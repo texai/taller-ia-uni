@@ -19,17 +19,14 @@ import { FAMILIA } from "@/lib/tipos";
  * entonces, no compartir esta URL.
  */
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export function generateStaticParams() {
-  const curso = cargarCurso();
-  return curso.sesiones.map((s) => ({ curso: curso.id, sesion: s.id }));
-}
+
 
 export default async function Revision({
   params,
 }: {
-  params: Promise<{ curso: string; sesion: string }>;
+  params: Promise<{ sesion: string }>;
 }) {
   const { sesion: idSesion } = await params;
   const curso = cargarCurso();
@@ -47,7 +44,7 @@ export default async function Revision({
       >
         <div className="mx-auto max-w-4xl">
           <Link
-            href={`/curso/${curso.id}/sesion/${sesion.id}`}
+            href={`/profe/sesion/${sesion.id}`}
             className="text-sm underline"
             style={{ color: "var(--tinta-suave)" }}
           >
@@ -65,7 +62,7 @@ export default async function Revision({
             style={{ borderColor: "var(--color-aviso)", color: "var(--color-aviso)" }}
           >
             Vista de revisión. Muestra el material completo, incluidas las notas
-            privadas. No compartir esta URL hasta el batch 7.
+            privadas.
           </p>
         </div>
       </header>

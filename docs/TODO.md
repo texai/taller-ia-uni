@@ -23,7 +23,7 @@ Referencias:
 | 4 | Renderizadores: familia `contenido` | ✅ Completado |
 | 5 | Renderizadores: familia `dictado` | ✅ Completado |
 | 6 | Vista de dictado y navegación por teclado | ✅ Completado |
-| 7 | Autenticación del docente en `/profe` | ⬜ Pendiente |
+| 7 | Autenticación del docente en `/profe` | ✅ Completado |
 | 8 | Sincronía en vivo: el docente marca el ritmo | ⬜ Pendiente |
 | 9 | Preguntas del alumno hacia el docente | ⬜ Pendiente |
 | 10 | Preguntas del docente hacia los alumnos | ⬜ Pendiente |
@@ -64,41 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 7 — Autenticación del docente en `/profe`
-
-Todo lo anterior es público. Los controles de dictado no pueden serlo.
-
-**Alcance**
-- [ ] Supabase Auth con `@supabase/ssr`
-- [ ] `/profe` con formulario de correo y contraseña, fuera de toda navegación
-- [ ] Sesión en cookie, con renovación en el middleware
-- [ ] Middleware que protege las rutas de docente
-- [ ] El cliente comprueba que el usuario autenticado sea el docente,
-      comparando contra `NEXT_PUBLIC_DOCENTE_UID`. **Esto es para la interfaz,
-      no es la defensa**: la defensa está en la política de Realtime (ver
-      [`CONVENTIONS.md`](CONVENTIONS.md) §11), porque Auth es compartida con
-      `gen` y un usuario de esa aplicación queda autenticado también acá
-- [ ] Cierre de sesión
-- [ ] `/profe` documentada en el README
-
-**Fuera de alcance**
-- Ninguna tabla. El docente se crea a mano en el panel de Supabase; no hay
-  script de npm ni gestión de usuarios en la aplicación.
-- Recuperación de contraseña, registro, invitaciones.
-
-**Requisitos externos**
-- Usuario del docente creado a mano en *Authentication → Users* del proyecto
-  compartido con `gen`.
-- **Registro deshabilitado** en *Authentication → Providers → Email*.
-- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y
-  `NEXT_PUBLIC_DOCENTE_UID` en `.env.local` y en Vercel.
-
-**Tests esperados**
-- [ ] Sin sesión, una ruta de docente redirige a `/profe`
-- [ ] Un usuario autenticado que no sea el docente no ve los controles
 
 ---
 

@@ -105,3 +105,13 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   `useSyncExternalStore`: se puede recargar, compartir y usar el botón de atrás.
 - `src/lib/navegacion.ts` con 14 pruebas, entre ellas que avanzar y retroceder
   son inversas a lo largo de toda la sesión.
+
+### Batch 7 — Autenticación del docente
+- Entrada en `/profe`, fuera de navegación y documentada. Sin registro ni
+  recuperación: el usuario se crea a mano en Supabase.
+- Las rutas se parten en dos caras: la pública sirve la carga del alumno
+  —filtrada en el servidor— y `/profe/sesion/…` sirve el material completo,
+  dinámica para que no quede en caché.
+- Ser docente no es estar autenticado: Auth es compartida con `gen`, así que se
+  compara contra `NEXT_PUBLIC_DOCENTE_UID`.
+- Dos pruebas nuevas sobre el contenido real del curso, en ambos sentidos.

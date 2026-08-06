@@ -487,3 +487,104 @@ dictando.
   `paso 2/4` y la URL lleva `&paso=1`.
 - Retroceder vuelve al paso anterior dentro del mismo ítem.
 - 39 pruebas, `lint`, `typecheck` y `build` limpios, sin errores de JavaScript.
+
+---
+
+## Batch 7 — Autenticación del docente en `/profe`
+**2026-08-06**
+
+## Batch 7 — Autenticación del docente en `/profe`
+
+Todo lo anterior es público. Los controles de dictado no pueden serlo.
+
+**Alcance**
+- [ ] Supabase Auth con `@supabase/ssr`
+- [ ] `/profe` con formulario de correo y contraseña, fuera de toda navegación
+- [ ] Sesión en cookie, con renovación en el middleware
+- [ ] Middleware que protege las rutas de docente
+- [ ] El cliente comprueba que el usuario autenticado sea el docente,
+      comparando contra `NEXT_PUBLIC_DOCENTE_UID`. **Esto es para la interfaz,
+      no es la defensa**: la defensa está en la política de Realtime (ver
+      [`CONVENTIONS.md`](CONVENTIONS.md) §11), porque Auth es compartida con
+      `gen` y un usuario de esa aplicación queda autenticado también acá
+- [ ] Cierre de sesión
+- [ ] `/profe` documentada en el README
+
+**Fuera de alcance**
+- Ninguna tabla. El docente se crea a mano en el panel de Supabase; no hay
+  script de npm ni gestión de usuarios en la aplicación.
+- Recuperación de contraseña, registro, invitaciones.
+
+**Requisitos externos**
+- Usuario del docente creado a mano en *Authentication → Users* del proyecto
+  compartido con `gen`.
+- **Registro deshabilitado** en *Authentication → Providers → Email*.
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y
+  `NEXT_PUBLIC_DOCENTE_UID` en `.env.local` y en Vercel.
+
+**Tests esperados**
+- [ ] Sin sesión, una ruta de docente redirige a `/profe`
+- [ ] Un usuario autenticado que no sea el docente no ve los controles
+
+---
+
+### El batch reordenó las rutas, y esa es su parte importante
+
+Hasta acá **todo servía el contenido completo, con notas incluidas**. Ahora hay
+dos caras:
+
+| Ruta | Quién | Qué sirve |
+|---|---|---|
+| `/curso/{c}/sesion/{s}` | Público, estático | La carga del alumno: sin notas, sin respuestas, sin asistencia |
+| `/profe/sesion/{s}` | Docente, dinámico | Todo |
+| `/profe/sesion/{s}/revision` | Docente, dinámico | Todo, de corrido |
+
+**La ruta del docente es dinámica a propósito.** Una página estática con notas
+dentro quedaría en la caché de Vercel al alcance de cualquiera que acierte la
+URL, y el middleware no protege lo que ya está servido.
+
+**El filtrado lo hace la ruta, no el componente.** `Dictado` recibe la sesión
+ya filtrada y un `modoDocente` que solo cambia enlaces y avisos. Una vista que
+decide en el render qué ocultar acaba mostrándolo en el HTML.
+
+### Decisiones
+
+- **`getUser`, no `getSession`.** `getSession` lee la galleta sin comprobar
+  nada, y una galleta es precisamente lo que un alumno puede fabricar.
+  `getUser` la verifica contra Supabase.
+- **Ser docente no es estar autenticado.** Auth es compartida con `gen`, así
+  que se compara contra `NEXT_PUBLIC_DOCENTE_UID`. Alguien puede autenticarse
+  legítimamente y no dictar este taller; en ese caso se cierra la sesión y se
+  lo dice.
+- **Un solo mensaje para credenciales malas.** Distinguir "ese correo no
+  existe" de "la contraseña no es esa" le regala a quien prueba la mitad de la
+  respuesta.
+- **Sin configuración, el sitio no se cae.** Falta Supabase → el curso se sirve
+  igual y solo la entrada del docente deja de andar, diciéndolo en pantalla.
+  Reventar el arranque por una variable ausente convertiría un despliegue mal
+  configurado en un sitio caído. Las rutas del docente quedan cerradas, que es
+  la lectura segura.
+- **El middleware solo cubre `/profe/*`.** Hacer pasar el sitio público por él
+  le costaría una llamada a Supabase a cada alumno, para no proteger nada.
+
+### Verificado
+
+- **Sobre el HTML generado**: la página pública de la sesión 1 tiene **cero**
+  apariciones de la nota del docente, cero ítems de asistencia y cero
+  ocurrencias de la palabra `notas`.
+- **Dos pruebas nuevas sobre el contenido REAL del curso**, no sobre uno de
+  laboratorio: la carga pública no lleva `notas`, `respuesta` ni ítems de
+  asistencia; y la del docente **sí** lleva notas — porque si el filtro
+  empezara a vaciar el material para todos, las pruebas de privacidad
+  seguirían pasando y nadie lo notaría hasta proyectarlo.
+- **Sobre las rutas**: lo público responde 200, `/profe` responde 200 porque es
+  el formulario, y `/profe/inicio` y `/profe/sesion/…/revision` responden 307
+  hacia `/profe`.
+- 41 pruebas, `lint`, `typecheck` y `build` limpios.
+
+### Pendiente de Ernesto
+
+- Deshabilitar el registro en *Authentication → Providers → Email*.
+- Crear el usuario en *Authentication → Users* y pasar su `uuid`.
+- Registrar `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  y `NEXT_PUBLIC_DOCENTE_UID` en Vercel y en `.env.local`.

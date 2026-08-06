@@ -403,3 +403,32 @@ test("minutosDe usa los de la unidad, o suma los de sus ítems", () => {
   assert.equal(minutosDe({ minutos: 60, items } as Unidad), 60);
   assert.equal(minutosDe({ items } as Unidad), 15);
 });
+
+// --------------------------------------------------------------------------
+// La invariante, sobre el contenido REAL del curso
+// --------------------------------------------------------------------------
+
+test("el curso real no filtra notas ni respuestas hacia el alumno", () => {
+  // Las pruebas de arriba usan contenido de laboratorio. Esta usa el del curso
+  // que se va a dictar, que es el que de verdad se proyecta por Zoom. Si
+  // alguien agrega una nota jugosa a un ítem, esta prueba la cubre sin que
+  // haya que acordarse de nada.
+  const curso = mod.cargarCurso();
+  const publico = JSON.stringify(mod.cursoParaAlumno(curso));
+
+  assert.doesNotMatch(publico, /"notas"/);
+  assert.doesNotMatch(publico, /"respuesta"/);
+  assert.doesNotMatch(publico, /"tipo":"asistencia"/);
+
+  // Y que no esté vacío: una carga rota también pasaría las tres de arriba.
+  assert.ok(curso.sesiones.length >= 2);
+  assert.ok(publico.length > 5000);
+});
+
+test("las notas SÍ están en la carga del docente", () => {
+  // El complemento del anterior: si el filtro empezara a vaciar el material
+  // para todos, las pruebas de privacidad seguirían pasando y nadie lo notaría
+  // hasta proyectarlo.
+  const crudo = JSON.stringify(mod.cargarCurso());
+  assert.match(crudo, /"notas"/);
+});

@@ -53,7 +53,18 @@ function suscribirseALaUrl(alCambiar: () => void) {
   };
 }
 
-export function Dictado({ sesion }: { sesion: Sesion }) {
+export function Dictado({
+  sesion,
+  modoDocente = false,
+}: {
+  sesion: Sesion;
+  /**
+   * En modo docente la sesión llega completa, con notas y respuestas. El
+   * filtrado lo hace la ruta, no este componente: una vista que decide en el
+   * render qué ocultar acaba mostrándolo en el HTML.
+   */
+  modoDocente?: boolean;
+}) {
   const [indiceAbierto, setIndiceAbierto] = useState(false);
   const principal = useRef<HTMLDivElement>(null);
 
@@ -147,11 +158,11 @@ export function Dictado({ sesion }: { sesion: Sesion }) {
           style={{ borderColor: "var(--borde)" }}
         >
           <Link
-            href="/"
+            href={modoDocente ? "/profe/inicio" : "/"}
             className="text-xs underline"
             style={{ color: "var(--tinta-suave)" }}
           >
-            ← Cursos
+            {modoDocente ? "← Sesiones" : "← Cursos"}
           </Link>
           <p className="mt-2 text-sm font-semibold">
             Sesión {sesion.numero} · {sesion.titulo}
@@ -159,6 +170,14 @@ export function Dictado({ sesion }: { sesion: Sesion }) {
           <p className="text-xs" style={{ color: "var(--tinta-suave)" }}>
             {sesion.horaInicio}–{sesion.horaFin} · {total} ítems
           </p>
+          {modoDocente && (
+            <p
+              className="mt-2 text-[11px]"
+              style={{ color: "var(--color-aviso)" }}
+            >
+              Modo docente · esta pantalla muestra las notas privadas
+            </p>
+          )}
         </div>
 
         <ol className="flex-1 overflow-y-auto px-2 py-3">
@@ -279,12 +298,39 @@ export function Dictado({ sesion }: { sesion: Sesion }) {
 
         <main ref={principal} className="flex-1 overflow-y-auto py-12">
           {item ? (
-            <RenderizarItem
-              item={item}
-              sesion={sesion}
-              unidadActual={unidad?.id}
-              paso={pos.paso}
-            />
+            <>
+              <RenderizarItem
+                item={item}
+                sesion={sesion}
+                unidadActual={unidad?.id}
+                paso={pos.paso}
+              />
+              {/*
+                Las notas solo existen en la carga del docente: en la pública
+                el servidor ya las quitó, así que acá no hay nada que ocultar.
+              */}
+              {modoDocente && item.notas && (
+                <aside className="mx-auto mt-10 max-w-4xl px-6">
+                  <div
+                    className="rounded-lg border-l-2 py-2 pl-4"
+                    style={{ borderColor: "var(--color-aviso)" }}
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-widest"
+                      style={{ color: "var(--color-aviso)" }}
+                    >
+                      Notas
+                    </p>
+                    <p
+                      className="mt-1 whitespace-pre-wrap text-base leading-relaxed"
+                      style={{ color: "var(--tinta-suave)" }}
+                    >
+                      {item.notas}
+                    </p>
+                  </div>
+                </aside>
+              )}
+            </>
           ) : (
             <p className="px-6">Esta sesión no tiene ítems.</p>
           )}

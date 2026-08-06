@@ -33,16 +33,30 @@ Todo eso se define en YAML bajo `contenido/`, versionado junto al código. La
 base de datos solo guarda lo que cambia durante una clase: dónde va el docente
 y qué preguntan los alumnos.
 
-## Para el docente
+## Las dos caras
 
-El acceso está en **`/profe`**. No aparece en ninguna navegación —no tiene por
-qué distraer a un alumno— pero tampoco es un secreto: lo que protege el acceso
-es la contraseña, no la URL.
+| Ruta | Quién | Qué sirve |
+|---|---|---|
+| `/` | Cualquiera | El curso y sus sesiones |
+| `/curso/{curso}/sesion/{sesion}` | Cualquiera | La sesión **como la ve un alumno** |
+| `/profe` | — | La entrada del docente |
+| `/profe/inicio` | Docente | Sus sesiones |
+| `/profe/sesion/{sesion}` | Docente | La sesión **con todo**: notas, asistencia, respuestas |
+| `/profe/sesion/{sesion}/revision` | Docente | La sesión de corrido, para escribir material |
 
-Desde ahí se llega a los controles de dictado y a la **segunda pantalla**,
-pensada para el teléfono: los controles de avance, las notas privadas del ítem
-que se está explicando, las preguntas que van llegando, y el reloj de la
-sesión. Nada de eso aparece en la pantalla que se comparte por Zoom.
+**El acceso del docente está en `/profe`.** No aparece en ninguna navegación
+—no tiene por qué distraer a un alumno— pero tampoco es un secreto: lo que
+protege el acceso es la contraseña, no la URL.
+
+La diferencia entre las dos caras no es cosmética. La ruta pública sirve una
+carga distinta, filtrada **en el servidor**: sin notas del docente, sin la
+respuesta correcta de las preguntas, y sin los ítems de asistencia. Lo que
+llega al navegador es lo que un alumno puede leer con las herramientas de
+desarrollador abiertas, y esa pantalla se proyecta por Zoom.
+
+Desde `/profe` se llegará también a la **segunda pantalla**, pensada para el
+teléfono: los controles de avance, las notas privadas del ítem que se está
+explicando, las preguntas que van llegando, y el reloj de la sesión.
 
 ## Estado
 
@@ -65,7 +79,12 @@ clase —dónde va el docente, qué preguntan los alumnos— es efímero por
 naturaleza: se acaba cuando se acaba la clase.
 
 El usuario del docente se crea a mano en *Authentication → Users*, con el
-registro deshabilitado en *Authentication → Providers → Email*.
+registro deshabilitado en *Authentication → Providers → Email*. Su `uuid` va
+en `NEXT_PUBLIC_DOCENTE_UID`: Auth es compartida con la aplicación `gen`, así
+que "estar autenticado" no alcanza como criterio para dictar.
+
+Sin esas variables el sitio **sigue funcionando**: el curso se sirve igual y
+lo único que deja de andar es la entrada del docente, que lo dice en pantalla.
 
 ## Licencia
 
