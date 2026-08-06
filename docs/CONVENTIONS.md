@@ -111,6 +111,8 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `error-comun` | Un error que va a ocurrir, con su arreglo | `sintoma`, `causa`, `arreglo` |
 | `demo` | Momento de demostración en vivo | `pasos[]`, `observar`, `respaldo` |
 | `transicion` | Qué vimos, qué viene ahora | `vimos`, `viene` |
+| `diagrama-secuencia` | Secuencia PlantUML, recorrible mensaje a mensaje | `fuente`, `mensajes[].explicacion` |
+| `comando-anotado` | Un comando largo, explicado parte por parte | `comando`, `segmentos[]` |
 
 ### Familia `dictado`
 
@@ -140,6 +142,9 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 - **`demo`** — distinto de `terminal`: acá el docente ejecuta delante de todos.
   Lleva los comandos, lo que debería salir, cuánto tarda, y un respaldo por si
   falla en vivo.
+- **`diagrama-secuencia`** y **`comando-anotado`** — ver §10. Un diagrama
+  completo proyectado se lee como una maraña, y un comando de doce palabras se
+  lee como una sola cosa opaca. Los dos necesitan poder mirarse de a una parte.
 
 ## 9 · Los identificadores son estables
 
@@ -149,3 +154,41 @@ del docente se guarda por `id`, y las preguntas de los alumnos quedan atadas al
 
 Para reordenar, se mueve el bloque en el YAML: el orden lo da la posición en el
 archivo, no el identificador.
+
+## 10 · Ítems con pasos internos
+
+Algunos ítems no se explican de una sola vez. Un diagrama de secuencia
+proyectado entero es una maraña que nadie sigue; un comando de doce palabras
+se lee como un bloque opaco. Lo que falta en los dos casos es lo mismo: poder
+enfocar **una parte a la vez**, sabiendo de dónde viene y a dónde va.
+
+Por eso un ítem puede declarar `pasos`, y la posición de la clase deja de ser
+`(unidad, ítem)` para ser `(unidad, ítem, paso)`.
+
+Consecuencias, y son la razón de que esto sea una convención y no un detalle:
+
+- **La flecha derecha avanza al paso siguiente**, y solo salta al ítem
+  siguiente cuando se acabaron los pasos. Al revés con la izquierda.
+- **La sincronía transporta el paso.** Un alumno que llega tarde tiene que
+  aterrizar en el mensaje 4 del diagrama, no al principio del diagrama.
+- **El paso va en la URL**, para poder recargar sin perder el lugar.
+- **Un ítem sin `pasos` se comporta como siempre.** La capacidad es opcional y
+  no complica los diecisiete tipos que no la usan.
+
+El primer paso de un ítem con pasos muestra siempre el conjunto completo, sin
+nada enfocado: primero el mapa, después el recorrido.
+
+### PlantUML se renderiza en construcción, no en clase
+
+`diagrama-secuencia` se escribe en PlantUML. PlantUML es Java y Vercel no
+ejecuta Java, así que la imagen se genera **al construir** y se sirve estática.
+
+No es solo una limitación de la plataforma: depender de un servicio externo
+para dibujar un diagrama en mitad de una clase es una forma innecesaria de
+quedarse sin material. Lo que se proyecta ya está en disco antes de que empiece
+la sesión.
+
+El modo enfocado **no** se deriva de esa imagen. La fuente PlantUML se parsea y
+el recorrido se dibuja aparte, porque el SVG que produce PlantUML no expone sus
+mensajes de forma que se puedan resaltar con confianza. Una sola fuente de
+verdad, dos salidas.

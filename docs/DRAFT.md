@@ -31,6 +31,41 @@ porque falta una decisión, no trabajo.
 
 ## Procesado
 
+### 2026-08-06 — Visualizaciones enfocadas
+
+Transferido a [`TODO.md`](TODO.md) como batches 13 y 14, y a
+[`CONVENTIONS.md`](CONVENTIONS.md) §10.
+
+Lo que traía el dictado:
+
+- Tipos de ítem que contengan un conjunto de pasos animados.
+- Diagrama de secuencia escrito en PlantUML, con la aplicación generando la
+  imagen — dicho explícitamente como requerimiento.
+- Además de la imagen, una visualización que permita enfocar los mensajes uno
+  por uno: de dónde viene, a dónde va, qué contiene.
+- Duda abierta sobre la técnica: video, SVG animado, o una interfaz propia. El
+  dictado dice que la implementación hay que discutirla pero el concepto vale.
+- El mismo mecanismo para explicar un comando largo: un `docker compose` con
+  varias palabras, poniendo una explicación por cada componente del comando, al
+  estilo de las anotaciones en ASCII con flechitas señalando cada parte, y
+  listando para qué sirve cada modificador y qué otros valores admite.
+
+**Consecuencia de arquitectura, y es la parte importante:** un ítem con pasos
+internos cambia la posición de la clase de `(unidad, ítem)` a
+`(unidad, ítem, paso)`. Eso toca la navegación con flechas, la sincronía en
+vivo y la tabla `estado_clase`. Como ninguno de esos batches está implementado
+todavía, se enmendaron el 6 y el 8 en vez de agregar el arreglo después.
+
+**Decisión sobre PlantUML:** es Java, y Vercel no ejecuta Java. La imagen se
+genera al construir y se sirve estática. Depender de un servicio externo para
+dibujar un diagrama en mitad de una clase es una forma innecesaria de quedarse
+sin material.
+
+**Decisión sobre el modo enfocado:** no se deriva de la imagen de PlantUML. El
+SVG que produce no expone sus mensajes de forma que se puedan resaltar con
+confianza, así que la fuente se parsea y el recorrido se dibuja aparte. Una
+fuente de verdad, dos salidas.
+
 ### 2026-08-06 — Dictado inicial del producto
 
 Transferido a [`TODO.md`](TODO.md) como batches 1 a 12, y a

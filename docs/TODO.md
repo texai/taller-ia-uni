@@ -29,11 +29,16 @@ Referencias:
 | 10 | Preguntas del docente hacia los alumnos | ⬜ Pendiente |
 | 11 | Segunda pantalla del docente | ⬜ Pendiente |
 | 12 | Reloj de sesión y avisos de tiempo | ⬜ Pendiente |
+| 13 | Diagramas de secuencia PlantUML, recorribles | ⬜ Pendiente |
+| 14 | Comandos anotados parte por parte | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
-**Ruta mínima para dictar el sábado:** batches 1 a 8. Del 9 al 12 mejoran el
+**Ruta mínima para dictar el sábado:** batches 1 a 8. Del 9 al 14 mejoran el
 dictado pero la clase se puede dar sin ellos.
+
+Los batches 13 y 14 dependen de los `pasos` internos que introduce el batch 6
+(ver [`CONVENTIONS.md`](CONVENTIONS.md) §10).
 
 ### Decisiones pendientes
 
@@ -191,6 +196,11 @@ El material existe y se renderiza, pero no hay forma de recorrerlo.
 **Alcance**
 - [ ] Ruta de sesión que muestra un ítem a la vez
 - [ ] Flecha derecha e izquierda para avanzar y retroceder
+- [ ] **Pasos internos**: un ítem puede declarar `pasos`, y la flecha avanza
+      dentro del ítem antes de saltar al siguiente (ver
+      [`CONVENTIONS.md`](CONVENTIONS.md) §10). Un ítem sin `pasos` se comporta
+      como siempre
+- [ ] La posición es `(unidad, ítem, paso)` en toda la aplicación, incluida la URL
 - [ ] Barra de progreso con la unidad actual y cuánto falta
 - [ ] Índice lateral con las unidades, plegable
 - [ ] Al abrir una unidad se muestran sus `objetivos` antes del primer ítem
@@ -233,8 +243,10 @@ Todo lo anterior es público. Los controles de dictado no pueden serlo.
 El corazón del producto. El alumno debe seguir al docente sin adelantarse.
 
 **Alcance**
-- [ ] Tabla `estado_clase` y sus políticas, según [`supabase/esquema.sql`](../supabase/esquema.sql)
-- [ ] El docente publica su posición al moverse
+- [ ] Tabla `estado_clase` con `unidad_id`, `item_id`, `paso` y `posicion`, y sus políticas
+- [ ] El docente publica su posición al moverse, **incluido el paso interno**:
+      quien llega tarde tiene que aterrizar en el mensaje 4 del diagrama, no al
+      principio del diagrama
 - [ ] El alumno se suscribe por Supabase Realtime y sigue esa posición
 - [ ] Quien llega tarde recibe la posición actual al conectarse
 - [ ] El alumno puede navegar hacia atrás libremente; hacia adelante no
@@ -318,6 +330,75 @@ Cuatro horas se van rápido, y el receso se olvida.
 - [ ] Aviso cuando toca el receso según la hora, no solo según la posición
 - [ ] Aviso cuando una unidad se está pasando de sus minutos
 - [ ] Todo esto solo en la segunda pantalla; el proyector no lo muestra
+
+---
+
+## Batch 13 — Diagramas de secuencia PlantUML, recorribles
+
+Un diagrama de secuencia proyectado entero es una maraña. Nadie sigue nueve
+flechas a la vez, y el que se pierde en la tercera ya no vuelve. Hace falta
+poder recorrerlo mensaje por mensaje, viendo de dónde sale cada uno, a dónde
+llega y qué lleva.
+
+**Alcance**
+- [ ] Tipo `diagrama-secuencia` con la fuente en PlantUML
+- [ ] Render a imagen **en tiempo de construcción**, servida estática: PlantUML
+      es Java y Vercel no lo ejecuta, y depender de un servicio externo en
+      mitad de una clase es una forma innecesaria de quedarse sin material
+- [ ] Parser de la fuente PlantUML para el subconjunto que usamos:
+      participantes, mensajes, activaciones, notas
+- [ ] Modo enfocado que dibuja el recorrido por su cuenta, resaltando un
+      mensaje a la vez y atenuando el resto
+- [ ] Cada mensaje puede llevar su `explicacion`, que aparece al enfocarlo
+- [ ] El primer paso muestra el diagrama completo, sin nada enfocado: primero
+      el mapa, después el recorrido
+- [ ] Se apoya en los `pasos` del batch 6, no inventa su propia navegación
+- [ ] `npm run diagramas` regenera las imágenes; el resultado se versiona
+
+**Decisión a tomar al implementar**
+Cómo se genera la imagen en construcción. Las opciones son un `plantuml.jar`
+local, un contenedor, o un servicio tipo Kroki. Lo que no es negociable es que
+la salida quede en disco antes de la clase.
+
+**Tests esperados**
+- [ ] El parser extrae los mensajes esperados de una fuente de ejemplo
+- [ ] Una fuente PlantUML que el parser no entiende falla en validación, no en
+      clase
+- [ ] El número de pasos coincide con el número de mensajes más uno
+
+**Fuera de alcance**
+- Todo PlantUML. Solo el subconjunto de diagramas de secuencia que este curso
+  usa; cualquier otra cosa debe fallar diciendo qué no entendió.
+- Diagramas de clase, de componentes o de estados en PlantUML: para eso está
+  `diagrama` con Mermaid.
+
+---
+
+## Batch 14 — Comandos anotados parte por parte
+
+`docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso`
+son doce palabras que un alumno lee como un bloque opaco. Cada una está ahí por
+una razón, y esa razón es justamente lo que hay que enseñar.
+
+**Alcance**
+- [ ] Tipo `comando-anotado`: el comando completo, más una lista de segmentos
+- [ ] Cada segmento con su explicación, y opcionalmente qué otros valores
+      admite
+- [ ] Modo enfocado: el segmento activo resaltado dentro del comando, con una
+      llave o flecha señalándolo, al estilo de las anotaciones en ASCII
+- [ ] El resto del comando queda visible pero atenuado: el punto es ver la
+      parte **sin perder el todo**
+- [ ] Los segmentos se declaran por texto, no por índice de caracteres — un
+      índice se rompe en cuanto alguien corrige un espacio
+- [ ] Un segmento que no aparece en el comando falla en validación
+- [ ] Se apoya en los `pasos` del batch 6
+- [ ] Funciona con comandos que ocupan más de una línea
+
+**Tests esperados**
+- [ ] Los segmentos se localizan correctamente dentro del comando
+- [ ] Un segmento inexistente falla nombrando el ítem y el texto que no encontró
+- [ ] Un segmento que aparece dos veces en el comando falla como ambiguo, en
+      vez de elegir uno en silencio
 
 ---
 

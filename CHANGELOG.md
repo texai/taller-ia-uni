@@ -13,3 +13,11 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   del material de clase, y el catálogo de tipos de ítem.
 - `TODO.md` abre con doce batches. Los ocho primeros son la ruta mínima para
   dictar el sábado 8 de agosto.
+
+### Documentación · visualizaciones enfocadas
+- Se agregan los tipos `diagrama-secuencia` y `comando-anotado`, y con ellos el
+  concepto de **ítems con pasos internos** (`CONVENTIONS.md` §10): la posición
+  de la clase pasa de `(unidad, ítem)` a `(unidad, ítem, paso)`.
+- Se enmiendan los batches 6 y 8 para transportar el paso, en vez de dejarlo
+  como arreglo posterior.
+- Batches 13 y 14 abiertos.
