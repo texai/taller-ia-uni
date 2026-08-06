@@ -44,10 +44,11 @@ Los batches 13 y 14 dependen de los `pasos` internos que introduce el batch 6
 
 | Decisión | Bloquea | Detalle |
 |---|---|---|
-| ~~Proyecto Supabase~~ | ~~Batches 7, 8~~ | ✅ Resuelto: se comparte el proyecto de `gen`. Falta verificar que el registro esté deshabilitado en Authentication → Providers → Email, y habilitar Realtime para las tablas `taller_*` |
+| ~~Proyecto Supabase~~ | ~~Batches 7, 8~~ | ✅ Resuelto: se comparte el de `gen`. Falta deshabilitar el registro en Authentication → Providers → Email, crear el usuario del docente, y habilitar Realtime |
 | Dominio de la aplicación | — (ajuste posterior) | Afecta a la URL que se comparte con los alumnos y a los `redirectTo` de Supabase Auth |
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
-| Retención de preguntas y respuestas | Batch 9, 10 | Si se borran al terminar el curso o quedan como registro. Por ahora quedan |
+| ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
+| Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
 
 ---
 
@@ -255,27 +256,32 @@ Todo lo anterior es público. Los controles de dictado no pueden serlo.
 
 **Alcance**
 - [ ] Supabase Auth con `@supabase/ssr`
-- [ ] `/profe` con formulario de contraseña, fuera de toda navegación
-- [ ] Registro deshabilitado; sin recuperación por correo
+- [ ] `/profe` con formulario de correo y contraseña, fuera de toda navegación
 - [ ] Sesión en cookie, con renovación en el middleware
-- [ ] Tabla `taller_docentes` con la lista explícita de quién puede dictar
-- [ ] `npm run clave-docente` que crea o actualiza al docente usando la clave de
-      servicio **y lo inscribe en `taller_docentes`**; un usuario fuera de esa
-      tabla puede iniciar sesión y no puede hacer nada
-- [ ] `supabase/esquema.sql` con las cuatro tablas, sus políticas y las notas
-      de Realtime
 - [ ] Middleware que protege las rutas de docente
+- [ ] El cliente comprueba que el usuario autenticado sea el docente,
+      comparando contra `NEXT_PUBLIC_DOCENTE_UID`. **Esto es para la interfaz,
+      no es la defensa**: la defensa está en la política de Realtime (ver
+      [`CONVENTIONS.md`](CONVENTIONS.md) §11), porque Auth es compartida con
+      `gen` y un usuario de esa aplicación queda autenticado también acá
+- [ ] Cierre de sesión
 - [ ] `/profe` documentada en el README
 
+**Fuera de alcance**
+- Ninguna tabla. El docente se crea a mano en el panel de Supabase; no hay
+  script de npm ni gestión de usuarios en la aplicación.
+- Recuperación de contraseña, registro, invitaciones.
+
 **Requisitos externos**
-- Proyecto Supabase **compartido con `gen`**, con el proveedor de correo activo
-  y **el registro deshabilitado**.
+- Usuario del docente creado a mano en *Authentication → Users* del proyecto
+  compartido con `gen`.
+- **Registro deshabilitado** en *Authentication → Providers → Email*.
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y
-  `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en Vercel.
+  `NEXT_PUBLIC_DOCENTE_UID` en `.env.local` y en Vercel.
 
 **Tests esperados**
 - [ ] Sin sesión, una ruta de docente redirige a `/profe`
-- [ ] La clave de servicio nunca se expone al cliente
+- [ ] Un usuario autenticado que no sea el docente no ve los controles
 
 ---
 
@@ -284,28 +290,35 @@ Todo lo anterior es público. Los controles de dictado no pueden serlo.
 El corazón del producto. El alumno debe seguir al docente sin adelantarse.
 
 **Alcance**
-- [ ] Tabla `taller_estado_clase` con `unidad_id`, `item_id`, `paso` y
-      `posicion`, y sus políticas escritas contra `taller_docentes` — **no**
-      contra `auth.role()` (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
-- [ ] El docente publica su posición al moverse, **incluido el paso interno**:
-      quien llega tarde tiene que aterrizar en el mensaje 4 del diagrama, no al
-      principio del diagrama
-- [ ] El alumno se suscribe por Supabase Realtime y sigue esa posición
-- [ ] Quien llega tarde recibe la posición actual al conectarse
+- [ ] Canal privado de Realtime por sesión: `taller:{curso}:{sesion}`
+- [ ] **Broadcast** para publicar cada movimiento del docente
+- [ ] **Presence** para llevar la posición actual, de modo que quien se conecta
+      reciba el estado de entrada. Es la pieza que hace innecesaria una tabla
+      (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
+- [ ] La posición incluye el **paso interno**: quien llega tarde tiene que
+      aterrizar en el mensaje 4 del diagrama, no al principio del diagrama
 - [ ] El alumno puede navegar hacia atrás libremente; hacia adelante no
 - [ ] El contenido posterior **no se envía** al cliente del alumno (ver
       [`CONVENTIONS.md`](CONVENTIONS.md) §4)
 - [ ] Botón de "volver a donde va la clase" cuando el alumno se quedó atrás
 - [ ] Indicador de conexión: en vivo, reconectando, sin conexión
+- [ ] Al reconectar, el docente vuelve a publicar la posición que conserva su
+      propia URL
 - [ ] Interruptor de "clase en vivo": fuera de vivo, el alumno navega libre
 
+**Fuera de alcance**
+- Cualquier tabla. Nada de esto se persiste: se acaba cuando se acaba la clase.
+
 **Requisitos externos**
-- Realtime habilitado para `taller_estado_clase`. El proyecto compartido con
-  `gen` no usa Realtime hoy, así que hay que activarlo.
+- Realtime habilitado en el proyecto. `gen` no lo usa hoy.
+- Política sobre `realtime.messages` que solo deje publicar la pauta al
+  identificador del docente, según [`CONVENTIONS.md`](CONVENTIONS.md) §11.
 
 **Tests esperados**
-- [ ] Un alumno que se conecta a mitad de clase cae en la posición correcta
+- [ ] Un alumno que se conecta a mitad de clase cae en la posición correcta,
+      incluido el paso interno
 - [ ] La carga del alumno no incluye ítems posteriores a la posición del docente
+- [ ] Perder la conexión y recuperarla deja al alumno donde corresponde
 
 ---
 
@@ -315,35 +328,84 @@ Preguntar en voz alta cuesta. La mitad del valor de poder preguntar es que
 nadie más te vea preguntarlo.
 
 **Alcance**
-- [ ] Tabla `taller_preguntas` con sus políticas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
+- [ ] Subcanal de Broadcast para preguntas, dentro del canal de la sesión
 - [ ] Botón de preguntar siempre a mano en la vista del alumno
-- [ ] La pregunta queda atada al ítem donde se hizo
+- [ ] La pregunta viaja con el ítem y el paso donde se hizo: sin eso llega
+      descontextualizada diez minutos después y ya nadie sabe de qué hablaba
 - [ ] Nombre opcional: se puede preguntar sin firmar
-- [ ] Las preguntas **no** se muestran en la pantalla principal del docente
+- [ ] Las preguntas llegan **solo al cliente del docente**, y ahí se acumulan
+      en memoria mientras dure la sesión
+- [ ] Las preguntas **no** aparecen en la pantalla principal del docente
 - [ ] Contador discreto de preguntas sin atender
 - [ ] Marcar una pregunta como atendida
 
+**Fuera de alcance**
+- Persistencia. Si el docente recarga la página, las preguntas se pierden: son
+  de la clase, no del curso. Si alguna vez hace falta conservarlas, se exportan
+  a un archivo desde la segunda pantalla antes de cerrar.
+
 **Tests esperados**
-- [ ] Un alumno sin sesión puede insertar una pregunta
-- [ ] Un alumno sin sesión NO puede leer las preguntas de otros
+- [ ] Una pregunta publicada llega al cliente del docente con su contexto
+- [ ] Un alumno no recibe las preguntas de otros alumnos
 
 ---
 
 ## Batch 10 — Preguntas del docente hacia los alumnos
 
-Preguntar a la clase es la forma más barata de saber si alguien se perdió.
+Preguntar a la clase es la forma más barata de saber si alguien se perdió. Y
+mostrar el resultado, cuando el docente decide mostrarlo, es la forma más
+barata de que la clase se entere de que no estaba tan de acuerdo consigo misma
+como creía.
 
 **Alcance**
 - [ ] Ítem `pregunta` de la pauta: al llegar, aparece en la pantalla del alumno
 - [ ] Preguntas en vivo, lanzadas desde la segunda pantalla sin estar en la pauta
 - [ ] Respuesta abierta o de opciones
 - [ ] El alumno siempre puede decir explícitamente que prefiere no responder
-- [ ] El docente ve el recuento en su segunda pantalla, no en el proyector
-- [ ] Tabla `taller_respuestas` con sus políticas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
+- [ ] `visibilidad: privada | publica`
+
+**Las públicas, y sus tres estados** (ver [`CONVENTIONS.md`](CONVENTIONS.md) §12)
+- [ ] **Respondiendo** — la pantalla proyectada muestra la pregunta y *cuántos
+      ya contestaron*. **Nunca qué contestaron**: si los resultados se ven
+      mientras la gente responde, los que faltan copian al grupo y la pregunta
+      deja de medir nada
+- [ ] Contador de avance: "12 de 20 respondieron", y quiénes faltan si firmaron
+- [ ] **Revelado** — por dos vías: un clic del docente, que puede cortar cuando
+      quiera, o **automáticamente cuando ya respondieron todos**, porque a esa
+      altura ya no hay a quién sesgar
+- [ ] **En vivo** — ya revelado, el recuento sigue actualizándose si alguien
+      responde tarde
+- [ ] El denominador de "todos" sale de **Presence**: el canal ya sabe cuántos
+      alumnos están conectados, así que no hay que declarar el tamaño del
+      grupo. Si alguien se desconecta a mitad, el denominador baja con él
+- [ ] Gráfico de barras legible proyectado, con el porcentaje y el conteo
+- [ ] Si la pregunta tiene `respuesta` correcta, se marca **solo al revelar**
+
+**Las privadas**
+- [ ] El recuento llega únicamente a la segunda pantalla del docente
+
+**Cómo viajan las respuestas sin tablas**
+- [ ] Las respuestas van por Broadcast a un tema que los alumnos pueden
+      **escribir pero no leer**, resuelto con la política de Realtime. Si
+      pudieran leerlo, cualquiera con las herramientas de desarrollador vería
+      las respuestas de los demás antes del revelado
+- [ ] El revelado sí es público: lo publica el docente en el canal de la sesión
+- [ ] La `respuesta` correcta nunca sale del servidor antes del revelado (ver
+      [`CONVENTIONS.md`](CONVENTIONS.md) §3)
+
+**Fuera de alcance**
+- Persistencia. El recuento vive mientras dura la clase; si el docente recarga,
+  se pierde. Son datos de la clase, no del curso.
 
 **Tests esperados**
-- [ ] `respuesta` (la correcta) nunca llega al cliente del alumno
+- [ ] `respuesta` no aparece en la carga del alumno
 - [ ] Omitir queda registrado como omisión, no como falta de respuesta
+- [ ] Antes del revelado, el cliente del alumno no tiene forma de conocer el
+      recuento
+- [ ] El recuento se actualiza al llegar respuestas tardías
+- [ ] Con todos los conectados respondiendo, el revelado ocurre sin clic
+- [ ] Un alumno que se desconecta baja el denominador y puede disparar el
+      revelado
 
 ---
 

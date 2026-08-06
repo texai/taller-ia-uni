@@ -31,3 +31,14 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   "estar autenticado" no alcanza como criterio (`CONVENTIONS.md` §11).
 - El reparto de las ocho horas queda fijado en el batch 3, cuadrado contra los
   cinco retos que ya existen en el laboratorio.
+
+### Documentación · cero tablas, y preguntas públicas
+- Supabase queda reducido a Auth y Realtime. **No hay tablas.** El estado de la
+  clase viaja por Broadcast y Presence; el que llega tarde se sincroniza con
+  Presence, que es la pieza que hace innecesaria la persistencia
+  (`CONVENTIONS.md` §11).
+- Se elimina la tarea de npm para la contraseña: el docente se crea a mano en
+  el panel de Supabase.
+- Las preguntas del docente pueden ser públicas, con tres estados: respondiendo
+  —solo el contador, nunca las respuestas—, revelado por clic o al completarse,
+  y recuento en vivo (`CONVENTIONS.md` §12).

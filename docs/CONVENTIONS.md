@@ -16,9 +16,15 @@ Por qué: el material del curso es código. Se revisa en un diff, se versiona co
 el resto del repo, y se puede volver atrás. Un panel de administración para
 editar contenido sería más trabajo y peor herramienta que un editor de texto.
 
-**Excepción:** un ítem de markdown largo vive en su propio `.md` bajo
-`contenido/md/` y el YAML lo referencia por ruta. Meter tres párrafos dentro de
-una cadena YAML hace ilegibles ambas cosas.
+**Excepción:** un contenido largo vive en su propio archivo y el YAML lo
+referencia por ruta. Markdown bajo `contenido/md/`, fuentes PlantUML bajo
+`contenido/puml/`, y lo que haga falta después. Meter tres párrafos —o un
+diagrama de nueve mensajes— dentro de una cadena YAML hace ilegibles ambas
+cosas.
+
+Lo que no cambia es la regla: **todo el material está versionado en el
+repositorio**. No hay tablas de contenido, no hay panel de administración, no
+hay nada que se edite en producción sin dejar rastro en un diff.
 
 ## 2 · Español para el dominio, inglés para lo técnico
 
@@ -121,7 +127,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `receso` | Descanso, con reloj | `minutos` |
 | `pausa-preguntas` | Pausa deliberada para preguntas | `disparadores[]` |
 | `asistencia` | Recordatorio de tomar lista. Solo el docente | `nota` |
-| `pregunta` | El docente pregunta a los alumnos | `pregunta`, `opciones`, `respuesta`, `permiteOmitir` |
+| `pregunta` | El docente pregunta a los alumnos | `pregunta`, `opciones`, `respuesta`, `permiteOmitir`, `visibilidad` |
 
 ### Comunes a todos
 
@@ -201,55 +207,74 @@ el recorrido se dibuja aparte, porque el SVG que produce PlantUML no expone sus
 mensajes de forma que se puedan resaltar con confianza. Una sola fuente de
 verdad, dos salidas.
 
-## 11 · El proyecto de Supabase es compartido con `gen`
+## 11 · No creamos tablas. Ninguna
 
-Esta aplicación no tiene proyecto propio: vive en el mismo que `gen`, que usa
-Postgres y Auth pero no Realtime. Compartirlo está bien —hay un solo usuario en
-ambas— pero tiene dos consecuencias que hay que respetar.
+Supabase se usa para **dos cosas y nada más**: Auth, para que el docente entre
+por `/profe`, y Realtime, para el canal en vivo. No hay tablas nuestras en la
+base.
 
-### Todas nuestras tablas llevan el prefijo `taller_`
+Es una decisión deliberada, no una etapa. Todo el material del curso vive
+versionado en el repositorio (§1), y lo único que ocurre durante una clase
+—dónde va el docente, qué preguntan los alumnos— es efímero por naturaleza: se
+acaba cuando se acaba la clase. Guardarlo en una tabla sería inventar un
+problema de retención, de migraciones y de políticas para datos que nadie va a
+consultar el lunes.
 
-`taller_estado_clase`, `taller_preguntas`, `taller_respuestas`,
-`taller_docentes`.
+### Cómo se sincroniza sin base de datos
 
-Nombres como `preguntas` o `respuestas` son de los que dos aplicaciones
-distintas eligen sin consultarse. Una colisión acá no da un error de
-compilación: da una tabla que ya existía, con otras columnas y otras políticas,
-y el descubrimiento llega tarde.
+Realtime tiene dos mecanismos que no tocan Postgres:
 
-Un esquema de Postgres aparte sería más limpio, pero obliga a exponerlo en la
-configuración de la API de Supabase. Con el prefijo se consigue lo mismo sin
-tocar configuración.
+| Mecanismo | Para qué acá |
+|---|---|
+| **Broadcast** | El docente publica cada movimiento. Las preguntas de los alumnos viajan por el mismo canal |
+| **Presence** | Lleva la posición actual del docente. Quien se conecta recibe el estado completo de entrada, y así el que llega tarde aterriza donde va la clase |
 
-### Las políticas NO pueden decir `auth.role() = 'authenticated'`
+Presence es la pieza que hace innecesaria la tabla. Sin ella habría que
+persistir la posición en algún lado para que un alumno que abre el navegador a
+las 16:20 supiera dónde está la clase; con ella, ese estado lo mantiene el
+propio canal.
 
-Ese es el error de seguridad que trae compartir proyecto, y es fácil de no ver.
-Auth es común a las dos aplicaciones: cualquiera que se autentique en `gen`
-queda autenticado también acá. Una política que solo pide "estar autenticado"
-le daría a un futuro usuario de `gen` el control de la clase — mover la
-posición, leer las preguntas de los alumnos, ver las respuestas correctas.
+**Consecuencia que hay que aceptar:** si el docente pierde la conexión, el
+estado de presencia se va con él. Al reconectar vuelve a publicar su posición,
+que su propio cliente conserva en la URL. Un alumno que se conecte durante esos
+segundos ve "reconectando" en vez de una posición vieja, que es la lectura
+correcta de lo que está pasando.
 
-Hoy no ocurre porque el usuario es uno solo. Pero es una bomba de relojería:
-explota el día que `gen` sume a alguien, y para entonces nadie va a recordar
-que la política estaba escrita así.
+### El proyecto es compartido con `gen`
 
-La regla es una lista explícita:
+No hay proyecto propio: se usa el de `gen`, que ya tiene Postgres y Auth pero
+no Realtime. Auth es **común a las dos aplicaciones**, y ahí está el filo.
+
+Cualquiera que se autentique en `gen` queda autenticado también acá. Así que
+"estar autenticado" no alcanza como criterio para mover la clase: le daría a un
+futuro usuario de `gen` el control del dictado. Hoy no ocurre porque el usuario
+es uno solo, y eso es justamente lo que lo vuelve fácil de olvidar.
+
+Los canales de Realtime son **privados**, y la autorización se resuelve con una
+política sobre `realtime.messages` —que es una tabla de Supabase, no nuestra—
+comparando contra el identificador del docente:
 
 ```sql
-create table if not exists taller_docentes (
-  usuario uuid primary key references auth.users (id) on delete cascade,
-  nota    text
-);
-
--- Y toda politica de docente se escribe contra ella:
-create policy "solo el docente marca el ritmo"
-  on taller_estado_clase for all
-  using (exists (select 1 from taller_docentes where usuario = auth.uid()))
-  with check (exists (select 1 from taller_docentes where usuario = auth.uid()));
+create policy "solo el docente publica la pauta"
+  on realtime.messages for insert
+  to authenticated
+  with check (
+    realtime.topic() like 'taller:%'
+    and auth.uid() = 'UUID-DEL-DOCENTE'
+  );
 ```
 
-`npm run clave-docente` crea al usuario **y lo inscribe en `taller_docentes`**.
-Un usuario que no esté en esa tabla puede iniciar sesión y no puede hacer nada.
+El identificador va en una variable de entorno del servidor y en esa política.
+Un usuario de `gen` puede iniciar sesión y no puede publicar nada.
+
+Los alumnos **leen** el canal sin autenticarse, y pueden publicar únicamente en
+el subcanal de preguntas.
+
+### Nombres de canal con prefijo
+
+Los temas de Realtime llevan prefijo: `taller:{curso}:{sesion}`. El proyecto es
+compartido, y un nombre de canal genérico es de los que dos aplicaciones eligen
+sin consultarse.
 
 ### La llave de servicio abre las dos aplicaciones
 
@@ -257,3 +282,29 @@ Un usuario que no esté en esa tabla puede iniciar sesión y no puede hacer nada
 que también da acceso a los datos de `gen`. Solo en el servidor y en los
 scripts de mantenimiento. Nunca en el repositorio, nunca en un componente
 cliente.
+
+## 12 · Una pregunta se revela cuando el docente lo decide
+
+Un ítem `pregunta` puede ser **privada** —el recuento llega solo a la segunda
+pantalla— o **pública**, y entonces se proyecta.
+
+En las públicas hay tres estados, y el orden importa:
+
+1. **Respondiendo.** En la pantalla proyectada se ve la pregunta y *cuántas
+   personas ya contestaron*. **Nunca qué contestaron.**
+2. **Revelado.** Ocurre por una de dos vías: **un clic del docente**, que puede
+   cortar cuando quiera, o **automáticamente cuando ya respondieron todos**,
+   porque a esa altura ya no hay a quién sesgar.
+3. **En vivo.** Ya revelado, el recuento sigue actualizándose si alguien
+   responde tarde.
+
+El primer estado es toda la razón de la convención. Si los resultados se
+proyectan mientras la gente contesta, los que faltan copian al grupo y la
+pregunta deja de medir lo que quería medir. El contador sí puede verse —sirve
+para saber cuándo cortar— porque no dice hacia dónde va la respuesta.
+
+**El denominador sale de Presence.** No hay que declarar el tamaño del grupo:
+el canal ya sabe cuántos alumnos están conectados, así que "respondieron todos"
+se calcula solo. Si alguien se desconecta a mitad, el denominador baja con él,
+que es la lectura correcta — no tiene sentido esperar por una pantalla que se
+fue.

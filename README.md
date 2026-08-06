@@ -56,12 +56,16 @@ npm install
 npm run dev
 ```
 
-Variables de entorno en `.env.example`. Hace falta un proyecto de Supabase con
-el registro deshabilitado; el docente se crea con:
+Variables de entorno en `.env.example`.
 
-```bash
-npm run clave-docente
-```
+Supabase se usa para dos cosas y nada más: **Auth**, para que el docente entre
+por `/profe`, y **Realtime**, para el canal en vivo. **No hay tablas.** Todo el
+material del curso vive versionado en `contenido/`, y lo que ocurre durante una
+clase —dónde va el docente, qué preguntan los alumnos— es efímero por
+naturaleza: se acaba cuando se acaba la clase.
+
+El usuario del docente se crea a mano en *Authentication → Users*, con el
+registro deshabilitado en *Authentication → Providers → Email*.
 
 ## Licencia
 
