@@ -21,3 +21,5 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Se enmiendan los batches 6 y 8 para transportar el paso, en vez de dejarlo
   como arreglo posterior.
 - Batches 13 y 14 abiertos.
+- `transicion` dibuja además el mapa de la sesión —unidades cerradas, actual y
+  siguiente— derivado de la estructura del curso y no declarado en el YAML.

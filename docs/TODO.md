@@ -157,11 +157,16 @@ proyectable.
 - [ ] `markdown` con GFM: tablas, listas de tareas, código embebido
 - [ ] `imagen` responsiva, con `destacar` dibujando el recuadro
 - [ ] `archivo` con descarga y el peso del archivo a la vista
+- [ ] `transicion` dibuja el mapa de la sesión: unidades cerradas, la actual y
+      la que viene. **Derivado de la estructura del curso, no declarado en el
+      YAML** (ver [`CONVENTIONS.md`](CONVENTIONS.md) §8)
 - [ ] Todos legibles proyectados: mínimo 18px de cuerpo, contraste alto
 
 **Tests esperados**
 - [ ] Cada tipo del catálogo renderiza sin romper
 - [ ] Un tipo desconocido muestra el fallback y no tumba la página
+- [ ] `transicion` marca como cerradas exactamente las unidades anteriores a la
+      suya, y reordenar unidades en el YAML cambia el mapa sin tocar el ítem
 
 **Fuera de alcance**
 - Navegación entre ítems. Cada componente solo se dibuja a sí mismo.

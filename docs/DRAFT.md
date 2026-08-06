@@ -31,6 +31,21 @@ porque falta una decisión, no trabajo.
 
 ## Procesado
 
+### 2026-08-06 — El mapa de progreso en las transiciones
+
+Transferido a [`CONVENTIONS.md`](CONVENTIONS.md) §8 y al batch 4 de
+[`TODO.md`](TODO.md).
+
+Del dictado: en `transicion` sería particularmente útil mostrar el contexto de
+dónde estás respecto al progreso del curso — qué unidades del mismo nivel ya
+cerraste y cuál viene.
+
+**Decisión:** el mapa se **deriva**, no se declara. La aplicación ya sabe en qué
+unidad está el ítem y cuáles son sus hermanas, así que el YAML sigue llevando
+solo la prosa. Declararlo obligaría al docente a mantener a mano algo que el
+programa ya tiene, y quedaría desactualizado la primera vez que se reordene una
+unidad.
+
 ### 2026-08-06 — Visualizaciones enfocadas
 
 Transferido a [`TODO.md`](TODO.md) como batches 13 y 14, y a

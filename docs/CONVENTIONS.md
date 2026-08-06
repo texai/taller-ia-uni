@@ -110,7 +110,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `criterios` | Criterios de aceptación de un reto | `criterios[]` |
 | `error-comun` | Un error que va a ocurrir, con su arreglo | `sintoma`, `causa`, `arreglo` |
 | `demo` | Momento de demostración en vivo | `pasos[]`, `observar`, `respaldo` |
-| `transicion` | Qué vimos, qué viene ahora | `vimos`, `viene` |
+| `transicion` | Qué vimos, qué viene ahora, y dónde estamos | `vimos`, `viene` (el mapa se deriva) |
 | `diagrama-secuencia` | Secuencia PlantUML, recorrible mensaje a mensaje | `fuente`, `mensajes[].explicacion` |
 | `comando-anotado` | Un comando largo, explicado parte por parte | `comando`, `segmentos[]` |
 
@@ -145,6 +145,14 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 - **`diagrama-secuencia`** y **`comando-anotado`** — ver §10. Un diagrama
   completo proyectado se lee como una maraña, y un comando de doce palabras se
   lee como una sola cosa opaca. Los dos necesitan poder mirarse de a una parte.
+- **`transicion`** — es el tipo más aburrido del catálogo y probablemente el
+  más útil. En un taller de cuatro horas la gente se pierde en las costuras, no
+  en el contenido. Además de la prosa, **dibuja el mapa**: qué unidades del
+  mismo nivel quedaron cerradas y cuál viene. Ese mapa NO se declara en el
+  YAML — la aplicación sabe dónde está el ítem dentro del curso y lo deriva
+  sola. Declararlo sería pedirle al docente que mantenga a mano una
+  información que el programa ya tiene, y que quedaría desactualizada la
+  primera vez que se reordene una unidad.
 
 ## 9 · Los identificadores son estables
 
