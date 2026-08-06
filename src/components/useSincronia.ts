@@ -6,6 +6,10 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { clienteNavegador, HAY_SUPABASE } from "@/lib/supabase";
 import {
   canalDePreguntas,
+  canalDeRespuestas,
+  contar,
+  EVENTO_RESPUESTA,
+  EVENTO_REVELADO,
   EVENTO_PAUTA,
   EVENTO_PREGUNTA,
   esMasNueva,
@@ -14,6 +18,8 @@ import {
   type EstadoCanal,
   type Pauta,
   type PreguntaAlumno,
+  type RespuestaAlumno,
+  type Revelado,
 } from "@/lib/vivo";
 
 /**
@@ -38,8 +44,26 @@ export function useSincronia({
     HAY_SUPABASE ? "conectando" : "sin-configurar",
   );
   const [preguntas, setPreguntas] = useState<PreguntaAlumno[]>([]);
+  const [respuestas, setRespuestas] = useState<RespuestaAlumno[]>([]);
+  const [revelado, setRevelado] = useState<Revelado | null>(null);
+  /** Cuántos alumnos hay conectados. Es el denominador de "respondieron
+   *  todos", y sale de Presence: nunca hay que declarar el tamaño del grupo. */
+  const [conectados, setConectados] = useState(0);
   const canal = useRef<RealtimeChannel | null>(null);
   const canalPreguntas = useRef<RealtimeChannel | null>(null);
+  const canalRespuestas = useRef<RealtimeChannel | null>(null);
+
+  /**
+   * Identidad anónima y estable dentro de la pestaña.
+   *
+   * Sirve para no contar dos veces a quien cambia de opinión. Va en un estado
+   * con inicializador perezoso y no en un ref: un ref hay que escribirlo, y
+   * escribirlo durante el render es justo lo que React desaconseja. Este valor
+   * nace una vez y no cambia nunca, que es lo que un estado hace bien.
+   */
+  const [yo] = useState(() =>
+    typeof crypto !== "undefined" ? crypto.randomUUID() : "",
+  );
   const ultima = useRef<Pauta | null>(null);
 
   useEffect(() => {
@@ -70,6 +94,18 @@ export function useSincronia({
       const estados = c.presenceState<{ pauta?: Pauta }>();
       const delDocente = estados["docente"]?.[0]?.pauta;
       if (delDocente) aceptar(delDocente);
+      // Todos menos el docente. Si alguien se desconecta a mitad, el
+      // denominador baja con él: no tiene sentido esperar por una pantalla que
+      // se fue.
+      setConectados(
+        Object.keys(estados).filter((k) => k !== "docente").length,
+      );
+    });
+
+    // El revelado lo publica el docente en el canal público: a partir de ahí
+    // los resultados sí se ven.
+    c.on("broadcast", { event: EVENTO_REVELADO }, ({ payload }) => {
+      setRevelado(payload as Revelado);
     });
 
     c.subscribe((situacion) => {
@@ -98,11 +134,28 @@ export function useSincronia({
     cp.subscribe();
     canalPreguntas.current = cp;
 
+    // Canal de respuestas, con la misma asimetría: los alumnos escriben y no
+    // leen. Antes del revelado, ver las respuestas de los demás cambia las
+    // propias.
+    const cr = supabase.channel(canalDeRespuestas(curso, sesion));
+    if (esDocente) {
+      cr.on("broadcast", { event: EVENTO_RESPUESTA }, ({ payload }) => {
+        setRespuestas((previas) => [...previas, payload as RespuestaAlumno]);
+      });
+    }
+    cr.subscribe();
+    canalRespuestas.current = cr;
+
+    // Un alumno anuncia su presencia para que cuente en el denominador.
+    if (!esDocente) void c.track({ alumno: true });
+
     return () => {
       canal.current = null;
       canalPreguntas.current = null;
+      canalRespuestas.current = null;
       supabase.removeChannel(c);
       supabase.removeChannel(cp);
+      supabase.removeChannel(cr);
     };
   }, [curso, sesion, esDocente]);
 
@@ -154,5 +207,64 @@ export function useSincronia({
     setPreguntas((previas) => previas.filter((p) => p.id !== id));
   }, []);
 
-  return { pauta, estado, publicar, preguntas, preguntar, atender };
+  /** El alumno responde una pregunta del docente. */
+  const responder = useCallback(
+    (preguntaId: string, valor: { opcion?: string; texto?: string; omitida?: boolean }) => {
+      const cr = canalRespuestas.current;
+      if (!cr) return false;
+      void cr.send({
+        type: "broadcast",
+        event: EVENTO_RESPUESTA,
+        payload: {
+          preguntaId,
+          alumnoId: yo,
+          opcion: valor.opcion,
+          texto: valor.texto,
+          omitida: Boolean(valor.omitida),
+          momento: Date.now(),
+        } satisfies RespuestaAlumno,
+      });
+      return true;
+    },
+    [yo],
+  );
+
+  /**
+   * El docente revela los resultados.
+   *
+   * Es un acto deliberado: el momento de mostrar el resultado es el momento de
+   * enseñar. Lo único que lo dispara solo es que ya hayan respondido todos,
+   * porque a esa altura no queda a quién sesgar.
+   */
+  const revelar = useCallback(
+    (preguntaId: string, correcta?: string) => {
+      const c = canal.current;
+      if (!c || !esDocente) return;
+      const cuenta = contar(respuestas, preguntaId, correcta);
+      setRevelado(cuenta);
+      void c.send({ type: "broadcast", event: EVENTO_REVELADO, payload: cuenta });
+    },
+    [esDocente, respuestas],
+  );
+
+  /** Cuántos respondieron una pregunta. Sin decir qué respondieron. */
+  const cuantosRespondieron = useCallback(
+    (preguntaId: string) => contar(respuestas, preguntaId).total,
+    [respuestas],
+  );
+
+  return {
+    pauta,
+    estado,
+    publicar,
+    preguntas,
+    preguntar,
+    atender,
+    respuestas,
+    responder,
+    revelar,
+    revelado,
+    conectados,
+    cuantosRespondieron,
+  };
 }

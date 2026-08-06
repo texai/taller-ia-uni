@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import type {
   ItemAsistencia,
   ItemPausaPreguntas,
-  ItemPregunta,
   ItemReceso,
 } from "@/lib/tipos";
 import { ahora, comoCuentaRegresiva, horaDeRegreso } from "@/lib/reloj";
@@ -175,118 +174,5 @@ export function Asistencia({ item }: { item: ItemAsistencia }) {
         )}
       </Caja>
     </Marco>
-  );
-}
-
-/**
- * Una pregunta del docente hacia los alumnos.
- *
- * Acá se dibuja y se puede responder localmente. Enviar la respuesta, contar
- * quién ya respondió y revelar los resultados es el batch 10: hasta entonces,
- * la respuesta se queda en esta pantalla.
- */
-export function Pregunta({ item }: { item: ItemPregunta }) {
-  const [elegida, setElegida] = useState<string | null>(null);
-  const [abierta, setAbierta] = useState("");
-  const [omitida, setOmitida] = useState(false);
-  const [enviada, setEnviada] = useState(false);
-
-  const puedeOmitir = item.permiteOmitir !== false;
-  const respondida = enviada || omitida;
-
-  return (
-    <Interrupcion
-      etiqueta={item.visibilidad === "publica" ? "Pregunta a la clase" : "Pregunta"}
-      color="var(--color-acento)"
-    >
-      <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-5xl">
-        {item.pregunta}
-      </h2>
-
-      {respondida ? (
-        <p
-          className="mt-10 text-xl sm:text-2xl"
-          style={{ color: "var(--tinta-suave)" }}
-        >
-          {omitida
-            ? "Anotado: prefieres no responder."
-            : "Respuesta registrada. Gracias."}
-        </p>
-      ) : (
-        <div className="mt-10">
-          {item.opciones?.length ? (
-            <ul className="space-y-3">
-              {item.opciones.map((opcion) => (
-                <li key={opcion}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setElegida(opcion);
-                      setEnviada(true);
-                    }}
-                    className="w-full rounded-xl border px-6 py-4 text-left text-xl transition-colors hover:bg-black/20"
-                    style={{
-                      borderColor:
-                        elegida === opcion
-                          ? "var(--color-acento)"
-                          : "var(--borde)",
-                      background: "var(--lienzo-alto)",
-                    }}
-                  >
-                    {opcion}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (abierta.trim()) setEnviada(true);
-              }}
-            >
-              <textarea
-                value={abierta}
-                onChange={(e) => setAbierta(e.target.value)}
-                rows={3}
-                placeholder="Tu respuesta"
-                className="w-full rounded-xl border px-5 py-4 text-xl"
-                style={{
-                  borderColor: "var(--borde)",
-                  background: "var(--lienzo-alto)",
-                  color: "var(--tinta)",
-                }}
-              />
-              <button
-                type="submit"
-                disabled={!abierta.trim()}
-                className="mt-4 rounded-lg border px-6 py-3 text-lg font-medium disabled:opacity-40"
-                style={{
-                  borderColor: "var(--color-acento)",
-                  color: "var(--color-acento)",
-                }}
-              >
-                Responder
-              </button>
-            </form>
-          )}
-
-          {puedeOmitir && (
-            <button
-              type="button"
-              onClick={() => setOmitida(true)}
-              className="mt-6 text-base underline"
-              style={{ color: "var(--tinta-suave)" }}
-            >
-              Prefiero no responder
-            </button>
-          )}
-        </div>
-      )}
-
-      <p className="mt-10 text-sm" style={{ color: "var(--tinta-suave)" }}>
-        El envío y el recuento en vivo llegan con el batch 10.
-      </p>
-    </Interrupcion>
   );
 }

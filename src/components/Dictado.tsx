@@ -75,7 +75,19 @@ export function Dictado({
   const [enVivo, setEnVivo] = useState(true);
   const principal = useRef<HTMLDivElement>(null);
 
-  const { pauta, estado, publicar, preguntas, preguntar, atender } = useSincronia({
+  const {
+    pauta,
+    estado,
+    publicar,
+    preguntas,
+    preguntar,
+    atender,
+    responder,
+    revelar,
+    revelado,
+    conectados,
+    cuantosRespondieron,
+  } = useSincronia({
     curso,
     sesion: sesion.id,
     esDocente: modoDocente,
@@ -405,6 +417,21 @@ export function Dictado({
                 sesion={sesion}
                 unidadActual={unidad?.id}
                 paso={pos.paso}
+                vivo={{
+                  modoDocente,
+                  revelado,
+                  conectados,
+                  respondieron:
+                    item.tipo === "pregunta"
+                      ? cuantosRespondieron(item.id)
+                      : 0,
+                  onResponder: (v) =>
+                    item.tipo === "pregunta" ? responder(item.id, v) : undefined,
+                  onRevelar: () =>
+                    item.tipo === "pregunta"
+                      ? revelar(item.id, item.respuesta)
+                      : undefined,
+                }}
               />
               {/*
                 Las notas solo existen en la carga del docente: en la pública

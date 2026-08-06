@@ -137,3 +137,13 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   pantalla se proyecta.
 - `supabase/politicas.sql` cierra además el canal de la pauta: publicar solo el
   docente, leer cualquiera.
+
+### Batch 10 — Preguntas del docente (implementado, sin verificar)
+- Tres estados: respondiendo —solo el contador—, revelado por clic, y recuento
+  en vivo después.
+- El denominador de "respondieron todos" sale de Presence; nunca se declara el
+  tamaño del grupo.
+- Las respuestas van por su propio tema, asimétrico como el de preguntas.
+- Una respuesta por alumno, la última gana: quien cambia de opinión no cuenta
+  dos veces.
+- La respuesta correcta sale del servidor solo dentro del revelado.

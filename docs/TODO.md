@@ -26,7 +26,7 @@ Referencias:
 | 7 | Autenticación del docente en `/profe` | ✅ Completado |
 | 8 | Sincronía en vivo: el docente marca el ritmo | 🔵 En curso |
 | 9 | Preguntas del alumno hacia el docente | 🔵 En curso |
-| 10 | Preguntas del docente hacia los alumnos | ⬜ Pendiente |
+| 10 | Preguntas del docente hacia los alumnos | 🔵 En curso |
 | 11 | Segunda pantalla del docente | ⬜ Pendiente |
 | 12 | Reloj de sesión y avisos de tiempo | ⬜ Pendiente |
 | 13 | Diagramas de secuencia PlantUML, recorribles | ⬜ Pendiente |
@@ -141,60 +141,46 @@ red del contenedor de desarrollo deniega las conexiones a Supabase.
 
 ## Batch 10 — Preguntas del docente hacia los alumnos
 
-Preguntar a la clase es la forma más barata de saber si alguien se perdió. Y
-mostrar el resultado, cuando el docente decide mostrarlo, es la forma más
-barata de que la clase se entere de que no estaba tan de acuerdo consigo misma
-como creía.
+**Implementado, sin verificar en vivo** (red del contenedor).
 
-**Alcance**
-- [ ] Ítem `pregunta` de la pauta: al llegar, aparece en la pantalla del alumno
-- [ ] Preguntas en vivo, lanzadas desde la segunda pantalla sin estar en la pauta
-- [ ] Respuesta abierta o de opciones
-- [ ] El alumno siempre puede decir explícitamente que prefiere no responder
-- [ ] `visibilidad: privada | publica`
+### Los tres estados
 
-**Las públicas, y sus tres estados** (ver [`CONVENTIONS.md`](CONVENTIONS.md) §12)
-- [ ] **Respondiendo** — la pantalla proyectada muestra la pregunta y *cuántos
-      ya contestaron*. **Nunca qué contestaron**: si los resultados se ven
-      mientras la gente responde, los que faltan copian al grupo y la pregunta
-      deja de medir nada
-- [ ] Contador de avance: "12 de 20 respondieron", y quiénes faltan si firmaron
-- [ ] **Revelado** — por dos vías: un clic del docente, que puede cortar cuando
-      quiera, o **automáticamente cuando ya respondieron todos**, porque a esa
-      altura ya no hay a quién sesgar
-- [ ] **En vivo** — ya revelado, el recuento sigue actualizándose si alguien
-      responde tarde
-- [ ] El denominador de "todos" sale de **Presence**: el canal ya sabe cuántos
-      alumnos están conectados, así que no hay que declarar el tamaño del
-      grupo. Si alguien se desconecta a mitad, el denominador baja con él
-- [ ] Gráfico de barras legible proyectado, con el porcentaje y el conteo
-- [ ] Si la pregunta tiene `respuesta` correcta, se marca **solo al revelar**
+1. **Respondiendo** — la pantalla proyectada muestra la pregunta y un número
+   grande: `12 / 20`. Cuántos respondieron, **nunca qué respondieron**.
+2. **Revelado** — un clic del docente. El botón se enciende cuando ya
+   respondieron todos, pero no se pulsa solo: el momento de mostrar el
+   resultado es el momento de enseñar.
+3. **En vivo** — ya revelado, el recuento sigue subiendo si alguien responde
+   tarde.
 
-**Las privadas**
-- [ ] El recuento llega únicamente a la segunda pantalla del docente
+### El denominador sale de Presence
 
-**Cómo viajan las respuestas sin tablas**
-- [ ] Las respuestas van por Broadcast a un tema que los alumnos pueden
-      **escribir pero no leer**, resuelto con la política de Realtime. Si
-      pudieran leerlo, cualquiera con las herramientas de desarrollador vería
-      las respuestas de los demás antes del revelado
-- [ ] El revelado sí es público: lo publica el docente en el canal de la sesión
-- [ ] La `respuesta` correcta nunca sale del servidor antes del revelado (ver
-      [`CONVENTIONS.md`](CONVENTIONS.md) §3)
+No hay que declarar el tamaño del grupo: el canal ya sabe cuántos alumnos están
+conectados. Si alguien se desconecta a mitad, el denominador baja con él — no
+tiene sentido esperar por una pantalla que se fue.
 
-**Fuera de alcance**
-- Persistencia. El recuento vive mientras dura la clase; si el docente recarga,
-  se pierde. Son datos de la clase, no del curso.
+### Decisiones
 
-**Tests esperados**
-- [ ] `respuesta` no aparece en la carga del alumno
-- [ ] Omitir queda registrado como omisión, no como falta de respuesta
-- [ ] Antes del revelado, el cliente del alumno no tiene forma de conocer el
-      recuento
-- [ ] El recuento se actualiza al llegar respuestas tardías
-- [ ] Con todos los conectados respondiendo, el revelado ocurre sin clic
-- [ ] Un alumno que se desconecta baja el denominador y puede disparar el
-      revelado
+- **Las respuestas van por su propio tema**, con la misma asimetría que las
+  preguntas: los alumnos escriben y no leen. Ver las respuestas de los demás
+  antes del revelado cambia las propias.
+- **Una respuesta por alumno; la última gana.** Sin esto, quien cambia de
+  opinión cuenta dos veces y el recuento proyectado diría más votos que
+  personas en la sala. Probado.
+- **Omitir es una respuesta, no una ausencia**: cuenta en el total y se reporta
+  aparte.
+- **La correcta sale del servidor solo en el revelado**, dentro del mensaje que
+  publica el docente. La carga del alumno nunca la lleva.
+
+### Qué falta comprobar
+
+1. Llegar a un ítem `pregunta` con el docente y dos alumnos.
+2. Responder desde los dos: el docente debe ver `2 / 2` y **ninguna respuesta**.
+3. Comprobar en el HTML del alumno que no está la correcta ni el recuento.
+4. Pulsar "Mostrar resultados": las barras aparecen en las tres pantallas, con
+   la correcta marcada.
+5. Un tercer alumno responde tarde: el recuento sube.
+6. Cambiar de opinión antes del revelado no debe contar dos veces.
 
 ---
 

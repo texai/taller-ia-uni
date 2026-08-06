@@ -86,3 +86,90 @@ export function canalDePreguntas(curso: string, sesion: string): string {
 
 /** Límite de longitud. Una pregunta no es un ensayo. */
 export const MAX_PREGUNTA = 500;
+
+// --------------------------------------------------------------------------
+// Preguntas del docente hacia los alumnos
+// --------------------------------------------------------------------------
+
+/**
+ * La respuesta de un alumno.
+ *
+ * Viaja por su propio tema, con la misma asimetría que las preguntas: los
+ * alumnos escriben y no leen. Si pudieran leerlo, cualquiera con las
+ * herramientas de desarrollador abiertas vería las respuestas de los demás
+ * antes del revelado — y entonces la pregunta deja de medir lo que quería.
+ */
+export interface RespuestaAlumno {
+  preguntaId: string;
+  /** Quién responde. Anónimo y estable dentro de la sesión, para no contar dos
+   *  veces a quien cambia de opinión. */
+  alumnoId: string;
+  opcion?: string;
+  texto?: string;
+  /** Prefiere no responder. Es una respuesta, no una ausencia. */
+  omitida: boolean;
+  momento: number;
+}
+
+/**
+ * El recuento, tal como lo publica el docente al revelar.
+ *
+ * Solo se emite DESPUÉS del revelado. Antes, lo único que se proyecta es
+ * cuántos respondieron — nunca qué respondieron (ver `CONVENTIONS.md` §12).
+ */
+export interface Revelado {
+  preguntaId: string;
+  /** Opción → cuántos la eligieron. */
+  conteo: Record<string, number>;
+  /** Respuestas abiertas, tal cual. */
+  abiertas: string[];
+  omitidas: number;
+  total: number;
+  /** La correcta, si la pregunta la tenía. Sale del servidor solo acá. */
+  correcta?: string;
+  momento: number;
+}
+
+export const EVENTO_RESPUESTA = "respuesta-alumno";
+export const EVENTO_REVELADO = "revelado";
+
+export function canalDeRespuestas(curso: string, sesion: string): string {
+  return `${nombreCanal(curso, sesion)}:respuestas`;
+}
+
+/** Cuenta las respuestas de una pregunta, listas para publicar. */
+export function contar(
+  respuestas: RespuestaAlumno[],
+  preguntaId: string,
+  correcta?: string,
+): Revelado {
+  const suyas = respuestas.filter((r) => r.preguntaId === preguntaId);
+
+  // Una sola por alumno: la última gana. Quien cambia de opinión no cuenta dos
+  // veces, y sin esto el total podría superar a los conectados.
+  const porAlumno = new Map<string, RespuestaAlumno>();
+  for (const r of suyas) {
+    const previa = porAlumno.get(r.alumnoId);
+    if (!previa || r.momento > previa.momento) porAlumno.set(r.alumnoId, r);
+  }
+
+  const conteo: Record<string, number> = {};
+  const abiertas: string[] = [];
+  let omitidas = 0;
+
+  for (const r of porAlumno.values()) {
+    if (r.omitida) omitidas++;
+    else if (r.opcion) conteo[r.opcion] = (conteo[r.opcion] ?? 0) + 1;
+    else if (r.texto) abiertas.push(r.texto);
+  }
+
+  return {
+    preguntaId,
+    conteo,
+    abiertas,
+    omitidas,
+    total: porAlumno.size,
+    correcta,
+    momento: Date.now(),
+  };
+}

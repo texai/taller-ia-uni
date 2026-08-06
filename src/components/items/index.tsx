@@ -8,6 +8,7 @@
  */
 
 import type { Item, Sesion } from "@/lib/tipos";
+import type { Revelado } from "@/lib/vivo";
 import { FAMILIA } from "@/lib/tipos";
 
 import { Marco } from "./marco";
@@ -15,7 +16,8 @@ import { BloqueMarkdown, CitaAgente, Metrica, Titulo, Transicion } from "./texto
 import { Codigo, ComandoAnotado, Demo, Terminal } from "./codigo";
 import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos";
 import { Archivo, Diagrama, DiagramaSecuencia, Enlace, Imagen } from "./medios";
-import { Asistencia, PausaPreguntas, Pregunta, Receso } from "./dictado";
+import { Asistencia, PausaPreguntas, Receso } from "./dictado";
+import { Pregunta } from "./pregunta";
 
 export interface PropsItem {
   item: Item;
@@ -28,6 +30,18 @@ export interface PropsItem {
    * secuencia y un comando anotado; el resto de los tipos lo ignora.
    */
   paso?: number;
+  /**
+   * Lo que necesita una `pregunta` para vivir en el canal: el recuento, el
+   * revelado y cómo responder. El resto de los tipos lo ignora.
+   */
+  vivo?: {
+    modoDocente?: boolean;
+    revelado?: Revelado | null;
+    respondieron?: number;
+    conectados?: number;
+    onResponder?: (v: { opcion?: string; texto?: string; omitida?: boolean }) => void;
+    onRevelar?: () => void;
+  };
 }
 
 function SinRenderizador({ item }: { item: Item }) {
@@ -48,7 +62,13 @@ function SinRenderizador({ item }: { item: Item }) {
 }
 
 /** Dibuja un ítem, sea del tipo que sea. */
-export function RenderizarItem({ item, sesion, unidadActual, paso = 0 }: PropsItem) {
+export function RenderizarItem({
+  item,
+  sesion,
+  unidadActual,
+  paso = 0,
+  vivo,
+}: PropsItem) {
   switch (item.tipo) {
     case "titulo":
       return <Titulo item={item} />;
@@ -95,7 +115,7 @@ export function RenderizarItem({ item, sesion, unidadActual, paso = 0 }: PropsIt
     case "pausa-preguntas":
       return <PausaPreguntas item={item} />;
     case "pregunta":
-      return <Pregunta item={item} />;
+      return <Pregunta item={item} {...vivo} />;
     case "asistencia":
       // El alumno nunca llega acá: `cursoParaAlumno` lo quita en el servidor.
       // Este componente solo se dibuja en las vistas del docente.
