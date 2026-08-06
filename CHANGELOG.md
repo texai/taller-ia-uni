@@ -115,3 +115,15 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Ser docente no es estar autenticado: Auth es compartida con `gen`, así que se
   compara contra `NEXT_PUBLIC_DOCENTE_UID`.
 - Dos pruebas nuevas sobre el contenido real del curso, en ambos sentidos.
+
+### Batch 8 — Sincronía en vivo (implementado, sin verificar)
+- Canal de Realtime por sesión, con Broadcast para cada movimiento y Presence
+  para que quien llega tarde aterrice donde va la clase, paso interno incluido.
+- El alumno puede retroceder libremente y no puede adelantarse; botón para
+  volver a donde va la clase, e indicador de conexión.
+- Interruptor "Dictando / Ensayando": fuera de vivo el alumno navega libre.
+- `CONVENTIONS.md` §4 corregida: el bloqueo hacia adelante es una barrera de
+  comportamiento, no de seguridad. Prometía que el contenido posterior no se
+  envía, y eso no se puede cumplir sin un store en el servidor.
+- **No verificado contra Supabase**: la red del contenedor de desarrollo
+  deniega las conexiones salientes al proyecto.

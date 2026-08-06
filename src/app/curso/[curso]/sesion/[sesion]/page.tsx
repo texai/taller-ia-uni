@@ -33,5 +33,5 @@ export default async function SesionPublica({
 
   if (!sesion) notFound();
 
-  return <Dictado sesion={sesion} />;
+  return <Dictado sesion={sesion} curso={curso.id} />;
 }

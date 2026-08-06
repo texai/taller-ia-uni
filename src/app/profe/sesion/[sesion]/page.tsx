@@ -19,9 +19,10 @@ export default async function SesionDocente({
   params: Promise<{ sesion: string }>;
 }) {
   const { sesion: idSesion } = await params;
-  const sesion = cargarCurso().sesiones.find((s) => s.id === idSesion);
+  const curso = cargarCurso();
+  const sesion = curso.sesiones.find((s) => s.id === idSesion);
 
   if (!sesion) notFound();
 
-  return <Dictado sesion={sesion} modoDocente />;
+  return <Dictado sesion={sesion} curso={curso.id} modoDocente />;
 }

@@ -48,12 +48,31 @@ mismo para `respuesta` en los ítems de tipo `pregunta`.
 
 ## 4 · El alumno puede mirar atrás, nunca adelante
 
-El docente marca el ritmo. El cliente del alumno conoce su posición actual y
-puede navegar libremente hacia atrás, pero el contenido posterior no se le
-envía. El filtro es del servidor, por la misma razón que el punto 3.
+El docente marca el ritmo. El alumno navega libremente hacia atrás; hacia
+adelante, no.
 
-Es una decisión pedagógica con consecuencia técnica: si el material completo
-está disponible, la mitad de la clase se adelanta y deja de escuchar.
+Es una decisión pedagógica: si el material completo está a un clic, media clase
+se adelanta y deja de escuchar.
+
+**Y es una barrera de comportamiento, no de seguridad.** Conviene decirlo con
+todas las letras, porque la primera versión de esta convención prometía que el
+contenido posterior "no se le envía", y eso no se puede cumplir con las
+decisiones que tomamos:
+
+- La página del alumno es estática y lleva la sesión entera dentro.
+- Para enviar solo lo ya visto, el servidor tendría que saber por dónde va la
+  clase. Esa posición vive en Realtime (§11), que el servidor no puede
+  consultar.
+- Enfocarlo de verdad exigiría un store en el servidor, es decir, una tabla —
+  justo lo que §11 descarta.
+
+Así que el bloqueo lo aplica el cliente. Un alumno con las herramientas de
+desarrollador abiertas puede leer lo que viene. Es un costo aceptado: el riesgo
+real es que alguien se adelante, no que se filtre nada — porque **lo que sí es
+de seguridad son las notas del docente y las respuestas correctas, y esas no
+salen del servidor** (§3). Esa distinción es la que importa: una cosa es que un
+alumno curioso vea la siguiente lámina, y otra que lea lo que escribiste para
+ti mismo.
 
 ## 5 · Realtime va directo contra Supabase
 

@@ -25,6 +25,8 @@ import {
   type Posicion,
 } from "@/lib/navegacion";
 import { RenderizarItem } from "@/components/items";
+import { useSincronia } from "@/components/useSincronia";
+import { comparar } from "@/lib/navegacion";
 
 /**
  * La vista de dictado: navegación a la izquierda, un ítem a la vez a la
@@ -55,9 +57,12 @@ function suscribirseALaUrl(alCambiar: () => void) {
 
 export function Dictado({
   sesion,
+  curso,
   modoDocente = false,
 }: {
   sesion: Sesion;
+  /** Para el nombre del canal en vivo. */
+  curso: string;
   /**
    * En modo docente la sesión llega completa, con notas y respuestas. El
    * filtrado lo hace la ruta, no este componente: una vista que decide en el
@@ -66,7 +71,14 @@ export function Dictado({
   modoDocente?: boolean;
 }) {
   const [indiceAbierto, setIndiceAbierto] = useState(false);
+  const [enVivo, setEnVivo] = useState(true);
   const principal = useRef<HTMLDivElement>(null);
+
+  const { pauta, estado, publicar } = useSincronia({
+    curso,
+    sesion: sesion.id,
+    esDocente: modoDocente,
+  });
 
   const busqueda = useSyncExternalStore(
     suscribirseALaUrl,
@@ -86,6 +98,24 @@ export function Dictado({
 
   const item = itemEn(sesion, pos);
   const unidad = unidadEn(sesion, pos);
+
+  const seFueAtras = useRef(false);
+
+  // Hasta dónde ha llegado la clase. Todo lo anterior es libre para el alumno;
+  // lo posterior, no. El docente no tiene tope.
+  //
+  // Se calcula acá arriba, antes de `mover`, para que `mover` lo lea como un
+  // valor y no a través de un ref: un ref leído en el render puede quedar
+  // desfasado si React interrumpe una renderización.
+  const tope = useMemo(() => {
+    if (modoDocente || !pauta?.enVivo) return null;
+    const encontrada = buscarPorId(sesion, pauta.itemId);
+    return encontrada
+      ? acotar(sesion, { ...encontrada, paso: pauta.paso })
+      : null;
+  }, [modoDocente, pauta, sesion]);
+
+  const atrasado = tope !== null && comparar(pos, tope) < 0;
 
   const irA = useCallback(
     (destino: Posicion) => {
@@ -109,9 +139,16 @@ export function Dictado({
 
   const mover = useCallback(
     (direccion: 1 | -1) => {
-      irA(direccion === 1 ? avanzar(sesion, pos) : retroceder(sesion, pos));
+      const destino =
+        direccion === 1 ? avanzar(sesion, pos) : retroceder(sesion, pos);
+      // El alumno puede mirar atrás cuanto quiera; adelantarse, no. Es una
+      // barrera de comportamiento y no de seguridad: la página estática lleva
+      // toda la sesión dentro. Ver `CONVENTIONS.md` §4.
+      if (tope && comparar(destino, tope) > 0) return;
+      seFueAtras.current = direccion === -1;
+      irA(destino);
     },
-    [sesion, pos, irA],
+    [sesion, pos, irA, tope],
   );
 
   useEffect(() => {
@@ -138,6 +175,21 @@ export function Dictado({
     window.addEventListener("keydown", alPulsar);
     return () => window.removeEventListener("keydown", alPulsar);
   }, [mover]);
+
+  // El docente publica cada movimiento.
+  useEffect(() => {
+    if (!modoDocente || !item) return;
+    publicar(item.id, pos.paso, enVivo);
+  }, [modoDocente, item, pos.paso, enVivo, publicar]);
+
+  // El alumno sigue la pauta, salvo que se haya ido a mirar hacia atrás: en
+  // ese caso se queda donde está y aparece el botón para volver. Arrastrarlo
+  // de vuelta mientras lee algo es peor que dejarlo perderse un ítem.
+  useEffect(() => {
+    if (modoDocente || !tope) return;
+    if (seFueAtras.current) return;
+    if (comparar(pos, tope) !== 0) irA(tope);
+  }, [modoDocente, tope, pos, irA]);
 
   const indice = indiceDeItem(sesion, pos);
   const total = totalItems(sesion);
@@ -267,8 +319,52 @@ export function Dictado({
             {unidad?.titulo}
           </p>
 
+          {/* Estado del canal. Al alumno le importa saber si sigue conectado;
+              al docente, si lo están siguiendo. */}
+          <span
+            className="ml-auto flex shrink-0 items-center gap-1.5 text-xs"
+            style={{
+              color:
+                estado === "en-vivo"
+                  ? "var(--color-acento)"
+                  : estado === "reconectando"
+                    ? "var(--color-aviso)"
+                    : "var(--tinta-suave)",
+            }}
+            title={estado}
+          >
+            <span aria-hidden>●</span>
+            {estado === "en-vivo"
+              ? modoDocente
+                ? enVivo
+                  ? "En vivo"
+                  : "Fuera de vivo"
+                : pauta?.enVivo
+                  ? "Siguiendo la clase"
+                  : "Libre"
+              : estado === "reconectando"
+                ? "Reconectando"
+                : estado === "sin-configurar"
+                  ? "Sin sincronía"
+                  : "Sin conexión"}
+          </span>
+
+          {modoDocente && (
+            <button
+              type="button"
+              onClick={() => setEnVivo((v) => !v)}
+              className="shrink-0 rounded-md border px-3 py-1 text-xs"
+              style={{
+                borderColor: enVivo ? "var(--color-acento)" : "var(--borde)",
+                color: enVivo ? "var(--color-acento)" : "var(--tinta-suave)",
+              }}
+            >
+              {enVivo ? "Dictando" : "Ensayando"}
+            </button>
+          )}
+
           <p
-            className="ml-auto shrink-0 text-sm tabular-nums"
+            className="shrink-0 text-sm tabular-nums"
             style={{ color: "var(--tinta-suave)" }}
           >
             {indice + 1} / {total}
@@ -356,6 +452,23 @@ export function Dictado({
           >
             Siguiente →
           </button>
+          {atrasado && (
+            <button
+              type="button"
+              onClick={() => {
+                seFueAtras.current = false;
+                if (tope) irA(tope);
+              }}
+              className="rounded-md border px-4 py-2 text-sm font-medium"
+              style={{
+                borderColor: "var(--color-acento)",
+                color: "var(--color-acento)",
+              }}
+            >
+              Volver a donde va la clase →
+            </button>
+          )}
+
           <p
             className="ml-auto hidden text-xs sm:block"
             style={{ color: "var(--tinta-suave)" }}

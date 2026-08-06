@@ -24,7 +24,7 @@ Referencias:
 | 5 | Renderizadores: familia `dictado` | ✅ Completado |
 | 6 | Vista de dictado y navegación por teclado | ✅ Completado |
 | 7 | Autenticación del docente en `/profe` | ✅ Completado |
-| 8 | Sincronía en vivo: el docente marca el ritmo | ⬜ Pendiente |
+| 8 | Sincronía en vivo: el docente marca el ritmo | 🔵 En curso |
 | 9 | Preguntas del alumno hacia el docente | ⬜ Pendiente |
 | 10 | Preguntas del docente hacia los alumnos | ⬜ Pendiente |
 | 11 | Segunda pantalla del docente | ⬜ Pendiente |
@@ -69,40 +69,35 @@ unidad y no necesita leer el resto del curso.
 
 ## Batch 8 — Sincronía en vivo: el docente marca el ritmo
 
-El corazón del producto. El alumno debe seguir al docente sin adelantarse.
+**Implementado, sin verificar en vivo.** El código está escrito, compila y pasa
+lint; lo que falta es probar el canal contra Supabase, y eso **no se pudo hacer
+desde el contenedor de desarrollo**: su política de red deniega las conexiones
+salientes a Supabase.
 
-**Alcance**
-- [ ] Canal privado de Realtime por sesión: `taller:{curso}:{sesion}`
-- [ ] **Broadcast** para publicar cada movimiento del docente
-- [ ] **Presence** para llevar la posición actual, de modo que quien se conecta
-      reciba el estado de entrada. Es la pieza que hace innecesaria una tabla
-      (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
-- [ ] La posición incluye el **paso interno**: quien llega tarde tiene que
-      aterrizar en el mensaje 4 del diagrama, no al principio del diagrama
-- [ ] El alumno puede navegar hacia atrás libremente; hacia adelante no
-- [ ] El contenido posterior **no se envía** al cliente del alumno (ver
-      [`CONVENTIONS.md`](CONVENTIONS.md) §4)
-- [ ] Botón de "volver a donde va la clase" cuando el alumno se quedó atrás
-- [ ] Indicador de conexión: en vivo, reconectando, sin conexión
-- [ ] Al reconectar, el docente vuelve a publicar la posición que conserva su
-      propia URL
-- [ ] Interruptor de "clase en vivo": fuera de vivo, el alumno navega libre
+### Qué falta comprobar, y cómo
 
-**Fuera de alcance**
-- Cualquier tabla. Nada de esto se persiste: se acaba cuando se acaba la clase.
+Con `.env.local` puesto y `npm run dev`:
 
-**Requisitos externos**
-- Realtime habilitado en el proyecto. `gen` no lo usa hoy.
-- Política sobre `realtime.messages` que solo deje publicar la pauta al
-  identificador del docente, según [`CONVENTIONS.md`](CONVENTIONS.md) §11.
+1. Abrir `/profe`, entrar, e ir a `/profe/sesion/sesion-1`.
+2. En otra ventana —de incógnito, para no compartir sesión— abrir
+   `/curso/taller-02/sesion/sesion-1`.
+3. Mover al docente con las flechas. **El alumno debería seguirlo.**
+4. En el alumno, retroceder: debería quedarse donde está y aparecer el botón
+   "Volver a donde va la clase".
+5. En el alumno, intentar avanzar más allá del docente: no debería moverse.
+6. Recargar el alumno a mitad de clase: debería aterrizar donde va el docente,
+   **incluido el paso interno** si es un comando anotado.
+7. Pulsar "Ensayando" en el docente: el alumno debería quedar libre.
 
-**Tests esperados**
-- [ ] Un alumno que se conecta a mitad de clase cae en la posición correcta,
-      incluido el paso interno
-- [ ] La carga del alumno no incluye ítems posteriores a la posición del docente
-- [ ] Perder la conexión y recuperarla deja al alumno donde corresponde
+Si el indicador dice **Reconectando**, lo más probable es que Realtime no esté
+habilitado en el proyecto: `gen` no lo usa.
 
----
+### Lo que queda pendiente del alcance original
+
+- [ ] Política sobre `realtime.messages` que solo deje publicar al docente. Hoy
+      el canal está abierto: cualquiera que sepa el nombre del tema podría
+      publicar una pauta falsa. Con veinte alumnos que no saben que existe es
+      un riesgo teórico, pero hay que cerrarlo.
 
 ## Batch 9 — Preguntas del alumno hacia el docente
 
