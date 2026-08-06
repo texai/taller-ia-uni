@@ -24,7 +24,7 @@ unidades:
     objetivos:
       - Situar el taller dentro del programa y ver qué se junta acá
       - Entender qué es una flota de modelos desplegados y quién la vigila hoy
-      - Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura
+      - "Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura"
     requisitos:
       - Haber hecho el trabajo previo y llegar con las 24 comprobaciones en verde
     items:

@@ -249,3 +249,94 @@ implementación de referencia está en `agente/`.
 - `npm run validar-contenido` carga las dos sesiones sin problemas, y no
   reporta descuadres de minutos.
 - 18 pruebas, `lint`, `typecheck` y `build` limpios.
+
+---
+
+## Batch 4 — Renderizadores: familia `contenido`
+**2026-08-06**
+
+## Batch 4 — Renderizadores: familia `contenido`
+
+Los ítems están definidos pero no se ven. Sin renderizadores no hay material
+proyectable.
+
+**Alcance**
+- [ ] Un componente por tipo en `src/components/items/`
+- [ ] Registro que mapea `tipo` → componente, con un fallback visible que diga
+      qué tipo no supo renderizar en vez de romper la vista
+- [ ] `codigo` con resaltado por lenguaje y soporte de `resaltar`
+- [ ] `terminal` con el comando copiable de un clic, y las dos variantes cuando
+      hay `comandoWindows`
+- [ ] `diagrama` con Mermaid, legible en claro y oscuro
+- [ ] `markdown` con GFM: tablas, listas de tareas, código embebido
+- [ ] `imagen` responsiva, con `destacar` dibujando el recuadro
+- [ ] `archivo` con descarga y el peso del archivo a la vista
+- [ ] `transicion` dibuja el mapa de la sesión: unidades cerradas, la actual y
+      la que viene. **Derivado de la estructura del curso, no declarado en el
+      YAML** (ver [`CONVENTIONS.md`](CONVENTIONS.md) §8)
+- [ ] Todos legibles proyectados: mínimo 18px de cuerpo, contraste alto
+
+**Tests esperados**
+- [ ] Cada tipo del catálogo renderiza sin romper
+- [ ] Un tipo desconocido muestra el fallback y no tumba la página
+- [ ] `transicion` marca como cerradas exactamente las unidades anteriores a la
+      suya, y reordenar unidades en el YAML cambia el mapa sin tocar el ítem
+
+**Fuera de alcance**
+- Navegación entre ítems. Cada componente solo se dibuja a sí mismo.
+
+---
+
+### Añadido al alcance: la vista de revisión
+
+`/curso/[curso]/sesion/[sesion]` muestra la sesión entera de corrido, con todos
+los ítems renderizados uno debajo de otro.
+
+**No es la vista de dictado** —esa va de a un ítem, con flechas y sincronía, y
+llega con el batch 6— sino una hoja de contactos para escribir material. Ver
+ochenta ítems en una sola página es la única forma razonable de darse cuenta de
+que dos unidades explican lo mismo, o de que a la tercera hora no queda nada
+proyectable.
+
+Muestra el contenido **completo, incluidas las notas privadas**. Es deliberado
+y es la razón de que el batch 7 tenga que protegerla; hasta entonces, esa URL
+no se comparte. Lleva un aviso visible que lo dice.
+
+La portada también quedó conectada al YAML real: se borró `src/lib/cursos.ts`,
+que era un maniquí del batch 1.
+
+### Decisiones
+
+- **El resaltado corre en el servidor.** Shiki resuelve al construir y devuelve
+  HTML; al navegador no llega ni una línea de JavaScript para pintar código. En
+  una aplicación que se proyecta desde el portátil del docente sobre el wifi de
+  un aula, cada kilobyte que no se envía es un problema que no puede ocurrir.
+- **Mermaid sí es cliente**, porque dibuja midiendo texto y necesita un DOM. Se
+  carga diferido, y un diagrama mal escrito muestra el error y su fuente en vez
+  de tumbar la lámina.
+- **Un tipo sin renderizador tampoco rompe nada**: sale un aviso que dice cuál
+  fue y con qué batch llega. El material se escribe hasta el último minuto, y
+  una excepción convertiría un ítem a medio hacer en una clase interrumpida.
+- **`transicion` deriva su mapa** de dónde está el ítem, como fija
+  `CONVENTIONS.md` §8. Reordenar unidades en el YAML cambia el mapa sin tocar
+  el ítem.
+
+### Dos tropiezos, ambos del bundler y del YAML
+
+- **`js-yaml` no publica export por defecto en su paquete ESM.** Funcionaba con
+  `tsx` por la interoperabilidad de Node y falló al construir con Turbopack. Se
+  cambió a import con nombre.
+- **YAML lee `"Algo: otra cosa"` como un mapa, no como texto.** Dos objetivos
+  del curso lo tenían, y el síntoma era un error de React —*Objects are not
+  valid as a React child*— que no menciona el YAML por ningún lado. Además de
+  arreglarlos, el cargador ahora valida que `objetivos` y `requisitos` sean
+  texto, y el mensaje explica lo de los dos puntos. Los ocho batches de
+  contenido iban a tropezar con esto.
+
+### Verificado
+
+- Las dos sesiones prerenderizan. La página de la sesión 1 mide 20,777 px de
+  alto y no tiene errores de JavaScript.
+- Los 8 avisos de "sin renderizador" son exactamente los ítems de la familia
+  `dictado`, que llegan con el batch 5.
+- 18 pruebas, `lint`, `typecheck` y `build` limpios.

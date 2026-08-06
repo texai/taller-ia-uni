@@ -20,7 +20,7 @@ Referencias:
 | 1 | Esqueleto Next.js y despliegue en Vercel | ✅ Completado |
 | 2 | Modelo de contenido en YAML y cargador | ✅ Completado |
 | 3 | Estructura completa del curso | ✅ Completado |
-| 4 | Renderizadores: familia `contenido` | ⬜ Pendiente |
+| 4 | Renderizadores: familia `contenido` | ✅ Completado |
 | 5 | Renderizadores: familia `dictado` | ⬜ Pendiente |
 | 6 | Vista de dictado y navegación por teclado | ⬜ Pendiente |
 | 7 | Autenticación del docente en `/profe` | ⬜ Pendiente |
@@ -64,38 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 4 — Renderizadores: familia `contenido`
-
-Los ítems están definidos pero no se ven. Sin renderizadores no hay material
-proyectable.
-
-**Alcance**
-- [ ] Un componente por tipo en `src/components/items/`
-- [ ] Registro que mapea `tipo` → componente, con un fallback visible que diga
-      qué tipo no supo renderizar en vez de romper la vista
-- [ ] `codigo` con resaltado por lenguaje y soporte de `resaltar`
-- [ ] `terminal` con el comando copiable de un clic, y las dos variantes cuando
-      hay `comandoWindows`
-- [ ] `diagrama` con Mermaid, legible en claro y oscuro
-- [ ] `markdown` con GFM: tablas, listas de tareas, código embebido
-- [ ] `imagen` responsiva, con `destacar` dibujando el recuadro
-- [ ] `archivo` con descarga y el peso del archivo a la vista
-- [ ] `transicion` dibuja el mapa de la sesión: unidades cerradas, la actual y
-      la que viene. **Derivado de la estructura del curso, no declarado en el
-      YAML** (ver [`CONVENTIONS.md`](CONVENTIONS.md) §8)
-- [ ] Todos legibles proyectados: mínimo 18px de cuerpo, contraste alto
-
-**Tests esperados**
-- [ ] Cada tipo del catálogo renderiza sin romper
-- [ ] Un tipo desconocido muestra el fallback y no tumba la página
-- [ ] `transicion` marca como cerradas exactamente las unidades anteriores a la
-      suya, y reordenar unidades en el YAML cambia el mapa sin tocar el ítem
-
-**Fuera de alcance**
-- Navegación entre ítems. Cada componente solo se dibuja a sí mismo.
 
 ---
 

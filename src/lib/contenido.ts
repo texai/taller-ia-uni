@@ -14,7 +14,9 @@
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import yaml from "js-yaml";
+// Import con nombre, no por defecto: el paquete ESM de js-yaml no publica un
+// export default, y aunque Node lo tolera por interoperabilidad, el bundler no.
+import { load as cargarYaml } from "js-yaml";
 
 import {
   CAMPOS_COMUNES,
@@ -55,7 +57,7 @@ function leerYaml(ruta: string, raiz: string, problemas: string[]): Bruto | null
     return null;
   }
   try {
-    const datos = yaml.load(readFileSync(ruta, "utf8"));
+    const datos = cargarYaml(readFileSync(ruta, "utf8"));
     if (datos === null || typeof datos !== "object" || Array.isArray(datos)) {
       problemas.push(`${ruta}: se esperaba un objeto YAML`);
       return null;
@@ -246,6 +248,28 @@ function cargarUnidad(
   if (typeof bruto.titulo !== "string") {
     problemas.push(`${archivo} · unidad \`${id}\`: falta \`titulo\``);
     return null;
+  }
+
+  // YAML convierte "Algo: otra cosa" en un mapa, no en texto. Es la trampa que
+  // más muerde al escribir material, porque el archivo se ve bien y el error
+  // aparece al renderizar, con un mensaje de React que no menciona el YAML.
+  for (const campo of ["objetivos", "requisitos"] as const) {
+    const lista = bruto[campo];
+    if (lista === undefined) continue;
+    if (!Array.isArray(lista)) {
+      problemas.push(`${archivo} · unidad \`${id}\`: \`${campo}\` debe ser una lista`);
+      continue;
+    }
+    lista.forEach((entrada, i) => {
+      if (typeof entrada !== "string") {
+        problemas.push(
+          `${archivo} · unidad \`${id}\` · ${campo}[${i}]: se esperaba texto y ` +
+            `llegó ${Array.isArray(entrada) ? "una lista" : typeof entrada}. ` +
+            `Si la frase lleva dos puntos seguidos de espacio, YAML la lee como ` +
+            `un mapa: enciérrala entre comillas.`,
+        );
+      }
+    });
   }
 
   const brutos = Array.isArray(bruto.items) ? (bruto.items as Bruto[]) : [];

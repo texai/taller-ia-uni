@@ -215,7 +215,7 @@ unidades:
     titulo: De la recomendación a la acción
     minutos: 60
     objetivos:
-      - Cerrar el ciclo: que el agente ejecute lo que recomienda
+      - "Cerrar el ciclo: que el agente ejecute lo que recomienda"
       - Entender por qué el freno va en código y no en el prompt
     requisitos:
       - Un grafo que diagnostica bien los cuatro mundos

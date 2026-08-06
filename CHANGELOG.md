@@ -77,3 +77,13 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   unidad.
 - Primer archivo PlantUML: el recorrido de una corrida del agente, que el batch
   13 va a parsear para el modo enfocado.
+
+### Batch 4 — Renderizadores de contenido
+- Los 19 tipos de la familia `contenido`, con resaltado de código en el
+  servidor y Mermaid diferido en el cliente.
+- Vista de revisión en `/curso/[curso]/sesion/[sesion]`: la sesión entera de
+  corrido, para escribir material. Muestra las notas privadas; el batch 7 la
+  protege.
+- La portada lee el YAML real.
+- El cargador valida que `objetivos` y `requisitos` sean texto: YAML convierte
+  "Algo: otra cosa" en un mapa, y el síntoma aparecía como un error de React.
