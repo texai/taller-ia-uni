@@ -68,3 +68,12 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Filtro de servidor que quita `notas`, `respuesta` y los ítems de `asistencia`
   de lo que viaja al alumno, con pruebas que lo comprueban sobre el JSON.
 - `npm run validar-contenido`, dentro de `npm run build`.
+
+### Batch 3 — Estructura completa del curso
+- Las ocho horas enunciadas: 8 unidades, 84 ítems, 240 minutos exactos por
+  sesión. El receso y el cierre del sábado son ítems dentro de su unidad, no
+  unidades sueltas.
+- El validador comprueba que los minutos de los ítems cuadren con los de su
+  unidad.
+- Primer archivo PlantUML: el recorrido de una corrida del agente, que el batch
+  13 va a parsear para el modo enfocado.

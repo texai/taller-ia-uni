@@ -140,3 +140,112 @@ descubrirse en vivo delante de veinte personas.
 - `lint`, `typecheck` y `build` limpios.
 - Un YAML roto a mano produce los tres problemas juntos, cada uno con archivo,
   unidad, posición, identificador y campo.
+
+---
+
+## Batch 3 — Estructura completa del curso
+**2026-08-06**
+
+## Batch 3 — Estructura completa del curso
+
+Antes de escribir contenido fino hace falta ver el esqueleto de las ocho horas
+completo, para saber si el reparto de tiempos cierra y si falta algún bloque.
+
+**Alcance**
+- [ ] `contenido/curso.yml` con los atributos del curso: título, programa,
+      institución, docente, descripción
+- [ ] `contenido/sesiones/sesion-1.yml` y `sesion-2.yml` con fecha y horario
+- [ ] Unidades de sesión 1: una de tipo `repaso` y las de tipo `reto`
+- [ ] Unidades de sesión 2: las de tipo `reto` y una de tipo `cierre`
+- [ ] Cada unidad con `objetivos`, `requisitos` y `minutos`
+- [ ] Ítems enunciados con su tipo, título y minutos — **sin el contenido
+      definitivo**, que es trabajo aparte
+- [ ] Ítems de dictado colocados donde corresponden: asistencia al inicio de
+      cada sesión, receso a mitad, pausas de preguntas entre unidades
+- [ ] La suma de minutos por sesión cuadra con las cuatro horas
+
+**Reparto acordado**
+
+Sale de cuadrar los cinco retos que ya existen en `texai/taller-ia-uni-lab`
+(`retos/README.md`) contra los 480 minutos disponibles. Los retos suman 310, así
+que quedan 170 para todo lo demás: apertura, repaso, recesos, rescate de
+entornos, pausas de preguntas, asistencia y cierre. Cabe, sin holgura.
+
+Sesión 1 · sábado 15:00–19:00 · *El mundo y la percepción* — 240 min
+
+| Inicio | Unidad | Tipo | Min |
+|---|---|---|---|
+| 15:00 | Dónde encaja esto, y la flota de 192 modelos | `repaso` | 60 |
+| 16:00 | Encontrar el problema a mano | `reto` | 40 |
+| 16:40 | *Receso* | | 15 |
+| 16:55 | La herramienta de percepción | `reto` | 60 |
+| 17:55 | El primer agente, sin arquitectura | `reto` | 55 |
+| 18:50 | Cierre y qué viene mañana | | 10 |
+
+Sesión 2 · domingo 09:00–13:00 · *La arquitectura cognitiva* — 240 min
+
+| Inicio | Unidad | Tipo | Min |
+|---|---|---|---|
+| 09:00 | Qué le faltaba al bucle de ayer | `repaso` | 25 |
+| 09:25 | La arquitectura cognitiva | `reto` | 90 |
+| 10:55 | *Receso* | | 15 |
+| 11:10 | De la recomendación a la acción | `reto` | 60 |
+| 12:10 | Los errores, y dónde estaban de verdad | `cierre` | 35 |
+| 12:45 | Preguntas y despedida | | 15 |
+
+**Dos decisiones que salieron de hacer las cuentas**
+
+- **El rescate de entornos rotos vive dentro del repaso**, no como bloque
+  aparte. Con su propio bloque se consume los veinte minutos completos aunque
+  solo dos personas lo necesiten; dentro del repaso, quien está bien escucha el
+  contexto mientras quien está roto arregla en paralelo.
+- **El reto 3 baja de 60 a 55 minutos, y puede bajar más.** Es el único reto
+  donde no se construye casi nada: se corre un ReAct pelado tres veces y se
+  observa cómo divaga. Es diagnóstico, no construcción. Si el sábado va
+  retrasado, es el bloque del que robar tiempo sin perder nada.
+
+**Riesgo conocido:** el reto 2 es el que puede reventar el cronograma. Son 60
+minutos escribiendo estadística con niveles mezclados, y es el único donde una
+persona trabada se traba de verdad. Las dos redes ya existen en el laboratorio:
+`make verificar` da un criterio objetivo de cuándo terminaron, y la
+implementación de referencia está en `agente/`.
+
+**Fuera de alcance**
+- El contenido definitivo de cada ítem. Acá se define qué ítem va dónde.
+
+---
+
+### Cómo quedó
+
+**8 unidades · 84 ítems · 240 + 240 minutos exactos.**
+
+| Sesión | Unidades | Ítems |
+|---|---|---|
+| 1 · El mundo y la percepción | repaso 60 · reto‑1 55 · reto‑2 60 · reto‑3 65 | 46 |
+| 2 · La arquitectura cognitiva | repaso 25 · reto‑4 105 · reto‑5 60 · cierre 50 | 38 |
+
+### Decisiones de estructura
+
+- **El receso es un ítem, no un bloque suelto.** Vive dentro de la unidad que
+  lo precede — al final del reto 1 en la sesión 1, al final del reto 4 en la
+  sesión 2. Una unidad "receso" habría partido la jerarquía en dos para
+  representar quince minutos de nada.
+- **El cierre del sábado son los últimos ítems del reto 3**, no una unidad
+  aparte. Diez minutos no sostienen una unidad con objetivos y requisitos.
+- **Los minutos de cada unidad cuadran con la suma de sus ítems**, y el
+  validador ahora lo comprueba. No es un error de estructura, pero un desajuste
+  significa que la unidad no dura lo que dice — y el reloj de la segunda
+  pantalla se apoya en ese número.
+- **Ningún ítem inventa contenido.** Donde el valor es real —los comandos, los
+  umbrales medidos, las 36,567 unidades, el `1.5s` del reentrenamiento— está el
+  valor real. Donde falta, dice `Pendiente — batch N` con el número del batch
+  que lo escribe. Ver `CONVENTIONS.md` §13.
+- **`diagrama-secuencia` estrena su archivo**: `contenido/puml/grafo-agente.puml`
+  lleva el recorrido de una corrida en PlantUML, con doce mensajes. Es la fuente
+  que el batch 13 va a parsear para el modo enfocado.
+
+### Verificado
+
+- `npm run validar-contenido` carga las dos sesiones sin problemas, y no
+  reporta descuadres de minutos.
+- 18 pruebas, `lint`, `typecheck` y `build` limpios.

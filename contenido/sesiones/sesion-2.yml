@@ -1,0 +1,388 @@
+# Sesión 2 · La arquitectura cognitiva
+#
+# Estructura, no contenido definitivo. El contenido de cada ítem lo escriben
+# los batches 19 a 22, uno por unidad. La suma de minutos da 240.
+
+id: sesion-2
+numero: 2
+titulo: La arquitectura cognitiva
+subtitulo: Sesión 2
+fecha: 2026-08-09
+horaInicio: "09:00"
+horaFin: "13:00"
+
+unidades:
+  # ------------------------------------------------------------------ 09:00
+  - id: s2-repaso
+    tipo: repaso
+    titulo: Qué le faltaba al bucle de ayer
+    minutos: 25
+    objetivos:
+      - Recuperar el hilo tras una noche
+      - Emparejar cada patología de ayer con la capa que la resuelve
+    requisitos:
+      - Nada. Se puede seguir sin haber estado el sábado.
+    items:
+      - id: s2-asistencia
+        tipo: asistencia
+        titulo: Tomar asistencia
+        nota: Segunda sesión. Anotar también a quien no vino ayer.
+
+      - id: s2-donde-quedamos
+        tipo: transicion
+        titulo: Dónde quedamos
+        vimos: Un agente que funciona, llama herramientas, y aun así divaga
+        viene: Lo que le falta, que no es un prompt más largo
+        minutos: 5
+
+      - id: s2-patologias
+        tipo: tabla
+        titulo: Las cuatro patologías, y qué las resuelve
+        minutos: 6
+        columnas: [Patología, Capa que la resuelve]
+        filas:
+          - ["Concluye con lo primero que encuentra", "Pendiente — batch 19"]
+          - ["Ordena por la señal más ruidosa", "Pendiente — batch 19"]
+          - ["Dramatiza el impacto", "Pendiente — batch 19"]
+          - ["Mañana redescubre lo mismo", "Pendiente — batch 19"]
+
+      - id: s2-el-grafo
+        tipo: diagrama
+        titulo: El grafo completo
+        entradilla: Sin explicar todavía. Solo para que lo vean entero una vez.
+        clase: flujo
+        minutos: 8
+        contenido: |
+          Pendiente — batch 19.
+        notas: |
+          No explicarlo acá. Se presenta y se pasa. La explicación es la unidad
+          siguiente, y adelantarla le quita el efecto.
+
+      - id: s2-pregunta-agregar
+        tipo: pregunta
+        titulo: ¿Qué le agregarías?
+        pregunta: Pendiente — batch 19
+        visibilidad: publica
+        permiteOmitir: true
+        minutos: 6
+
+  # ------------------------------------------------------------------ 09:25
+  - id: s2-reto-4
+    tipo: reto
+    titulo: La arquitectura cognitiva
+    minutos: 105
+    objetivos:
+      - Construir un grafo donde cada nodo hace un trabajo y solo uno
+      - Entender por qué una reflexión que no puede corregir es decorativa
+      - Darle memoria, para que no repita la alerta de ayer
+    requisitos:
+      - Herramientas de percepción funcionando
+      - Haber visto divagar al ReAct pelado
+    items:
+      - id: s2-r4-titulo
+        tipo: titulo
+        titulo: "Reto 4 · La arquitectura cognitiva"
+        entradilla: El corazón del taller
+        minutos: 3
+
+      - id: s2-r4-un-nodo
+        tipo: markdown
+        titulo: Un nodo, un trabajo
+        contenido: |
+          Pendiente — batch 20.
+        minutos: 5
+
+      - id: s2-r4-secuencia
+        tipo: diagrama-secuencia
+        titulo: Una corrida, mensaje a mensaje
+        archivo: puml/grafo-agente.puml
+        minutos: 15
+        notas: |
+          Recorrerlo de a un mensaje. Proyectarlo entero de una vez es
+          exactamente lo que este tipo de ítem existe para evitar.
+        mensajes:
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+          - explicacion: "Pendiente — batch 20"
+
+      - id: s2-r4-estado
+        tipo: codigo
+        titulo: El estado
+        lenguaje: python
+        ruta: agente/grafo.py
+        minutos: 8
+        contenido: |
+          # Pendiente — batch 20
+          class Estado(TypedDict):
+              mensajes: Annotated[list[AnyMessage], add_messages]
+
+      - id: s2-r4-messages-key
+        tipo: error-comun
+        titulo: "Trampa · ToolNode lee otra clave"
+        sintoma: Pendiente — batch 20
+        causa: Pendiente — batch 20
+        arreglo: Pendiente — batch 20
+        minutos: 6
+
+      - id: s2-r4-apertura
+        tipo: error-comun
+        titulo: "Trampa · El estado que no se propaga"
+        sintoma: Pendiente — batch 20
+        causa: Pendiente — batch 20
+        arreglo: Pendiente — batch 20
+        minutos: 6
+
+      - id: s2-r4-aristas
+        tipo: codigo
+        titulo: Las aristas condicionales
+        lenguaje: python
+        ruta: agente/grafo.py
+        minutos: 7
+        contenido: |
+          # Pendiente — batch 20
+
+      - id: s2-r4-memoria
+        tipo: markdown
+        titulo: Memoria
+        contenido: |
+          Pendiente — batch 20. Las tres cosas que un tablero nunca dice.
+        minutos: 6
+
+      - id: s2-r4-dramatizando
+        tipo: cita-agente
+        titulo: El agente se acusa a sí mismo
+        cita: Pendiente — batch 20
+        procedencia: Pendiente — batch 20
+        comentario: Pendiente — batch 20
+        minutos: 6
+
+      - id: s2-r4-revision
+        tipo: comparacion
+        titulo: Antes y después de la revisión
+        minutos: 8
+        izquierda:
+          titulo: El diagnóstico que salía
+          contenido: Pendiente — batch 20
+        derecha:
+          titulo: El diagnóstico reescrito
+          contenido: Pendiente — batch 20
+
+      - id: s2-r4-si-hay-deriva
+        tipo: cita-agente
+        titulo: Sabía la respuesta, y el grafo no lo dejaba decirla
+        cita: Pendiente — batch 20
+        procedencia: Pendiente — batch 20
+        comentario: Pendiente — batch 20
+        minutos: 6
+
+      - id: s2-r4-criterios
+        tipo: criterios
+        titulo: Cuatro mundos, cuatro lecturas
+        minutos: 6
+        criterios:
+          - texto: "Mundo sano → sin_hallazgos, severidad baja"
+          - texto: "campana_promocional → deriva, categoria:bebidas"
+          - texto: "sesgo_silencioso → deriva, flota, las 8 categorías"
+          - texto: "feed_caido → anomalia, tienda:arequipa, y NO reentrenar"
+            pista: Esta es la trampa. La flota se ve impecable.
+
+      - id: s2-r4-correr
+        tipo: demo
+        titulo: Correrlo contra los cuatro mundos
+        minutos: 8
+        pasos:
+          - comando: make romper ESCENARIO=feed_caido
+          - comando: make agente ARGS="--verboso"
+        observar: Pendiente — batch 20
+
+      - id: s2-receso
+        tipo: receso
+        titulo: Receso
+        minutos: 15
+
+  # ------------------------------------------------------------------ 11:10
+  - id: s2-reto-5
+    tipo: reto
+    titulo: De la recomendación a la acción
+    minutos: 60
+    objetivos:
+      - Cerrar el ciclo: que el agente ejecute lo que recomienda
+      - Entender por qué el freno va en código y no en el prompt
+    requisitos:
+      - Un grafo que diagnostica bien los cuatro mundos
+    items:
+      - id: s2-r5-titulo
+        tipo: titulo
+        titulo: "Reto 5 · De la recomendación a la acción"
+        minutos: 3
+
+      - id: s2-r5-riesgo
+        tipo: markdown
+        titulo: Cambia la naturaleza del riesgo
+        contenido: |
+          Pendiente — batch 21. Equivocarse deja de costar una alerta de más y
+          pasa a costar 24 modelos entrenados con datos malos.
+        minutos: 5
+
+      - id: s2-r5-politica
+        tipo: codigo
+        titulo: Las dos reglas
+        lenguaje: python
+        ruta: agente/accion.py
+        minutos: 7
+        contenido: |
+          # Pendiente — batch 21
+
+      - id: s2-r5-comando
+        tipo: comando-anotado
+        titulo: Correrlo con permiso para actuar
+        comando: docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso
+        minutos: 6
+        segmentos:
+          - texto: "--rm"
+            explicacion: Pendiente — batch 21
+          - texto: "-e EJECUTAR_ACCIONES=1"
+            explicacion: Pendiente — batch 21
+          - texto: "--verboso"
+            explicacion: Pendiente — batch 21
+
+      - id: s2-r5-deriva
+        tipo: demo
+        titulo: Sobre deriva, reentrena
+        minutos: 10
+        pasos:
+          - comando: make reparar && make romper ESCENARIO=sesgo_silencioso
+          - comando: make actuar ARGS="--verboso"
+            esperado: "✓ reentrenar → 24 modelos de panaderia    1.5s"
+        observar: Pendiente — batch 21
+
+      - id: s2-r5-anomalia
+        tipo: demo
+        titulo: Sobre anomalía, se frena
+        minutos: 10
+        pasos:
+          - comando: make reparar && make romper ESCENARIO=feed_caido
+          - comando: make actuar ARGS="--verboso"
+            esperado: "✗ no se ejecutó: no es una accion automatizable"
+        observar: Pendiente — batch 21
+        notas: |
+          Este es el momento del domingo. El agente puede estar convencidísimo;
+          un `if` no se deja persuadir.
+
+      - id: s2-r5-comparacion
+        tipo: comparacion
+        titulo: El mismo agente, dos mundos
+        minutos: 6
+        izquierda:
+          titulo: sesgo_silencioso
+          contenido: Pendiente — batch 21
+        derecha:
+          titulo: feed_caido
+          contenido: Pendiente — batch 21
+
+      - id: s2-r5-urgencia
+        tipo: error-comun
+        titulo: "El error que cometí: frenar por urgencia"
+        sintoma: Pendiente — batch 21
+        causa: Pendiente — batch 21
+        arreglo: Pendiente — batch 21
+        minutos: 6
+
+      - id: s2-r5-panel
+        tipo: demo
+        titulo: El panel, razonando en vivo
+        minutos: 3
+        pasos:
+          - comando: make ui
+        observar: Pendiente — batch 21
+
+      - id: s2-r5-preguntas
+        tipo: pausa-preguntas
+        titulo: Pausa para preguntas
+        minutos: 4
+
+  # ------------------------------------------------------------------ 12:10
+  - id: s2-cierre
+    tipo: cierre
+    titulo: Los errores, y dónde estaban de verdad
+    minutos: 50
+    objetivos:
+      - Llevarse la tesis del taller
+      - Saber qué hacer con esto en el trabajo del lunes
+    items:
+      - id: s2-c-titulo
+        tipo: titulo
+        titulo: Nueve errores construyendo esto
+        destacado: Ninguno estaba en el modelo
+        minutos: 3
+
+      - id: s2-c-errores
+        tipo: tabla
+        titulo: Dónde estaban de verdad
+        minutos: 10
+        columnas: [Error, Dónde vivía el arreglo]
+        filas:
+          - ["El contexto no llegaba a la API", "Pendiente — batch 22"]
+          - ["El estado no se propagaba", "Pendiente — batch 22"]
+          - ["ToolNode leía otra clave", "Pendiente — batch 22"]
+          - ["Un simulador que no podía fallar", "Pendiente — batch 22"]
+          - ["Promediar porcentajes", "Pendiente — batch 22"]
+          - ["Medir lo normal con la ventana auditada", "Pendiente — batch 22"]
+          - ["Significancia confundida con relevancia", "Pendiente — batch 22"]
+          - ["Ordenar por la métrica ruidosa", "Pendiente — batch 22"]
+          - ["Un campo sin definir", "Pendiente — batch 22"]
+
+      - id: s2-c-cita-1
+        tipo: cita-agente
+        titulo: El agente criticando un umbral mal calibrado
+        cita: Pendiente — batch 22
+        procedencia: Pendiente — batch 22
+        minutos: 5
+
+      - id: s2-c-cita-2
+        tipo: cita-agente
+        titulo: Y confundiendo significancia con causa
+        cita: Pendiente — batch 22
+        procedencia: Pendiente — batch 22
+        minutos: 5
+
+      - id: s2-c-incidencias
+        tipo: markdown
+        titulo: Y trece del entorno
+        contenido: |
+          Pendiente — batch 22.
+        minutos: 6
+
+      - id: s2-c-tesis
+        tipo: titulo
+        titulo: Cuando un agente se equivoca, la primera sospecha no debería ser el modelo
+        destacado: Casi siempre es lo que le diste de comer
+        minutos: 4
+
+      - id: s2-c-mapa
+        tipo: transicion
+        titulo: Las ocho horas, completas
+        vimos: Un mundo, una percepción, una arquitectura y una acción con freno
+        viene: Tu propia flota, el lunes
+        minutos: 5
+
+      - id: s2-c-repo
+        tipo: enlace
+        titulo: El laboratorio queda con ustedes
+        url: https://github.com/texai/taller-ia-uni-lab
+        descripcion: Todo lo que corrimos, con make verificar como red de seguridad
+        minutos: 2
+
+      - id: s2-c-preguntas
+        tipo: pausa-preguntas
+        titulo: Preguntas y despedida
+        minutos: 10

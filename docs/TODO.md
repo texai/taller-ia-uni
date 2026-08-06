@@ -19,7 +19,7 @@ Referencias:
 |---|--------|--------|
 | 1 | Esqueleto Next.js y despliegue en Vercel | ✅ Completado |
 | 2 | Modelo de contenido en YAML y cargador | ✅ Completado |
-| 3 | Estructura completa del curso | ⬜ Pendiente |
+| 3 | Estructura completa del curso | ✅ Completado |
 | 4 | Renderizadores: familia `contenido` | ⬜ Pendiente |
 | 5 | Renderizadores: familia `dictado` | ⬜ Pendiente |
 | 6 | Vista de dictado y navegación por teclado | ⬜ Pendiente |
@@ -64,75 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 3 — Estructura completa del curso
-
-Antes de escribir contenido fino hace falta ver el esqueleto de las ocho horas
-completo, para saber si el reparto de tiempos cierra y si falta algún bloque.
-
-**Alcance**
-- [ ] `contenido/curso.yml` con los atributos del curso: título, programa,
-      institución, docente, descripción
-- [ ] `contenido/sesiones/sesion-1.yml` y `sesion-2.yml` con fecha y horario
-- [ ] Unidades de sesión 1: una de tipo `repaso` y las de tipo `reto`
-- [ ] Unidades de sesión 2: las de tipo `reto` y una de tipo `cierre`
-- [ ] Cada unidad con `objetivos`, `requisitos` y `minutos`
-- [ ] Ítems enunciados con su tipo, título y minutos — **sin el contenido
-      definitivo**, que es trabajo aparte
-- [ ] Ítems de dictado colocados donde corresponden: asistencia al inicio de
-      cada sesión, receso a mitad, pausas de preguntas entre unidades
-- [ ] La suma de minutos por sesión cuadra con las cuatro horas
-
-**Reparto acordado**
-
-Sale de cuadrar los cinco retos que ya existen en `texai/taller-ia-uni-lab`
-(`retos/README.md`) contra los 480 minutos disponibles. Los retos suman 310, así
-que quedan 170 para todo lo demás: apertura, repaso, recesos, rescate de
-entornos, pausas de preguntas, asistencia y cierre. Cabe, sin holgura.
-
-Sesión 1 · sábado 15:00–19:00 · *El mundo y la percepción* — 240 min
-
-| Inicio | Unidad | Tipo | Min |
-|---|---|---|---|
-| 15:00 | Dónde encaja esto, y la flota de 192 modelos | `repaso` | 60 |
-| 16:00 | Encontrar el problema a mano | `reto` | 40 |
-| 16:40 | *Receso* | | 15 |
-| 16:55 | La herramienta de percepción | `reto` | 60 |
-| 17:55 | El primer agente, sin arquitectura | `reto` | 55 |
-| 18:50 | Cierre y qué viene mañana | | 10 |
-
-Sesión 2 · domingo 09:00–13:00 · *La arquitectura cognitiva* — 240 min
-
-| Inicio | Unidad | Tipo | Min |
-|---|---|---|---|
-| 09:00 | Qué le faltaba al bucle de ayer | `repaso` | 25 |
-| 09:25 | La arquitectura cognitiva | `reto` | 90 |
-| 10:55 | *Receso* | | 15 |
-| 11:10 | De la recomendación a la acción | `reto` | 60 |
-| 12:10 | Los errores, y dónde estaban de verdad | `cierre` | 35 |
-| 12:45 | Preguntas y despedida | | 15 |
-
-**Dos decisiones que salieron de hacer las cuentas**
-
-- **El rescate de entornos rotos vive dentro del repaso**, no como bloque
-  aparte. Con su propio bloque se consume los veinte minutos completos aunque
-  solo dos personas lo necesiten; dentro del repaso, quien está bien escucha el
-  contexto mientras quien está roto arregla en paralelo.
-- **El reto 3 baja de 60 a 55 minutos, y puede bajar más.** Es el único reto
-  donde no se construye casi nada: se corre un ReAct pelado tres veces y se
-  observa cómo divaga. Es diagnóstico, no construcción. Si el sábado va
-  retrasado, es el bloque del que robar tiempo sin perder nada.
-
-**Riesgo conocido:** el reto 2 es el que puede reventar el cronograma. Son 60
-minutos escribiendo estadística con niveles mezclados, y es el único donde una
-persona trabada se traba de verdad. Las dos redes ya existen en el laboratorio:
-`make verificar` da un criterio objetivo de cuándo terminaron, y la
-implementación de referencia está en `agente/`.
-
-**Fuera de alcance**
-- El contenido definitivo de cada ítem. Acá se define qué ítem va dónde.
 
 ---
 

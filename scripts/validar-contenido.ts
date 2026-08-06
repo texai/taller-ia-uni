@@ -10,6 +10,7 @@ import { cargarCurso, ErrorDeContenido, recorrer, minutosDe } from "../src/lib/c
 const VERDE = "\x1b[32m";
 const ROJO = "\x1b[31m";
 const GRIS = "\x1b[90m";
+const AMARILLO = "\x1b[33m";
 const FIN = "\x1b[0m";
 
 try {
@@ -19,6 +20,24 @@ try {
     0,
   );
   const unidades = curso.sesiones.reduce((t, s) => t + s.unidades.length, 0);
+
+  // Los minutos declarados de la unidad contra la suma de sus items. No es un
+  // error de estructura -- el YAML es valido igual -- pero un desajuste
+  // significa que la unidad no dura lo que dice, y el reloj de la segunda
+  // pantalla se apoya en ese numero.
+  const descuadres: string[] = [];
+  for (const sesion of curso.sesiones) {
+    for (const unidad of sesion.unidades) {
+      if (typeof unidad.minutos !== "number") continue;
+      const suma = unidad.items.reduce((t, i) => t + (i.minutos ?? 0), 0);
+      if (suma !== unidad.minutos) {
+        descuadres.push(
+          `${sesion.id} · ${unidad.id}: declara ${unidad.minutos} min y sus ` +
+            `ítems suman ${suma}`,
+        );
+      }
+    }
+  }
 
   console.log(`${VERDE}✓${FIN} ${curso.titulo}`);
   for (const sesion of curso.sesiones) {
@@ -30,6 +49,11 @@ try {
     );
   }
   console.log(`${GRIS}${unidades} unidades · ${items} ítems${FIN}`);
+
+  if (descuadres.length) {
+    console.log(`\n${AMARILLO}Minutos que no cuadran:${FIN}`);
+    for (const d of descuadres) console.log(`  ${AMARILLO}·${FIN} ${d}`);
+  }
 } catch (e) {
   if (e instanceof ErrorDeContenido) {
     console.error(`${ROJO}${e.message}${FIN}`);

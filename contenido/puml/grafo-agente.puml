@@ -1,0 +1,35 @@
+@startuml
+' El recorrido de una corrida del agente.
+'
+' Se escribe en PlantUML porque la imagen se genera al construir y se sirve
+' estatica -- PlantUML es Java y Vercel no lo ejecuta. La misma fuente se
+' parsea para el modo enfocado, que recorre los mensajes de a uno.
+'
+' Ver docs/CONVENTIONS.md §10.
+
+skinparam backgroundColor transparent
+skinparam shadowing false
+
+participant Percepcion as P
+participant Herramientas as H
+participant Diagnostico as D
+participant Reflexion as R
+participant Revision as V
+participant Recomendacion as C
+participant Accion as A
+
+P -> H : comparar_periodos(14, 45, categoria)
+H --> P : banderas por categoria
+P -> H : detectar_anomalias(21)
+H --> P : sin anomalias
+P -> D : evidencia reunida
+D -> R : hipotesis con alcance y severidad
+R -> P : falta evidencia, vuelve a mirar
+P -> D : evidencia ampliada
+D -> R : hipotesis revisada
+R -> V : la critica quedo en pie
+V -> C : diagnostico reescrito
+C -> A : recomendaciones
+A -> A : la politica decide que se ejecuta
+
+@enduml

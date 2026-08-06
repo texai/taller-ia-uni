@@ -1,6 +1,12 @@
-# Provisional: el batch 3 escribe la estructura completa de las ocho horas.
-# Esto existe para que el cargador tenga qué cargar, y ejercita varios tipos
-# del catálogo.
+# Sesión 1 · El mundo y la percepción
+#
+# Estructura, no contenido definitivo. Los ítems están enunciados con su tipo,
+# su título y sus minutos; el contenido de cada uno lo escriben los batches 15
+# a 18, uno por unidad.
+#
+# Los minutos salen del reparto del batch 3, cuadrado contra los cinco retos
+# que ya existen en `texai/taller-ia-uni-lab`. La suma da 240.
+
 id: sesion-1
 numero: 1
 titulo: El mundo y la percepción
@@ -10,51 +16,82 @@ horaInicio: "15:00"
 horaFin: "19:00"
 
 unidades:
+  # ------------------------------------------------------------------ 15:00
   - id: s1-repaso
     tipo: repaso
     titulo: Dónde encaja esto, y la flota de 192 modelos
     minutos: 60
     objetivos:
-      - Situar el taller dentro del programa
-      - Entender qué es vigilar una flota de modelos desplegados
+      - Situar el taller dentro del programa y ver qué se junta acá
+      - Entender qué es una flota de modelos desplegados y quién la vigila hoy
+      - Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura
     requisitos:
-      - Haber hecho el trabajo previo del laboratorio
+      - Haber hecho el trabajo previo y llegar con las 24 comprobaciones en verde
     items:
       - id: s1-asistencia
         tipo: asistencia
         titulo: Tomar asistencia
-        nota: Solo lo ve el docente. El alumno no se entera de este ítem.
+        nota: El taller se evalúa solo por asistencia. Tomarla ahora, no al final.
 
       - id: s1-portada
         tipo: titulo
         titulo: Un agente que vigila 192 modelos
-        entradilla: Arquitectura cognitiva para monitoreo en producción
-        minutos: 5
+        entradilla: Arquitectura cognitiva para monitoreo de modelos en producción
+        minutos: 3
         notas: |
-          Abrir preguntando quién hizo el trabajo previo. Si hay manos abajo,
-          decir que el rescate va en paralelo durante los próximos 15 minutos.
+          Preguntar quién hizo el trabajo previo. Si hay manos abajo, avisar que
+          el rescate va en paralelo durante los próximos quince minutos, sin
+          detener la clase.
+
+      - id: s1-donde-estamos
+        tipo: transicion
+        titulo: Dónde estamos
+        vimos: Fundamentos, MLOps, despliegue, generativa y agentes
+        viene: Todo junto, sobre un caso que no se deja resolver con una sola de esas piezas
+        minutos: 5
 
       - id: s1-el-caso
         tipo: markdown
         titulo: El caso
-        minutos: 10
         contenido: |
-          Una cadena con **24 tiendas** y **8 categorías** pronostica su
-          demanda todas las noches. Un modelo por tienda y categoría:
-          **192 modelos en producción**.
+          Pendiente — batch 15. Va la cadena de 24 tiendas y 8 categorías,
+          los 192 modelos, y el job que corre cada madrugada.
+        minutos: 7
 
-          Los modelos funcionan. Hasta que dejan de funcionar.
+      - id: s1-arquitectura
+        tipo: diagrama
+        titulo: La solución completa, por componentes
+        clase: componentes
+        contenido: |
+          Pendiente — batch 15. Fuentes de datos, ingesta, entrenamiento,
+          registro de modelos, job batch, telemetría, y dónde entra el agente.
+        minutos: 8
+        notas: |
+          Es el mapa al que se vuelve toda la clase. Dejarlo bien anclado.
 
-      - id: s1-sesgo
-        tipo: metrica
-        titulo: El sesgo silencioso
-        valor: "36,567"
-        unidad: unidades de más en almacén
-        contexto: En catorce días, y ninguna alarma sonó.
-        tono: malo
+      - id: s1-telemetria
+        tipo: modelo-datos
+        titulo: Qué emite la flota
+        minutos: 6
+        tablas:
+          - nombre: metricas
+            descripcion: Pendiente — batch 15
+            columnas:
+              - { nombre: fecha, tipo: date }
+              - { nombre: modelo_id, tipo: text }
+              - { nombre: mape, tipo: float }
+              - { nombre: sesgo_pct, tipo: float }
+              - { nombre: cobertura, tipo: float }
+
+      - id: s1-que-es-un-modelo
+        tipo: markdown
+        titulo: Qué es "un modelo en producción"
+        contenido: |
+          Pendiente — batch 15. Un artefacto entrenado, no un chatbot. Por qué
+          la relación modelo↔contenedor no es 1 a 1.
         minutos: 5
 
-      - id: s1-arriba
+      - id: s1-levantar
         tipo: terminal
         titulo: Levantar el entorno
         comando: make arriba && make seed
@@ -63,10 +100,359 @@ unidades:
         duracion: 300
         minutos: 5
 
-      - id: s1-preguntas
+      - id: s1-demo-ui
+        tipo: demo
+        titulo: La flota, de un vistazo
+        minutos: 8
+        pasos:
+          - comando: make ui
+            esperado: "http://localhost:8501"
+        observar: Pendiente — batch 15
+        respaldo: Pendiente — batch 15
+
+      - id: s1-metricas-definidas
+        tipo: markdown
+        titulo: MAPE, sesgo y cobertura
+        contenido: |
+          Pendiente — batch 15. Definir los tres ANTES de usarlos. La cobertura
+          es la que se malinterpreta: fracción de días en que la venta real cayó
+          dentro del intervalo, no días con predicción disponible.
+        minutos: 5
+
+      - id: s1-pregunta-hoy
+        tipo: pregunta
+        titulo: ¿Cómo se enteran hoy?
+        pregunta: Pendiente — batch 15
+        visibilidad: publica
+        opciones:
+          - Un tablero con umbrales
+          - Alguien revisa a mano
+          - Cuando se queja el negocio
+          - No nos enteramos
+        minutos: 4
+
+      - id: s1-repaso-preguntas
+        tipo: pausa-preguntas
+        titulo: Pausa para preguntas
+        minutos: 4
+
+  # ------------------------------------------------------------------ 16:00
+  - id: s1-reto-1
+    tipo: reto
+    titulo: Encontrar el problema a mano
+    minutos: 55
+    objetivos:
+      - Sentir que revisar 192 modelos a mano no escala
+      - Descubrir que la métrica que estaban mirando no era la que hablaba de plata
+    requisitos:
+      - Entorno levantado y con datos
+    items:
+      - id: s1-r1-titulo
+        tipo: titulo
+        titulo: "Reto 1 · Encuentra el problema a mano"
+        entradilla: Sin agente, sin LLM. Tú, la API y pandas.
+        minutos: 2
+
+      - id: s1-r1-encargo
+        tipo: markdown
+        titulo: El encargo
+        contenido: |
+          Pendiente — batch 16.
+        minutos: 3
+
+      - id: s1-r1-api
+        tipo: comando-anotado
+        titulo: La telemetría, por la API
+        comando: curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
+        minutos: 6
+        segmentos:
+          - texto: "-s"
+            explicacion: Pendiente — batch 16
+            otrosValores: ["-v", "-i"]
+          - texto: "categoria=bebidas"
+            explicacion: Pendiente — batch 16
+          - texto: "desde=2026-07-01"
+            explicacion: Pendiente — batch 16
+
+      - id: s1-r1-romper
+        tipo: terminal
+        titulo: Romper el mundo
+        comando: make romper ESCENARIO=campana_promocional
+        comandoWindows: .\taller.ps1 romper campana_promocional
+        duracion: 20
+        minutos: 4
+
+      - id: s1-r1-a-mano
+        tipo: demo
+        titulo: Encontrarlo con pandas
+        minutos: 6
+        pasos:
+          - comando: "# agrupar por categoría, comparar 14 días contra 45"
+        observar: Pendiente — batch 16
+
+      - id: s1-r1-silencioso
+        tipo: terminal
+        titulo: Ahora el silencioso
+        comando: make reparar && make romper ESCENARIO=sesgo_silencioso
+        comandoWindows: .\taller.ps1 reparar; .\taller.ps1 romper sesgo_silencioso
+        duracion: 40
+        minutos: 3
+
+      - id: s1-r1-tabla
+        tipo: tabla
+        titulo: Las dos degradaciones
+        minutos: 6
+        columnas: [Señal, Antes, Después, Lectura]
+        filas:
+          - [MAPE de la flota, "13.8%", "14.5%", "Pendiente — batch 16"]
+          - [Modelos sobre umbral, "7 / 192", "14 / 192", "Pendiente — batch 16"]
+          - [Sesgo de la flota, "+0.7%", "+4.7%", "Pendiente — batch 16"]
+
+      - id: s1-r1-metrica
+        tipo: metrica
+        titulo: Lo que costó
+        valor: "36,567"
+        unidad: unidades de más en almacén
+        contexto: En catorce días. Ninguna alarma sonó.
+        tono: malo
+        minutos: 4
+
+      - id: s1-r1-comparacion
+        tipo: comparacion
+        titulo: Dos señales del mismo modelo
+        minutos: 4
+        izquierda:
+          titulo: MAPE
+          contenido: Pendiente — batch 16
+        derecha:
+          titulo: Sesgo
+          contenido: Pendiente — batch 16
+
+      - id: s1-r1-pregunta
+        tipo: pregunta
+        titulo: ¿Cuál alertarías?
+        pregunta: Pendiente — batch 16
+        visibilidad: publica
+        opciones: ["El MAPE", "El sesgo", "Los dos", "Ninguno de los dos solo"]
+        minutos: 2
+
+      - id: s1-receso
+        tipo: receso
+        titulo: Receso
+        minutos: 15
+
+  # ------------------------------------------------------------------ 16:55
+  - id: s1-reto-2
+    tipo: reto
+    titulo: La herramienta de percepción
+    minutos: 60
+    objetivos:
+      - Entender que la calidad de un agente se decide antes del LLM
+      - Escribir una herramienta que agregue y no vuelque filas
+      - Calibrar umbrales contra la flota sana, no contra la intuición
+    requisitos:
+      - Haber visto que el sesgo silencioso no se detecta a ojo
+    items:
+      - id: s1-r2-titulo
+        tipo: titulo
+        titulo: "Reto 2 · Escribe la herramienta"
+        entradilla: "Criterio: en la flota sana, cero banderas"
+        minutos: 2
+
+      - id: s1-r2-por-que
+        tipo: markdown
+        titulo: Por qué agregar, y no volcar filas
+        contenido: |
+          Pendiente — batch 17.
+        minutos: 4
+
+      - id: s1-r2-firma
+        tipo: codigo
+        titulo: La herramienta
+        lenguaje: python
+        ruta: agente/herramientas.py
+        minutos: 6
+        contenido: |
+          # Pendiente — batch 17
+          @tool
+          def comparar_periodos(dias_recientes=14, dias_base=45,
+                                dimension="categoria") -> dict:
+              ...
+
+      - id: s1-r2-sesgo
+        tipo: comparacion
+        titulo: "Trampa 1 · El sesgo no se promedia"
+        minutos: 7
+        izquierda:
+          titulo: Promedio de porcentajes
+          contenido: Pendiente — batch 17
+        derecha:
+          titulo: Cociente de totales
+          contenido: Pendiente — batch 17
+
+      - id: s1-r2-ventana
+        tipo: error-comun
+        titulo: "Trampa 2 · Medir lo normal con la ventana que auditas"
+        sintoma: Pendiente — batch 17
+        causa: Pendiente — batch 17
+        arreglo: Pendiente — batch 17
+        minutos: 5
+
+      - id: s1-r2-significancia
+        tipo: error-comun
+        titulo: "Trampa 3 · Significativo no es relevante"
+        sintoma: Pendiente — batch 17
+        causa: Pendiente — batch 17
+        arreglo: Pendiente — batch 17
+        minutos: 5
+
+      - id: s1-r2-umbrales
+        tipo: tabla
+        titulo: El umbral depende de por dónde cortes
+        entradilla: Medido sobre la flota sana, donde nada está roto
+        minutos: 6
+        columnas: [Dimensión, Modelos por grupo, Máx Δ MAPE, Máx Δ sesgo]
+        filas:
+          - [categoría, 24, "+19.6%", "1.05 pp"]
+          - [región, 40, "+15.2%", "2.31 pp"]
+          - [tienda, 8, "+48.4%", "3.54 pp"]
+        resaltar: [2]
+
+      - id: s1-r2-criterios
+        tipo: criterios
+        titulo: Cuándo terminaste
+        minutos: 5
+        criterios:
+          - texto: Con la flota sana, cero banderas en las tres dimensiones
+            pista: Si alarma sobre lo normal, ningún agente encima lo arregla
+          - texto: La campaña promocional se ve, y solo en bebidas
+          - texto: El sesgo silencioso aparece en las 8 categorías
+          - texto: La tienda muda se detecta como anomalía, no como deriva
+
+      - id: s1-r2-verificar
+        tipo: terminal
+        titulo: Comprobarlo
+        comando: make verificar ARGS="--reto 2"
+        comandoWindows: .\taller.ps1 verificar --reto 2
+        duracion: 60
+        minutos: 4
+
+      - id: s1-r2-taller
+        tipo: demo
+        titulo: Escribirla
+        minutos: 12
+        pasos:
+          - comando: "# manos al teclado"
+        observar: Pendiente — batch 17
+        respaldo: La implementación de referencia está en agente/herramientas.py
+        notas: |
+          A los 30 minutos, decir en voz alta que la referencia existe. Este es
+          el bloque que puede reventar el cronograma.
+
+      - id: s1-r2-preguntas
+        tipo: pausa-preguntas
+        titulo: Pausa para preguntas
+        minutos: 4
+
+  # ------------------------------------------------------------------ 17:55
+  - id: s1-reto-3
+    tipo: reto
+    titulo: El primer agente, sin arquitectura
+    minutos: 65
+    objetivos:
+      - Ver funcionar un ReAct pelado, y verlo divagar
+      - Nombrar las cuatro patologías de un bucle sin arquitectura
+      - Llegar al domingo con una pregunta abierta, no con una respuesta
+    requisitos:
+      - Tener herramientas de percepción que no alarmen sobre lo normal
+    items:
+      - id: s1-r3-titulo
+        tipo: titulo
+        titulo: "Reto 3 · Un LLM con herramientas, y nada más"
+        minutos: 2
+
+      - id: s1-r3-bucle
+        tipo: codigo
+        titulo: El bucle entero
+        lenguaje: python
+        minutos: 6
+        entradilla: Es corto a propósito
+        contenido: |
+          # Pendiente — batch 18
+          llm = obtener_llm().bind_tools(HERRAMIENTAS)
+
+      - id: s1-r3-correr
+        tipo: terminal
+        titulo: Correrlo
+        comando: make agente ARGS="--verboso"
+        comandoWindows: .\taller.ps1 agente --verboso
+        duracion: 43
+        minutos: 3
+
+      - id: s1-r3-tres-veces
+        tipo: demo
+        titulo: El mismo escenario, tres veces
+        minutos: 10
+        pasos:
+          - comando: make agente ARGS="--fecha 2026-08-09"
+          - comando: make agente ARGS="--fecha 2026-08-09"
+          - comando: make agente ARGS="--fecha 2026-08-09"
+        observar: Pendiente — batch 18
+
+      - id: s1-r3-cita-1
+        tipo: cita-agente
+        titulo: Primera corrida
+        cita: Pendiente — batch 18
+        procedencia: Pendiente — batch 18
+        minutos: 5
+
+      - id: s1-r3-cita-2
+        tipo: cita-agente
+        titulo: Segunda corrida, mismo mundo
+        cita: Pendiente — batch 18
+        procedencia: Pendiente — batch 18
+        minutos: 5
+
+      - id: s1-r3-patologias
+        tipo: tabla
+        titulo: Las cuatro patologías
+        minutos: 6
+        columnas: [Qué hace, Por qué importa]
+        filas:
+          - ["Concluye con lo primero que encuentra", "Pendiente — batch 18"]
+          - ["Ordena por la señal más ruidosa", "Pendiente — batch 18"]
+          - ["Dramatiza el impacto de negocio", "Pendiente — batch 18"]
+          - ["Mañana redescubre lo mismo", "Pendiente — batch 18"]
+
+      - id: s1-r3-prompt
+        tipo: markdown
+        titulo: Por qué no se arregla con un prompt más largo
+        contenido: |
+          Pendiente — batch 18.
+        minutos: 5
+
+      - id: s1-r3-pregunta
+        tipo: pregunta
+        titulo: ¿Qué le falta?
+        pregunta: Pendiente — batch 18
+        visibilidad: publica
+        permiteOmitir: true
+        minutos: 4
+
+      - id: s1-r3-golpe
+        tipo: titulo
+        titulo: Nada de esto se arregla con un prompt más largo
+        destacado: ¿Qué le falta a este bucle?
+        minutos: 4
+
+      - id: s1-r3-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
         minutos: 5
-        disparadores:
-          - ¿Alguien ya vigila modelos en producción en su trabajo?
-          - ¿Cómo se enteran hoy de que un modelo se degradó?
+
+      - id: s1-cierre
+        tipo: transicion
+        titulo: Cierre, y qué viene mañana
+        vimos: Un mundo que se degrada en silencio, herramientas que lo detectan, y un agente que divaga
+        viene: La arquitectura cognitiva que convierte ese bucle en algo que se puede creer
+        minutos: 10
