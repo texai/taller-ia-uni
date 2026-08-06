@@ -51,3 +51,11 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Cada batch trae su objetivo pedagógico, el material de origen en el
   repositorio del laboratorio, los tipos de ítem sugeridos y sus criterios de
   aceptación.
+
+### Batch 1 — Esqueleto de la aplicación
+- Next 16 con App Router, TypeScript estricto y Tailwind 4. Página raíz con el
+  listado de cursos.
+- Se sube de Next 15.1.3 a 16 por CVE-2025-66478. `next lint` ya no existe en
+  16: el script usa `eslint` directo, y la configuración de Next se importa en
+  formato plano.
+- Tema oscuro por omisión, claro según el sistema.

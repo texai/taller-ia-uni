@@ -17,7 +17,7 @@ Referencias:
 
 | # | Título | Estado |
 |---|--------|--------|
-| 1 | Esqueleto Next.js y despliegue en Vercel | ⬜ Pendiente |
+| 1 | Esqueleto Next.js y despliegue en Vercel | ✅ Completado |
 | 2 | Modelo de contenido en YAML y cargador | ⬜ Pendiente |
 | 3 | Estructura completa del curso | ⬜ Pendiente |
 | 4 | Renderizadores: familia `contenido` | ⬜ Pendiente |
@@ -64,29 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 1 — Esqueleto Next.js y despliegue en Vercel
-
-No existe aplicación. Hace falta la base sobre la que se apoya todo lo demás,
-desplegada y accesible por URL, porque los alumnos entran sin instalar nada.
-
-**Alcance**
-- [ ] Next.js 15 con App Router, TypeScript en modo estricto, Tailwind
-- [ ] Estructura de carpetas: `src/app/`, `src/lib/`, `src/components/`, `contenido/`
-- [ ] Página raíz que lista los cursos disponibles (por ahora, uno)
-- [ ] Layout con tipografía y tema claro/oscuro respetando el sistema
-- [ ] `npm run dev`, `npm run build`, `npm run typecheck` y `npm run lint` pasando
-- [ ] Despliegue en Vercel desde `main`
-- [ ] `.env.example` con las variables que van a hacer falta
-
-**Fuera de alcance**
-- Supabase, autenticación, sincronía. Nada de eso todavía.
-- Contenido real del curso: basta con datos de prueba.
-
-**Requisitos externos**
-- Proyecto en Vercel conectado a `texai/taller-ia-uni`.
 
 ---
 

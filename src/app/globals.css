@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/*
+ * Esto se proyecta. Todo lo de aca abajo esta calibrado para leerse desde la
+ * ultima fila de un aula, no desde medio metro de un monitor: cuerpo grande,
+ * contraste alto, y ningun gris sobre gris.
+ */
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --color-lienzo: #0f1115;
+  --color-lienzo-alto: #161a21;
+  --color-borde: #262c37;
+  --color-tinta: #e8eaed;
+  --color-tinta-suave: #9aa4b2;
+  --color-acento: #7dd3a0;
+  --color-alerta: #f0806c;
+  --color-aviso: #e0b552;
+}
+
+:root {
+  --lienzo: var(--color-lienzo);
+  --lienzo-alto: var(--color-lienzo-alto);
+  --borde: var(--color-borde);
+  --tinta: var(--color-tinta);
+  --tinta-suave: var(--color-tinta-suave);
+  color-scheme: dark;
+}
+
+/*
+ * El tema claro existe para quien prepara material a plena luz. La clase se
+ * dicta en oscuro: un aula a oscuras con un proyector blanco encandila.
+ */
+@media (prefers-color-scheme: light) {
+  :root {
+    --lienzo: #ffffff;
+    --lienzo-alto: #f6f7f9;
+    --borde: #e1e5ea;
+    --tinta: #14171c;
+    --tinta-suave: #59616e;
+    color-scheme: light;
+  }
+}
+
+:root[data-tema="oscuro"] {
+  --lienzo: var(--color-lienzo);
+  --lienzo-alto: var(--color-lienzo-alto);
+  --borde: var(--color-borde);
+  --tinta: var(--color-tinta);
+  --tinta-suave: var(--color-tinta-suave);
+  color-scheme: dark;
+}
+
+:root[data-tema="claro"] {
+  --lienzo: #ffffff;
+  --lienzo-alto: #f6f7f9;
+  --borde: #e1e5ea;
+  --tinta: #14171c;
+  --tinta-suave: #59616e;
+  color-scheme: light;
+}
+
+body {
+  background: var(--lienzo);
+  color: var(--tinta);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Foco visible siempre: la aplicacion se maneja con el teclado. */
+:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
