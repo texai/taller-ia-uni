@@ -52,6 +52,10 @@ export function useSincronia({
   const canal = useRef<RealtimeChannel | null>(null);
   const canalPreguntas = useRef<RealtimeChannel | null>(null);
   const canalRespuestas = useRef<RealtimeChannel | null>(null);
+  /** El canal está listo para recibir envíos. */
+  const suscrito = useRef(false);
+  /** La última pauta que se quiso publicar antes de estarlo. */
+  const pendiente = useRef<Pauta | null>(null);
 
   /**
    * Identidad anónima y estable dentro de la pestaña.
@@ -70,11 +74,24 @@ export function useSincronia({
     const supabase = clienteNavegador();
     if (!supabase) return;
 
+    /**
+     * Los avisos de un canal que ya se limpió no cuentan.
+     *
+     * Al reejecutarse el efecto, el canal anterior emite `CLOSED` mientras se
+     * cierra — y ese aviso llega DESPUÉS del `SUBSCRIBED` del canal nuevo. Sin
+     * esta bandera, el indicador acaba diciendo "Sin conexión" con el canal
+     * perfectamente vivo: exactamente lo que se vio en la primera clase de
+     * prueba, con el docente marcado como desconectado mientras los alumnos lo
+     * seguían sin problema.
+     */
+    let vigente = true;
+
     const c = supabase.channel(nombreCanal(curso, sesion), {
       config: { presence: { key: esDocente ? "docente" : crypto.randomUUID() } },
     });
 
     const aceptar = (nueva: Pauta) => {
+      if (!vigente) return;
       // Los mensajes pueden llegar fuera de orden tras una reconexión. Sin
       // esta comprobación, una pauta vieja arrastraría a la clase hacia atrás
       // en el peor momento posible.
@@ -91,6 +108,7 @@ export function useSincronia({
     // el estado completo del canal, incluida la posición que el docente dejó
     // anotada la última vez que se movió.
     c.on("presence", { event: "sync" }, () => {
+      if (!vigente) return;
       const estados = c.presenceState<{ pauta?: Pauta }>();
       const delDocente = estados["docente"]?.[0]?.pauta;
       if (delDocente) aceptar(delDocente);
@@ -105,14 +123,31 @@ export function useSincronia({
     // El revelado lo publica el docente en el canal público: a partir de ahí
     // los resultados sí se ven.
     c.on("broadcast", { event: EVENTO_REVELADO }, ({ payload }) => {
+      if (!vigente) return;
       setRevelado(payload as Revelado);
     });
 
     c.subscribe((situacion) => {
-      if (situacion === "SUBSCRIBED") setEstado("en-vivo");
+      if (!vigente) return;
+      if (situacion === "SUBSCRIBED") {
+        setEstado("en-vivo");
+        suscrito.current = true;
+        // Se publica la posición en cuanto hay canal, sin esperar a que el
+        // docente se mueva. Si no, quien entre antes del primer movimiento se
+        // queda sin pauta y aterriza en el primer ítem.
+        const p = pendiente.current;
+        if (p) {
+          void c.send({ type: "broadcast", event: EVENTO_PAUTA, payload: p });
+          void c.track({ pauta: p });
+        }
+      }
       else if (situacion === "CHANNEL_ERROR" || situacion === "TIMED_OUT") {
+        suscrito.current = false;
         setEstado("reconectando");
-      } else if (situacion === "CLOSED") setEstado("sin-conexion");
+      } else if (situacion === "CLOSED") {
+        suscrito.current = false;
+        setEstado("sin-conexion");
+      }
     });
 
     canal.current = c;
@@ -123,6 +158,7 @@ export function useSincronia({
     const cp = supabase.channel(canalDePreguntas(curso, sesion));
     if (esDocente) {
       cp.on("broadcast", { event: EVENTO_PREGUNTA }, ({ payload }) => {
+        if (!vigente) return;
         const pregunta = payload as PreguntaAlumno;
         setPreguntas((previas) =>
           previas.some((p) => p.id === pregunta.id)
@@ -140,6 +176,7 @@ export function useSincronia({
     const cr = supabase.channel(canalDeRespuestas(curso, sesion));
     if (esDocente) {
       cr.on("broadcast", { event: EVENTO_RESPUESTA }, ({ payload }) => {
+        if (!vigente) return;
         setRespuestas((previas) => [...previas, payload as RespuestaAlumno]);
       });
     }
@@ -150,6 +187,8 @@ export function useSincronia({
     if (!esDocente) void c.track({ alumno: true });
 
     return () => {
+      vigente = false;
+      suscrito.current = false;
       canal.current = null;
       canalPreguntas.current = null;
       canalRespuestas.current = null;
@@ -169,8 +208,17 @@ export function useSincronia({
     (itemId: string, paso: number, enVivo: boolean) => {
       const c = canal.current;
       if (!c || !esDocente) return;
+
       const nueva: Pauta = { itemId, paso, enVivo, momento: Date.now() };
       ultima.current = nueva;
+
+      // Enviar por un canal que todavía no terminó de suscribirse falla, y en
+      // algunos casos lo cierra. Se guarda y se emite al suscribirse.
+      if (!suscrito.current) {
+        pendiente.current = nueva;
+        return;
+      }
+      pendiente.current = null;
       void c.send({ type: "broadcast", event: EVENTO_PAUTA, payload: nueva });
       void c.track({ pauta: nueva });
     },

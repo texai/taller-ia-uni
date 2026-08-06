@@ -24,9 +24,9 @@ Referencias:
 | 5 | Renderizadores: familia `dictado` | ✅ Completado |
 | 6 | Vista de dictado y navegación por teclado | ✅ Completado |
 | 7 | Autenticación del docente en `/profe` | ✅ Completado |
-| 8 | Sincronía en vivo: el docente marca el ritmo | 🔵 En curso |
-| 9 | Preguntas del alumno hacia el docente | 🔵 En curso |
-| 10 | Preguntas del docente hacia los alumnos | 🔵 En curso |
+| 8 | Sincronía en vivo: el docente marca el ritmo | ✅ Completado |
+| 9 | Preguntas del alumno hacia el docente | ✅ Completado |
+| 10 | Preguntas del docente hacia los alumnos | ✅ Completado |
 | 11 | Segunda pantalla del docente | ⬜ Pendiente |
 | 12 | Reloj de sesión y avisos de tiempo | ⬜ Pendiente |
 | 13 | Diagramas de secuencia PlantUML, recorribles | ⬜ Pendiente |

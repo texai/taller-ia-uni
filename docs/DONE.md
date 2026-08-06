@@ -588,3 +588,42 @@ decide en el render qué ocultar acaba mostrándolo en el HTML.
 - Crear el usuario en *Authentication → Users* y pasar su `uuid`.
 - Registrar `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
   y `NEXT_PUBLIC_DOCENTE_UID` en Vercel y en `.env.local`.
+
+---
+
+## Batches 8, 9 y 10 — El canal en vivo
+**2026-08-07** · verificados en producción
+
+Los tres se implementaron sin poder probarse: la red del contenedor de
+desarrollo deniega las conexiones a Supabase. Se verificaron en el despliegue
+de Vercel, con el docente en `/profe/sesion/sesion-1` y un alumno en incógnito.
+
+**Funciona:** el docente entra, activa el dictado, y el alumno lo sigue solo.
+Con el dictado apagado, el alumno queda libre.
+
+### El fallo que apareció al verlo funcionar
+
+La cabecera del docente decía **"Sin conexión"** mientras el alumno decía
+"Siguiendo la clase" — y el alumno lo seguía sin problema. El canal estaba
+vivo; mentía el indicador.
+
+Es una carrera de las que no se ven leyendo el código: al reejecutarse el
+efecto, el canal anterior emite `CLOSED` mientras se cierra, y ese aviso llega
+**después** del `SUBSCRIBED` del canal nuevo. El estado quedaba en
+"sin-conexión" con todo funcionando.
+
+Arreglado con una bandera `vigente` que descarta los avisos de un canal ya
+limpiado. Se aplica a los seis manejadores, no solo al del estado: una pauta
+o una pregunta de un canal muerto tampoco deben entrar.
+
+### Y un segundo problema, encontrado buscando el primero
+
+El docente publicaba su posición **al montar**, antes de que el canal
+terminara de suscribirse. Enviar por un canal no suscrito falla y en algunos
+casos lo cierra — posible causa concurrente del mismo síntoma.
+
+Ahora la pauta se guarda y se emite en cuanto llega `SUBSCRIBED`. Eso arregla
+además algo que nadie había notado: **quien entraba antes del primer
+movimiento del docente se quedaba sin pauta** y aterrizaba en el primer ítem.
+Con veinte alumnos abriendo la URL a la vez al empezar la clase, eso les habría
+pasado a todos.

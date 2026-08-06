@@ -147,3 +147,12 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Una respuesta por alumno, la última gana: quien cambia de opinión no cuenta
   dos veces.
 - La respuesta correcta sale del servidor solo dentro del revelado.
+
+### Batches 8, 9 y 10 verificados en producción
+- El docente entra, activa el dictado y el alumno lo sigue. Con el dictado
+  apagado, el alumno queda libre.
+- Corregido: la cabecera del docente decía "Sin conexión" con el canal vivo. Un
+  canal ya limpiado emitía `CLOSED` después del `SUBSCRIBED` del nuevo.
+- Corregido: la pauta se publicaba antes de que el canal estuviera suscrito.
+  Ahora se encola y se emite al suscribirse, así quien entra antes del primer
+  movimiento del docente ya recibe la posición.
