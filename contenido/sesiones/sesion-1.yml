@@ -1,0 +1,72 @@
+# Provisional: el batch 3 escribe la estructura completa de las ocho horas.
+# Esto existe para que el cargador tenga qué cargar, y ejercita varios tipos
+# del catálogo.
+id: sesion-1
+numero: 1
+titulo: El mundo y la percepción
+subtitulo: Sesión 1
+fecha: 2026-08-08
+horaInicio: "15:00"
+horaFin: "19:00"
+
+unidades:
+  - id: s1-repaso
+    tipo: repaso
+    titulo: Dónde encaja esto, y la flota de 192 modelos
+    minutos: 60
+    objetivos:
+      - Situar el taller dentro del programa
+      - Entender qué es vigilar una flota de modelos desplegados
+    requisitos:
+      - Haber hecho el trabajo previo del laboratorio
+    items:
+      - id: s1-asistencia
+        tipo: asistencia
+        titulo: Tomar asistencia
+        nota: Solo lo ve el docente. El alumno no se entera de este ítem.
+
+      - id: s1-portada
+        tipo: titulo
+        titulo: Un agente que vigila 192 modelos
+        entradilla: Arquitectura cognitiva para monitoreo en producción
+        minutos: 5
+        notas: |
+          Abrir preguntando quién hizo el trabajo previo. Si hay manos abajo,
+          decir que el rescate va en paralelo durante los próximos 15 minutos.
+
+      - id: s1-el-caso
+        tipo: markdown
+        titulo: El caso
+        minutos: 10
+        contenido: |
+          Una cadena con **24 tiendas** y **8 categorías** pronostica su
+          demanda todas las noches. Un modelo por tienda y categoría:
+          **192 modelos en producción**.
+
+          Los modelos funcionan. Hasta que dejan de funcionar.
+
+      - id: s1-sesgo
+        tipo: metrica
+        titulo: El sesgo silencioso
+        valor: "36,567"
+        unidad: unidades de más en almacén
+        contexto: En catorce días, y ninguna alarma sonó.
+        tono: malo
+        minutos: 5
+
+      - id: s1-arriba
+        tipo: terminal
+        titulo: Levantar el entorno
+        comando: make arriba && make seed
+        comandoWindows: .\taller.ps1 arriba; .\taller.ps1 seed
+        salida: "Listo. 192 modelos con 17,472 dias-modelo de telemetria."
+        duracion: 300
+        minutos: 5
+
+      - id: s1-preguntas
+        tipo: pausa-preguntas
+        titulo: Pausa para preguntas
+        minutos: 5
+        disparadores:
+          - ¿Alguien ya vigila modelos en producción en su trabajo?
+          - ¿Cómo se enteran hoy de que un modelo se degradó?

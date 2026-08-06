@@ -18,7 +18,7 @@ Referencias:
 | # | Título | Estado |
 |---|--------|--------|
 | 1 | Esqueleto Next.js y despliegue en Vercel | ✅ Completado |
-| 2 | Modelo de contenido en YAML y cargador | ⬜ Pendiente |
+| 2 | Modelo de contenido en YAML y cargador | ✅ Completado |
 | 3 | Estructura completa del curso | ⬜ Pendiente |
 | 4 | Renderizadores: familia `contenido` | ⬜ Pendiente |
 | 5 | Renderizadores: familia `dictado` | ⬜ Pendiente |
@@ -64,36 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 2 — Modelo de contenido en YAML y cargador
-
-El contenido del curso tiene que poder escribirse a mano, revisarse en un diff
-y validarse antes de proyectarse. Un error de tipeo en el YAML no puede
-descubrirse en vivo delante de veinte personas.
-
-**Alcance**
-- [ ] `src/lib/tipos.ts` con la jerarquía: `Curso`, `Sesion`, `Unidad`, `Item`
-- [ ] Unión discriminada de tipos de ítem según el catálogo de [`CONVENTIONS.md`](CONVENTIONS.md) §8
-- [ ] Cargador que lee `contenido/curso.yml` y `contenido/sesiones/*.yml`
-- [ ] Resolución de referencias a archivo: `archivo: md/el-caso.md` se lee y se
-      incorpora
-- [ ] Validación con mensajes útiles: qué archivo, qué ítem, qué campo falta
-- [ ] `npm run validar-contenido` que falla con código distinto de cero
-- [ ] La validación corre dentro de `npm run build`: un YAML roto no llega a
-      producción
-- [ ] Filtro del servidor que elimina `notas` y `respuesta` de la carga pública
-      (ver [`CONVENTIONS.md`](CONVENTIONS.md) §3)
-
-**Tests esperados**
-- [ ] Un YAML válido carga con la jerarquía esperada
-- [ ] Un ítem sin campo obligatorio falla nombrando archivo, ítem y campo
-- [ ] Identificadores duplicados dentro de una sesión fallan
-- [ ] `notas` y `respuesta` no aparecen en la carga pública
-
-**Fuera de alcance**
-- Renderizar los ítems. Este batch solo carga y valida.
 
 ---
 

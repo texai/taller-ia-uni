@@ -59,3 +59,12 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   16: el script usa `eslint` directo, y la configuración de Next se importa en
   formato plano.
 - Tema oscuro por omisión, claro según el sistema.
+
+### Batch 2 — Modelo de contenido y cargador
+- Los 23 tipos del catálogo como unión discriminada, con una especificación
+  dirigida por datos: agregar un tipo cuesta una línea.
+- Cargador que lee YAML, resuelve referencias a archivos markdown y PlantUML, y
+  acumula todos los problemas en vez de fallar en el primero.
+- Filtro de servidor que quita `notas`, `respuesta` y los ítems de `asistencia`
+  de lo que viaja al alumno, con pruebas que lo comprueban sobre el JSON.
+- `npm run validar-contenido`, dentro de `npm run build`.

@@ -1,0 +1,12 @@
+# El curso. La estructura completa de las ocho horas la define el batch 3;
+# esto es el encabezado.
+id: taller-02
+titulo: Caso aplicado de IA en industria
+subtitulo: Un agente que vigila 192 modelos en producción
+programa: II Programa de Especialización en IA Generativa y MLOps
+institucion: Universidad Nacional de Ingeniería
+docente: Ernesto Anaya
+descripcion: >
+  Una cadena de retail pronostica su demanda todas las noches con 192 modelos.
+  Funcionan, hasta que dejan de funcionar. Vamos a construir el agente que los
+  vigila: percibe, recuerda, razona, se cuestiona a sí mismo, y actúa.

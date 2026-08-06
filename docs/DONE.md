@@ -66,3 +66,77 @@ desplegada y accesible por URL, porque los alumnos entran sin instalar nada.
 - **El despliegue en Vercel lo hace Ernesto**: hay que conectar el proyecto a
   `texai/taller-ia-uni` y registrar las variables de `.env.example`.
 
+---
+
+## Batch 2 — Modelo de contenido en YAML y cargador
+**2026-08-06**
+
+## Batch 2 — Modelo de contenido en YAML y cargador
+
+El contenido del curso tiene que poder escribirse a mano, revisarse en un diff
+y validarse antes de proyectarse. Un error de tipeo en el YAML no puede
+descubrirse en vivo delante de veinte personas.
+
+**Alcance**
+- [ ] `src/lib/tipos.ts` con la jerarquía: `Curso`, `Sesion`, `Unidad`, `Item`
+- [ ] Unión discriminada de tipos de ítem según el catálogo de [`CONVENTIONS.md`](CONVENTIONS.md) §8
+- [ ] Cargador que lee `contenido/curso.yml` y `contenido/sesiones/*.yml`
+- [ ] Resolución de referencias a archivo: `archivo: md/el-caso.md` se lee y se
+      incorpora
+- [ ] Validación con mensajes útiles: qué archivo, qué ítem, qué campo falta
+- [ ] `npm run validar-contenido` que falla con código distinto de cero
+- [ ] La validación corre dentro de `npm run build`: un YAML roto no llega a
+      producción
+- [ ] Filtro del servidor que elimina `notas` y `respuesta` de la carga pública
+      (ver [`CONVENTIONS.md`](CONVENTIONS.md) §3)
+
+**Tests esperados**
+- [ ] Un YAML válido carga con la jerarquía esperada
+- [ ] Un ítem sin campo obligatorio falla nombrando archivo, ítem y campo
+- [ ] Identificadores duplicados dentro de una sesión fallan
+- [ ] `notas` y `respuesta` no aparecen en la carga pública
+
+**Fuera de alcance**
+- Renderizar los ítems. Este batch solo carga y valida.
+
+---
+
+### Cómo quedó
+
+- **`src/lib/tipos.ts`** — los 23 tipos del catálogo como unión discriminada,
+  más `Curso`, `Sesion` y `Unidad`.
+- **`src/lib/especificacion.ts`** — qué campos exige cada tipo, dirigido por
+  datos. Agregar un tipo cuesta una línea acá, una interfaz y un componente.
+  Si validar un tipo nuevo exigiera escribir un validador a mano, el catálogo
+  dejaría de crecer y la apuesta del producto se cae.
+- **`src/lib/contenido.ts`** — carga, valida, resuelve referencias a archivo, y
+  filtra lo privado.
+- **`scripts/validar-contenido.ts`** — corre dentro de `npm run build`.
+
+### Decisiones que se apartaron de lo previsto
+
+- **La raíz del contenido es un parámetro, no una constante de módulo.** La
+  primera versión la fijaba al importar, y las pruebas tuvieron que recurrir a
+  `process.chdir`, que con pruebas en paralelo produce fallos que no se
+  reproducen. `cargarCurso(raiz)` resolvió el problema y quedó mejor diseño.
+- **Los problemas se acumulan y se reportan todos juntos.** Fallar en el
+  primero obliga a arreglar y volver a correr una vez por error.
+- **Un campo no reconocido es un error, no un aviso.** Casi siempre es un typo,
+  y un typo silencioso en el material se descubre proyectado. `destacadu` en
+  vez de `destacado` habría dejado la lámina muda.
+- **Validaciones propias de tres tipos**, que salieron de pensar cómo fallan:
+  - `comando-anotado` comprueba que cada segmento exista en el comando y sea
+    inequívoco. Un segmento que aparece dos veces falla como ambiguo en vez de
+    elegir uno en silencio.
+  - `tabla` comprueba que cada fila tenga tantas celdas como columnas.
+  - `pregunta` con `respuesta` correcta pero sin `opciones` falla: una pregunta
+    abierta no se corrige sola.
+
+### Verificado
+
+- 18 pruebas, todas pasando. Las tres que más importan comprueban que `notas`,
+  `respuesta` y los ítems de `asistencia` **no aparecen en el JSON** que va al
+  alumno — serializando y buscando, no inspeccionando el objeto.
+- `lint`, `typecheck` y `build` limpios.
+- Un YAML roto a mano produce los tres problemas juntos, cada uno con archivo,
+  unidad, posición, identificador y campo.
