@@ -42,3 +42,12 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Las preguntas del docente pueden ser públicas, con tres estados: respondiendo
   —solo el contador, nunca las respuestas—, revelado por clic o al completarse,
   y recuento en vivo (`CONVENTIONS.md` §12).
+
+### Documentación · contenido unidad por unidad
+- Se abren ocho batches de contenido, uno por unidad (15 a 22), separados de
+  los de código. Se hacen después de que la funcionalidad esté en pie y **uno
+  por conversación**: una iteración que sostiene las ocho unidades a la vez
+  escribe ocho unidades mediocres (`CONVENTIONS.md` §13).
+- Cada batch trae su objetivo pedagógico, el material de origen en el
+  repositorio del laboratorio, los tipos de ítem sugeridos y sus criterios de
+  aceptación.

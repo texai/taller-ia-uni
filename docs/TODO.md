@@ -31,6 +31,15 @@ Referencias:
 | 12 | Reloj de sesión y avisos de tiempo | ⬜ Pendiente |
 | 13 | Diagramas de secuencia PlantUML, recorribles | ⬜ Pendiente |
 | 14 | Comandos anotados parte por parte | ⬜ Pendiente |
+| | **Contenido — una unidad por iteración** | |
+| 15 | S1·U1 `repaso` — Dónde encaja esto, y la flota | ⬜ Pendiente |
+| 16 | S1·U2 `reto` — Encontrar el problema a mano | ⬜ Pendiente |
+| 17 | S1·U3 `reto` — La herramienta de percepción | ⬜ Pendiente |
+| 18 | S1·U4 `reto` — El primer agente, sin arquitectura | ⬜ Pendiente |
+| 19 | S2·U1 `repaso` — Qué le faltaba al bucle de ayer | ⬜ Pendiente |
+| 20 | S2·U2 `reto` — La arquitectura cognitiva | ⬜ Pendiente |
+| 21 | S2·U3 `reto` — De la recomendación a la acción | ⬜ Pendiente |
+| 22 | S2·U4 `cierre` — Los errores, y dónde estaban | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
@@ -39,6 +48,12 @@ dictado pero la clase se puede dar sin ellos.
 
 Los batches 13 y 14 dependen de los `pasos` internos que introduce el batch 6
 (ver [`CONVENTIONS.md`](CONVENTIONS.md) §10).
+
+**Los batches 15 a 22 son de contenido, no de código.** Se hacen *después* de
+que la funcionalidad esté en pie, y **uno por conversación** — una iteración
+que sostiene las ocho unidades a la vez escribe ocho unidades mediocres (ver
+[`CONVENTIONS.md`](CONVENTIONS.md) §13). Cada uno toca un solo archivo de
+unidad y no necesita leer el resto del curso.
 
 ### Decisiones pendientes
 
@@ -505,6 +520,316 @@ una razón, y esa razón es justamente lo que hay que enseñar.
 - [ ] Un segmento inexistente falla nombrando el ítem y el texto que no encontró
 - [ ] Un segmento que aparece dos veces en el comando falla como ambiguo, en
       vez de elegir uno en silencio
+
+---
+
+## Batch 15 — Contenido · S1·U1 `repaso` — Dónde encaja esto, y la flota de 192 modelos
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Situar el taller en el programa y hacer que la clase entienda qué es vigilar 192 modelos desplegados, antes de que aparezca ningún agente.
+
+**Duración** 60 minutos → del orden de 20 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- `README.md` del laboratorio — la sección *El caso*
+- `plataforma/config.py`, `datos.py`, `modelo.py` — cómo está hecha la flota
+- El sílabo y los módulos previos del programa
+
+**Tipos de ítem sugeridos**
+- `titulo` para la apertura
+- `transicion` con el mapa del programa: qué módulos ya vieron
+- `diagrama` de componentes de la solución completa: fuentes de datos, ingesta, entrenamiento, job batch, telemetría, y dónde entrará el agente
+- `modelo-datos` con las columnas de la telemetría
+- `terminal` con `make arriba` y `make seed`
+- `demo` de la interfaz en :8501
+- `asistencia` al inicio
+- `pausa-preguntas` al cerrar
+
+**Criterios de aceptación**
+- [ ] Explica qué es un artefacto entrenado y por qué la relación modelo↔contenedor no es 1 a 1
+- [ ] Deja claro que los 192 modelos vienen dados y no se tocan
+- [ ] Incluye el rescate de entornos rotos dentro de la unidad, no como bloque aparte
+- [ ] Define `cobertura`, `MAPE` y `sesgo` antes de usarlos
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 60 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 16 — Contenido · S1·U2 `reto` — Encontrar el problema a mano
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Que sientan en el cuerpo que revisar 192 modelos a mano no escala, y que la métrica que estaban mirando no era la que hablaba de plata.
+
+**Duración** 40 minutos → del orden de 13 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- `retos/README.md` — Reto 1
+- `plataforma/escenario.py` — los cuatro escenarios
+- Las cifras medidas: 13.8%→14.5% de MAPE, 7→14 modelos sobre umbral, +0.7%→+4.7% de sesgo, 36,567 unidades
+
+**Tipos de ítem sugeridos**
+- `comando-anotado` con la llamada a `/v1/metricas`
+- `terminal` con `make romper ESCENARIO=campana_promocional`
+- `tabla` comparando las dos degradaciones
+- `metrica` con las 36,567 unidades
+- `comparacion` entre lo que ve el MAPE y lo que ve el sesgo
+- `pregunta` pública: ¿cuál de las dos alertarías?
+- `pausa-preguntas`
+
+**Criterios de aceptación**
+- [ ] El escenario visible se resuelve rápido; el silencioso no se resuelve
+- [ ] La pregunta del cierre es cuánto tardarías haciendo esto cada mañana para 192 modelos
+- [ ] No se adelanta la solución: acá solo se sufre el problema
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 40 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 17 — Contenido · S1·U3 `reto` — La herramienta de percepción
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Que entiendan que la calidad de un agente se decide antes del LLM: si la percepción miente, no hay arquitectura que lo salve.
+
+**Duración** 60 minutos → del orden de 20 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- `retos/README.md` — Reto 2
+- `agente/herramientas.py` — `_sesgo`, `UMBRALES`, `comparar_periodos`
+- Los máximos medidos de la flota sana por dimensión: categoría +19.6% y 1.05pp, región +15.2% y 2.31pp, tienda +48.4% y 3.54pp
+
+**Tipos de ítem sugeridos**
+- `codigo` con `_sesgo`, resaltando el cociente de totales
+- `comparacion` entre promediar porcentajes y dividir totales, con el caso de panadería a +9.2% contra +0.7%
+- `tabla` de umbrales por dimensión
+- `criterios` con el de aceptación: cero banderas en la flota sana
+- `error-comun` con las tres trampas
+- `terminal` con `make verificar ARGS="--reto 2"`
+
+**Criterios de aceptación**
+- [ ] Las tres trampas quedan explicadas con las cifras medidas, no en abstracto
+- [ ] Se explica por qué el umbral de tienda es más alto que el de categoría
+- [ ] El criterio de aceptación es verificable por el alumno sin preguntar
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 60 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 18 — Contenido · S1·U4 `reto` — El primer agente, sin arquitectura
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Ver fallar a un agente que funciona. Es diagnóstico, no construcción — y es la pregunta que abre la sesión 2.
+
+**Duración** 55 minutos → del orden de 18 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- `retos/README.md` — Reto 3
+- `agente/llm.py` — `obtener_llm` y `bind_tools`
+- Las cuatro patologías documentadas de corridas reales del ReAct pelado
+
+**Tipos de ítem sugeridos**
+- `codigo` con el bucle ReAct completo, que es corto a propósito
+- `demo` corriendo el mismo escenario tres veces
+- `cita-agente` con las salidas divergentes
+- `tabla` con las cuatro patologías
+- `titulo` de cierre: *nada de esto se arregla con un prompt más largo*
+- `transicion` hacia la sesión 2
+
+**Criterios de aceptación**
+- [ ] Queda claro que el agente **funciona**: llama herramientas y encuentra cosas
+- [ ] Las patologías se muestran con salidas reales, no descritas
+- [ ] La unidad cierra con una pregunta abierta, no con una respuesta
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 55 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 19 — Contenido · S2·U1 `repaso` — Qué le faltaba al bucle de ayer
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Recuperar el hilo tras una noche, y convertir las cuatro patologías de ayer en el planteamiento de la arquitectura.
+
+**Duración** 25 minutos → del orden de 8 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- La unidad 4 de la sesión 1
+- `agente/grafo.py` — el diagrama del módulo
+
+**Tipos de ítem sugeridos**
+- `asistencia`
+- `transicion` con el mapa: dónde quedamos
+- `tabla` recordando las cuatro patologías
+- `diagrama` del grafo completo, todavía sin explicar
+- `pregunta` pública: ¿qué le agregarías?
+
+**Criterios de aceptación**
+- [ ] Se puede seguir sin haber estado el sábado
+- [ ] Cada patología se empareja con la capa que la resuelve
+- [ ] No se explica el grafo todavía: solo se presenta
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 25 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 20 — Contenido · S2·U2 `reto` — La arquitectura cognitiva
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+El corazón del taller: cada nodo hace un trabajo y solo uno, y una reflexión que no puede corregir es decorativa.
+
+**Duración** 90 minutos → del orden de 30 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- `retos/README.md` — Reto 4
+- `agente/grafo.py` completo
+- `agente/memoria.py`
+- Las citas reales de reflexión: *estoy dramatizando*, *SÍ hay hallazgo: hay DERIVA*
+
+**Tipos de ítem sugeridos**
+- `diagrama-secuencia` en PlantUML recorrible mensaje a mensaje: percepción, herramientas, diagnóstico, reflexión, revisión
+- `codigo` con `Estado`, `messages_key` y las aristas condicionales
+- `error-comun` con las dos trampas de cableado
+- `cita-agente` con la reflexión acusándose de dramatizar
+- `comparacion` del diagnóstico antes y después de la revisión
+- `criterios` con los cuatro mundos
+- `receso` a mitad
+
+**Criterios de aceptación**
+- [ ] El diagrama de secuencia se recorre paso a paso, no se proyecta entero
+- [ ] Se explica **por qué existe `revision`** con el caso real donde el agente sabía la respuesta y el grafo no lo dejaba decirla
+- [ ] Las dos trampas de cableado quedan anticipadas: son mudas y cuestan una hora
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 90 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 21 — Contenido · S2·U3 `reto` — De la recomendación a la acción
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Lo que separa a un agente de un informe, y por qué el freno importa más que el botón.
+
+**Duración** 60 minutos → del orden de 20 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- `retos/README.md` — Reto 5
+- `agente/accion.py`
+- `plataforma/api.py` — `POST /v1/reentrenar`
+- La corrida real: 24 modelos de panadería en 1.5s, 24 de lácteos en 1.4s
+
+**Tipos de ítem sugeridos**
+- `titulo`: *equivocarse deja de costar una alerta*
+- `codigo` con las dos reglas de la política
+- `demo` con `make actuar` sobre `sesgo_silencioso` y sobre `feed_caido`
+- `comparacion` de los dos resultados
+- `error-comun` con el error de frenar por urgencia en vez de por radio de daño
+- `imagen` del panel de la interfaz
+- `pausa-preguntas`
+
+**Criterios de aceptación**
+- [ ] El freno está en código y se explica por qué no en el prompt
+- [ ] Se cuenta el error propio: la primera versión frenaba por urgencia, y la urgencia es opinión editorial del agente, no una propiedad de seguridad
+- [ ] La trampa del `feed_caido` se demuestra, no se describe
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 60 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
+
+---
+
+## Batch 22 — Contenido · S2·U4 `cierre` — Los errores, y dónde estaban de verdad
+
+**Escribe una sola unidad.** No leas el resto del curso: la estructura
+del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
+
+**Objetivo de la unidad**
+Que se lleven la tesis: cuando un agente se equivoca, la primera sospecha no debería ser el modelo.
+
+**Duración** 35 minutos → del orden de 12 ítems.
+
+**Material de origen** — repositorio `texai/taller-ia-uni-lab`
+- Los nueve errores de diseño del agente, documentados
+- Las trece incidencias del laboratorio
+- Las citas donde el agente diagnosticó errores nuestros antes que nosotros
+
+**Tipos de ítem sugeridos**
+- `tabla` con los nueve errores y dónde vivía cada arreglo
+- `cita-agente` con el agente criticando un umbral mal calibrado
+- `titulo` de cierre con la tesis
+- `enlace` al repositorio del laboratorio
+- `transicion` con el mapa completo de las ocho horas
+- `pausa-preguntas` final
+
+**Criterios de aceptación**
+- [ ] Ninguno de los nueve errores estaba en el modelo de lenguaje
+- [ ] Se nombra que varios los encontró el propio agente
+- [ ] Cierra con qué se llevan y qué pueden hacer con esto en su trabajo
+- [ ] `objetivos` y `requisitos` de la unidad, escritos
+- [ ] Los minutos de los ítems suman los 35 de la unidad
+- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
+- [ ] `npm run validar-contenido` pasa
+
+**Fuera de alcance**
+- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
+- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
 
 ---
 

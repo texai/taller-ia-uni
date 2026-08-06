@@ -308,3 +308,35 @@ el canal ya sabe cuántos alumnos están conectados, así que "respondieron todo
 se calcula solo. Si alguien se desconecta a mitad, el denominador baja con él,
 que es la lectura correcta — no tiene sentido esperar por una pantalla que se
 fue.
+
+## 13 · Una unidad por iteración
+
+El contenido del curso se escribe **una unidad por conversación**, nunca varias
+a la vez.
+
+No es una preferencia de orden: es que la calidad se degrada con el tamaño del
+contexto. Una iteración que tiene que sostener las ocho unidades a la vez
+escribe ocho unidades mediocres; una que solo sostiene la suya escribe una
+buena. El batch de estructura (§3 de `TODO.md`) existe justamente para que cada
+batch de contenido pueda ignorar al resto: la estructura ya dice qué unidad va
+dónde y cuánto dura, así que escribir la de adentro no necesita mirar afuera.
+
+Reglas para un batch de contenido:
+
+- **Toca un solo archivo de unidad.** Si un batch modifica dos unidades, está
+  mal partido.
+- **No lee el resto del curso.** Lee su unidad, la estructura, y el material de
+  origen en `texai/taller-ia-uni-lab`.
+- **Respeta los minutos de la estructura.** Como referencia, entre dos y cuatro
+  minutos por ítem: una unidad de 60 minutos lleva del orden de 20 ítems. Muy
+  por encima significa que hay relleno; muy por debajo, que hay ítems que en
+  realidad son tres.
+- **Los identificadores no se reciclan** (§9), porque una unidad reescrita
+  después de una clase ya dictada rompería el historial de esa clase.
+
+### Sobre las cifras
+
+Este curso tiene números medidos —36,567 unidades, 13.8% a 14.5% de MAPE, los
+umbrales por dimensión— y citas literales de corridas reales del agente. **No
+se inventan ni se redondean para que suenen mejor.** Si un batch necesita una
+cifra que no está en el material de origen, la pide; no la estima.
