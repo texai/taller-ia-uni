@@ -200,3 +200,60 @@ El modo enfocado **no** se deriva de esa imagen. La fuente PlantUML se parsea y
 el recorrido se dibuja aparte, porque el SVG que produce PlantUML no expone sus
 mensajes de forma que se puedan resaltar con confianza. Una sola fuente de
 verdad, dos salidas.
+
+## 11 · El proyecto de Supabase es compartido con `gen`
+
+Esta aplicación no tiene proyecto propio: vive en el mismo que `gen`, que usa
+Postgres y Auth pero no Realtime. Compartirlo está bien —hay un solo usuario en
+ambas— pero tiene dos consecuencias que hay que respetar.
+
+### Todas nuestras tablas llevan el prefijo `taller_`
+
+`taller_estado_clase`, `taller_preguntas`, `taller_respuestas`,
+`taller_docentes`.
+
+Nombres como `preguntas` o `respuestas` son de los que dos aplicaciones
+distintas eligen sin consultarse. Una colisión acá no da un error de
+compilación: da una tabla que ya existía, con otras columnas y otras políticas,
+y el descubrimiento llega tarde.
+
+Un esquema de Postgres aparte sería más limpio, pero obliga a exponerlo en la
+configuración de la API de Supabase. Con el prefijo se consigue lo mismo sin
+tocar configuración.
+
+### Las políticas NO pueden decir `auth.role() = 'authenticated'`
+
+Ese es el error de seguridad que trae compartir proyecto, y es fácil de no ver.
+Auth es común a las dos aplicaciones: cualquiera que se autentique en `gen`
+queda autenticado también acá. Una política que solo pide "estar autenticado"
+le daría a un futuro usuario de `gen` el control de la clase — mover la
+posición, leer las preguntas de los alumnos, ver las respuestas correctas.
+
+Hoy no ocurre porque el usuario es uno solo. Pero es una bomba de relojería:
+explota el día que `gen` sume a alguien, y para entonces nadie va a recordar
+que la política estaba escrita así.
+
+La regla es una lista explícita:
+
+```sql
+create table if not exists taller_docentes (
+  usuario uuid primary key references auth.users (id) on delete cascade,
+  nota    text
+);
+
+-- Y toda politica de docente se escribe contra ella:
+create policy "solo el docente marca el ritmo"
+  on taller_estado_clase for all
+  using (exists (select 1 from taller_docentes where usuario = auth.uid()))
+  with check (exists (select 1 from taller_docentes where usuario = auth.uid()));
+```
+
+`npm run clave-docente` crea al usuario **y lo inscribe en `taller_docentes`**.
+Un usuario que no esté en esa tabla puede iniciar sesión y no puede hacer nada.
+
+### La llave de servicio abre las dos aplicaciones
+
+`SUPABASE_SERVICE_ROLE_KEY` salta todas las políticas de todo el proyecto, así
+que también da acceso a los datos de `gen`. Solo en el servidor y en los
+scripts de mantenimiento. Nunca en el repositorio, nunca en un componente
+cliente.

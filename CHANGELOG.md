@@ -23,3 +23,11 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - Batches 13 y 14 abiertos.
 - `transicion` dibuja además el mapa de la sesión —unidades cerradas, actual y
   siguiente— derivado de la estructura del curso y no declarado en el YAML.
+
+### Documentación · proyecto Supabase compartido
+- El proyecto se comparte con `gen`. Todas las tablas llevan prefijo `taller_`,
+  y las políticas se escriben contra una lista explícita `taller_docentes` en
+  vez de contra `auth.role()`: Auth es común a las dos aplicaciones, así que
+  "estar autenticado" no alcanza como criterio (`CONVENTIONS.md` §11).
+- El reparto de las ocho horas queda fijado en el batch 3, cuadrado contra los
+  cinco retos que ya existen en el laboratorio.

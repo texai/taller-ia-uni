@@ -44,7 +44,7 @@ Los batches 13 y 14 dependen de los `pasos` internos que introduce el batch 6
 
 | Decisión | Bloquea | Detalle |
 |---|---|---|
-| Proyecto Supabase creado | Batches 7, 8 | Hace falta el proyecto, sus llaves (`URL`, `ANON_KEY`, `SERVICE_ROLE_KEY`) y el registro deshabilitado en Authentication → Providers → Email |
+| ~~Proyecto Supabase~~ | ~~Batches 7, 8~~ | ✅ Resuelto: se comparte el proyecto de `gen`. Falta verificar que el registro esté deshabilitado en Authentication → Providers → Email, y habilitar Realtime para las tablas `taller_*` |
 | Dominio de la aplicación | — (ajuste posterior) | Afecta a la URL que se comparte con los alumnos y a los `redirectTo` de Supabase Auth |
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | Retención de preguntas y respuestas | Batch 9, 10 | Si se borran al terminar el curso o quedan como registro. Por ahora quedan |
@@ -124,17 +124,49 @@ completo, para saber si el reparto de tiempos cierra y si falta algún bloque.
 
 **Reparto acordado**
 
-Sesión 1 · sábado 15:00–19:00 · *El mundo y la percepción*
-1. `repaso` — Dónde encaja esto y qué es una flota de modelos en producción
-2. `reto` — Encontrar el problema a mano
-3. `reto` — La herramienta de percepción
-4. `reto` — El primer agente, sin arquitectura
+Sale de cuadrar los cinco retos que ya existen en `texai/taller-ia-uni-lab`
+(`retos/README.md`) contra los 480 minutos disponibles. Los retos suman 310, así
+que quedan 170 para todo lo demás: apertura, repaso, recesos, rescate de
+entornos, pausas de preguntas, asistencia y cierre. Cabe, sin holgura.
 
-Sesión 2 · domingo 09:00–13:00 · *La arquitectura cognitiva*
-1. `repaso` — Qué le faltaba al bucle de ayer
-2. `reto` — La arquitectura cognitiva
-3. `reto` — De la recomendación a la acción
-4. `cierre` — Los errores, y dónde estaban de verdad
+Sesión 1 · sábado 15:00–19:00 · *El mundo y la percepción* — 240 min
+
+| Inicio | Unidad | Tipo | Min |
+|---|---|---|---|
+| 15:00 | Dónde encaja esto, y la flota de 192 modelos | `repaso` | 60 |
+| 16:00 | Encontrar el problema a mano | `reto` | 40 |
+| 16:40 | *Receso* | | 15 |
+| 16:55 | La herramienta de percepción | `reto` | 60 |
+| 17:55 | El primer agente, sin arquitectura | `reto` | 55 |
+| 18:50 | Cierre y qué viene mañana | | 10 |
+
+Sesión 2 · domingo 09:00–13:00 · *La arquitectura cognitiva* — 240 min
+
+| Inicio | Unidad | Tipo | Min |
+|---|---|---|---|
+| 09:00 | Qué le faltaba al bucle de ayer | `repaso` | 25 |
+| 09:25 | La arquitectura cognitiva | `reto` | 90 |
+| 10:55 | *Receso* | | 15 |
+| 11:10 | De la recomendación a la acción | `reto` | 60 |
+| 12:10 | Los errores, y dónde estaban de verdad | `cierre` | 35 |
+| 12:45 | Preguntas y despedida | | 15 |
+
+**Dos decisiones que salieron de hacer las cuentas**
+
+- **El rescate de entornos rotos vive dentro del repaso**, no como bloque
+  aparte. Con su propio bloque se consume los veinte minutos completos aunque
+  solo dos personas lo necesiten; dentro del repaso, quien está bien escucha el
+  contexto mientras quien está roto arregla en paralelo.
+- **El reto 3 baja de 60 a 55 minutos, y puede bajar más.** Es el único reto
+  donde no se construye casi nada: se corre un ReAct pelado tres veces y se
+  observa cómo divaga. Es diagnóstico, no construcción. Si el sábado va
+  retrasado, es el bloque del que robar tiempo sin perder nada.
+
+**Riesgo conocido:** el reto 2 es el que puede reventar el cronograma. Son 60
+minutos escribiendo estadística con niveles mezclados, y es el único donde una
+persona trabada se traba de verdad. Las dos redes ya existen en el laboratorio:
+`make verificar` da un criterio objetivo de cuándo terminaron, y la
+implementación de referencia está en `agente/`.
 
 **Fuera de alcance**
 - El contenido definitivo de cada ítem. Acá se define qué ítem va dónde.
@@ -226,16 +258,20 @@ Todo lo anterior es público. Los controles de dictado no pueden serlo.
 - [ ] `/profe` con formulario de contraseña, fuera de toda navegación
 - [ ] Registro deshabilitado; sin recuperación por correo
 - [ ] Sesión en cookie, con renovación en el middleware
+- [ ] Tabla `taller_docentes` con la lista explícita de quién puede dictar
 - [ ] `npm run clave-docente` que crea o actualiza al docente usando la clave de
-      servicio, y explica cómo dejar la variable en Vercel
+      servicio **y lo inscribe en `taller_docentes`**; un usuario fuera de esa
+      tabla puede iniciar sesión y no puede hacer nada
+- [ ] `supabase/esquema.sql` con las cuatro tablas, sus políticas y las notas
+      de Realtime
 - [ ] Middleware que protege las rutas de docente
 - [ ] `/profe` documentada en el README
 
 **Requisitos externos**
-- Proyecto Supabase con el proveedor de correo activo y **el registro
-  deshabilitado**.
-- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y
-  `SUPABASE_SERVICE_ROLE_KEY` en local y en Vercel.
+- Proyecto Supabase **compartido con `gen`**, con el proveedor de correo activo
+  y **el registro deshabilitado**.
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y
+  `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en Vercel.
 
 **Tests esperados**
 - [ ] Sin sesión, una ruta de docente redirige a `/profe`
@@ -248,7 +284,9 @@ Todo lo anterior es público. Los controles de dictado no pueden serlo.
 El corazón del producto. El alumno debe seguir al docente sin adelantarse.
 
 **Alcance**
-- [ ] Tabla `estado_clase` con `unidad_id`, `item_id`, `paso` y `posicion`, y sus políticas
+- [ ] Tabla `taller_estado_clase` con `unidad_id`, `item_id`, `paso` y
+      `posicion`, y sus políticas escritas contra `taller_docentes` — **no**
+      contra `auth.role()` (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
 - [ ] El docente publica su posición al moverse, **incluido el paso interno**:
       quien llega tarde tiene que aterrizar en el mensaje 4 del diagrama, no al
       principio del diagrama
@@ -262,7 +300,8 @@ El corazón del producto. El alumno debe seguir al docente sin adelantarse.
 - [ ] Interruptor de "clase en vivo": fuera de vivo, el alumno navega libre
 
 **Requisitos externos**
-- Realtime habilitado para `estado_clase` en el proyecto Supabase.
+- Realtime habilitado para `taller_estado_clase`. El proyecto compartido con
+  `gen` no usa Realtime hoy, así que hay que activarlo.
 
 **Tests esperados**
 - [ ] Un alumno que se conecta a mitad de clase cae en la posición correcta
@@ -276,7 +315,7 @@ Preguntar en voz alta cuesta. La mitad del valor de poder preguntar es que
 nadie más te vea preguntarlo.
 
 **Alcance**
-- [ ] Tabla `preguntas` con sus políticas
+- [ ] Tabla `taller_preguntas` con sus políticas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
 - [ ] Botón de preguntar siempre a mano en la vista del alumno
 - [ ] La pregunta queda atada al ítem donde se hizo
 - [ ] Nombre opcional: se puede preguntar sin firmar
@@ -300,7 +339,7 @@ Preguntar a la clase es la forma más barata de saber si alguien se perdió.
 - [ ] Respuesta abierta o de opciones
 - [ ] El alumno siempre puede decir explícitamente que prefiere no responder
 - [ ] El docente ve el recuento en su segunda pantalla, no en el proyector
-- [ ] Tabla `respuestas` con sus políticas
+- [ ] Tabla `taller_respuestas` con sus políticas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11)
 
 **Tests esperados**
 - [ ] `respuesta` (la correcta) nunca llega al cliente del alumno
