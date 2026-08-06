@@ -87,3 +87,11 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - La portada lee el YAML real.
 - El cargador valida que `objetivos` y `requisitos` sean texto: YAML convierte
   "Algo: otra cosa" en un mapa, y el síntoma aparecía como un error de React.
+
+### Batch 5 — Renderizadores de dictado
+- Receso con cuenta regresiva y hora de regreso, pausa de preguntas con
+  disparadores, asistencia solo para el docente, y la pregunta con su botón de
+  omitir.
+- `src/lib/reloj.ts` con la aritmética de hora y siete pruebas: cruce de hora,
+  vuelta a medianoche, y `null` antes que inventar una hora.
+- El catálogo completo se renderiza: cero tipos sin componente.

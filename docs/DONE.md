@@ -340,3 +340,74 @@ que era un maniquí del batch 1.
 - Los 8 avisos de "sin renderizador" son exactamente los ítems de la familia
   `dictado`, que llegan con el batch 5.
 - 18 pruebas, `lint`, `typecheck` y `build` limpios.
+
+---
+
+## Batch 5 — Renderizadores: familia `dictado`
+**2026-08-06**
+
+## Batch 5 — Renderizadores: familia `dictado`
+
+Los ítems que marcan el ritmo necesitan un tratamiento distinto: interrumpen,
+no informan.
+
+**Alcance**
+- [ ] `receso` a pantalla completa, con cuenta regresiva y la hora de regreso
+      calculada
+- [ ] `pausa-preguntas` que muestra que es el momento y lista los disparadores
+- [ ] `asistencia` visible **solo** para el docente: el alumno ve el ítem
+      siguiente sin enterarse
+- [ ] `pregunta` renderizado para alumno: la pregunta, el campo o las opciones,
+      y el botón de omitir
+- [ ] Estos ítems se distinguen visualmente de los de contenido a primera vista
+
+**Tests esperados**
+- [ ] Un ítem `asistencia` no aparece en la carga del alumno
+- [ ] `receso` calcula bien la hora de regreso
+
+---
+
+### Cómo quedó
+
+Los cuatro tipos de la familia comparten un envoltorio, `Interrupcion`, que
+ocupa la pantalla y lleva su propio color. **Interrumpen; no informan** — un
+receso que se parece a una lámina más es un receso que la mitad de la clase no
+toma.
+
+- **`receso`** — cuenta regresiva y la hora de regreso calculada.
+- **`pausa-preguntas`** — pone en pantalla que es el momento, y lista los
+  disparadores para cuando nadie dice nada.
+- **`asistencia`** — el alumno no llega nunca a este componente: el servidor
+  quita el ítem en `cursoParaAlumno`. Solo se dibuja en las vistas del docente.
+- **`pregunta`** — la pregunta, las opciones o el campo abierto, y el botón de
+  omitir. Enviar la respuesta y contar quién respondió es el batch 10; hasta
+  entonces la respuesta se queda en esa pantalla, y el ítem lo dice.
+
+### La aritmética de reloj vive aparte, y con pruebas
+
+`src/lib/reloj.ts` es lo único de esta familia que puede equivocarse en
+silencio. Un receso que anuncia mal la hora de regreso divide la clase en dos
+grupos que vuelven en momentos distintos, y nadie nota que el error estaba en
+un `+ minutos`.
+
+Siete pruebas cubren el cruce de hora, la vuelta a medianoche —para que nunca
+salga `24:10` ni `-1:50`— y que una hora ilegible devuelva `null` **en vez de
+inventar una**: anunciar una hora equivocada es peor que no anunciar ninguna.
+
+### Un tropiezo con React
+
+La primera versión ponía el estado inicial del reloj en el cuerpo del efecto, y
+el linter de React lo rechaza: encadena renders. Reescrito con un solo estado
+que escribe únicamente el intervalo, y el primer tic en el siguiente turno del
+bucle de eventos. Durante ese instante no se pinta reloj, que es preferible a
+pintar la hora del servidor y corregirla al hidratar — la hora del servidor no
+significa nada acá.
+
+### Verificado
+
+- La sesión 1 renderiza **los 23 tipos del catálogo**: cero avisos de "sin
+  renderizador", donde antes había ocho.
+- El receso calcula bien: a las 23:05 anuncia regreso a las 23:20, con la
+  cuenta arrancando en 15:00.
+- 25 pruebas, `lint`, `typecheck` y `build` limpios, sin errores de JavaScript
+  en navegador.

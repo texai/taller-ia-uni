@@ -21,7 +21,7 @@ Referencias:
 | 2 | Modelo de contenido en YAML y cargador | ✅ Completado |
 | 3 | Estructura completa del curso | ✅ Completado |
 | 4 | Renderizadores: familia `contenido` | ✅ Completado |
-| 5 | Renderizadores: familia `dictado` | ⬜ Pendiente |
+| 5 | Renderizadores: familia `dictado` | ✅ Completado |
 | 6 | Vista de dictado y navegación por teclado | ⬜ Pendiente |
 | 7 | Autenticación del docente en `/profe` | ⬜ Pendiente |
 | 8 | Sincronía en vivo: el docente marca el ritmo | ⬜ Pendiente |
@@ -64,27 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 5 — Renderizadores: familia `dictado`
-
-Los ítems que marcan el ritmo necesitan un tratamiento distinto: interrumpen,
-no informan.
-
-**Alcance**
-- [ ] `receso` a pantalla completa, con cuenta regresiva y la hora de regreso
-      calculada
-- [ ] `pausa-preguntas` que muestra que es el momento y lista los disparadores
-- [ ] `asistencia` visible **solo** para el docente: el alumno ve el ítem
-      siguiente sin enterarse
-- [ ] `pregunta` renderizado para alumno: la pregunta, el campo o las opciones,
-      y el botón de omitir
-- [ ] Estos ítems se distinguen visualmente de los de contenido a primera vista
-
-**Tests esperados**
-- [ ] Un ítem `asistencia` no aparece en la carga del alumno
-- [ ] `receso` calcula bien la hora de regreso
 
 ---
 

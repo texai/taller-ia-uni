@@ -15,6 +15,7 @@ import { BloqueMarkdown, CitaAgente, Metrica, Titulo, Transicion } from "./texto
 import { Codigo, ComandoAnotado, Demo, Terminal } from "./codigo";
 import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos";
 import { Archivo, Diagrama, DiagramaSecuencia, Enlace, Imagen } from "./medios";
+import { Asistencia, PausaPreguntas, Pregunta, Receso } from "./dictado";
 
 export interface PropsItem {
   item: Item;
@@ -32,8 +33,8 @@ function SinRenderizador({ item }: { item: Item }) {
       >
         <p style={{ color: "var(--color-aviso)" }}>
           Todavía no hay renderizador para el tipo{" "}
-          <code className="font-mono">{item.tipo}</code>
-          {FAMILIA[item.tipo] === "dictado" && " — llega con el batch 5"}.
+          <code className="font-mono">{item.tipo}</code> (familia{" "}
+          {FAMILIA[item.tipo]}).
         </p>
       </div>
     </Marco>
@@ -81,8 +82,20 @@ export function RenderizarItem({ item, sesion, unidadActual }: PropsItem) {
       return <Demo item={item} />;
     case "transicion":
       return <Transicion item={item} sesion={sesion} unidadActual={unidadActual} />;
+
+    // Familia `dictado`: interrumpen, no informan.
+    case "receso":
+      return <Receso item={item} />;
+    case "pausa-preguntas":
+      return <PausaPreguntas item={item} />;
+    case "pregunta":
+      return <Pregunta item={item} />;
+    case "asistencia":
+      // El alumno nunca llega acá: `cursoParaAlumno` lo quita en el servidor.
+      // Este componente solo se dibuja en las vistas del docente.
+      return <Asistencia item={item} />;
+
     default:
-      // Los de la familia `dictado` caen acá hasta el batch 5.
       return <SinRenderizador item={item} />;
   }
 }

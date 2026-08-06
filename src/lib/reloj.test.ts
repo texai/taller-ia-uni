@@ -1,0 +1,54 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+
+import {
+  aHora,
+  aMinutos,
+  ahora,
+  comoCuentaRegresiva,
+  horaDeRegreso,
+} from "./reloj";
+
+test("horaDeRegreso suma los minutos del receso", () => {
+  assert.equal(horaDeRegreso("16:40", 15), "16:55");
+  assert.equal(horaDeRegreso("10:55", 15), "11:10");
+  assert.equal(horaDeRegreso("09:00", 90), "10:30");
+});
+
+test("horaDeRegreso cruza la hora en punto", () => {
+  assert.equal(horaDeRegreso("16:55", 15), "17:10");
+  assert.equal(horaDeRegreso("18:50", 20), "19:10");
+});
+
+test("horaDeRegreso da la vuelta a medianoche sin negativos", () => {
+  // No pasa en este taller, pero un formato que produce "24:10" o "-1:50" es
+  // el tipo de cosa que se descubre proyectada.
+  assert.equal(horaDeRegreso("23:50", 30), "00:20");
+});
+
+test("horaDeRegreso devuelve null antes que inventar una hora", () => {
+  // Anunciar una hora equivocada divide la clase en dos grupos que vuelven en
+  // momentos distintos. Mejor no anunciar ninguna.
+  assert.equal(horaDeRegreso("no es una hora", 15), null);
+  assert.equal(horaDeRegreso("25:00", 15), null);
+  assert.equal(horaDeRegreso("16:70", 15), null);
+  assert.equal(horaDeRegreso("16:40", NaN), null);
+});
+
+test("aMinutos y aHora son inversas", () => {
+  for (const h of ["00:00", "09:05", "15:00", "23:59"]) {
+    assert.equal(aHora(aMinutos(h)!), h);
+  }
+});
+
+test("comoCuentaRegresiva rellena los segundos", () => {
+  assert.equal(comoCuentaRegresiva(900), "15:00");
+  assert.equal(comoCuentaRegresiva(65), "1:05");
+  assert.equal(comoCuentaRegresiva(9), "0:09");
+  assert.equal(comoCuentaRegresiva(-5), "0:00");
+});
+
+test("ahora formatea con dos dígitos", () => {
+  assert.equal(ahora(new Date(2026, 7, 8, 9, 5)), "09:05");
+  assert.equal(ahora(new Date(2026, 7, 8, 15, 0)), "15:00");
+});
