@@ -127,3 +127,13 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   envía, y eso no se puede cumplir sin un store en el servidor.
 - **No verificado contra Supabase**: la red del contenedor de desarrollo
   deniega las conexiones salientes al proyecto.
+
+### Batch 9 — Preguntas del alumno (implementado, sin verificar)
+- Canal aparte y asimétrico: los alumnos escriben y no leen. Lo corta la
+  política sobre `realtime.messages`, no el cliente.
+- Botón discreto en la vista del alumno, con nombre opcional recordado entre
+  preguntas; la pregunta viaja con el ítem y el paso donde se hizo.
+- En el docente, contador en la cabecera y panel cerrado por omisión: esa
+  pantalla se proyecta.
+- `supabase/politicas.sql` cierra además el canal de la pauta: publicar solo el
+  docente, leer cualquiera.

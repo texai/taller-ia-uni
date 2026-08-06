@@ -52,3 +52,37 @@ export const EVENTO_PAUTA = "pauta";
 export function esMasNueva(a: Pauta, b: Pauta | null): boolean {
   return !b || a.momento > b.momento;
 }
+
+/**
+ * Una pregunta de un alumno.
+ *
+ * Viaja por un canal aparte, `…:preguntas`, donde los alumnos escriben pero no
+ * leen. La asimetría es el punto: la mitad del valor de poder preguntar es que
+ * nadie más te vea preguntarlo, y si el canal fuera de lectura común cualquiera
+ * con las herramientas de desarrollador abiertas sabría quién preguntó qué.
+ *
+ * La restricción la aplica la política sobre `realtime.messages`
+ * (`supabase/politicas.sql`), no el cliente.
+ */
+export interface PreguntaAlumno {
+  id: string;
+  texto: string;
+  /** Cómo quiere firmar. Puede quedar vacío: preguntar sin firmar es la idea. */
+  autor?: string;
+  /** Dónde estaba la clase. Sin esto, una pregunta llega descontextualizada
+   *  diez minutos después y ya nadie sabe de qué hablaba. */
+  itemId: string;
+  itemTitulo?: string;
+  paso: number;
+  momento: number;
+}
+
+export const EVENTO_PREGUNTA = "pregunta-alumno";
+
+/** El tema donde viajan las preguntas. */
+export function canalDePreguntas(curso: string, sesion: string): string {
+  return `${nombreCanal(curso, sesion)}:preguntas`;
+}
+
+/** Límite de longitud. Una pregunta no es un ensayo. */
+export const MAX_PREGUNTA = 500;

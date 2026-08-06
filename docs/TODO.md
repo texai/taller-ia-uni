@@ -25,7 +25,7 @@ Referencias:
 | 6 | Vista de dictado y navegación por teclado | ✅ Completado |
 | 7 | Autenticación del docente en `/profe` | ✅ Completado |
 | 8 | Sincronía en vivo: el docente marca el ritmo | 🔵 En curso |
-| 9 | Preguntas del alumno hacia el docente | ⬜ Pendiente |
+| 9 | Preguntas del alumno hacia el docente | 🔵 En curso |
 | 10 | Preguntas del docente hacia los alumnos | ⬜ Pendiente |
 | 11 | Segunda pantalla del docente | ⬜ Pendiente |
 | 12 | Reloj de sesión y avisos de tiempo | ⬜ Pendiente |
@@ -101,29 +101,41 @@ habilitado en el proyecto: `gen` no lo usa.
 
 ## Batch 9 — Preguntas del alumno hacia el docente
 
-Preguntar en voz alta cuesta. La mitad del valor de poder preguntar es que
-nadie más te vea preguntarlo.
+**Implementado, sin verificar en vivo**, por la misma razón que el batch 8: la
+red del contenedor de desarrollo deniega las conexiones a Supabase.
 
-**Alcance**
-- [ ] Subcanal de Broadcast para preguntas, dentro del canal de la sesión
-- [ ] Botón de preguntar siempre a mano en la vista del alumno
-- [ ] La pregunta viaja con el ítem y el paso donde se hizo: sin eso llega
-      descontextualizada diez minutos después y ya nadie sabe de qué hablaba
-- [ ] Nombre opcional: se puede preguntar sin firmar
-- [ ] Las preguntas llegan **solo al cliente del docente**, y ahí se acumulan
-      en memoria mientras dure la sesión
-- [ ] Las preguntas **no** aparecen en la pantalla principal del docente
-- [ ] Contador discreto de preguntas sin atender
-- [ ] Marcar una pregunta como atendida
+### Cómo quedó
 
-**Fuera de alcance**
-- Persistencia. Si el docente recarga la página, las preguntas se pierden: son
-  de la clase, no del curso. Si alguna vez hace falta conservarlas, se exportan
-  a un archivo desde la segunda pantalla antes de cerrar.
+- Canal **aparte**, `taller:{curso}:{sesion}:preguntas`, y asimétrico: los
+  alumnos escriben y no leen. La mitad del valor de poder preguntar es que
+  nadie más te vea preguntarlo; si el canal fuera de lectura común, cualquiera
+  con las herramientas de desarrollador abiertas vería quién preguntó qué.
+  Lo corta la política, no el cliente (`supabase/politicas.sql`).
+- Botón discreto, siempre a mano en la vista del alumno.
+- La pregunta viaja con el ítem y el paso donde se hizo.
+- Nombre **opcional**, recordado entre preguntas. Se recupera al abrir el
+  formulario y no al montar: además de evitar un efecto que escribe estado, si
+  el alumno lo cambia en otra pestaña verá el actual. La pregunta a medio
+  escribir NO se guarda — nadie quiere que le reaparezca media frase de hace
+  media hora.
+- En el docente, un contador discreto en la cabecera y un panel **cerrado por
+  omisión**. Esa pantalla se proyecta: que una pregunta aparezca sola delante
+  de toda la clase es exactamente lo que hace que la siguiente no se escriba.
+- "Atendida" la quita de la lista.
 
-**Tests esperados**
-- [ ] Una pregunta publicada llega al cliente del docente con su contexto
-- [ ] Un alumno no recibe las preguntas de otros alumnos
+### Qué falta comprobar
+
+1. Con el docente en `/profe/sesion/sesion-1` y un alumno en la ruta pública,
+   enviar una pregunta: debe aparecer el contador en la cabecera del docente.
+2. Abrir el panel: la pregunta con su autor y el ítem donde se hizo.
+3. Desde un **segundo alumno**, comprobar que NO recibe la pregunta del
+   primero. Esto solo se cumple con `supabase/politicas.sql` aplicado.
+4. "Atendida" la quita.
+
+### Fuera de alcance, y dicho
+
+- Persistencia. Si el docente recarga, las preguntas se pierden: son de la
+  clase, no del curso.
 
 ---
 

@@ -5,11 +5,15 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 
 import { clienteNavegador, HAY_SUPABASE } from "@/lib/supabase";
 import {
+  canalDePreguntas,
   EVENTO_PAUTA,
+  EVENTO_PREGUNTA,
   esMasNueva,
+  MAX_PREGUNTA,
   nombreCanal,
   type EstadoCanal,
   type Pauta,
+  type PreguntaAlumno,
 } from "@/lib/vivo";
 
 /**
@@ -33,7 +37,9 @@ export function useSincronia({
   const [estado, setEstado] = useState<EstadoCanal>(
     HAY_SUPABASE ? "conectando" : "sin-configurar",
   );
+  const [preguntas, setPreguntas] = useState<PreguntaAlumno[]>([]);
   const canal = useRef<RealtimeChannel | null>(null);
+  const canalPreguntas = useRef<RealtimeChannel | null>(null);
   const ultima = useRef<Pauta | null>(null);
 
   useEffect(() => {
@@ -74,9 +80,29 @@ export function useSincronia({
     });
 
     canal.current = c;
+
+    // Canal de preguntas, aparte. El docente se suscribe para recibirlas; el
+    // alumno solo lo abre para poder publicar. Que un alumno intente leerlo no
+    // depende de que el cliente se porte bien: lo corta la política.
+    const cp = supabase.channel(canalDePreguntas(curso, sesion));
+    if (esDocente) {
+      cp.on("broadcast", { event: EVENTO_PREGUNTA }, ({ payload }) => {
+        const pregunta = payload as PreguntaAlumno;
+        setPreguntas((previas) =>
+          previas.some((p) => p.id === pregunta.id)
+            ? previas
+            : [...previas, pregunta],
+        );
+      });
+    }
+    cp.subscribe();
+    canalPreguntas.current = cp;
+
     return () => {
       canal.current = null;
+      canalPreguntas.current = null;
       supabase.removeChannel(c);
+      supabase.removeChannel(cp);
     };
   }, [curso, sesion, esDocente]);
 
@@ -98,5 +124,35 @@ export function useSincronia({
     [esDocente],
   );
 
-  return { pauta, estado, publicar };
+  /** El alumno manda una pregunta. Devuelve si salió. */
+  const preguntar = useCallback(
+    (texto: string, autor: string, itemId: string, itemTitulo: string, paso: number) => {
+      const cp = canalPreguntas.current;
+      const limpio = texto.trim().slice(0, MAX_PREGUNTA);
+      if (!cp || !limpio) return false;
+
+      void cp.send({
+        type: "broadcast",
+        event: EVENTO_PREGUNTA,
+        payload: {
+          id: crypto.randomUUID(),
+          texto: limpio,
+          autor: autor.trim() || undefined,
+          itemId,
+          itemTitulo,
+          paso,
+          momento: Date.now(),
+        } satisfies PreguntaAlumno,
+      });
+      return true;
+    },
+    [],
+  );
+
+  /** El docente marca una pregunta como atendida. */
+  const atender = useCallback((id: string) => {
+    setPreguntas((previas) => previas.filter((p) => p.id !== id));
+  }, []);
+
+  return { pauta, estado, publicar, preguntas, preguntar, atender };
 }

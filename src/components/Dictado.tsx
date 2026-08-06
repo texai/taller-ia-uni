@@ -26,6 +26,7 @@ import {
 } from "@/lib/navegacion";
 import { RenderizarItem } from "@/components/items";
 import { useSincronia } from "@/components/useSincronia";
+import { PanelPreguntas, Preguntar } from "@/components/Preguntar";
 import { comparar } from "@/lib/navegacion";
 
 /**
@@ -74,7 +75,7 @@ export function Dictado({
   const [enVivo, setEnVivo] = useState(true);
   const principal = useRef<HTMLDivElement>(null);
 
-  const { pauta, estado, publicar } = useSincronia({
+  const { pauta, estado, publicar, preguntas, preguntar, atender } = useSincronia({
     curso,
     sesion: sesion.id,
     esDocente: modoDocente,
@@ -350,6 +351,10 @@ export function Dictado({
           </span>
 
           {modoDocente && (
+            <PanelPreguntas preguntas={preguntas} onAtender={atender} />
+          )}
+
+          {modoDocente && (
             <button
               type="button"
               onClick={() => setEnVivo((v) => !v)}
@@ -477,6 +482,18 @@ export function Dictado({
           </p>
         </footer>
       </div>
+
+      {/* El alumno puede preguntar desde cualquier ítem. Sin sincronía no hay
+          a quién preguntarle, así que el botón no aparece. */}
+      {!modoDocente && (
+        <Preguntar
+          disponible={estado === "en-vivo"}
+          itemTitulo={item?.titulo}
+          onEnviar={(texto, autor) =>
+            item ? preguntar(texto, autor, item.id, item.titulo ?? "", pos.paso) : false
+          }
+        />
+      )}
     </div>
   );
 }
