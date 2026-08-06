@@ -23,8 +23,17 @@ export function Diagrama({ item }: { item: ItemDiagrama }) {
  * —uno a la vez, con el resto atenuado— y la imagen generada en construcción
  * los agrega el batch 13, apoyándose en los pasos internos del batch 6.
  */
-export function DiagramaSecuencia({ item }: { item: ItemDiagramaSecuencia }) {
+export function DiagramaSecuencia({
+  item,
+  paso = 0,
+}: {
+  item: ItemDiagramaSecuencia;
+  paso?: number;
+}) {
+  // paso 0 es el diagrama completo; a partir de 1, un mensaje enfocado. El
+  // recorrido dibujado lo agrega el batch 13.
   const mensajes = item.mensajes ?? [];
+  const enfocado = paso > 0 ? paso - 1 : null;
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
@@ -38,7 +47,11 @@ export function DiagramaSecuencia({ item }: { item: ItemDiagramaSecuencia }) {
       {mensajes.length > 0 && (
         <ol className="mt-6 space-y-3">
           {mensajes.map((m, i) => (
-            <li key={i} className="flex gap-4">
+            <li
+              key={i}
+              className="flex gap-4 transition-opacity"
+              style={{ opacity: enfocado === null || enfocado === i ? 1 : 0.3 }}
+            >
               <span
                 className="shrink-0 tabular-nums font-mono text-sm"
                 style={{ color: "var(--tinta-suave)" }}

@@ -144,7 +144,17 @@ export async function Terminal({ item }: { item: ItemTerminal }) {
  * enfocado —una parte a la vez, con el resto atenuado— lo agrega el batch 14
  * apoyándose en los pasos internos del batch 6.
  */
-export function ComandoAnotado({ item }: { item: ItemComandoAnotado }) {
+export function ComandoAnotado({
+  item,
+  paso = 0,
+}: {
+  item: ItemComandoAnotado;
+  paso?: number;
+}) {
+  // paso 0 es el comando entero; a partir de 1, un segmento enfocado. El
+  // recorrido completo con la llave señalando la parte es el batch 14.
+  const enfocado = paso > 0 ? item.segmentos[paso - 1] : null;
+
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
       <div
@@ -160,8 +170,11 @@ export function ComandoAnotado({ item }: { item: ItemComandoAnotado }) {
         {item.segmentos.map((seg) => (
           <div
             key={seg.texto}
-            className="border-l-2 pl-5"
-            style={{ borderColor: "var(--color-acento)" }}
+            className="border-l-2 pl-5 transition-opacity"
+            style={{
+              borderColor: "var(--color-acento)",
+              opacity: !enfocado || enfocado.texto === seg.texto ? 1 : 0.3,
+            }}
           >
             <dt className="font-mono text-base font-semibold">{seg.texto}</dt>
             <dd className="mt-1 text-lg leading-relaxed">{seg.explicacion}</dd>

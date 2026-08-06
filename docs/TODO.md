@@ -22,7 +22,7 @@ Referencias:
 | 3 | Estructura completa del curso | ✅ Completado |
 | 4 | Renderizadores: familia `contenido` | ✅ Completado |
 | 5 | Renderizadores: familia `dictado` | ✅ Completado |
-| 6 | Vista de dictado y navegación por teclado | ⬜ Pendiente |
+| 6 | Vista de dictado y navegación por teclado | ✅ Completado |
 | 7 | Autenticación del docente en `/profe` | ⬜ Pendiente |
 | 8 | Sincronía en vivo: el docente marca el ritmo | ⬜ Pendiente |
 | 9 | Preguntas del alumno hacia el docente | ⬜ Pendiente |
@@ -64,29 +64,6 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-
----
-
-## Batch 6 — Vista de dictado y navegación por teclado
-
-El material existe y se renderiza, pero no hay forma de recorrerlo.
-
-**Alcance**
-- [ ] Ruta de sesión que muestra un ítem a la vez
-- [ ] Flecha derecha e izquierda para avanzar y retroceder
-- [ ] **Pasos internos**: un ítem puede declarar `pasos`, y la flecha avanza
-      dentro del ítem antes de saltar al siguiente (ver
-      [`CONVENTIONS.md`](CONVENTIONS.md) §10). Un ítem sin `pasos` se comporta
-      como siempre
-- [ ] La posición es `(unidad, ítem, paso)` en toda la aplicación, incluida la URL
-- [ ] Barra de progreso con la unidad actual y cuánto falta
-- [ ] Índice lateral con las unidades, plegable
-- [ ] Al abrir una unidad se muestran sus `objetivos` antes del primer ítem
-- [ ] La URL refleja la posición, para poder recargar y compartir
-- [ ] Funciona con teclado, con clic y en pantalla táctil
-
-**Fuera de alcance**
-- Sincronía. Acá cada quien navega por su cuenta.
 
 ---
 

@@ -22,6 +22,12 @@ export interface PropsItem {
   /** Para los ítems que se sitúan dentro de la sesión, como `transicion`. */
   sesion?: Sesion;
   unidadActual?: string;
+  /**
+   * Paso interno, cuando el ítem tiene varios. 0 es el conjunto completo, sin
+   * nada enfocado. Los batches 13 y 14 lo usan para recorrer un diagrama de
+   * secuencia y un comando anotado; el resto de los tipos lo ignora.
+   */
+  paso?: number;
 }
 
 function SinRenderizador({ item }: { item: Item }) {
@@ -42,7 +48,7 @@ function SinRenderizador({ item }: { item: Item }) {
 }
 
 /** Dibuja un ítem, sea del tipo que sea. */
-export function RenderizarItem({ item, sesion, unidadActual }: PropsItem) {
+export function RenderizarItem({ item, sesion, unidadActual, paso = 0 }: PropsItem) {
   switch (item.tipo) {
     case "titulo":
       return <Titulo item={item} />;
@@ -55,9 +61,9 @@ export function RenderizarItem({ item, sesion, unidadActual }: PropsItem) {
     case "diagrama":
       return <Diagrama item={item} />;
     case "diagrama-secuencia":
-      return <DiagramaSecuencia item={item} />;
+      return <DiagramaSecuencia item={item} paso={paso} />;
     case "comando-anotado":
-      return <ComandoAnotado item={item} />;
+      return <ComandoAnotado item={item} paso={paso} />;
     case "modelo-datos":
       return <ModeloDatos item={item} />;
     case "imagen":

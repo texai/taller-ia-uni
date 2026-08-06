@@ -1,0 +1,146 @@
+/**
+ * Moverse por una sesión.
+ *
+ * Vive aparte de los componentes porque es la lógica que el docente maneja a
+ * ciegas: en clase se pulsa la flecha mirando a la audiencia, no a la pantalla.
+ * Una posición que se salta un ítem o que se atasca en el último paso de un
+ * diagrama es de las cosas que solo se descubren dictando.
+ *
+ * La posición es `(unidad, ítem, paso)` — el paso interno importa tanto como
+ * los otros dos, porque quien llega tarde tiene que aterrizar en el mensaje 4
+ * del diagrama y no al principio del diagrama. Ver `CONVENTIONS.md` §10.
+ */
+
+import type { Item, Sesion, Unidad } from "./tipos";
+
+export interface Posicion {
+  unidad: number;
+  item: number;
+  paso: number;
+}
+
+export const INICIO: Posicion = { unidad: 0, item: 0, paso: 0 };
+
+/**
+ * Cuántos pasos internos tiene un ítem. Siempre al menos 1.
+ *
+ * El primer paso muestra el conjunto completo, sin nada enfocado: primero el
+ * mapa, después el recorrido. De ahí el `+ 1`.
+ */
+export function pasosDe(item: Item): number {
+  if (item.tipo === "diagrama-secuencia" && item.mensajes?.length) {
+    return item.mensajes.length + 1;
+  }
+  if (item.tipo === "comando-anotado" && item.segmentos.length) {
+    return item.segmentos.length + 1;
+  }
+  return 1;
+}
+
+/** El ítem que hay en una posición, o `null` si la posición no existe. */
+export function itemEn(sesion: Sesion, pos: Posicion): Item | null {
+  return sesion.unidades[pos.unidad]?.items[pos.item] ?? null;
+}
+
+export function unidadEn(sesion: Sesion, pos: Posicion): Unidad | null {
+  return sesion.unidades[pos.unidad] ?? null;
+}
+
+/** Acota una posición a algo que existe de verdad. */
+export function acotar(sesion: Sesion, pos: Posicion): Posicion {
+  const unidad = Math.max(0, Math.min(pos.unidad, sesion.unidades.length - 1));
+  const items = sesion.unidades[unidad]?.items ?? [];
+  const item = Math.max(0, Math.min(pos.item, items.length - 1));
+  const actual = items[item];
+  const pasos = actual ? pasosDe(actual) : 1;
+  return { unidad, item, paso: Math.max(0, Math.min(pos.paso, pasos - 1)) };
+}
+
+/**
+ * Avanza uno.
+ *
+ * Dentro del ítem mientras le queden pasos; después al ítem siguiente; después
+ * a la unidad siguiente. Al final de la sesión se queda donde está: pulsar de
+ * más no debe tirar al docente a una pantalla en blanco.
+ */
+export function avanzar(sesion: Sesion, pos: Posicion): Posicion {
+  const item = itemEn(sesion, pos);
+  if (item && pos.paso < pasosDe(item) - 1) {
+    return { ...pos, paso: pos.paso + 1 };
+  }
+
+  const items = sesion.unidades[pos.unidad]?.items ?? [];
+  if (pos.item < items.length - 1) {
+    return { unidad: pos.unidad, item: pos.item + 1, paso: 0 };
+  }
+
+  if (pos.unidad < sesion.unidades.length - 1) {
+    return { unidad: pos.unidad + 1, item: 0, paso: 0 };
+  }
+
+  return pos;
+}
+
+/**
+ * Retrocede uno.
+ *
+ * Al volver a un ítem con pasos, cae en su ÚLTIMO paso, no en el primero:
+ * retroceder es deshacer, y quien retrocede quiere ver lo que acaba de pasar.
+ */
+export function retroceder(sesion: Sesion, pos: Posicion): Posicion {
+  if (pos.paso > 0) return { ...pos, paso: pos.paso - 1 };
+
+  if (pos.item > 0) {
+    const previo = sesion.unidades[pos.unidad]?.items[pos.item - 1];
+    return {
+      unidad: pos.unidad,
+      item: pos.item - 1,
+      paso: previo ? pasosDe(previo) - 1 : 0,
+    };
+  }
+
+  if (pos.unidad > 0) {
+    const unidad = sesion.unidades[pos.unidad - 1];
+    const items = unidad?.items ?? [];
+    const ultimo = items[items.length - 1];
+    return {
+      unidad: pos.unidad - 1,
+      item: Math.max(0, items.length - 1),
+      paso: ultimo ? pasosDe(ultimo) - 1 : 0,
+    };
+  }
+
+  return pos;
+}
+
+/** Índice absoluto del ítem dentro de la sesión, ignorando los pasos. */
+export function indiceDeItem(sesion: Sesion, pos: Posicion): number {
+  let n = 0;
+  for (let u = 0; u < pos.unidad; u++) {
+    n += sesion.unidades[u]?.items.length ?? 0;
+  }
+  return n + pos.item;
+}
+
+/** Total de ítems de la sesión. */
+export function totalItems(sesion: Sesion): number {
+  return sesion.unidades.reduce((t, u) => t + u.items.length, 0);
+}
+
+/** Dónde está un ítem, por su identificador. `null` si no está. */
+export function buscarPorId(sesion: Sesion, id: string): Posicion | null {
+  for (let u = 0; u < sesion.unidades.length; u++) {
+    const items = sesion.unidades[u]?.items ?? [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i]?.id === id) return { unidad: u, item: i, paso: 0 };
+    }
+  }
+  return null;
+}
+
+/** Compara dos posiciones. Negativo si `a` va antes que `b`. */
+export function comparar(a: Posicion, b: Posicion): number {
+  if (a.unidad !== b.unidad) return a.unidad - b.unidad;
+  if (a.item !== b.item) return a.item - b.item;
+  return a.paso - b.paso;
+}

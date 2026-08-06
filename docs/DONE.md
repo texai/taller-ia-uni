@@ -411,3 +411,79 @@ significa nada acá.
   cuenta arrancando en 15:00.
 - 25 pruebas, `lint`, `typecheck` y `build` limpios, sin errores de JavaScript
   en navegador.
+
+---
+
+## Batch 6 — Vista de dictado y navegación por teclado
+**2026-08-06**
+
+## Batch 6 — Vista de dictado y navegación por teclado
+
+El material existe y se renderiza, pero no hay forma de recorrerlo.
+
+**Alcance**
+- [ ] Ruta de sesión que muestra un ítem a la vez
+- [ ] Flecha derecha e izquierda para avanzar y retroceder
+- [ ] **Pasos internos**: un ítem puede declarar `pasos`, y la flecha avanza
+      dentro del ítem antes de saltar al siguiente (ver
+      [`CONVENTIONS.md`](CONVENTIONS.md) §10). Un ítem sin `pasos` se comporta
+      como siempre
+- [ ] La posición es `(unidad, ítem, paso)` en toda la aplicación, incluida la URL
+- [ ] Barra de progreso con la unidad actual y cuánto falta
+- [ ] Índice lateral con las unidades, plegable
+- [ ] Al abrir una unidad se muestran sus `objetivos` antes del primer ítem
+- [ ] La URL refleja la posición, para poder recargar y compartir
+- [ ] Funciona con teclado, con clic y en pantalla táctil
+
+**Fuera de alcance**
+- Sincronía. Acá cada quien navega por su cuenta.
+
+---
+
+### Cómo quedó
+
+`/curso/[curso]/sesion/[sesion]` es ahora la vista de dictado: **índice a la
+izquierda, un ítem a la vez a la derecha**. La vista de corrido se mudó a
+`/revision`, que sigue sirviendo para escribir material.
+
+El índice muestra las unidades con su tipo y minutos, y los ítems con su
+duración. Los de la familia `dictado` llevan un rombo ámbar en vez de un punto:
+de un vistazo se ve dónde caen los recesos y las pausas.
+
+### Decisiones
+
+- **La URL es la fuente de verdad de la posición**, no un espejo del estado.
+  Se lee con `useSyncExternalStore`, que es exactamente para eso: una fuente
+  mutable externa a React. La primera versión guardaba la posición en estado y
+  la sincronizaba con un efecto; el linter de React lo rechazó por encadenar
+  renders, y tenía razón por una segunda razón que el linter no menciona — ese
+  diseño rompe el botón de atrás del navegador, que en clase es justo lo que
+  uno pulsa al pasarse de ítem.
+- **`replaceState`, no `pushState`.** Avanzar de ítem no debe apilar una
+  entrada de historial por cada flecha.
+- **Las flechas no se le roban a quien está escribiendo.** Si el foco está en
+  un campo de texto —respondiendo una pregunta— las flechas mueven el cursor,
+  no la clase.
+- **El final de la sesión no tira a una pantalla en blanco.** Pulsar de más se
+  queda donde está. En clase se pulsa la flecha mirando a la audiencia.
+- **Retroceder a un ítem con pasos cae en su último paso**, no en el primero:
+  retroceder es deshacer, y quien retrocede quiere ver lo que acaba de pasar.
+- Espacio y AvPág/RePág también mueven, porque es lo que hace un presentador
+  de diapositivas y lo que envían los mandos a distancia.
+
+### La navegación vive aparte, con pruebas
+
+`src/lib/navegacion.ts`, por la misma razón que el reloj: es lógica que el
+docente maneja a ciegas. La prueba que más vale recorre la sesión entera hacia
+adelante y vuelve, comprobando que avanzar y retroceder son inversas en cada
+posición — un ítem que se salta o un paso que se atasca solo se descubre
+dictando.
+
+### Verificado en navegador
+
+- Cinco flechas avanzan cinco ítems, y la URL queda en `item=s1-telemetria`.
+- El comando anotado tiene **4 pasos** (3 segmentos más el conjunto completo);
+  las flechas los recorren antes de saltar al ítem siguiente, la cabecera dice
+  `paso 2/4` y la URL lleva `&paso=1`.
+- Retroceder vuelve al paso anterior dentro del mismo ítem.
+- 39 pruebas, `lint`, `typecheck` y `build` limpios, sin errores de JavaScript.

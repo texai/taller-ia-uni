@@ -95,3 +95,13 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - `src/lib/reloj.ts` con la aritmética de hora y siete pruebas: cruce de hora,
   vuelta a medianoche, y `null` antes que inventar una hora.
 - El catálogo completo se renderiza: cero tipos sin componente.
+
+### Batch 6 — Vista de dictado
+- La sesión es ahora índice a la izquierda y un ítem a la vez a la derecha; la
+  vista de corrido se mudó a `/revision`.
+- Navegación con flechas, espacio y AvPág, incluidos los pasos internos de los
+  ítems que los declaran.
+- La URL es la fuente de verdad de la posición, leída con
+  `useSyncExternalStore`: se puede recargar, compartir y usar el botón de atrás.
+- `src/lib/navegacion.ts` con 14 pruebas, entre ellas que avanzar y retroceder
+  son inversas a lo largo de toda la sesión.
