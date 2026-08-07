@@ -14,18 +14,44 @@ import { Prosa } from "./texto";
  * varias entradas es la mitad útil, y mezclado con la definición se lee como
  * una coletilla.
  */
-function Entrada({ t, compacta = false }: { t: Termino; compacta?: boolean }) {
+function Entrada({
+  t,
+  compacta = false,
+  nuevo,
+}: {
+  t: Termino;
+  compacta?: boolean;
+  /** `undefined` donde no hay novedad que marcar — el panel, o una lámina
+   *  de referencia que no declara `nuevos`. */
+  nuevo?: boolean;
+}) {
+  const repaso = nuevo === false;
   return (
     <div
       className="border-l-2 pl-4"
-      style={{ borderColor: "var(--color-acento)" }}
+      style={{
+        // Lo ya visto se dibuja apagado. Una lámina de apertura tiene que
+        // decir en un vistazo dónde detenerse y dónde basta con recordar; con
+        // los cinco términos iguales el docente los explica los cinco otra
+        // vez, y ahí se va el doble del tiempo previsto.
+        borderColor: repaso ? "var(--borde)" : "var(--color-acento)",
+      }}
     >
       <p className="flex flex-wrap items-baseline gap-x-3">
         <span
           className={compacta ? "text-base font-semibold" : "text-xl font-semibold"}
+          style={repaso ? { color: "var(--tinta-suave)" } : undefined}
         >
           {t.termino}
         </span>
+        {repaso && (
+          <span
+            className="text-[10px] font-semibold uppercase tracking-widest"
+            style={{ color: "var(--tinta-suave)" }}
+          >
+            ya visto
+          </span>
+        )}
         {t.expansion && (
           <span className="text-sm" style={{ color: "var(--tinta-suave)" }}>
             {t.expansion}
@@ -63,6 +89,11 @@ function Entrada({ t, compacta = false }: { t: Termino; compacta?: boolean }) {
 /** Una selección del glosario, como lámina. */
 export function Glosario({ item }: { item: ItemGlosario }) {
   const entradas = item.entradas ?? [];
+  // Sin `nuevos` la lámina es de referencia y no marca nada: es el caso de
+  // las tres que junta términos para compararlos, donde «nuevo» no significa
+  // nada porque lo son todos o ninguno.
+  const nuevos = item.nuevos?.length ? new Set(item.nuevos) : null;
+
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
       {/* En dos columnas desde tres términos: cuatro definiciones apiladas en
@@ -75,7 +106,12 @@ export function Glosario({ item }: { item: ItemGlosario }) {
         }
       >
         {entradas.map((t) => (
-          <Entrada key={t.termino} t={t} compacta={entradas.length > 2} />
+          <Entrada
+            key={t.termino}
+            t={t}
+            compacta={entradas.length > 2}
+            nuevo={nuevos ? nuevos.has(t.termino) : undefined}
+          />
         ))}
       </div>
     </Marco>

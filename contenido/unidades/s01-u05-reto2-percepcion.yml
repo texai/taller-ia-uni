@@ -5,7 +5,7 @@ objetivos:
   - Entender que la calidad de un agente se decide antes del LLM
   - Saber qué separa una herramienta de percepción de un volcado de filas
   - Calibrar umbrales contra la flota sana, no contra la intuición
-  - "Conceptos: deriva, línea base, significancia contra relevancia, y el test KS"
+  - "Conceptos: línea base, p-valor, significancia contra relevancia, el test KS, y por qué el sesgo no se promedia"
 requisitos:
   - Haber visto que el sesgo silencioso no se detecta a ojo
   - Entorno levantado, con el mundo sano
@@ -40,6 +40,26 @@ items:
 
       El hexágono del final es literalmente el criterio de aceptación del
       verificador. Anunciarlo acá y volver a él al comprobar.
+  - id: s1-glosario-percepcion
+    tipo: glosario
+    titulo: Dos palabras del reto
+    entradilla: La segunda no significa acá lo que significa en el resto del mundo
+    minutos: 2
+    terminos: [LLM, herramienta]
+    nuevos: [LLM, herramienta]
+    notas: |
+      Corta, y va antes de la primera lámina porque las dos salen en su primera
+      frase.
+
+      **`herramienta` es la que hay que desactivar.** Fuera de acá significa
+      cualquier programa; en un agente es algo muy concreto: **una función que
+      el modelo puede pedir que se ejecute**, con su nombre, sus argumentos y
+      su docstring. Quien no tenga esa definición va a leer la unidad entera
+      creyendo que hablamos de utilidades.
+
+      Y en la definición está sembrado lo que la unidad demuestra: la docstring
+      es lo único que el modelo lee para decidir si la llama. Es prompt.
+
   - id: s1-r2-por-que
     tipo: markdown
     titulo: Por qué agregar, y no volcar filas
@@ -79,6 +99,36 @@ items:
       dos números.
 
       Está en el glosario, con el detalle. Acá basta con decir qué compara.
+
+  - id: s1-glosario-estadistica
+    tipo: glosario
+    titulo: Y cuatro de estadística, porque las tres trampas son de ahí
+    entradilla: Las tres trampas que vienen son estadística bien calculada y mal planteada
+    minutos: 4
+    terminos:
+      [ventana y línea base, Kolmogorov-Smirnov, p-valor, significativo y relevante]
+    nuevos:
+      [ventana y línea base, Kolmogorov-Smirnov, p-valor, significativo y relevante]
+    notas: |
+      **4 min, y es la lámina que este reto necesitaba.** Media unidad se va en
+      tres trampas de estadística, y hasta acá el material proyectaba `p < 0.01`
+      sin que nadie hubiera dicho en voz alta qué es un p-valor. La mitad de la
+      sala no viene de estadística.
+
+      El orden es deliberado y cuenta una historia: para saber si algo cambió
+      hace falta **contra qué** compararlo (`ventana y línea base`); para
+      comparar dos conjuntos de números hay un test (`Kolmogorov-Smirnov`); ese
+      test devuelve un número (`p-valor`); y ese número **no responde la
+      pregunta que uno cree** (`significativo y relevante`).
+
+      La última es la que hay que dejar caer despacio: **el p-valor responde
+      «¿pasó algo?», no «¿me importa?»**. Con miles de días-modelo, casi todo
+      da significativo. Un agente que solo pregunta lo primero es un agente que
+      grita todos los días.
+
+      No hace falta que nadie sepa calcular un KS. Hace falta que sepan qué
+      compara —la forma de dos distribuciones— y por qué eso lo hace Python y
+      no el LLM, que es la tercera regla de hace un minuto.
 
   - id: s1-guia-herramientas
     tipo: archivo

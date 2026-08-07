@@ -140,16 +140,22 @@ items:
 
   - id: s1-glosario-docker
     tipo: glosario
-    titulo: Cuatro palabras de Docker, antes de teclear
+    titulo: Cinco palabras de Docker, antes de teclear
     entradilla: Las que hacen falta para leer los comandos que vienen
     minutos: 3
-    terminos: [imagen, contenedor, volumen, up contra run]
+    terminos: [imagen, contenedor, volumen, servicio, up contra run]
+    nuevos: [imagen, contenedor, volumen, servicio, up contra run]
     notas: |
       Va justo antes de la tabla de comandos porque todo lo que viene usa estas
-      cuatro palabras. Quien hizo el taller anterior las tiene; quien no, se
+      cinco palabras. Quien hizo el taller anterior las tiene; quien no, se
       pierde en la primera línea.
 
-      La cuarta es la que se confunde el resto del día, y por eso está acá y no
+      **`servicio` es la que se usa sin explicarse.** Aparece en cada
+      `docker compose run --rm plataforma …` —esa palabra es el nombre de un
+      servicio— y en `make estado`, y es lo que hace que «el agente no es un
+      servicio» signifique algo.
+
+      La última es la que se confunde el resto del día, y por eso está acá y no
       dentro de un comando anotado: **`up` deja algo vivo, `run` ejecuta y
       desaparece**.
 
@@ -451,6 +457,30 @@ items:
 
       Quien hizo el trabajo previo ya tiene todo esto y solo necesita
       `make arriba`.
+
+  - id: s1-glosario-pipeline
+    tipo: glosario
+    titulo: Y cuatro más, de lo que acaba de correr
+    entradilla: Salieron en la pantalla de recién y se van a usar el resto del día
+    minutos: 3
+    terminos: [pipeline, telemetría, días-modelo, percentil]
+    nuevos: [pipeline, telemetría, días-modelo, percentil]
+    notas: |
+      Las cuatro acaban de aparecer y ninguna se explicó. `seed` se anuncia a
+      sí mismo como «pipeline completo», la salida dice «17,472 días-modelo», y
+      la palabra `telemetría` es la que va a nombrar todo lo que el agente
+      puede mirar.
+
+      **`días-modelo` es la que vale.** 17,472 no son filas de datos ni
+      modelos: son **la unidad en que se cuenta la observación de una flota**,
+      un modelo durante un día. Cuando alguien diga «tenemos poca telemetría»,
+      la pregunta es cuántos días-modelo — no cuántos modelos.
+
+      **`percentil`** se cuela en dos sitios y conviene tenerla antes: la
+      columna `latencia_p95_ms` de la lámina siguiente, y el
+      `sesgo_modelo_p90` que el agente va a mirar mañana. Un percentil no es un
+      promedio: es un corte, y por eso resiste a los valores extremos que un
+      promedio se traga.
 
   - id: s1-artefactos
     tipo: salida-anotada
@@ -834,6 +864,7 @@ items:
     entradilla: Las tres se leen mal de tres maneras distintas
     minutos: 2
     terminos: [MAPE, sesgo, cobertura]
+    nuevos: [MAPE, sesgo, cobertura]
     notas: |
       **Es la lámina de referencia de las ocho horas**, y va después de las
       tres y no antes: cada una trae su fórmula y sus confusiones propias, y
@@ -1321,6 +1352,28 @@ items:
       promoción a producción, con quién aprobó qué. Acá el registro que manda
       es `registro.json`, porque el job tiene que poder correr sin MLflow
       arriba. Es una simplificación consciente y vale la pena decirlo.
+
+  - id: s1-glosario-herramientas
+    tipo: glosario
+    titulo: Y las tres herramientas que se ven, no se escriben
+    entradilla: Las tres vienen dadas. Conviene saber cuál hace qué antes de abrirlas.
+    minutos: 3
+    terminos: [MLflow, LangGraph, Streamlit]
+    nuevos: [MLflow, LangGraph, Streamlit]
+    notas: |
+      Van juntas porque comparten una propiedad: **ninguna de las tres se
+      escribe en este taller, y las tres se abren.** MLflow ahora mismo,
+      LangGraph mañana por la mañana, Streamlit mañana al final.
+
+      Decirlo explícitamente ahorra ansiedad: nadie tiene que aprender
+      LangGraph hoy. Lo que hay que entender es qué problema resuelve cada una,
+      y para eso basta con leerlas.
+
+      **MLflow** es el reencuentro con el Módulo 2 y está en pantalla ahora
+      mismo. **LangGraph** es lo que convierte el bucle del sábado en el grafo
+      del domingo, y es la única de las tres que aporta una idea y no solo una
+      comodidad. **Streamlit** dibuja el razonamiento del agente en 286 líneas,
+      y su docstring es una tesis que se lee el domingo.
 
   - id: s1-mlflow-captura
     tipo: imagen

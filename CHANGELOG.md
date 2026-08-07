@@ -5,6 +5,29 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Ninguna palabra se usa antes de abrirse
+- El glosario tenía **39 términos y tres láminas cubriendo 13**. Los otros 26
+  vivían solo en el panel flotante — a mano si alguien lo abre, y nadie lo abre
+  en mitad de una explicación. Ahora hay **once láminas y la cobertura es
+  completa**.
+- La que más falta hacía es la del reto 2: media unidad se va en tres trampas
+  de estadística, y el material proyectaba `p < 0.01` **sin que nadie hubiera
+  dicho qué es un p-valor**. Entran línea base, Kolmogorov-Smirnov, p-valor y
+  significativo-contra-relevante, en ese orden, que cuenta una historia.
+- Y dos palabras que el material declaraba como concepto propio y no definía
+  nunca: **ReAct**, objetivo del reto 3, y **arquitectura cognitiva**, título
+  de la sesión 2 entera.
+- **Campo `nuevos`**, no un tipo nuevo. Distingue las láminas de apertura
+  —«estas cuatro palabras se van a usar en lo que viene»— de las de referencia:
+  lo ya visto se dibuja apagado y marcado. Con los cinco términos iguales, el
+  docente los explica los cinco otra vez.
+- Dos reglas con prueba: `nuevos` tiene que estar en la lámina, y **un término
+  se abre una sola vez en todo el curso** — dos láminas estrenando «deriva» son
+  dos explicaciones que se separan, y viven en archivos distintos.
+- `validar-contenido` avisa de los términos que ninguna lámina abre.
+- El reto 1 prometía enseñar *por qué el sesgo no se promedia* y no lo enseñaba
+  —eso es el reto 2, trampa 1—. El objetivo bajó a donde se cumple.
+
 ### Con qué se fabrica un modelo
 - **La cadena, nombrada donde se usa.** pandas construye las features,
   `Ridge` de **scikit-learn** ajusta, **joblib** guarda el `.joblib` y

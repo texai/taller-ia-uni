@@ -65,13 +65,25 @@ items:
   - id: s2-glosario-agente
     tipo: glosario
     titulo: El vocabulario del domingo
-    entradilla: Seis palabras que se van a usar todo el día
-    minutos: 3
-    terminos: [grafo, nodo, estado, herramienta, reflexión y revisión, memoria]
+    entradilla: Las palabras con las que se dicta el día entero
+    minutos: 4
+    terminos:
+      [arquitectura cognitiva, grafo, nodo, estado, reflexión y revisión, memoria, herramienta]
+    nuevos:
+      [arquitectura cognitiva, grafo, nodo, estado, reflexión y revisión, memoria]
     notas: |
       **4 min** bien gastados. El domingo entero se dicta con estas
-      seis palabras, y la mitad de la sala llega sin haber tocado un grafo de
+      palabras, y la mitad de la sala llega sin haber tocado un grafo de
       agentes nunca.
+
+      **`arquitectura cognitiva` va primero porque es el título de la sesión**,
+      y se venía usando sin definirse: está en la portada, en el nombre del
+      reto 4 y en el subtítulo del curso. Que la sala pueda decir qué significa
+      **antes** de construirla es la diferencia entre seguir un montaje y
+      entender por qué se monta.
+
+      `herramienta` va apagada: es del sábado, y quien estuvo la reconoce. Para
+      quien llega hoy es la única de la lámina que necesita leer entera.
 
       La entrada de `reflexión y revisión` adelanta la tesis de la unidad —
       cuestionarse sin poder corregirse no sirve de nada— y eso está bien acá:

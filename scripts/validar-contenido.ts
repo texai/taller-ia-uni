@@ -122,6 +122,34 @@ try {
     for (const r of ritmos) console.log(`  ${AMARILLO}·${FIN} ${r}`);
   }
 
+  // El vocabulario que se usa sin abrirse.
+  //
+  // Ninguna palabra del glosario debería usarse en pantalla antes de haberse
+  // abierto en pantalla (CONVENTIONS.md §18). El panel flotante es el
+  // respaldo, no el primer contacto: nadie lo abre en mitad de una
+  // explicación.
+  //
+  // Es un aviso y no un error porque un glosario puede llevar términos de
+  // consulta que no toca dictar. Lo que no puede es llevarlos sin que nadie lo
+  // haya decidido, que es como estaba: 39 términos y tres láminas cubriendo 13.
+  const abiertos = new Set<string>();
+  for (const sesion of curso.sesiones) {
+    for (const { item } of recorrer(sesion)) {
+      if (item.tipo !== "glosario") continue;
+      for (const t of item.entradas ?? []) abiertos.add(t.termino);
+    }
+  }
+  const sinAbrir = (curso.glosario ?? [])
+    .map((t) => t.termino)
+    .filter((t) => !abiertos.has(t));
+  if (sinAbrir.length) {
+    console.log(
+      `\n${AMARILLO}Términos del glosario que ninguna lámina abre ` +
+        `(${sinAbrir.length} de ${curso.glosario?.length}):${FIN}`,
+    );
+    console.log(`  ${AMARILLO}·${FIN} ${sinAbrir.join(", ")}`);
+  }
+
   // Las rutas al laboratorio.
   //
   // Es un error y no un aviso: una ventana de lectura que manda abrir un

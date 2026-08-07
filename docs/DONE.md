@@ -3081,3 +3081,88 @@ siempre pesca a dos o tres.
 - `validar-contenido` sin errores y **sin reproches de ritmo**.
 - 165 pruebas, lint, typecheck y build limpios. 212 ítems · 365 + 268 min.
 - `npm run humo`: **310 pantallas abiertas, 0 con error**.
+
+---
+
+## Batch 47 — Ninguna palabra se usa antes de abrirse
+**2026-08-07**
+
+El glosario tenía **39 términos y tres láminas cubriendo 13**. Los otros 26
+vivían solo en el panel flotante: a mano si alguien lo abre, y nadie lo abre en
+mitad de una explicación.
+
+**Alcance** (todo hecho)
+- [x] El campo `nuevos`, con sus dos reglas y sus pruebas
+- [x] Once láminas, y la cobertura completa: **39 de 39**
+- [x] El aviso de cobertura en `validar-contenido`
+- [x] `CONVENTIONS.md` §18, y la fila del tipo en §8
+- [x] Los objetivos de los retos 1 y 2, cada concepto donde se enseña
+
+### El tipo no es nuevo; el campo sí
+
+Se descartó crear un segundo tipo: `glosario` ya existe e inventar otro para lo
+mismo es exactamente lo que §8 evita. Lo que le faltaba era distinguir sus dos
+usos, que no son el mismo ítem — la lámina **de apertura** («estas cuatro
+palabras se van a usar en lo que viene») y la **de referencia** (las tres
+señales juntas, para compararlas).
+
+`nuevos` lo resuelve: los términos que no están en esa lista se dibujan
+apagados y marcados «ya visto». No es cosmético. Con los cinco dibujados igual,
+el docente los explica los cinco otra vez y se le va el doble del tiempo
+previsto.
+
+Dos reglas lo sostienen, las dos con prueba:
+
+- **`nuevos` ⊆ `terminos`.** Marcar como novedad algo que no está en pantalla
+  es una promesa que la lámina no cumple.
+- **Un término se abre una sola vez en todo el curso.** Se comprueba cruzando
+  las dos sesiones enteras en `cargarCurso`, porque las láminas viven en
+  archivos distintos y a mano no se ven. Repetir un término está bien —es lo
+  normal, apagado—; lo que falla es repetir el **estreno**.
+
+### Las once láminas
+
+| Unidad | Ítem | Qué abre |
+|---|---|---|
+| S1·U2 caso | `s1-glosario-caso` | flota, el mundo, artefacto, job batch |
+| S1·U3 | `s1-glosario-docker` | + **servicio**, que se usaba en cada comando |
+| S1·U3 | `s1-glosario-pipeline` | pipeline, telemetría, días-modelo, percentil |
+| S1·U3 | `s1-glosario-senales` | MAPE, sesgo, cobertura |
+| S1·U3 | `s1-glosario-herramientas` | MLflow, LangGraph, Streamlit |
+| S1·U4 reto 1 | `s1-glosario-escenarios` | escenario, deriva, anomalía |
+| S1·U5 reto 2 | `s1-glosario-percepcion` | LLM, herramienta |
+| S1·U5 reto 2 | `s1-glosario-estadistica` | línea base, KS, p-valor, significativo y relevante |
+| S1·U6 reto 3 | `s1-glosario-react` | ReAct |
+| S2·U3 | `s2-glosario-agente` | + **arquitectura cognitiva** |
+| S2·U4 reto 4 | `s2-glosario-diagnostico` | alcance, severidad y urgencia |
+| S2·U5 reto 5 | `s2-glosario-accion` | política, radio de daño |
+
+La del reto 2 es la que más falta hacía: media unidad se va en tres trampas de
+estadística, y el material proyectaba `p < 0.01` sin que nadie hubiera dicho
+qué es un p-valor.
+
+### Desviación
+
+El plan ponía `herramienta` y `LLM` en el reto 3, y se movieron al **reto 2**:
+es donde aparecen por primera vez —«un LLM no puede leer 17,472 filas», «una
+herramienta de percepción»— y abrirlas una unidad tarde habría sido justo el
+error que este batch corrige.
+
+### Y un objetivo que estaba en el reto equivocado
+
+`s1-reto-1` prometía enseñar *«por qué el sesgo no se promedia»* y no lo
+enseñaba: en toda la unidad eso era un `resaltar` y una nota privada. Se enseña
+en el reto 2, trampa 1. El objetivo bajó, y el del reto 1 pasa a declarar lo
+que sí cumple: escenario, agregación por dimensión, y deriva contra anomalía.
+
+---
+
+**Verificación**
+- `validar-contenido`: el aviso de cobertura pasó de **26 términos sin abrir a
+  ninguno**.
+- 167 pruebas (2 nuevas: `nuevos` fuera de la lámina, y un estreno repetido
+  entre dos sesiones), lint, typecheck y build limpios.
+- Una lámina con `nuevos` vista en el navegador: el término nuevo con su borde
+  de acento, los otros dos apagados y con la etiqueta «ya visto».
+- `npm run humo`: **319 pantallas abiertas, 0 con error**.
+- 221 ítems · 386 + 275 min.

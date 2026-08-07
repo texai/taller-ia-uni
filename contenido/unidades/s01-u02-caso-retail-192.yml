@@ -23,6 +23,32 @@ items:
       Este mismo caso vuelve a abrir el domingo, desde el mismo archivo,
       para quien no vino.
 
+  - id: s1-glosario-caso
+    tipo: glosario
+    titulo: Cuatro palabras del caso, antes de seguir
+    entradilla: Se van a usar las ocho horas, y las cuatro significan algo preciso
+    minutos: 3
+    terminos: [flota, el mundo, artefacto, job batch]
+    nuevos: [flota, el mundo, artefacto, job batch]
+    notas: |
+      **Va acá y no al principio del todo** porque acaban de oír el caso: las
+      cuatro palabras ya tienen a qué agarrarse. Explicadas antes, son
+      definiciones; explicadas ahora, son nombres de cosas que la sala acaba de
+      ver.
+
+      La que más rinde es **«el mundo»**. Suena a licencia poética y es
+      literal: es `ventas.csv`, es lo único que el laboratorio inventa, y es lo
+      único que se toca para provocar cada uno de los fallos de esta tarde. Los
+      192 modelos no se van a tocar nunca.
+
+      **«flota»** existe para que nadie diga «los modelos»: el problema del
+      taller aparece justo cuando son demasiados para mirarlos de a uno, y la
+      palabra lo lleva puesto.
+
+      Y decir en voz alta que **el glosario está siempre disponible**, con el
+      botón de abajo a la derecha. Es la primera vez que aparece: de acá al
+      domingo nadie va a levantar la mano para preguntar qué era un artefacto.
+
   - id: s1-caso-codigo
     tipo: codigo
     titulo: Y esta es la cadena, en código

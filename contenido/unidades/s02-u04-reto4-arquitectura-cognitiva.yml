@@ -455,6 +455,32 @@ items:
       A mitad de la unidad a propósito: la segunda parte es la difícil, y
       **90 min** seguidos de grafo no los aguanta nadie.
 
+  - id: s2-glosario-diagnostico
+    tipo: glosario
+    titulo: Dos campos que el diagnóstico tiene que rellenar
+    entradilla: No son adjetivos. Uno decide a quién se toca; el otro no decide nada.
+    minutos: 3
+    terminos: [alcance, severidad y urgencia, deriva, anomalía]
+    nuevos: [alcance, severidad y urgencia]
+    notas: |
+      Va justo antes de la forma del diagnóstico porque las dos primeras son
+      **campos de ese JSON**, y las dos se leen mal si nadie las abre.
+
+      **`alcance` importa más que la severidad**, y es lo contrario de lo que
+      la intuición dice. La severidad es qué tan grave suena; el alcance es
+      **de quién es la causa** —un modelo, una categoría, una tienda, la
+      flota— y es lo que decide a cuántos artefactos se les pasa por encima
+      mañana. Ocho categorías con bandera no son ocho problemas: son uno, y el
+      alcance correcto es la flota.
+
+      Y **`severidad y urgencia` van juntas para poder decir lo que las separa
+      del resto**: son las dos únicas del diagnóstico que **el LLM redacta y la
+      política no usa para avanzar**. En el reto 5 hay una regla que salió de
+      un error real —frenar por urgencia— y esta lámina la deja sembrada.
+
+      `deriva` y `anomalía` van apagadas, del sábado. Quien llegó hoy las tiene
+      completas acá, y son las dos que el nodo de reflexión pregunta.
+
   - id: s2-r4-diagnostico
     tipo: codigo
     titulo: Lo que el diagnóstico tiene que producir

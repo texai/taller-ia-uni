@@ -1080,6 +1080,84 @@ test("sin la carpeta de assets el curso carga igual, y con ella un archivo que f
   );
 });
 
+const GLOSARIO_MINIMO = `
+terminos:
+  - termino: deriva
+    grupo: La telemetría
+    definicion: Cuando el modelo empieza a fallar de otra manera.
+  - termino: anomalía
+    grupo: La telemetría
+    definicion: Cuando el problema es de los datos y no del modelo.
+`;
+
+test("un término marcado como nuevo tiene que estar en la lámina", () => {
+  // Prometer una novedad que no se proyecta es una promesa que la lámina no
+  // cumple, y no se descubre hasta tenerla delante de la clase.
+  const items = `
+      - id: vocabulario
+        tipo: glosario
+        titulo: Las palabras que vienen
+        terminos: [deriva]
+        nuevos: [anomalía]
+`;
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "glosario.yml": GLOSARIO_MINIMO,
+      "sesiones/s1.yml": sesionCon(items),
+    },
+    (raiz) =>
+      assert.throws(() => mod.cargarCurso(raiz), /`anomalía` está en `nuevos`/),
+  );
+});
+
+test("un término solo se abre una vez en todo el curso", () => {
+  // La regla que hace que `nuevos` valga la pena. Dos láminas presentando
+  // «deriva» como novedad son dos explicaciones que se separan en cuanto
+  // alguien corrige una — y viven en archivos distintos, así que solo se
+  // pueden comparar cargando el curso entero.
+  const lamina = (id: string) => `
+      - id: ${id}
+        tipo: glosario
+        titulo: Las palabras que vienen
+        terminos: [deriva, anomalía]
+        nuevos: [deriva]
+`;
+  const segunda = sesionCon(lamina("vocabulario-2"))
+    .replace("id: sesion-1", "id: sesion-2")
+    .replace("numero: 1", "numero: 2")
+    .replace("id: u1", "id: u2");
+
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "glosario.yml": GLOSARIO_MINIMO,
+      "sesiones/s1.yml": sesionCon(lamina("vocabulario-1")),
+      "sesiones/s2.yml": segunda,
+    },
+    (raiz) =>
+      assert.throws(
+        () => mod.cargarCurso(raiz),
+        /`deriva` se declara nuevo dos veces: en `vocabulario-1` y en `vocabulario-2`/,
+      ),
+  );
+
+  // Y con uno nuevo en cada una, carga.
+  const otra = sesionCon(lamina("vocabulario-2").replace("[deriva]\n", "[anomalía]\n"))
+    .replace("id: sesion-1", "id: sesion-2")
+    .replace("numero: 1", "numero: 2")
+    .replace("id: u1", "id: u2");
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "glosario.yml": GLOSARIO_MINIMO,
+      "sesiones/s1.yml": sesionCon(lamina("vocabulario-1")),
+      "sesiones/s2.yml": otra,
+    },
+    (raiz) => assert.equal(mod.cargarCurso(raiz).sesiones.length, 2),
+  );
+});
+
 test("un `descargas` valida cada entrada de su lista, no solo la primera", () => {
   // La lista es lo único que este tipo tiene, así que sus tres formas de estar
   // mal —vacía, sin título, apuntando a un PDF que nadie copió— tienen que

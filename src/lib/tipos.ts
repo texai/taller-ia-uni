@@ -363,6 +363,19 @@ export interface ItemGlosario extends ItemBase {
   terminos?: string[];
   /** O un grupo entero, por su nombre. */
   grupo?: string;
+  /**
+   * Cuáles de los términos listados se abren por primera vez acá.
+   *
+   * Distingue los dos usos de esta lámina, que no son el mismo ítem: la de
+   * **apertura** —«estas cuatro palabras se van a usar en lo que viene»— y la
+   * de **referencia**, que junta términos ya vistos para compararlos.
+   *
+   * Un término solo puede declararse nuevo **una vez en todo el curso**, y el
+   * cargador lo comprueba. Dos láminas presentando «deriva» como novedad son
+   * dos explicaciones que se separan, que es justo lo que el glosario existe
+   * para impedir (ver `CONVENTIONS.md` §18).
+   */
+  nuevos?: string[];
   /** Lo rellena el cargador desde `glosario.yml`. */
   entradas?: Termino[];
 }

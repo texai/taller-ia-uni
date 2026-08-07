@@ -58,6 +58,31 @@ items:
       nadie discute si un agente puede leer telemetría. Todo el mundo
       discute si puede tocar algo.
 
+  - id: s2-glosario-accion
+    tipo: glosario
+    titulo: Las dos palabras de esta hora
+    entradilla: La segunda es el criterio, y no es «qué tan seguro estoy»
+    minutos: 3
+    terminos: [política, radio de daño, alcance]
+    nuevos: [política, radio de daño]
+    notas: |
+      Dos palabras y las dos son de diseño, no de código. Van al principio
+      porque toda la unidad se dicta con ellas.
+
+      **`política`** es la que hay que separar de «prompt» con todas las
+      letras: es **código Python que decide qué se ejecuta**, no una
+      instrucción. Se cumple aunque el modelo esté convencidísimo de lo
+      contrario, y esa es la diferencia entera con lo del sábado.
+
+      **`radio de daño` es el criterio de la unidad**, y conviene decir lo que
+      **no** es: no es la probabilidad de equivocarse, ni la confianza del
+      agente. Es **cuánto se rompe si el diagnóstico estaba mal, y cuánto
+      cuesta deshacerlo**. Una categoría son 24 modelos y se revierte; la
+      flota son 192 a la vez y no queda ninguno sano con que comparar.
+
+      `alcance` va apagada, de ayer: es el campo del diagnóstico sobre el que
+      la política mide el radio.
+
   - id: s2-r5-apagado
     tipo: markdown
     titulo: Viene apagado

@@ -68,7 +68,7 @@ Referencias:
 | 44 | Lo que no cuadra | ✅ Completado |
 | 45 | El caso, recorrido y no contado | ✅ Completado |
 | 46 | Con qué se fabrica un modelo | ✅ Completado |
-| 47 | Ninguna palabra se usa antes de abrirse | ⬜ Pendiente |
+| 47 | Ninguna palabra se usa antes de abrirse | ✅ Completado |
 | 48 | Cada reto cierra su círculo | ⬜ Pendiente |
 | 49 | La pauta de comandos del docente | ⬜ Pendiente |
 
@@ -720,87 +720,6 @@ concretas, y están todas enumeradas.
 El orden no es negociable. El 44 son correcciones de dato y cuesta minutos; del
 45 al 48 son contenido y van **uno por conversación** (§13); el 49 se hace al
 final porque necesita que todos los comandos estén ya escritos.
-
----
-
-## Batch 47 — Ninguna palabra se usa antes de abrirse
-
-El glosario tiene **39 términos** y está bien escrito, pero solo hay **tres**
-láminas de tipo `glosario` y cubren **13**. Los otros 26 existen únicamente en
-el panel flotante: están a mano si alguien lo abre, y nadie lo abre en mitad de
-una explicación.
-
-El agujero más caro es el del **reto 2**, que proyecta `p < 0.01` sin que nadie
-haya dicho en voz alta qué es un p-valor: `p-valor`, `Kolmogorov-Smirnov`,
-`significativo y relevante`, `ventana y línea base` y `percentil` —el
-vocabulario entero de esa unidad— no aparecen en ninguna lámina. Y hay dos
-palabras que el material **declara como concepto propio y no define nunca**:
-`ReAct`, que es un objetivo del reto 3 y sale en su diagrama de pasos, y
-`arquitectura cognitiva`, que es el título de la sesión 2 completa.
-
-La regla que sale de acá, y que es lo que de verdad entrega este batch:
-**ninguna palabra del glosario se usa en pantalla antes de haberse abierto en
-pantalla.** El panel flotante es el respaldo, no el primer contacto.
-
-### El tipo de ítem
-
-`glosario` ya existe y **no hace falta uno nuevo**: inventar un segundo tipo
-para lo mismo es exactamente lo que §8 evita. Lo que sí le falta es distinguir
-sus dos usos, porque no son el mismo ítem:
-
-- **De apertura** — «estas cuatro palabras se van a usar en lo que viene».
-- **De referencia** — las tres señales juntas, para compararlas.
-
-Se resuelve con **un campo opcional `nuevos`**: cuáles de los términos
-listados se abren por primera vez acá, y cuáles son recordatorio. La lámina los
-dibuja distinto y el docente sabe en cuáles detenerse.
-
-- [ ] `ItemGlosario.nuevos?: string[]`, validado contra `terminos` del propio
-      ítem — un `nuevos` que nombre algo que no está en la lámina es un error.
-- [ ] **Un término solo puede declararse `nuevo` una vez en todo el curso.**
-      Esta es la regla que paga el campo: dos láminas presentando «deriva» como
-      novedad son dos explicaciones que se separan, que es justo lo que el
-      glosario existe para impedir. Falla en validación nombrando las dos.
-- [ ] Fila en `CONVENTIONS.md` §8 y sección propia: **§18 · El vocabulario se
-      abre antes de usarse**.
-
-### Dónde va cada lámina
-
-| Unidad | Ítem | Términos | Nuevos |
-|---|---|---|---|
-| S1·U2 caso | `s1-glosario-caso` | flota, el mundo, artefacto, job batch | los 4 |
-| S1·U3 (existe) | `s1-glosario-docker` | + **servicio**, que falta | servicio |
-| S1·U3 tras `s1-seed-salida` | `s1-glosario-pipeline` | pipeline, telemetría, días-modelo, percentil | los 4 |
-| S1·U3 (existe) | `s1-glosario-senales` | — | MAPE, sesgo, cobertura |
-| S1·U4 tras `s1-r1-encargo` | `s1-glosario-escenarios` | escenario, deriva, anomalía, el mundo | los 3 primeros |
-| S1·U5 tras `s1-r2-tres-reglas` | `s1-glosario-estadistica` | ventana y línea base, Kolmogorov-Smirnov, p-valor, significativo y relevante | los 4 |
-| S1·U6 antes de `s1-r3-bucle` | `s1-glosario-react` | LLM, herramienta, ReAct | LLM, ReAct |
-| S2·U3 (existe) | `s2-glosario-agente` | + **arquitectura cognitiva** | arquitectura cognitiva |
-| S2·U4 antes de `s2-r4-diagnostico` | `s2-glosario-diagnostico` | alcance, severidad y urgencia, deriva, anomalía | los 2 primeros |
-| S2·U5 tras `s2-r5-riesgo` | `s2-glosario-accion` | política, radio de daño | los 2 |
-| S1·U3, con el batch 46 | `s1-glosario-herramientas` | MLflow, LangGraph, Streamlit | los 3 |
-
-13 ya cubiertos + 26 nuevos = **39**. La cobertura queda completa, y eso es
-comprobable.
-
-**Alcance, además de las láminas**
-- [ ] `s1-reto-1` declara en sus objetivos *«por qué el sesgo no se promedia»*
-      y no lo enseña: en toda la unidad eso es un `resaltar` sobre dos líneas
-      del groupby y una nota privada. Se enseña de verdad en el reto 2, trampa
-      1. **Baja el objetivo del reto 1** y se queda donde se cumple.
-
-**Tests esperados**
-- [ ] Todo término de `glosario.yml` aparece en al menos una lámina `glosario`.
-      Es el criterio de aceptación del batch y tiene que ser una prueba, no una
-      revisión a ojo
-- [ ] Un término declarado `nuevo` en dos láminas falla nombrando las dos
-- [ ] Un `nuevos` que no esté en `terminos` falla
-- [ ] `ESPECIFICACION` sigue cubriendo todos los tipos
-
-**Fuera de alcance**
-- Reescribir las definiciones del glosario. Están bien; lo que falta es
-  proyectarlas.
-- Una lámina por término. Van agrupadas por unidad, tres o cuatro cada una.
 
 ---
 

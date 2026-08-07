@@ -297,6 +297,18 @@ function resolverGlosario(
     problemas.push(`${donde}: no selecciona ningún término`);
   }
 
+  // `nuevos` tiene que ser un subconjunto de lo que la lámina muestra. Marcar
+  // como novedad algo que no está en pantalla es una promesa que la lámina no
+  // cumple, y el docente no se entera hasta proyectarla.
+  for (const n of item.nuevos ?? []) {
+    if (!entradas.some((t) => t.termino === n)) {
+      problemas.push(
+        `${donde}: \`${n}\` está en \`nuevos\` y no en los términos de la ` +
+          `lámina (${entradas.map((t) => t.termino).join(", ")})`,
+      );
+    }
+  }
+
   item.entradas = entradas;
 }
 
@@ -682,6 +694,32 @@ export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
     .map((a) => cargarSesion(a, raiz, glosario, problemas))
     .filter((s): s is Sesion => s !== null)
     .sort((a, b) => a.numero - b.numero);
+
+  // Un término se abre UNA vez en todo el curso.
+  //
+  // Es la regla que hace que `nuevos` valga la pena, y solo se puede comprobar
+  // acá: dos láminas presentando «deriva» como novedad viven en dos archivos
+  // distintos, casi siempre de dos sesiones distintas, y son dos explicaciones
+  // que se separan en cuanto alguien corrige una. Ver `CONVENTIONS.md` §18.
+  const estrenos = new Map<string, string>();
+  for (const sesion of sesiones) {
+    for (const unidad of sesion.unidades) {
+      for (const item of unidad.items) {
+        if (item.tipo !== "glosario") continue;
+        for (const n of item.nuevos ?? []) {
+          const ya = estrenos.get(n);
+          if (ya) {
+            problemas.push(
+              `\`${n}\` se declara nuevo dos veces: en \`${ya}\` y en ` +
+                `\`${item.id}\`. Un término se abre una sola vez`,
+            );
+          } else {
+            estrenos.set(n, item.id);
+          }
+        }
+      }
+    }
+  }
 
   if (problemas.length) throw new ErrorDeContenido(problemas);
 

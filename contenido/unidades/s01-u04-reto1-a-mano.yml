@@ -5,7 +5,7 @@ objetivos:
   - Sentir que revisar 192 modelos a mano no escala
   - Descubrir que la métrica que estaban mirando no era la que hablaba de plata
   - Salir con la pregunta de cuánto tardarían haciendo esto cada mañana
-  - "Conceptos: agregación por dimensión, y por qué el sesgo no se promedia"
+  - "Conceptos: escenario, agregación por dimensión, y deriva contra anomalía"
 requisitos:
   - Entorno levantado y con datos
   - Saber qué son el MAPE, el sesgo y la cobertura
@@ -64,6 +64,30 @@ items:
       Insistir en el orden. Quien salta directo a mirar modelos
       individuales se pierde: con 192 series, mirar de a una no converge.
       El camino es agregar y comparar cortes.
+
+  - id: s1-glosario-escenarios
+    tipo: glosario
+    titulo: Tres palabras antes de romper nada
+    entradilla: Las dos últimas son la decisión más cara del taller, y hoy solo se nombran
+    minutos: 3
+    terminos: [escenario, deriva, anomalía, el mundo]
+    nuevos: [escenario, deriva, anomalía]
+    notas: |
+      **`deriva` y `anomalía` son el par que decide todo el domingo**, y por eso
+      se abren hoy y no mañana: el reto 1 las va a producir las dos sin
+      nombrarlas, y es mejor tener la palabra puesta cuando pase.
+
+      La distinción en una frase: **la deriva es del modelo, la anomalía es de
+      los datos.** Sobre deriva se reentrena; sobre anomalía, reentrenar
+      **rompe un modelo que estaba sano**. Hoy basta con que quede la
+      distinción; el precio de confundirlas es el reto 5.
+
+      `escenario` es la palabra técnica de lo que vamos a hacer en un minuto:
+      no es «datos de prueba», es una degradación con nombre, aplicada sobre el
+      mundo ya generado, que se puede aplicar y revertir.
+
+      «el mundo» ya se vio en el caso y va acá de recordatorio, apagada: es lo
+      único que el escenario toca.
 
   - id: s1-r1-api
     tipo: comando-anotado

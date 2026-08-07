@@ -180,7 +180,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `diagrama-secuencia` | Secuencia PlantUML, recorrible mensaje a mensaje | `fuente`, `mensajes[].explicacion` |
 | `comando-anotado` | Un comando largo, explicado parte por parte | `comando`, `segmentos[]` |
 | `salida-anotada` | Una salida de terminal, explicada trozo a trozo | `salida`, `anotaciones[]`, `comando` |
-| `glosario` | Una selección del glosario, como lámina | `terminos[]` \| `grupo` |
+| `glosario` | Una selección del glosario, como lámina | `terminos[]` \| `grupo`, `nuevos` |
 | `caso` | El marco de negocio dentro del cual ocurre todo lo demás | `empresa`, `cifras[]`, `bloques[]`, `archivo` |
 | `diff` | Un cambio, enseñado como cambio: antes y después | `antes`, `despues`, `ruta`, `lenguaje`, `explicacion` |
 
@@ -848,3 +848,51 @@ Antes de algo caro, no después. Dos minutos antes de que veinte personas
 empiecen a teclear valen por diez de depuración con el laboratorio corriendo.
 Los `disparadores` no son decoración: si nadie levanta la mano, el docente
 lanza uno y la pausa ocurre igual.
+
+## 18 · El vocabulario se abre antes de usarse
+
+**Ninguna palabra del glosario se usa en pantalla antes de haberse abierto en
+pantalla.** El panel flotante es el respaldo, no el primer contacto: está para
+que a las 18:20 alguien pueda mirar qué era la cobertura sin levantar la mano,
+y nadie lo abre en mitad de una explicación.
+
+La auditoría del 7 de agosto encontró el hueco medido: **39 términos y tres
+láminas cubriendo 13**. Los 26 restantes vivían solo en el panel — incluido el
+vocabulario entero del reto 2, que proyectaba `p < 0.01` sin que nadie hubiera
+dicho qué es un p-valor, y dos palabras que el material declaraba como concepto
+propio y no definía nunca: `ReAct`, objetivo del reto 3, y
+`arquitectura cognitiva`, título de la sesión 2.
+
+`validar-contenido` avisa de los términos que ninguna lámina abre. Es un aviso
+y no un error: un glosario puede llevar términos de consulta que no toca
+dictar. Lo que no puede es llevarlos **sin que nadie lo haya decidido**.
+
+### Las láminas de apertura y las de referencia no son el mismo ítem
+
+Las dos usan el tipo `glosario`, y crear un segundo tipo para lo mismo es
+exactamente lo que §8 evita. Lo que las separa es el campo **`nuevos`**:
+cuáles de los términos listados se abren por primera vez ahí.
+
+- **De apertura** — «estas cuatro palabras se van a usar en lo que viene».
+  Declara `nuevos`, y los que no están en esa lista se dibujan apagados y
+  marcados «ya visto».
+- **De referencia** — las tres señales juntas, para compararlas. No declara
+  `nuevos` y no marca nada, porque ahí «nuevo» no significa nada: lo son todos
+  o ninguno.
+
+La distinción no es cosmética. Con los cinco términos dibujados igual, el
+docente los explica los cinco otra vez y se le va el doble del tiempo
+previsto; apagados, la lámina dice en un vistazo dónde detenerse.
+
+### Un término se abre una sola vez en todo el curso
+
+Es la regla que hace que `nuevos` valga la pena, y el cargador la comprueba
+cruzando **las dos sesiones enteras**: dos láminas presentando «deriva» como
+novedad son dos explicaciones que se separan en cuanto alguien corrige una, y
+viven en archivos distintos, así que a mano no se ven. Repetir un término está
+bien —de hecho es lo normal, apagado, como recordatorio—; lo que falla es
+repetir el **estreno**.
+
+Y `nuevos` tiene que ser un subconjunto de lo que la lámina muestra. Marcar
+como novedad algo que no está en pantalla es una promesa que la lámina no
+cumple, y no se descubre hasta tenerla proyectada.

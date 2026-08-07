@@ -40,6 +40,33 @@ items:
       El paso 3 parece un desperdicio de tiempo hasta que la clase ve las
       tres salidas juntas. Con temperatura 0 y el mismo mundo, deberían ser
       idénticas. No lo son.
+
+  - id: s1-glosario-react
+    tipo: glosario
+    titulo: La palabra que nombra lo que vamos a leer
+    entradilla: Tres letras y un patrón de veinte líneas. Es lo que hay dentro del archivo que viene.
+    minutos: 3
+    terminos: [ReAct, herramienta, LLM]
+    nuevos: [ReAct]
+    notas: |
+      **ReAct se venía usando sin definirse**: está en los objetivos del reto,
+      en el diagrama de pasos y en boca del docente, y nadie había dicho qué
+      significa.
+
+      Reason + Act. **Pensar, actuar, observar, repetir**, y eso es todo: no es
+      una librería ni un framework, es la forma de un bucle. Que quepa en tres
+      palabras es la mitad del punto — el patrón que está debajo de casi todos
+      los agentes de hoy se explica en una frase, y por eso el archivo que
+      viene tiene veinte líneas.
+
+      Las otras dos van apagadas, de recordatorio. Conviene señalar la de
+      `herramienta`: **el bucle de ReAct es exactamente el ciclo de pedir y
+      ejecutar herramientas**, así que quien la entendió en el reto 2 ya
+      entendió la mitad de este.
+
+      Y sembrar lo del domingo sin decirlo todavía: ReAct es una **línea**.
+      Mañana lo mismo se dibuja como una red.
+
   - id: s1-r3-bucle
     tipo: codigo
     titulo: El bucle entero
