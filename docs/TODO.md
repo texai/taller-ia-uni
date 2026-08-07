@@ -67,7 +67,7 @@ Referencias:
 | | **Quinta ronda — cerrar el hilo conductor** | |
 | 44 | Lo que no cuadra | ✅ Completado |
 | 45 | El caso, recorrido y no contado | ✅ Completado |
-| 46 | Con qué se fabrica un modelo | ⬜ Pendiente |
+| 46 | Con qué se fabrica un modelo | ✅ Completado |
 | 47 | Ninguna palabra se usa antes de abrirse | ⬜ Pendiente |
 | 48 | Cada reto cierra su círculo | ⬜ Pendiente |
 | 49 | La pauta de comandos del docente | ⬜ Pendiente |
@@ -720,75 +720,6 @@ concretas, y están todas enumeradas.
 El orden no es negociable. El 44 son correcciones de dato y cuesta minutos; del
 45 al 48 son contenido y van **uno por conversación** (§13); el 49 se hace al
 final porque necesita que todos los comandos estén ya escritos.
-
----
-
-## Batch 46 — Con qué se fabrica un modelo
-
-Pregunta literal del docente: *«no he visto en qué momento se usan las
-herramientas específicas que generan los modelos; ¿cómo se generan, con Python
-o con otra herramienta?»*. La respuesta es que se generan con **Python y
-scikit-learn**, y el curso no lo dice en ninguna parte.
-
-Contado sobre los 199 ítems: **scikit-learn, joblib, LangChain, numpy, scipy,
-FastAPI y pydantic tienen cero menciones**; `pandas` una; `uvicorn` una, dentro
-de la causa de un error; `Ridge` una, sin decir de qué librería sale. Alguien
-que termine las ocho horas no puede decir con qué se entrenó el modelo que
-estuvo vigilando.
-
-Y hay una promesa hecha dos veces y nunca pagada: **MLflow**. `s1-recap` dice
-en notas *«el registro de modelos que van a ver hoy es MLflow»* y
-`s1-arquitectura` lo dibuja como arista punteada. En el laboratorio es real
-—`make mlflow` levanta la interfaz en `:5000` y cada uno de los 192
-entrenamientos registra parámetros y `mape_validacion`— y la clase no lo ve.
-De ahí cuelga además el `mape_validacion_medio: 10.382` de `s1-inventario`, que
-la lámina explica que *«sale del registro de los modelos»*: la mitad izquierda
-de la comparación 10.4 → 13.8, que es el argumento de la primera hora, no tiene
-dónde mirarse.
-
-**Alcance**
-- [ ] **La cadena, nombrada**: `pandas` construye las features →
-      `sklearn.linear_model.Ridge` entrena → `joblib.dump` deja el `.joblib` →
-      `mlflow.log_params/log_metric` lo registra. Va como ampliación de
-      `s1-features` / `s1-validacion`, que ya están en el sitio correcto — **no
-      como lámina nueva de inventario de librerías**.
-- [ ] **`make entrenar`, solo y con su salida.** Hoy solo corre dentro de
-      `seed`, donde es la barra de progreso `2/4`. Es el único paso lento del
-      laboratorio y el único que **cambia un artefacto**, y la clase nunca lo
-      ve aislado. Ítem `comando-anotado` + `salida-anotada`.
-- [ ] **La persistencia**: `joblib.dump(modelo, ruta)` y el bump de `version`
-      en el registro. Dos líneas de `plataforma/entrenar.py`, y son las que
-      hacen que «artefacto» deje de ser una abstracción.
-- [ ] **El job cargando los 192.** `s1-intervalo` muestra de
-      `plataforma/pronosticar.py` la sigma y el intervalo, pero no el bucle que
-      abre los `.joblib` y predice. El «job batch de madrugada» del caso no
-      tiene código en pantalla.
-- [ ] **MLflow en pantalla**: `make mlflow`, `:5000`, y una captura de
-      respaldo bajo `public/contenido/img/`. Va en S1·U3, después de
-      `s1-validacion`, que es donde nace el 10.4%. Paga la promesa de
-      `s1-recap` y cierra `s1-inventario`.
-- [ ] **`docker-compose.yml`**, aunque sea un fragmento: dos comandos anotados
-      explican «los servicios declarados ahí» y el mecanismo de `profiles` que
-      esconde `mlflow` y `ollama`, y el archivo no se abre nunca.
-- [ ] Añadir a la tabla `s1-make` las filas que faltan: `make entrenar`,
-      `make mlflow` y `make ollama`.
-
-**Tests esperados**
-- [ ] `validar-contenido` con las rutas nuevas comprobadas contra el
-      laboratorio, y `npm run numerar` cuadrando
-- [ ] La captura de MLflow existe en `public/contenido/img/` y `npm run humo`
-      la abre sin error
-
-**Fuera de alcance**
-- Enseñar a usar MLflow. Se abre, se mira un run, se dice que es el mismo del
-  Módulo 2, y se sigue.
-- Un ítem por librería. Las herramientas se nombran **donde se usan**, no en
-  una lista.
-
-**Requisitos externos**
-- Correr `make mlflow` en el laboratorio para capturar la pantalla. Son unos
-  minutos y hay que tener el `seed` hecho, porque sin runs la interfaz sale
-  vacía.
 
 ---
 

@@ -23,7 +23,28 @@ items:
 
       Deliberadamente simple. El taller no trata de exprimir precisión;
       trata de vigilar modelos que ya están corriendo.
+
+      Y se fabrican con la caja de herramientas de siempre, sin nada exótico:
+
+      | Pieza | Con qué |
+      |---|---|
+      | Las features | **pandas** |
+      | El ajuste | **scikit-learn**, `Ridge` de `sklearn.linear_model` |
+      | Guardar el artefacto | **joblib**, un `.joblib` por modelo |
+      | Registrar la versión | **MLflow**, el mismo del Módulo 2 |
     notas: |
+      **Los cuatro nombres de la tabla hay que decirlos en voz alta**, aunque
+      parezcan obvios. Es la respuesta a «¿y con qué se generan los modelos?»,
+      y sin ella un alumno termina las ocho horas sin poder nombrar la librería
+      que entrenó lo que estuvo vigilando.
+
+      El que sorprende es el tercero: **guardar un modelo entrenado es una
+      línea**. `joblib.dump(modelo, ruta)`. Ni servidor de modelos, ni formato
+      propio, ni nada. Se ve en un rato.
+
+      Y el cuarto es un reencuentro: MLflow es del Módulo 2, y acá vuelve
+      haciendo exactamente su trabajo. También se abre en un rato.
+
       Si alguien pregunta por qué Ridge y no algo mejor: porque un modelo
       más complejo no cambiaría nada de lo que vamos a hacer, y sí
       alargaría el entrenamiento de los 192.
@@ -160,12 +181,15 @@ items:
     filas:
       - ["`make arriba`", "`docker compose build` y luego `docker compose up -d plataforma ui`"]
       - ["`make seed`", "`docker compose run --rm plataforma python -m plataforma seed`"]
+      - ["`make entrenar`", "`… python -m plataforma entrenar` — el único que reescribe un modelo"]
       - ["`make romper ESCENARIO=x`", "`escenario --nombre x`, después `pronosticar`, después `metricas`"]
       - ["`make agente`", "`docker compose run --rm agente python -m agente run`"]
       - ["`make actuar`", "lo mismo, más `-e EJECUTAR_ACCIONES=1`"]
       - ["`make ui`", "`docker compose up -d ui` — **`up`, no `run`**"]
+      - ["`make mlflow`", "`docker compose --profile mlflow up -d mlflow` — el registro, en `:5000`"]
+      - ["`make ollama`", "`--profile local up -d ollama` — un modelo local, si no hay llave"]
       - ["`make reset`", "`docker compose down -v` — la `-v` borra los volúmenes"]
-    resaltar: [5]
+    resaltar: [6]
     notas: |
       Empezar por qué es `make`: un ejecutor de recetas de 1976, anterior a
       Docker y a casi todo lo demás. Lee el archivo `Makefile` del
@@ -175,6 +199,11 @@ items:
       La fila resaltada es la trampa del día: **`make ui` usa `up`, no
       `run`**, y esa palabra decide si algo queda vivo o se ejecuta y
       desaparece. Vuelve tres veces durante la clase.
+
+      Las dos últimas usan `--profile`, y por eso `make arriba` no las levanta:
+      un servicio con perfil solo arranca si se lo pide por su nombre. Se ven
+      las dos hoy — `mlflow` en un rato, `ollama` solo si alguien llega sin
+      llave.
 
       Lo que quiero que se lleven no es la tabla: es que **ningún comando
       del taller es magia**, y que el día que trabajen sin este Makefile
@@ -987,6 +1016,374 @@ items:
       —tres rezagos y dos medias móviles miden casi lo mismo— una regresión sin
       penalización reparte pesos enormes que se cancelan y se vuelve
       inestable. `alpha=1.0` y a otra cosa.
+
+      `Ridge` sale de `sklearn.linear_model`, y esa es la cuarta línea del
+      archivo. Conviene decirlo: **el modelo se entrena con scikit-learn**, con
+      el mismo `.fit()` de cualquier cuaderno.
+
+  - id: s1-pausa-fabrica
+    tipo: pausa-preguntas
+    titulo: Pausa · antes de ver cómo se fabrican
+    minutos: 3
+    disparadores:
+      - ¿Quedó claro por qué el 10.4% y el 13.8% son comparables?
+      - ¿Alguien aparta su conjunto de validación por tiempo, o lo reparte al azar?
+      - ¿Cada cuánto se reentrena en donde trabajan? ¿Y quién lo decide?
+    notas: |
+      **3 min**, y el sitio no es casual: acabamos de cerrar el «qué es un
+      modelo acá» y lo que viene son cinco láminas seguidas sobre cómo se
+      fabrica uno. Es la última ventana barata antes de ese tramo.
+
+      La segunda pregunta es la que rinde. Repartir una serie temporal al azar
+      es de los errores más comunes que hay, y en una sala de veinte siempre
+      hay dos o tres que lo hacen sin saber que está mal.
+
+      La tercera engancha directo con el reto 5: quien contesta «cada mes» ya
+      entendió por qué el modelo que está sirviendo se entrenó contra un mundo
+      que ya no existe.
+
+  - id: s1-guardar
+    tipo: codigo
+    titulo: Y así se guarda un modelo entrenado
+    entradilla: Una línea. Lo demás de esta lámina es el registro, que es lo que se vuelve caro.
+    lenguaje: python
+    ruta: plataforma/entrenar.py
+    resaltar: ["4"]
+    minutos: 4
+    contenido: |2
+              ruta = RUTA_MODELOS / f"{m['modelo_id']}.joblib"
+              joblib.dump(modelo, ruta)
+
+              registro.append(
+                  {
+                      **m,
+                      "version": previo.get(m["modelo_id"], {}).get("version", 0) + 1,
+                      "entrenado_hasta": hasta.isoformat(),
+                      "mape_validacion": round(mape_val, 3),
+                      "artefacto": str(ruta),
+                  }
+              )
+    notas: |
+      **`joblib.dump(modelo, ruta)`. Esa es toda la persistencia.** Serializa el
+      objeto de scikit-learn a disco, y del otro lado `joblib.load` lo devuelve
+      listo para `.predict()`. Vale la pena decirlo despacio porque la palabra
+      «artefacto» sugiere algo mucho más ceremonioso de lo que es.
+
+      Lo que sí merece atención es lo de abajo. **La `version` no se pone: se
+      hereda y se incrementa** — `previo.get(...).get("version", 0) + 1`. Si
+      corren `make entrenar` dos veces, la segunda deja `version: 2`. Es la
+      línea que convierte una carpeta de archivos en un registro de modelos.
+
+      Y hay una decisión escondida en el `previo`, tres líneas más abajo del
+      fragmento: los modelos que **no** se tocaron conservan su versión y su
+      fecha. Un `--categoria bebidas` reentrena 24 y deja los otros 168 como
+      estaban, con su edad. El registro tiene que mostrar la flota como está de
+      verdad, con modelos de distinta edad conviviendo — que es como se ven
+      todas las flotas reales.
+
+      El `mape_validacion` que se guarda acá es **el 10.4% de hace dos
+      láminas**, y ahora se ve de dónde sale: lo escribe el propio
+      entrenamiento, modelo por modelo, en el momento en que se entrena.
+
+  - id: s1-entrenar
+    tipo: comando-anotado
+    titulo: Reentrenar, y solo eso
+    entradilla: La etapa 2/4 del seed, corrida sola. Es el único paso que cambia un artefacto.
+    comando: docker compose run --rm plataforma python -m plataforma entrenar
+    minutos: 4
+    segmentos:
+      - texto: entrenar
+        explicacion: >-
+          Uno de los seis subcomandos de la plataforma, y el único que
+          **escribe en `modelos/`**. Los demás tocan el histórico o la
+          telemetría; este toca los artefactos. `make entrenar` es su atajo.
+        otrosValores: ["datos", "escenario", "pronosticar", "metricas", "seed"]
+    notas: |
+      **Es el único comando de las ocho horas que cambia un modelo**, y hasta
+      acá solo se había visto escondido dentro de `seed`, como la barra de
+      progreso `2/4`.
+
+      Correrlo suelto sirve para dos cosas. Una, ver cuánto tarda de verdad: es
+      el único paso lento del laboratorio, y explica por qué ninguna de las
+      recetas de `romper` y `reparar` lo incluye. Y dos, ver el efecto en el
+      registro — **la `version` sube de 1 a 2**, que es la lámina anterior
+      ocurriendo.
+
+      Acepta los mismos filtros que `escenario`: `--categoria bebidas`
+      reentrena 24 modelos y deja 168 intactos. Es exactamente lo que el agente
+      va a pedir el domingo, y lo que la política del reto 5 deja pasar o no.
+
+  - id: s1-entrenar-salida
+    tipo: salida-anotada
+    titulo: Y lo que deja
+    entradilla: La misma flota, una versión más vieja
+    comando: docker compose run --rm plataforma python -m plataforma entrenar
+    minutos: 3
+    salida: |2
+        48/192 modelos entrenados...
+        96/192 modelos entrenados...
+        144/192 modelos entrenados...
+        192/192 modelos entrenados...
+      Flota entrenada: 192 modelos hasta 2026-05-08
+
+      # y en el registro, antes y despues:
+      "version": 1   ->   "version": 2
+      "entrenado_hasta": "2026-05-08"   (igual)
+    anotaciones:
+      - texto: "Flota entrenada: 192 modelos hasta 2026-05-08"
+        explicacion: >-
+          **La fecha no se movió, y eso es lo raro de la lámina.** Reentrenar no
+          adelanta el corte: el modelo se vuelve a ajustar contra el mismo
+          histórico, que llega hasta el 8 de mayo porque los 91 días siguientes
+          están apartados para evaluarlo. Reentrenar no es lo mismo que tener
+          datos nuevos.
+      - texto: '"version": 1   ->   "version": 2'
+        explicacion: >-
+          Lo único que cambió de verdad. Es la evidencia de que el comando hizo
+          algo: los `.joblib` pesan lo mismo, se llaman igual y tienen otra
+          marca de tiempo. **El registro es el que lleva la cuenta.**
+    notas: |
+      La primera anotación es la que enseña, y suele sorprender: se reentrena y
+      el modelo sigue sin saber nada de julio. Lo que arregla un
+      reentrenamiento es el ajuste, no la ignorancia — para eso hacen falta
+      datos nuevos, que es otra conversación.
+
+      Si alguien quiere comprobarlo: `ls -l /datos/modelos | head` antes y
+      después. Mismo nombre, mismo tamaño, otra hora. Un comando que no crea
+      archivos y sí cambia el mundo.
+
+  - id: s1-pregunta-reentrenar-arregla
+    tipo: pregunta
+    titulo: Y entonces, ¿qué arregla reentrenar?
+    pregunta: >-
+      Acabamos de reentrenar los 192 y `entrenado_hasta` sigue diciendo
+      2026-05-08. Si hoy un modelo se está equivocando porque el mundo cambió
+      en julio, ¿reentrenarlo así lo arregla?
+    visibilidad: publica
+    segundos: 45
+    permiteOmitir: true
+    respuesta: No, porque sigue sin ver julio
+    minutos: 3
+    opciones:
+      - Sí, para eso está reentrenar
+      - No, porque sigue sin ver julio
+      - Solo si se cambia el algoritmo
+      - Depende de cuántas veces se reentrene
+    notas: |
+      Treinta segundos. Es corta y va acá porque la lámina anterior acaba de
+      dejar el dato raro en pantalla: la fecha no se movió.
+
+      La respuesta correcta suele salir sola en cuanto alguien mira la fecha.
+      Lo que hay que dejar caer después es la consecuencia: **el reto 5 va a
+      recomendar reentrenar, y eso solo sirve si además llegan datos nuevos.**
+    solucion:
+      explicacion: |
+        **No, porque sigue sin ver julio.** El corte de entrenamiento está en
+        el 8 de mayo y los 91 días siguientes están apartados a propósito: son
+        contra lo que se evalúa la flota. Reentrenar vuelve a ajustar los
+        coeficientes **contra el mismo histórico**.
+
+        Reentrenar arregla el ajuste, no la ignorancia. Para que un
+        reentrenamiento sirva de verdad hacen falta **datos nuevos** — y en
+        producción esa es justo la parte que se olvida: se programa el
+        reentrenamiento semanal y nadie comprueba que la ventana de datos
+        avance con él.
+
+        Guárdenlo para mañana. En el reto 5 el agente va a recomendar
+        «reentrenar la categoría», y la pregunta que hay que hacerle a esa
+        recomendación es siempre la misma: *¿contra qué datos?*
+      descartes:
+        - opcion: Sí, para eso está reentrenar
+          razon: >-
+            Es lo que todo el mundo asume, y por eso la lámina anterior deja la
+            fecha a la vista. Reentrenar sin datos nuevos reajusta lo mismo.
+        - opcion: Solo si se cambia el algoritmo
+          razon: >-
+            Cambiar de algoritmo es otra conversación, y tampoco resuelve
+            ésta: un modelo mejor sobre los mismos datos sigue sin saber qué
+            pasó en julio.
+        - opcion: Depende de cuántas veces se reentrene
+          razon: >-
+            Reentrenar cien veces sobre el mismo histórico da cien veces el
+            mismo modelo. Lo que falta no es repetición, son datos.
+
+  - id: s1-mlflow-registro
+    tipo: codigo
+    titulo: Y cada entrenamiento queda registrado
+    entradilla: Ocho parámetros y una métrica, por modelo. Esto es MLflow, el del Módulo 2.
+    lenguaje: python
+    ruta: plataforma/entrenar.py
+    minutos: 3
+    contenido: |2
+              if mlflow is not None:
+                  with mlflow.start_run(run_name=m["modelo_id"]):
+                      mlflow.log_params(
+                          {
+                              "modelo_id": m["modelo_id"],
+                              "categoria": m["categoria"],
+                              "tienda": m["tienda"],
+                              "region": m["region"],
+                              "algoritmo": "Ridge",
+                              "alpha": alpha,
+                              "entrenado_hasta": hasta.isoformat(),
+                              "n_entrenamiento": len(X_tr),
+                          }
+                      )
+                      mlflow.log_metric("mape_validacion", mape_val)
+    notas: |
+      **Acá vuelve el Módulo 2**, y conviene nombrarlo así: es la misma
+      herramienta, haciendo el mismo trabajo, dentro de un caso que ya conocen.
+
+      La distinción que vale es **parámetro contra métrica**. Un parámetro es
+      lo que decidiste antes de entrenar —qué algoritmo, qué `alpha`, hasta qué
+      fecha, con cuántas filas—; una métrica es lo que salió. MLflow los separa
+      a propósito: los primeros se filtran, las segundas se comparan.
+
+      Y `log_metric("mape_validacion", ...)` **es el 10.4% otra vez**, por
+      tercera vez en esta unidad y ahora en su sitio definitivo. Sale del
+      entrenamiento, se guarda en el registro local y se registra en MLflow.
+
+      El `if mlflow is not None` de arriba es una concesión al taller: si la
+      librería no está, el entrenamiento sigue. Un registro de modelos no debe
+      poder tumbar un entrenamiento, y en clase menos.
+
+  - id: s1-mlflow-compose
+    tipo: codigo
+    titulo: Cómo se levanta, y por qué no está levantado
+    entradilla: El servicio de MLflow en docker-compose.yml. Es la primera vez que abrimos este archivo.
+    lenguaje: yaml
+    ruta: docker-compose.yml
+    resaltar: ["4", "5"]
+    minutos: 3
+    contenido: |2
+        # Registro de modelos. Opcional: docker compose --profile mlflow up -d mlflow
+        mlflow:
+          build:
+            context: .
+            dockerfile: plataforma/Dockerfile
+          profiles: ["mlflow"]
+          command: mlflow ui --host 0.0.0.0 --port 5000 --backend-store-uri file:///datos/mlruns
+          ports:
+            - "5000:5000"
+          volumes:
+            - datos:/datos
+    notas: |
+      **Es el archivo que lleva toda la tarde detrás de cada comando y no se
+      había abierto.** Cada `docker compose run --rm plataforma …` sale de un
+      bloque como este: de ahí salen la imagen, los puertos, los volúmenes.
+
+      Las dos líneas resaltadas son las que explican una cosa que ya se dijo y
+      no se había justificado. **`profiles: ["mlflow"]` es por qué `make arriba`
+      no lo levanta**: un servicio con perfil solo arranca si se lo pide por su
+      nombre. Es el mismo mecanismo que esconde `ollama`. Sin eso, todo el
+      mundo pagaría el arranque de dos servicios que la mayoría no usa.
+
+      Y el `--backend-store-uri file:///datos/mlruns` es la otra media frase:
+      **MLflow no tiene base de datos acá**, lee una carpeta del mismo volumen
+      `datos` donde están los modelos. Por eso puede levantarse cuando se le
+      antoje y ver todo lo que se entrenó antes.
+
+      Si alguien pregunta por qué usa el Dockerfile de la plataforma: porque
+      `mlflow` ya está en sus dependencias, y construir una imagen aparte para
+      un servicio opcional sería una imagen más que baja todo el mundo.
+
+  - id: s1-mlflow-ui
+    tipo: demo
+    titulo: El registro de modelos, abierto
+    entradilla: make mlflow. Es el mismo MLflow del Módulo 2, con 192 ejecuciones dentro.
+    minutos: 4
+    pasos:
+      - comando: make mlflow
+        esperado: "http://localhost:5000"
+      - comando: "# ordenar por mape_validacion, y filtrar por categoria"
+    observar: >-
+      192 ejecuciones, una por modelo, con el nombre del `modelo_id`. Ordenar
+      por `mape_validacion` y ver la dispersión: el mejor ronda el 6% y el peor
+      pasa del 20%, **el día en que se entrenaron**. Ese abanico es el que
+      luego se desplaza entero, y es lo que estamos a punto de medir.
+    respaldo: >-
+      Si no levanta, `registro.json` tiene lo mismo sin interfaz:
+      `docker compose run --rm plataforma head -c 400 /datos/modelos/registro.json`.
+      Nada de lo que viene depende de haber visto esta pantalla.
+    notas: |
+      **Paga una promesa que el curso hace en el minuto ocho.** El diagrama de
+      apertura dibuja MLflow con una flecha punteada y la nota dice «el
+      registro de modelos que van a ver hoy es MLflow». Este es el momento.
+
+      **4 min y no más.** No es un taller de MLflow: se abre, se ordena por
+      `mape_validacion`, se dice que es el mismo del Módulo 2 y se cierra. Lo
+      que la sala tiene que llevarse es que **el 10.4% de la lámina del
+      inventario tiene dónde mirarse**, y que cada uno de los 192 tiene su
+      ficha con qué algoritmo, qué `alpha` y hasta qué fecha.
+
+      La pregunta que suele salir: «¿y esto no debería ser el registro de
+      producción?». Sí, y en una cadena de verdad lo sería —con etapas, con
+      promoción a producción, con quién aprobó qué. Acá el registro que manda
+      es `registro.json`, porque el job tiene que poder correr sin MLflow
+      arriba. Es una simplificación consciente y vale la pena decirlo.
+
+  - id: s1-mlflow-captura
+    tipo: imagen
+    titulo: Lo que se ve dentro
+    entradilla: Una fila por modelo, y las columnas son exactamente lo que registra el código
+    archivo: img/mlflow-runs.png
+    destacar: [61, 25, 12, 62]
+    pie: >-
+      El experimento `pronostico-demanda`, con las ejecuciones de la última
+      corrida de `entrenar`. `mape_validacion` es la métrica; `algoritmo`,
+      `categoria`, `entrenado_hasta`, `n_entrenamiento` y `tienda` son
+      parámetros — los mismos ocho que se pasan a `log_params`.
+    minutos: 3
+    notas: |
+      **Es el respaldo de la demo anterior**, y sirve igual si la interfaz no
+      levanta en el aula.
+
+      Señalar la columna recuadrada: `mape_validacion`, y que va de 6.4 a 17.9
+      entre modelos de la misma categoría. **La flota nunca fue pareja**, ni
+      siquiera el día que se entrenó. Eso importa para el reto 2: un umbral
+      único sobre 192 modelos con esta dispersión de partida marca a los mismos
+      todos los días.
+
+      Las otras columnas son la lámina de código de hace dos minutos, ocurrida:
+      `algoritmo: Ridge`, `entrenado_hasta: 2026-05-08` igual para todos,
+      `n_entrenamiento: 253` — que son los días que quedaron después de apartar
+      las cuatro semanas de validación y de descartar las filas sin rezagos.
+
+      Si alguien pregunta por qué las columnas no salen solas: hay que
+      añadirlas en **Columns**. MLflow muestra por omisión lo que es común a
+      cualquier experimento, y los parámetros propios se eligen. Es medio
+      minuto y vale la pena hacerlo en vivo.
+
+  - id: s1-job-carga
+    tipo: codigo
+    titulo: Y esto es el job de madrugada
+    entradilla: Cargar los 192 y predecir. Tres líneas, y una de ellas es la que abre los artefactos.
+    lenguaje: python
+    ruta: plataforma/pronosticar.py
+    resaltar: ["4-6"]
+    minutos: 3
+    contenido: |2
+          """Simula una ejecucion diaria del job por cada fecha del rango."""
+          inicio = time.time()
+          ventas = pd.read_csv(RUTA_VENTAS, parse_dates=["fecha"])
+          flota = _cargar_flota()
+
+          modelos_cargados = {
+              mid: joblib.load(r["artefacto"]) for mid, r in flota.items()
+          }
+    notas: |
+      **Este es el job batch del caso, y son tres líneas.** Se lee el mundo, se
+      lee el registro, y se abren los 192 artefactos de una vez con
+      `joblib.load` — el reverso exacto del `joblib.dump` de hace dos láminas.
+
+      Señalar que los modelos se cargan **todos juntos y una sola vez**, no uno
+      por petición. Es la diferencia de la que hablaba la lámina «un modelo no
+      es un contenedor»: un proceso, 192 modelos en memoria, un CSV de salida.
+      856 KB caben de sobra.
+
+      Y la ruta de cada artefacto sale del registro, no de armar el nombre a
+      mano. Es lo que permite que un modelo reentrenado ayer y otro de mayo
+      convivan sin que el job se entere.
 
   - id: s1-flota-dada
     tipo: criterios

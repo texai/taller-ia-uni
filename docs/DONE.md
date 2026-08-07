@@ -3013,3 +3013,71 @@ falta no es el dato, es la instrumentación — y arreglarlo es subir un campo a
   de nuevo. Es exactamente para lo que está.
 - 165 pruebas, lint, typecheck y build limpios. 202 ítems · 332 + 268 min.
 - `npm run humo`: **297 pantallas abiertas, 0 con error**.
+
+---
+
+## Batch 46 — Con qué se fabrica un modelo
+**2026-08-07**
+
+Pregunta literal del docente: *«no he visto en qué momento se usan las
+herramientas específicas que generan los modelos»*. Sobre 199 ítems,
+**scikit-learn, joblib, LangChain, numpy, scipy, FastAPI y pydantic tenían cero
+menciones**; `pandas` una, `uvicorn` una dentro de la causa de un error, y
+`Ridge` una sin decir de qué librería sale.
+
+**Alcance** (todo hecho)
+- [x] La cadena nombrada donde se usa, no en un inventario de librerías
+- [x] `make entrenar` solo, con su salida
+- [x] La persistencia: `joblib.dump` y el bump de `version`
+- [x] El job cargando los 192 artefactos
+- [x] MLflow en pantalla, con captura
+- [x] `docker-compose.yml`, abierto por primera vez
+- [x] `make entrenar`, `make mlflow` y `make ollama` en la tabla de comandos
+
+### La promesa de MLflow, pagada
+
+`s1-recap` decía en notas *«el registro de modelos que van a ver hoy es
+MLflow»* y `s1-arquitectura` lo dibujaba con una arista punteada. No se veía
+nunca, y de ahí colgaba además el `mape_validacion_medio: 10.382` de
+`s1-inventario`, cuya mitad izquierda —el argumento de la primera hora— no
+tenía dónde mirarse.
+
+Entran cuatro láminas: el `log_params` / `log_metric` del código, el servicio
+en `docker-compose.yml` —que de paso explica por qué `make arriba` no lo
+levanta: `profiles`—, la demo con `make mlflow`, y **una captura de verdad**.
+La captura se hizo instalando MLflow, reentrenando los 192 con la librería
+disponible y abriendo la interfaz: el experimento `pronostico-demanda` con sus
+ejecuciones, y las columnas `mape_validacion`, `algoritmo: Ridge`,
+`entrenado_hasta: 2026-05-08` y `n_entrenamiento: 253` — exactamente los ocho
+parámetros y la métrica que registra el código.
+
+### Lo que enseña `make entrenar` corrido solo
+
+Que **la fecha no se mueve**. Reentrenar deja `entrenado_hasta` en el 8 de
+mayo, porque el corte es el corte: lo único que cambia es la `version`, de 1 a
+2. Reentrenar arregla el ajuste, no la ignorancia.
+
+Eso dio la pregunta nueva de la unidad —*¿y entonces qué arregla reentrenar?*—
+que además engancha con el reto 5: cuando el agente recomiende «reentrenar la
+categoría», la pregunta correcta es *¿contra qué datos?*.
+
+### Dos avisos del validador, y los dos útiles
+
+El primero, un bloque YAML cuya primera línea iba más indentada que el resto:
+se arregló con el indicador explícito `|2`, que es la misma solución del batch
+37. El segundo, el reproche de ritmo: **47 minutos seguidos sin interacción**
+en `s1-flota`, que es exactamente lo que pasa cuando un batch añade ocho
+láminas en fila. Se resolvió con la pregunta de arriba y con una
+`pausa-preguntas` antes del tramo de fabricación — la de «¿aparta su
+validación por tiempo o la reparte al azar?», que en una sala de veinte
+siempre pesca a dos o tres.
+
+---
+
+**Verificación**
+- Los 192 runs de MLflow, **entrenados y capturados de verdad**, no descritos.
+- `npm run numerar`: 24 numerados · 0 sin numerar, con `entrenar.py`,
+  `pronosticar.py` y `docker-compose.yml` cuadrando.
+- `validar-contenido` sin errores y **sin reproches de ritmo**.
+- 165 pruebas, lint, typecheck y build limpios. 212 ítems · 365 + 268 min.
+- `npm run humo`: **310 pantallas abiertas, 0 con error**.

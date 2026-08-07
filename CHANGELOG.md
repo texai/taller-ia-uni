@@ -5,6 +5,28 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Con qué se fabrica un modelo
+- **La cadena, nombrada donde se usa.** pandas construye las features,
+  `Ridge` de **scikit-learn** ajusta, **joblib** guarda el `.joblib` y
+  **MLflow** registra la versión. Ninguna de las cuatro se nombraba: sobre 199
+  ítems, scikit-learn, joblib, LangChain, numpy, scipy y FastAPI tenían **cero
+  menciones**.
+- **`make entrenar`, corrido solo.** Hasta ahora solo existía como la barra
+  `2/4` dentro de `seed`, y es el único comando de las ocho horas que reescribe
+  un modelo. Lo que enseña es que **la fecha no se mueve**: `entrenado_hasta`
+  sigue en mayo y solo sube la `version`. Reentrenar arregla el ajuste, no la
+  ignorancia — y de ahí sale la pregunta nueva, que engancha con el reto 5.
+- **La persistencia es una línea**, `joblib.dump(modelo, ruta)`, y el registro
+  de al lado es el que hereda e incrementa la `version`.
+- **El job de madrugada, en código**: `joblib.load` sobre los 192 de una vez.
+- **MLflow, abierto.** El material lo prometía dos veces —una nota del recap y
+  una arista punteada del diagrama— y no se veía nunca. Entra con su código,
+  su servicio en `docker-compose.yml` (que explica de paso por qué `make
+  arriba` no lo levanta: `profiles`) y **una captura real** con las 192
+  ejecuciones.
+- `docker-compose.yml` se abre por primera vez, y la tabla de comandos suma
+  `make entrenar`, `make mlflow` y `make ollama`.
+
 ### El caso, recorrido y no contado
 - **La cadena, en código.** `plataforma/config.py` entra en la unidad del caso:
   las 24 tiendas con su región y su factor de tamaño, y las 8 categorías con su
