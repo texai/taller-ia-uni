@@ -146,6 +146,20 @@ export interface ItemArchivo extends ItemBase {
 }
 
 /**
+ * Varios descargables juntos, cada uno con su porqué.
+ *
+ * No es `archivo` repetido. Seis `archivo` seguidos son seis láminas que la
+ * clase pasa a golpe de flecha, y para cuando aparece la sexta ya nadie se
+ * está bajando la primera. Un juego de material que se entrega en bloque se
+ * decide de una vez o no se decide, y para eso tiene que estar entero a la
+ * vista.
+ */
+export interface ItemDescargas extends ItemBase {
+  tipo: "descargas";
+  archivos: { archivo: string; titulo: string; descripcion?: string }[];
+}
+
+/**
  * Dos lados, uno al lado del otro.
  *
  * La mitad de lo que enseña este taller es una comparación: MAPE contra sesgo,
@@ -538,6 +552,7 @@ export type Item =
   | ItemImagen
   | ItemEnlace
   | ItemArchivo
+  | ItemDescargas
   | ItemComparacion
   | ItemMetrica
   | ItemTabla
@@ -570,6 +585,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   imagen: "contenido",
   enlace: "contenido",
   archivo: "contenido",
+  descargas: "contenido",
   comparacion: "contenido",
   metrica: "contenido",
   tabla: "contenido",

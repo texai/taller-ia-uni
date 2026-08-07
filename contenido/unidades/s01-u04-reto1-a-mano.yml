@@ -217,6 +217,30 @@ items:
       `docker compose run --rm plataforma python -m plataforma`. Se define
       una vez y se reutiliza en las seis recetas de la plataforma.
 
+  - id: s1-guia-escenarios
+    tipo: archivo
+    titulo: "Guía 3 · Romper el mundo"
+    entradilla: Los cuatro escenarios con sus cifras, y cómo armarse otros
+    archivo: archivos/guias/03-romper-el-mundo.pdf
+    descripcion: >-
+      Qué le hace cada escenario a la flota y qué huella deja en el MAPE y en
+      el sesgo, medido. Y los tres parámetros —`--categoria`, `--tienda`,
+      `--desde`— para acotar el daño y armarse escenarios propios.
+    minutos: 1
+    notas: |
+      Va justo acá porque el ejercicio empieza en la lámina siguiente y la
+      tabla de los cuatro escenarios es la referencia contra la que van a leer
+      lo que les salga.
+
+      **Ojo con la tabla:** trae las cifras de los cuatro, incluido el sesgo
+      silencioso. Quien la abra ahora y lea la fila de `sesgo_silencioso` se
+      adelanta el golpe del reto. No es grave —el punto del reto es el rato que
+      se pasa buscando, no la sorpresa del número— pero si la sala va rápida,
+      mejor anunciarla después de la tabla de las dos degradaciones.
+
+      Es la guía que más se usa **después** del taller: es la que deja seguir
+      rompiendo cosas el lunes.
+
   - id: s1-r1-lectura
     tipo: lectura
     titulo: La telemetría, en sus manos

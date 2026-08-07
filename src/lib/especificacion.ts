@@ -73,6 +73,8 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   archivo: { requeridos: ["archivo"], opcionales: ["descripcion"] },
 
+  descargas: { requeridos: ["archivos"] },
+
   comparacion: { requeridos: ["izquierda", "derecha"] },
 
   metrica: {

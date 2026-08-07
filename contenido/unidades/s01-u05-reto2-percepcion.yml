@@ -82,6 +82,27 @@ items:
 
       Está en el glosario, con el detalle. Acá basta con decir qué compara.
 
+  - id: s1-guia-herramientas
+    tipo: archivo
+    titulo: "Guía 4 · Las siete herramientas"
+    entradilla: Las tres reglas de recién, la cuarta que no está en la lámina, y las siete
+    archivo: archivos/guias/04-las-siete-herramientas.pdf
+    descripcion: >-
+      Qué devuelve cada una de las siete y cuándo la llama el agente. Más las
+      tres reglas de una herramienta de percepción, y una cuarta que solo se
+      descubre usándolas: la docstring es prompt.
+    minutos: 1
+    notas: |
+      Las siete aparecen repartidas entre hoy y mañana —`agregado_por` en un
+      rato, `estado_del_job` el domingo— y esta hoja es la única vez que están
+      las siete juntas. Vale la pena decirlo: es el índice de los ojos del
+      agente.
+
+      Conviene tenerla abierta durante la ventana de lectura de dentro de un
+      rato, que es sobre `comparar_periodos` y `agregado_por`. Quien entra al
+      archivo sabiendo qué devuelve cada herramienta lee el código en la mitad
+      del tiempo.
+
   - id: s1-r2-firma
     tipo: codigo
     titulo: La herramienta

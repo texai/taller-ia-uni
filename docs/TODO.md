@@ -63,6 +63,7 @@ Referencias:
 | 40 | La cadena de comandos, visible | ✅ Completado |
 | 41 | El repositorio, a un clic | ✅ Completado |
 | 42 | Los conceptos que se usan sin nombrarse | ✅ Completado |
+| 43 | Las seis guías, descargables desde la clase | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
