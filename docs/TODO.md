@@ -236,44 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 17 — Contenido · S1·U3 `reto` — La herramienta de percepción
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Que entiendan que la calidad de un agente se decide antes del LLM: si la percepción miente, no hay arquitectura que lo salve.
-
-**Duración** 60 minutos → del orden de 20 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- `retos/README.md` — Reto 2
-- `agente/herramientas.py` — `_sesgo`, `UMBRALES`, `comparar_periodos`
-- Los máximos medidos de la flota sana por dimensión: categoría +19.6% y 1.05pp, región +15.2% y 2.31pp, tienda +48.4% y 3.54pp
-
-**Tipos de ítem sugeridos**
-- `codigo` con `_sesgo`, resaltando el cociente de totales
-- `comparacion` entre promediar porcentajes y dividir totales, con el caso de panadería a +9.2% contra +0.7%
-- `tabla` de umbrales por dimensión
-- `criterios` con el de aceptación: cero banderas en la flota sana
-- `error-comun` con las tres trampas
-- `terminal` con `make verificar ARGS="--reto 2"`
-
-**Criterios de aceptación**
-- [ ] Las tres trampas quedan explicadas con las cifras medidas, no en abstracto
-- [ ] Se explica por qué el umbral de tienda es más alto que el de categoría
-- [ ] El criterio de aceptación es verificable por el alumno sin preguntar
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 60 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 18 — Contenido · S1·U4 `reto` — El primer agente, sin arquitectura
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura

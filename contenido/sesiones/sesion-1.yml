@@ -673,82 +673,307 @@ unidades:
       - Calibrar umbrales contra la flota sana, no contra la intuición
     requisitos:
       - Haber visto que el sesgo silencioso no se detecta a ojo
+      - Entorno levantado, con el mundo sano
     items:
       - id: s1-r2-titulo
         tipo: titulo
         titulo: "Reto 2 · Escribe la herramienta"
         entradilla: "Criterio: en la flota sana, cero banderas"
         minutos: 2
+        notas: |
+          La frase de la entradilla es todo el reto. Si la herramienta alarma
+          sobre lo normal, el agente que se construya encima no tiene
+          salvación: va a creerle a las banderas, y con razón — el error no es
+          suyo, es de quien puso el umbral.
 
       - id: s1-r2-por-que
         tipo: markdown
         titulo: Por qué agregar, y no volcar filas
+        minutos: 3
         contenido: |
-          Pendiente — batch 17.
-        minutos: 4
+          La telemetría son **17,472 filas**. Un LLM no puede leerlas, y aunque
+          pudiera, no debe: se las tragaría enteras para responder "¿cómo va la
+          flota?".
+
+          Una herramienta de percepción **agrega y devuelve una lectura**, no
+          datos crudos. Decenas de números, no miles de filas.
+
+          Y no es solo por el costo. Un modelo al que le entregas diecisiete
+          mil filas no razona sobre ellas: elige unas cuantas al azar y
+          construye una historia alrededor.
+        notas: |
+          Conectar con lo de ayer: ellos tampoco pudieron leer 192 modelos a
+          mano. El agente tiene exactamente el mismo problema, y la solución
+          también es la misma — agregar y comparar cortes.
+
+      - id: s1-r2-tres-reglas
+        tipo: criterios
+        titulo: Las tres reglas de una herramienta de percepción
+        minutos: 3
+        criterios:
+          - texto: Devuelve agregados, no filas.
+            pista: Decenas de números, no miles.
+          - texto: Es de solo lectura.
+            pista: En producción nadie le da escritura a un agente sobre los modelos.
+          - texto: La estadística la hace Python, no el LLM.
+            pista: El modelo razona sobre los números; no los calcula.
+        notas: |
+          La tercera es la que más se discute. Pedirle a un LLM que compute un
+          Kolmogorov-Smirnov es caro y poco confiable, y además irreproducible:
+          la misma pregunta dos veces puede dar dos números.
 
       - id: s1-r2-firma
         tipo: codigo
         titulo: La herramienta
+        entradilla: Lo que hay que escribir
         lenguaje: python
         ruta: agente/herramientas.py
-        minutos: 6
+        minutos: 3
         contenido: |
-          # Pendiente — batch 17
           @tool
-          def comparar_periodos(dias_recientes=14, dias_base=45,
-                                dimension="categoria") -> dict:
-              ...
+          def comparar_periodos(
+              dias_recientes: int = 14,
+              dias_base: int = 45,
+              dimension: str = "categoria",
+          ) -> dict:
+              """Compara una ventana reciente contra una linea base anterior
+              y mide si la diferencia es real."""
+        notas: |
+          Señalar que la docstring NO es documentación: es lo que el LLM lee
+          para decidir cuándo llamarla. Es prompt, y se escribe como prompt.
+
+      - id: s1-r2-sesgo-codigo
+        tipo: codigo
+        titulo: "Trampa 1 · Cómo se calcula el sesgo de un grupo"
+        lenguaje: python
+        ruta: agente/herramientas.py
+        minutos: 4
+        resaltar: ["6-8"]
+        contenido: |
+          def _sesgo(filas) -> float:
+              reales = pronosticadas = 0.0
+              for f in filas:
+                  reales += float(f.get("unidades_reales") or 0.0)
+                  pronosticadas += float(f.get("unidades_pronosticadas") or 0.0)
+              if reales <= 0:
+                  return 0.0
+              return round((pronosticadas - reales) / reales * 100, 3)
+        notas: |
+          Lo que NO está acá es lo importante: no hay ningún `mean` sobre la
+          columna `sesgo_pct`. Se suman unidades y se dividen totales.
 
       - id: s1-r2-sesgo
         tipo: comparacion
-        titulo: "Trampa 1 · El sesgo no se promedia"
-        minutos: 7
+        titulo: El sesgo no se promedia
+        entradilla: Dos cuentas sobre los mismos datos, y una está sesgada
+        minutos: 4
         izquierda:
           titulo: Promedio de porcentajes
-          contenido: Pendiente — batch 17
+          contenido: >-
+            Se toma el sesgo de cada día y se promedia. Suena razonable y está
+            mal: un día de venta baja infla su propio porcentaje sin mover casi
+            nada el total. El error va SIEMPRE hacia arriba.
+
         derecha:
           titulo: Cociente de totales
-          contenido: Pendiente — batch 17
+          contenido: >-
+            Cuántas unidades de más se pronosticó sobre cuántas se vendieron.
+            Además de ser correcto, el número significa algo en el mundo: +12%
+            son 12% de unidades de más en almacén.
+        notas: |
+          El "siempre hacia arriba" no es retórico y la tabla siguiente lo
+          muestra: las ocho categorías inflan, ninguna desinfla.
+
+      - id: s1-r2-sesgo-tabla
+        tipo: tabla
+        titulo: Lo que infla, medido
+        entradilla: Flota sana, últimos 14 días. Las ocho categorías, las dos cuentas.
+        minutos: 3
+        columnas: [Categoría, Promedio de %, Cociente de totales, Infla]
+        filas:
+          - ["panadería", "+9.4%", "+6.7%", "+2.8 pp"]
+          - ["lácteos", "+5.8%", "+2.4%", "+3.4 pp"]
+          - ["cuidado-personal", "+4.2%", "+1.2%", "+2.9 pp"]
+          - ["carnes", "+3.6%", "+2.5%", "+1.1 pp"]
+          - ["abarrotes", "+3.5%", "+1.2%", "+2.3 pp"]
+          - ["congelados", "+1.3%", "−0.7%", "+2.0 pp"]
+          - ["bebidas", "−1.8%", "−3.0%", "+1.2 pp"]
+          - ["limpieza", "−2.6%", "−4.9%", "+2.3 pp"]
+        resaltar: [0]
+        notas: |
+          Ninguna infla hacia abajo. Ese es el punto: no es ruido, es un sesgo
+          sistemático de la cuenta.
+
+          Panadería es el caso extremo. Con el umbral de 3 pp de la dimensión
+          `categoria`, promediar porcentajes la pone al borde de encender una
+          bandera en un mundo donde no pasa nada.
+
+          Las cifras están medidas sobre un mundo generado el 7 de agosto. Se
+          mueven un poco según el día; lo que no se mueve es el signo.
 
       - id: s1-r2-ventana
         tipo: error-comun
         titulo: "Trampa 2 · Medir lo normal con la ventana que auditas"
-        sintoma: Pendiente — batch 17
-        causa: Pendiente — batch 17
-        arreglo: Pendiente — batch 17
-        minutos: 5
+        minutos: 4
+        sintoma: >-
+          Los umbrales parecen razonables en el escritorio y encienden banderas
+          por todos lados en cuanto corren contra datos reales.
+        causa: >-
+          Se calibraron mirando la ventana degradada, o peor, a ojo. "Un 20% de
+          aumento de MAPE suena a mucho" no es una medición: es una intuición
+          sobre una escala que nadie miró.
+        arreglo: >-
+          Calibrar contra la flota SANA. Correr la comparación sobre un mundo
+          intacto, ver cuánto se mueve solo, y poner el umbral por encima de
+          eso. Es el único número que dice qué es normal acá.
+        notas: |
+          Es la trampa que más silenciosamente arruina un agente, porque el
+          resultado no es un error: es un agente que alarma todos los días y al
+          que se deja de hacer caso.
 
       - id: s1-r2-significancia
         tipo: error-comun
         titulo: "Trampa 3 · Significativo no es relevante"
-        sintoma: Pendiente — batch 17
-        causa: Pendiente — batch 17
-        arreglo: Pendiente — batch 17
-        minutos: 5
+        minutos: 4
+        sintoma: >-
+          El test estadístico marca deriva en casi todos los grupos, todo el
+          tiempo, incluso con el mundo sano.
+        causa: >-
+          Con miles de días-modelo, un Kolmogorov-Smirnov da significativo por
+          diferencias que a nadie le importan. La significancia mide si la
+          diferencia es real, no si vale la pena mirarla.
+        arreglo: >-
+          Pedir las dos cosas a la vez: `p < 0.01` **y** que el cambio supere
+          un umbral apreciable. Una sola de las dos no alcanza.
+        notas: |
+          El p-valor responde "¿pasó algo?". El umbral responde "¿me importa?".
+          Un agente que solo pregunta lo primero es un agente que grita.
+
+      - id: s1-r2-envejecimiento
+        tipo: metrica
+        titulo: Lo que se mueve solo
+        valor: "+20%"
+        unidad: de MAPE, en un mundo intacto
+        contexto: >-
+          Es la peor categoría de la flota sana comparando 14 días contra 45.
+          Nada está roto. Es envejecimiento: toda la flota pierde precisión al
+          alejarse de su fecha de entrenamiento.
+        tono: neutro
+        minutos: 2
+        notas: |
+          Medido: +20.8% en el mundo del 7 de agosto, +19.6% en la medición
+          original. Es la cifra que justifica el umbral de 25% para categoría.
 
       - id: s1-r2-umbrales
         tipo: tabla
         titulo: El umbral depende de por dónde cortes
-        entradilla: Medido sobre la flota sana, donde nada está roto
-        minutos: 6
+        entradilla: Lo peor que se mueve solo en la flota sana, por dimensión
+        minutos: 4
         columnas: [Dimensión, Modelos por grupo, Máx Δ MAPE, Máx Δ sesgo]
         filas:
-          - [categoría, 24, "+19.6%", "1.05 pp"]
-          - [región, 40, "+15.2%", "2.31 pp"]
-          - [tienda, 8, "+48.4%", "3.54 pp"]
+          - ["categoría", 24, "+20.8%", "1.06 pp"]
+          - ["región", "8 a 112", "+15.0%", "2.41 pp"]
+          - ["tienda", 8, "+51.3%", "3.21 pp"]
         resaltar: [2]
+        notas: |
+          La fila de tienda es la que sorprende: se mueve dos veces y media más
+          que la de categoría sin que nada esté roto.
+
+          Región es heterogénea a propósito y vale la pena decirlo — LIMA tiene
+          14 tiendas y 112 modelos; ORIENTE tiene una y ocho. Por eso su
+          columna no es un número solo.
+
+      - id: s1-r2-por-que-tienda
+        tipo: markdown
+        titulo: Por qué el umbral de tienda es más alto
+        minutos: 2
+        contenido: |
+          Una **categoría** agrupa 24 modelos, uno por tienda. Una **tienda**
+          agrupa 8, uno por categoría.
+
+          Promediar 8 números es mucho más ruidoso que promediar 24. La media
+          de la tienda salta más por puro azar, y salta más **todos los días**,
+          esté rota o no.
+
+          No es una decisión de gusto: es que el mismo umbral significa cosas
+          distintas según cuántas cosas estés promediando.
+        notas: |
+          Si alguien conoce la raíz de n, es el momento. Si no, basta con la
+          intuición: menos cosas, más ruido.
+
+      - id: s1-r2-umbrales-elegidos
+        tipo: codigo
+        titulo: Los umbrales, entonces
+        entradilla: Cada uno por encima de lo que su dimensión se mueve sola
+        lenguaje: python
+        ruta: agente/herramientas.py
+        minutos: 2
+        contenido: |
+          UMBRALES = {
+              #              MAPE %   sesgo pp
+              "categoria": (   25.0,      3.0),
+              "region":    (   25.0,      4.0),
+              "tienda":    (   60.0,      5.0),
+          }
+        notas: |
+          Comparar contra la tabla anterior fila por fila. Cada umbral está
+          justo por encima del máximo medido de su dimensión, con holgura pero
+          sin exagerar. Un umbral único calibrado con categorías marca tres
+          tiendas sanas como derivadas y cuatro como sesgadas.
+
+      - id: s1-r2-banderas
+        tipo: markdown
+        titulo: Dos banderas, y no significan lo mismo
+        minutos: 2
+        contenido: |
+          **`deriva_de_error`** — el MAPE empeoró de forma significativa *y*
+          apreciable. Pide las dos cosas por la trampa 3.
+
+          **`deriva_de_sesgo`** — el modelo empezó a errar hacia un lado. Es la
+          señal cara y la más silenciosa: no hace ruido en el MAPE, y su línea
+          base en una flota sana es prácticamente cero. Cuando se mueve, se
+          movió de verdad.
+        notas: |
+          De ahí que el umbral de sesgo sea de un dígito y el de MAPE de dos.
+          No están en la misma escala porque no parten del mismo sitio.
 
       - id: s1-r2-criterios
         tipo: criterios
         titulo: Cuándo terminaste
-        minutos: 5
+        minutos: 3
         criterios:
           - texto: Con la flota sana, cero banderas en las tres dimensiones
             pista: Si alarma sobre lo normal, ningún agente encima lo arregla
           - texto: La campaña promocional se ve, y solo en bebidas
           - texto: El sesgo silencioso aparece en las 8 categorías
+            pista: Si aparece en una sola, el problema es de la agregación
           - texto: La tienda muda se detecta como anomalía, no como deriva
+        notas: |
+          El primero se comprueba solo: `make reparar` y correr. No hace falta
+          preguntar si está bien.
+
+      - id: s1-r2-taller
+        tipo: demo
+        titulo: Escribirla
+        entradilla: Manos al teclado
+        minutos: 9
+        pasos:
+          - comando: "# abrir agente/herramientas.py y escribir comparar_periodos"
+          - comando: make reparar
+            esperado: "el mundo sano, para calibrar contra él"
+        observar: >-
+          Ir pasando por los puestos. Los dos tropiezos que aparecen son
+          siempre los mismos: un `mean` sobre la columna de sesgo, y umbrales
+          puestos a ojo antes de haber mirado la flota sana.
+        respaldo: >-
+          La implementación de referencia está en `agente/herramientas.py` de
+          la rama `reto-2-solucion`. Quien se trabe, que haga `git stash` y
+          siga desde ahí — perder la clase peleando con un groupby no es el
+          ejercicio.
+        notas: |
+          Nueve minutos es corto y es a propósito. La mayoría no va a terminar,
+          y no importa: lo que tiene que quedar es POR QUÉ se calibra contra la
+          flota sana, no el código.
 
       - id: s1-r2-verificar
         tipo: terminal
@@ -756,24 +981,20 @@ unidades:
         comando: make verificar ARGS="--reto 2"
         comandoWindows: .\taller.ps1 verificar --reto 2
         duracion: 60
-        minutos: 4
-
-      - id: s1-r2-taller
-        tipo: demo
-        titulo: Escribirla
-        minutos: 12
-        pasos:
-          - comando: "# manos al teclado"
-        observar: Pendiente — batch 17
-        respaldo: La implementación de referencia está en agente/herramientas.py
+        minutos: 3
         notas: |
-          A los 30 minutos, decir en voz alta que la referencia existe. Este es
-          el bloque que puede reventar el cronograma.
+          El verificador deja el mundo sano al terminar. Si alguien ve 17,304
+          filas en vez de 17,472, es que quedó en `feed_caido` — `make
+          reparar` y listo.
 
       - id: s1-r2-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
-        minutos: 4
+        minutos: 3
+        disparadores:
+          - ¿Dónde más han visto promediar porcentajes que ya eran cocientes?
+          - ¿Cómo calibrarían un umbral si no tuvieran un mundo sano de referencia?
+          - ¿Qué otra herramienta de percepción haría falta?
 
   # ------------------------------------------------------------------ 17:55
   - id: s1-reto-3

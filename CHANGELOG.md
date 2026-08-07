@@ -41,6 +41,31 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Los ítems de código reventaban la lámina al hidratar
+- `Codigo`, `Terminal` y `Demo` llamaban a Shiki con `await` dentro del
+  componente. Correcto en un componente de servidor — pero `Dictado` es de
+  cliente y se los lleva al navegador, donde un componente asíncrono no es
+  esperable: React renderiza bien en el servidor y **revienta al hidratar**.
+  Afectaba también a los ítems del esqueleto original.
+- Nada de lo que teníamos podía verlo: la construcción pasa, el HTML sale
+  completo y `curl` devuelve 200. El único síntoma es un error minificado en la
+  consola y la pantalla en blanco.
+- Arreglado con el patrón que ya usaba `diagrama-secuencia`: `resaltarSesion`
+  precalcula el HTML en el servidor y los componentes quedan síncronos.
+- **Nuevo `npm run humo`**: abre las 122 pantallas del curso en un navegador de
+  verdad —cada ítem y cada paso interno— y falla si alguna tira un error.
+
+### Contenido · S1·U3, la herramienta de percepción (batch 17)
+- 18 ítems, 60 minutos. Cada trampa se explica **con su medición al lado**: la
+  tabla de las ocho categorías donde ninguna infla hacia abajo, el +20% de MAPE
+  que la flota sana se mueve sola, y los `UMBRALES` comparados fila por fila
+  contra los máximos medidos.
+- Se verificaron los máximos por dimensión contra el simulador. La estructura
+  se sostiene exacta: tienda se mueve 2.5× más que categoría en MAPE y 3× en
+  sesgo, sin que nada esté roto.
+- Apareció el umbral que faltaba en el batch 16: `modelos_con_mape_sobre_25` en
+  `herramientas.py`. Es 25%.
+
 ### Cifras del caso, auditadas contra el simulador
 - Se corrió el pipeline del laboratorio dos veces, con el mundo anclado al 7 y
   al 12 de agosto. **El MAPE y el sesgo se sostienen al primer decimal**

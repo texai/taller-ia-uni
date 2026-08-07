@@ -1139,3 +1139,82 @@ dirección opuesta y una tienda muda no mueve ninguna de las dos.
 - `npm test` (112), typecheck, lint y build limpios.
 - Comprobado en el navegador: la tabla de las dos degradaciones con su fila
   resaltada, el comando anotado de la API y la comparación de las dos señales.
+
+---
+
+## Batch 17 — Contenido · S1·U3 `reto` — La herramienta de percepción
+**2026-08-07**
+
+Que entiendan que la calidad de un agente se decide **antes** del LLM: si la
+percepción miente, no hay arquitectura que lo salve.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] Las tres trampas explicadas con cifras medidas, no en abstracto
+- [ ] Se explica por qué el umbral de tienda es más alto que el de categoría
+- [ ] El criterio de aceptación es verificable por el alumno sin preguntar
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 60 de la unidad
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### 18 ítems, 60 minutos
+
+El esqueleto tenía 11. Los siete nuevos son casi todos consecuencia de una
+decisión: **cada trampa se explica con su medición al lado**, no como
+advertencia.
+
+- `s1-r2-sesgo-tabla` — las ocho categorías de la flota sana, con el sesgo
+  calculado de las dos maneras. **Ninguna infla hacia abajo.** Ese es el
+  argumento: no es ruido, es un sesgo sistemático de la cuenta. Panadería es el
+  extremo, +9.4% promediando porcentajes contra +6.7% por cociente de totales.
+- `s1-r2-envejecimiento` — el +20% de MAPE que la peor categoría se mueve sola
+  en un mundo intacto. Es la cifra que justifica el umbral de 25%, y sin ella
+  "significativo no es relevante" es una frase bonita.
+- `s1-r2-umbrales-elegidos` — los `UMBRALES` del laboratorio, para comparar
+  fila por fila contra la tabla de máximos medidos.
+- `s1-r2-tres-reglas`, `s1-r2-sesgo-codigo`, `s1-r2-por-que-tienda`,
+  `s1-r2-banderas` completan el arco.
+
+### Las cifras, verificadas
+
+Se corrió el pipeline sobre el mundo sano y se recalculó todo lo que la unidad
+afirma:
+
+| dimensión | modelos/grupo | máx Δ MAPE medido | documentado | máx Δ sesgo medido | documentado |
+|---|---|---|---|---|---|
+| categoría | 24 | +20.8% | +19.6% | 1.06 pp | 1.05 pp |
+| región | 8 a 112 | +15.0% | +15.2% | 2.41 pp | 2.31 pp |
+| tienda | 8 | +51.3% | +48.4% | 3.21 pp | 3.54 pp |
+
+Coinciden en forma y en orden de magnitud; las diferencias son el mismo
+corrimiento por fecha del batch 16. **La estructura, que es lo que enseña, se
+sostiene exacta**: tienda se mueve dos veces y media más que categoría en MAPE
+y tres veces más en sesgo, sin que nada esté roto.
+
+**Región resultó ser heterogénea** y la tabla lo dice: LIMA tiene 14 tiendas y
+112 modelos, ORIENTE tiene una y ocho. Su columna no es un número solo.
+
+**Apareció el umbral que faltaba en el batch 16.** El "7 a 14 modelos sobre el
+umbral" no decía cuál era el umbral, y no estaba en `escenario.py`. Está en
+`herramientas.py`: `modelos_con_mape_sobre_25`. Es 25% — exactamente el que se
+había usado para medir 8 → 16.
+
+**La cifra del brief que no cerraba.** El batch pedía "el caso de panadería a
++9.2% contra +0.7%". Medido, panadería da +9.4% promediando porcentajes y
++6.7% por cociente de totales; el +0.7% es el sesgo de la **flota**, no el de
+panadería. La tabla usa lo medido, que además es más fuerte: las ocho
+categorías inflan, entre +1.1 y +3.4 pp.
+
+### Y un fallo del renderizador, encontrado acá
+
+Con la consola abierta se vio que **todos los ítems `codigo` dejan la página en
+blanco al hidratar**, incluidos los del esqueleto original. Está arreglado en
+un commit aparte, junto con `npm run humo`, que abre las 122 pantallas del
+curso en un navegador de verdad.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 65 ítems en la sesión 1, 240 minutos.
+- `npm run humo`: 122 pantallas, 0 con error.
+- `npm test` (112), typecheck, lint y build limpios.
