@@ -46,7 +46,7 @@ Referencias:
 | 25 | Los comandos, desenvueltos · sesión 1 | ✅ Completado |
 | 26 | Los comandos, desenvueltos · sesión 2 | ✅ Completado |
 | 27 | El recap de apertura, con diagramas | ✅ Completado |
-| 28 | Diagrama de pasos al abrir cada reto | ⬜ Pendiente |
+| 28 | Diagrama de pasos al abrir cada reto | ✅ Completado |
 | 29 | El ritmo: preguntas y pausas repartidas | ⬜ Pendiente |
 | 30 | La salida anotada | ⬜ Pendiente |
 
@@ -428,11 +428,11 @@ Cuatro de los cinco retos empiezan sin ningún mapa de lo que se va a hacer. El
 el resultado y no el recorrido.
 
 **Alcance**
-- [ ] Un diagrama al abrir cada uno de los cinco retos, con los pasos que el
+- [x] Un diagrama al abrir cada uno de los cinco retos, con los pasos que el
       alumno va a recorrer
-- [ ] Es un mapa del trabajo, no de la solución: dice qué se va a hacer, no cómo
-- [ ] Los cinco comparten lenguaje visual, para que se reconozcan entre sí
-- [ ] Se ubica después del `titulo` del reto y antes de cualquier comando
+- [x] Es un mapa del trabajo, no de la solución: dice qué se va a hacer, no cómo
+- [x] Los cinco comparten lenguaje visual, para que se reconozcan entre sí
+- [x] Se ubica después del `titulo` del reto y antes de cualquier comando
 
 **Excepción a la §13, deliberada.** Toca los cinco retos, por lo mismo que el
 batch 27: cinco diagramas dibujados en cinco conversaciones son cinco dibujos

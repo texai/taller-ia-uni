@@ -528,13 +528,16 @@ Consecuencias:
   `horaFin`. Esa comparación es legítima porque las dos cifras miden cosas
   distintas — una es el plan y la otra es el aula.
 
-## 16 · Los diagramas de conjunto comparten una gramática
+## 16 · Los diagramas que abren algo comparten una gramática
 
 Los dibujos que abren algo —el recap de cada sesión, el mapa de pasos de cada
 reto— **no son ilustraciones sueltas**. Se leen en veinte segundos porque la
-sala ya reconoce su forma, y eso solo pasa si todos tienen la misma.
+sala ya reconoce su forma, y eso solo pasa si todos los de su clase tienen la
+misma. Son dos clases, y cada una tiene su forma.
 
-La gramática es de cuatro piezas, siempre en `flowchart LR`:
+### El recap de sesión: abanico, `flowchart LR`
+
+La gramática es de cuatro piezas:
 
     cajas de lo que ya existe   →   [(lo que se construyó con ellas)]
                                           ↓
@@ -557,7 +560,37 @@ flota → ¿quién los mira?" y el domingo con "herramientas, LLM, bucle → el
 agente de ayer → ¿se puede confiar?", nadie tiene que explicar el segundo
 dibujo: ya se aprendió a leerlo.
 
-Dos cosas de Mermaid que costaron encontrar y conviene no volver a pisar: una
-etiqueta escrita `-.texto.->` se dibuja truncada, así que va como
-`-.->|texto|`; y dos aristas que forman un ciclo reordenan el grafo entero,
-que es cómo `memoria` terminó una vez en el extremo derecho del dibujo.
+### El mapa de pasos de un reto: columna, `flowchart TD`
+
+Los cinco retos abren con el mismo dibujo:
+
+- **Pasos numerados** —`1 ·`, `2 ·`— de arriba abajo, entre cuatro y cinco.
+- **Un hexágono al final** —`{{...}}`— con lo que se llevan: el criterio de
+  aceptación si el reto lo tiene, y si no, la pregunta que queda abierta.
+- **Es el mapa del trabajo, no de la solución.** Dice qué se va a hacer; cómo,
+  lo descubren ellos. Un paso que revele la respuesta sobra.
+
+Va en vertical y no en horizontal por una razón que solo se ve proyectando:
+cinco cajas en fila las encoge Mermaid hasta dejar el texto a menos de la mitad
+del tamaño del resto de la lámina. En columna cada caja usa el ancho que
+necesita, y el dibujo crece hasta el tope de altura.
+
+### Por qué el ancho importa tanto
+
+Mermaid escribe un `max-width` en el atributo `style` del propio SVG, con el
+ancho natural del dibujo. Eso es correcto para un documento y es lo contrario
+de lo que uno quiere proyectando. `Mermaid` lo pisa después de dibujar
+(`ocuparElAncho`, en `components/items/diagrama.tsx`) y le pone un tope de
+altura para que un diagrama alto no se salga de la pantalla.
+
+Queda un caso que ninguna de las dos gramáticas arregla: **una tubería larga es
+ancha y punto.** `s1-arquitectura` son diez nodos en cadena, y ni el abanico ni
+la columna le sirven — es literalmente el recorrido de un dato. Se queda como
+está, y es la excepción consciente a esta sección.
+
+### Dos trampas de Mermaid
+
+Costaron encontrar y conviene no volver a pisarlas: una etiqueta escrita
+`-.texto.->` se dibuja truncada, así que va como `-.->|texto|`; y dos aristas
+que forman un ciclo reordenan el grafo entero, que es cómo `memoria` terminó
+una vez en el extremo derecho del dibujo.

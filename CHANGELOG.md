@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Diagrama de pasos al abrir cada reto (batch 28)
+- Los cinco retos abren ahora con **`Los pasos de este reto`**: pasos numerados
+  en columna y un hexágono al final con lo que se llevan — el criterio de
+  aceptación cuando lo hay, la pregunta abierta cuando no. Es el mapa del
+  trabajo, no de la solución.
+- Tres de ellos hacen un trabajo que la prosa no hacía: el del reto 1 enseña
+  que el reto es hacer lo mismo dos veces y que la segunda no encuentra nada;
+  el del 3, que es el único donde no se escribe una línea; el del 5 pone el
+  freno **antes** del permiso, que es el argumento de la unidad.
+- Van en `flowchart TD` y no `LR`: cinco cajas repartidas a lo ancho dejan el
+  texto ilegible proyectado. Las dos gramáticas —abanico para relacionar,
+  columna para enumerar— están en `CONVENTIONS.md` §16.
+- **Todos los diagramas del curso se ven más grandes.** Mermaid escribía un
+  `max-width` con el ancho natural del dibujo en el `style` del propio SVG:
+  correcto en un documento, contraproducente proyectando. Ahora ocupan el ancho
+  de la lámina, con un tope de altura para que uno alto no se salga.
+
 ### El recap de apertura, con diagramas (batch 27)
 - Las dos sesiones abren ahora con un **diagrama de conjunto**, después de la
   asistencia y antes del caso. El sábado repasa el programa —Docker, GitHub

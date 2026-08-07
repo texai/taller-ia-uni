@@ -404,7 +404,7 @@ unidades:
         tipo: modelo-datos
         titulo: Qué emite la flota
         entradilla: Una fila por modelo y por día. Esto es todo lo que el agente va a poder mirar.
-        minutos: 4
+        minutos: 3
         tablas:
           - nombre: metricas
             descripcion: >-
@@ -610,6 +610,30 @@ unidades:
           Dejar claro que este reto no se "resuelve": se sufre. El segundo
           escenario está hecho para que no lo encuentren, y eso es el punto.
 
+      - id: s1-r1-mapa
+        tipo: diagrama
+        titulo: Los pasos de este reto
+        entradilla: Cuarenta minutos, cuatro pasos, y una pregunta al final
+        clase: flujo
+        minutos: 2
+        contenido: |
+          flowchart TD
+            A["1 · romper el mundo<br/>campana_promocional"] --> B["2 · buscarlo<br/>con la API y pandas"]
+            B --> C["3 · repararlo y romperlo<br/>otra vez: sesgo_silencioso"]
+            C --> D["4 · buscarlo<br/>con el mismo metodo"]
+            D --> E{{"lo que te llevas:<br/>cuanto tardas en encontrar<br/>lo que no suena"}}
+        notas: |
+          **Es el mapa del trabajo, no de la solución.** Dice qué se va a
+          hacer; cómo, lo descubren ellos.
+
+          Los cinco retos abren con un dibujo de esta misma forma —pasos
+          numerados de izquierda a derecha y un hexágono al final con lo que se
+          llevan— para que a partir del segundo nadie tenga que leerlo: ya sabe
+          dónde mirar.
+
+          El paso 3 es el que sorprende. Casi nadie espera que el reto sea
+          hacer lo mismo dos veces, y ahí está el punto: la segunda vez el
+          método no encuentra nada.
       - id: s1-r1-encargo
         tipo: markdown
         titulo: El encargo
@@ -945,6 +969,25 @@ unidades:
           salvación: va a creerle a las banderas, y con razón — el error no es
           suyo, es de quien puso el umbral.
 
+      - id: s1-r2-mapa
+        tipo: diagrama
+        titulo: Los pasos de este reto
+        entradilla: Una hora. Se escribe código, y hay tres formas de escribirlo mal.
+        clase: flujo
+        minutos: 2
+        contenido: |
+          flowchart TD
+            A["1 · las tres reglas<br/>de una herramienta"] --> B["2 · escribir<br/>comparar_periodos"]
+            B --> C["3 · esquivar tres trampas<br/>sesgo · ventana · umbral"]
+            C --> D["4 · comprobarlo<br/>verificar --reto 2"]
+            D --> E{{"criterio: en la flota sana,<br/>ninguna bandera"}}
+        notas: |
+          El paso 3 es el que ocupa media unidad, y no está en el enunciado del
+          reto: son tres errores de estadística bien calculada y mal
+          planteada. Los tres salieron construyendo este laboratorio.
+
+          El hexágono del final es literalmente el criterio de aceptación del
+          verificador. Anunciarlo acá y volver a él al comprobar.
       - id: s1-r2-por-que
         tipo: markdown
         titulo: Por qué agregar, y no volcar filas
@@ -1025,7 +1068,7 @@ unidades:
         tipo: comparacion
         titulo: El sesgo no se promedia
         entradilla: Dos cuentas sobre los mismos datos, y una está sesgada
-        minutos: 4
+        minutos: 3
         izquierda:
           titulo: Promedio de porcentajes
           contenido: >-
@@ -1073,7 +1116,7 @@ unidades:
       - id: s1-r2-ventana
         tipo: error-comun
         titulo: "Trampa 2 · Medir lo normal con la ventana que auditas"
-        minutos: 4
+        minutos: 3
         sintoma: >-
           Los umbrales parecen razonables en el escritorio y encienden banderas
           por todos lados en cuanto corren contra datos reales.
@@ -1093,7 +1136,7 @@ unidades:
       - id: s1-r2-significancia
         tipo: error-comun
         titulo: "Trampa 3 · Significativo no es relevante"
-        minutos: 4
+        minutos: 3
         sintoma: >-
           El test estadístico marca deriva en casi todos los grupos, todo el
           tiempo, incluso con el mundo sano.
@@ -1339,12 +1382,32 @@ unidades:
           construcción. No vamos a arreglar nada hoy. Lo que hay que sacar de
           acá es una pregunta bien formulada para mañana.
 
+      - id: s1-r3-mapa
+        tipo: diagrama
+        titulo: Los pasos de este reto
+        entradilla: Una hora, y no se construye nada. Se mira.
+        clase: flujo
+        minutos: 2
+        contenido: |
+          flowchart TD
+            A["1 · leer el bucle<br/>veinte lineas de ReAct"] --> B["2 · correrlo<br/>una vez"]
+            B --> C["3 · correrlo dos veces mas<br/>mismo mundo, temperatura 0"]
+            C --> D["4 · comparar las tres<br/>salidas lado a lado"]
+            D --> E{{"lo que te llevas:<br/>cuatro patologias, y ninguna<br/>se arregla con un prompt"}}
+        notas: |
+          **El único reto del taller en el que no se escribe una línea.** Vale
+          la pena que se vea en el mapa: los cuatro pasos son leer, correr,
+          correr y comparar.
+
+          El paso 3 parece un desperdicio de tiempo hasta que la clase ve las
+          tres salidas juntas. Con temperatura 0 y el mismo mundo, deberían ser
+          idénticas. No lo son.
       - id: s1-r3-bucle
         tipo: codigo
         titulo: El bucle entero
         entradilla: Es corto a propósito
         lenguaje: python
-        minutos: 4
+        minutos: 3
         contenido: |
           llm = obtener_llm().bind_tools(HERRAMIENTAS)
 
@@ -1483,7 +1546,7 @@ unidades:
         tipo: tabla
         titulo: Las cuatro patologías
         entradilla: Ninguna es del modelo. Todas son de la forma del bucle.
-        minutos: 6
+        minutos: 5
         columnas: [Qué hace, Por qué pasa, Qué cuesta]
         filas:
           - ["Concluye con lo primero que encuentra", "Nada le dice cuándo tiene suficiente", "Diagnósticos que no contrastan contra una línea base"]

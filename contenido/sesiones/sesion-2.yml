@@ -239,6 +239,26 @@ unidades:
           Noventa minutos. Avisar que el receso va a mitad y que la parte
           difícil —por qué existe `revision`— viene después.
 
+      - id: s2-r4-mapa
+        tipo: diagrama
+        titulo: Los pasos de este reto
+        entradilla: Noventa minutos, cinco pasos, y el receso a la mitad
+        clase: flujo
+        minutos: 2
+        contenido: |
+          flowchart TD
+            A["1 · el estado<br/>y los seis nodos"] --> B["2 · cablear el grafo<br/>y sus dos vueltas"]
+            B --> C["3 · reflexion<br/>y revision"]
+            C --> D["4 · memoria<br/>leer antes, escribir despues"]
+            D --> E["5 · correrlo contra<br/>los cuatro mundos"]
+            E --> F{{"criterio: cuatro mundos,<br/>cuatro lecturas distintas"}}
+        notas: |
+          El reto más largo del taller, y el único con cinco pasos. Decir dónde
+          cae el receso —entre el 2 y el 3— para que nadie calcule mal su
+          propio ritmo.
+
+          El paso 3 es el difícil, y es donde está la idea de la que cuelga la
+          unidad: cuestionarse sin poder corregirse no sirve de nada.
       - id: s2-r4-un-nodo
         tipo: markdown
         titulo: Un nodo, un trabajo
@@ -260,7 +280,7 @@ unidades:
         tipo: tabla
         titulo: Los seis nodos
         entradilla: Y lo único que hace cada uno
-        minutos: 3
+        minutos: 2
         columnas: [Nodo, Su único trabajo]
         filas:
           - ["percepción", "Decide qué mirar y llama herramientas. No concluye nada."]
@@ -355,7 +375,7 @@ unidades:
         entradilla: Lo que viaja de nodo a nodo
         lenguaje: python
         ruta: agente/grafo.py
-        minutos: 4
+        minutos: 3
         contenido: |
           class Estado(TypedDict):
               fecha: str
@@ -929,6 +949,26 @@ unidades:
           Y lo que lo convierte en algo que da miedo, que es el punto de la
           unidad. Hasta ahora todo lo que hicimos era de solo lectura.
 
+      - id: s2-r5-mapa
+        tipo: diagrama
+        titulo: Los pasos de este reto
+        entradilla: Una hora. Y por primera vez el agente puede romper algo.
+        clase: flujo
+        minutos: 2
+        contenido: |
+          flowchart TD
+            A["1 · la politica<br/>dos reglas, doce lineas"] --> B["2 · a que modelos,<br/>exactamente"]
+            B --> C["3 · encender el permiso<br/>EJECUTAR_ACCIONES=1"]
+            C --> D["4 · sobre deriva reentrena,<br/>sobre anomalia frena"]
+            D --> E{{"lo que te llevas:<br/>el freno importa mas<br/>que el boton"}}
+        notas: |
+          El orden del mapa es el argumento de la unidad: **primero el freno,
+          después el permiso**. Escribir la política antes de encender
+          `EJECUTAR_ACCIONES` no es una casualidad del guion.
+
+          El paso 4 son las dos demostraciones, y son el criterio de
+          aceptación: el mismo agente, el mismo permiso, dos mundos, dos
+          decisiones opuestas.
       - id: s2-r5-riesgo
         tipo: markdown
         titulo: Equivocarse deja de costar una alerta
@@ -993,7 +1033,7 @@ unidades:
         titulo: Las dos reglas que hacen el trabajo pesado
         lenguaje: python
         ruta: agente/accion.py
-        minutos: 5
+        minutos: 4
         contenido: |
           es_anomalia = hipotesis.get("tipo") == "anomalia"
 
@@ -1462,7 +1502,7 @@ unidades:
         tipo: criterios
         titulo: Qué hacer con esto el lunes
         entradilla: Cinco cosas que no necesitan un agente para servir
-        minutos: 5
+        minutos: 4
         criterios:
           - texto: Mira si tus métricas tienen dirección, no solo distancia
             pista: Si tu tablero solo tiene MAPE, le falta la señal que habla de plata

@@ -2016,3 +2016,78 @@ minutos de cada sesión salieron de prosa que se repetía. Las dos siguen en 240
 - `npm test` (125 pasan), lint y build limpios.
 - `npm run humo`: 175 pantallas, 0 con error.
 - Los dos diagramas vistos a 1440×900: mismo tamaño de caja, misma lectura.
+
+---
+
+## Batch 28 — Diagrama de pasos al abrir cada reto
+
+Cuatro de los cinco retos empezaban sin ningún mapa de lo que se iba a hacer.
+El único diagrama de un reto era el de secuencia del agente corriendo, que
+explica el resultado y no el recorrido.
+
+### Cinco mapas, una forma
+
+Cada reto abre ahora, justo después de su `titulo` y antes de cualquier
+comando, con `Los pasos de este reto`: pasos numerados en columna y un hexágono
+al final con lo que se llevan.
+
+| Reto | Pasos | El hexágono |
+|---|---|---|
+| 1 | romper · buscar · romper otra vez · buscar | cuánto tardas en encontrar lo que no suena |
+| 2 | las reglas · escribir · esquivar tres trampas · comprobar | en la flota sana, ninguna bandera |
+| 3 | leer · correr · correr dos veces más · comparar | cuatro patologías, ninguna se arregla con un prompt |
+| 4 | estado · cablear · reflexión y revisión · memoria · correr | cuatro mundos, cuatro lecturas distintas |
+| 5 | la política · a qué modelos · encender el permiso · las dos demos | el freno importa más que el botón |
+
+**Es el mapa del trabajo, no de la solución.** Dice qué se va a hacer; cómo, lo
+descubren ellos. El hexágono es el criterio de aceptación cuando el reto lo
+tiene, y la pregunta abierta cuando no.
+
+Tres de los cinco mapas hacen un trabajo que la prosa no hacía: el del reto 1
+enseña que el reto es hacer lo mismo dos veces —y que la segunda no encuentra
+nada—; el del 3 deja ver que es el único reto donde no se escribe una línea; y
+el del 5 pone el freno **antes** del permiso, que es el argumento entero de la
+unidad.
+
+### En columna, no en fila
+
+La primera versión los dibujó en `flowchart LR`, como los recaps del batch 27.
+Proyectados eran ilegibles: cinco cajas repartidas en el ancho de la lámina
+dejan el texto a menos de la mitad del tamaño del resto de la pantalla. En
+`flowchart TD` cada caja usa el ancho que necesita y el dibujo crece hasta el
+tope de altura.
+
+Así que las dos clases de diagrama tienen formas distintas y por buenas
+razones: el recap es un abanico horizontal porque relaciona piezas; el mapa de
+pasos es una columna porque enumera. Las dos están en `CONVENTIONS.md` §16.
+
+### Y por qué los diagramas eran pequeños
+
+Mermaid escribe un `max-width` **en el atributo `style` del propio SVG**, con
+el ancho natural del dibujo. Es lo correcto en un documento —un diagrama no
+debe estirarse más allá de su tamaño cómodo— y lo contrario de lo que uno
+quiere proyectando: la lámina tenía el ancho libre y el dibujo ocupaba la
+mitad. `ocuparElAncho` lo pisa después de dibujar y le pone un tope de altura,
+para que un diagrama alto no se salga de la pantalla; con el `viewBox` que
+Mermaid ya trae, el navegador lo encoge dentro de la caja sin deformarlo.
+
+Beneficia a los quince diagramas del curso, no solo a los cinco de este batch.
+
+### Una excepción, consciente
+
+`s1-arquitectura` —el mapa de la plataforma, diez nodos en cadena— sigue siendo
+ancho y pequeño. Ni el abanico ni la columna le sirven: es literalmente el
+recorrido de un dato de punta a punta. Está anotado como excepción en §16 en
+vez de retorcerlo para que encaje en una gramática que no es la suya.
+
+### Los minutos
+
+Dos minutos por mapa, diez en total, seis en la sesión 1 y cuatro en la 2.
+Salieron de prosa que el mapa ahora anticipa. Las dos sesiones siguen en 240.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 144 ítems, 240 + 240 min.
+- `npm test` (125 pasan), lint y build limpios.
+- `npm run humo`: 180 pantallas, 0 con error.
+- Los cinco mapas y los diagramas ya existentes vistos a 1440×900, antes y
+  después del cambio de ancho.
