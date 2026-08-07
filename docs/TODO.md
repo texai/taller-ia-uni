@@ -56,6 +56,13 @@ Referencias:
 | 34 | El glosario | ✅ Completado |
 | 35 | El vocabulario, y un SQL idempotente | ✅ Completado |
 | 36 | Las tres herramientas que faltaban | ✅ Completado |
+| | **Cuarta ronda — el hilo narrativo** | |
+| 37 | La ventana de lectura, y el taller que es de verdad | ⬜ Pendiente |
+| 38 | Las salidas que faltan · retos 1 y 3 | ⬜ Pendiente |
+| 39 | El caso, anclado a algo ejecutable | ⬜ Pendiente |
+| 40 | La cadena de comandos, visible | ⬜ Pendiente |
+| 41 | El repositorio, a un clic | ⬜ Pendiente |
+| 42 | Los conceptos que se usan sin nombrarse | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
@@ -518,6 +525,165 @@ componente para los dos.
 
 **Fuera de alcance**
 - Un tipo para las capas de un comando. Se resuelve con dos ítems seguidos.
+
+---
+
+## Batch 37 — La ventana de lectura, y el taller que es de verdad
+
+El contenido dice «escribe la herramienta» y «manos al teclado», y el
+laboratorio trae `comparar_periodos` y el grafo ya escritos en `main`. El alumno
+abre el archivo y encuentra la respuesta. Además el material promete seis veces
+unas ramas `reto-N-solucion` que **no existen** — una de ellas abriendo el
+domingo a las 09:00.
+
+No va a haber tiempo en clase para depurar código de nadie. Lo que sí tiene que
+haber son ventanas para leer, entender y ejecutar, con los archivos y comandos
+dichos por su nombre y un tiempo propuesto que el docente pueda mover en vivo.
+
+**Alcance**
+- [ ] Tipo `lectura`: archivos del laboratorio a abrir, comandos a ejecutar,
+      qué mirar, y una cuenta regresiva con el tiempo propuesto
+- [ ] La cuenta se puede ajustar durante la clase sin salir de la lámina —
+      más tiempo, menos, pausar, reiniciar
+- [ ] Cada archivo listado lleva su enlace a GitHub y una línea de por qué
+- [ ] Los cinco retos dejan de prometer teclado: se lee, se ejecuta, se
+      comprueba con el verificador
+- [ ] Ninguna mención a `reto-N-solucion` sobrevive en el contenido ni en
+      `retos/README.md` del laboratorio
+
+**Tests esperados**
+- [ ] Un `lectura` sin archivos ni comandos falla en validación: no es una lámina
+- [ ] Un archivo que no existe en el laboratorio falla nombrándolo
+- [ ] El número de pasos de un `lectura` es 1 — la lámina no se recorre
+- [ ] `pasosDe` y el barrido de humo lo conocen
+
+**Fuera de alcance**
+- Sincronizar la cuenta entre las pantallas de los alumnos. Cada pantalla
+  cuenta desde que llegó, igual que el `receso` de hoy. Sincronizarla es un
+  mensaje más por el canal de la pauta y se decide después de verlo en clase.
+- Vaciar el cuerpo de las funciones del laboratorio. Decidido: todo en `main`.
+
+---
+
+## Batch 38 — Las salidas que faltan · retos 1 y 3
+
+Los dos retos donde el hilo se corta, y se corta por lo mismo: se afirma un
+resultado y no se enseña.
+
+En el reto 1, `s1-r1-a-mano` y `s1-r1-a-mano-2` son ocho minutos de clase cuyos
+pasos son dos comentarios —`# agrupar por categoría`— sin pandas y sin salida.
+En el reto 3 se corre el agente tres veces para demostrar que diverge, no se
+muestra ninguna de las tres, y el respaldo remite a «las salidas guardadas del
+ítem siguiente», que no existen. Las dos únicas evidencias del cierre del
+sábado son citas que —lo dicen sus propias notas— salen del agente del domingo.
+
+**Alcance**
+- [ ] El groupby de pandas del reto 1, escrito, y su salida real anotada
+- [ ] Lo mismo para el segundo escenario, donde el mismo código no encuentra nada
+- [ ] Las tres ejecuciones del reto 3, recortadas a lo que diverge, lado a lado
+- [ ] El respaldo de cada demo apunta a algo que existe
+
+**Tests esperados**
+- [ ] Ninguna demo del curso tiene todos sus pasos en comentario
+- [ ] Las salidas nuevas pasan la validación de anotaciones (ni ausentes ni ambiguas)
+
+**Fuera de alcance**
+- Grabar las tres ejecuciones en vivo durante la clase. Van medidas de antemano.
+
+**Requisitos externos**
+- Una llave de LLM para producir las tres ejecuciones reales del reto 3.
+
+---
+
+## Batch 39 — El caso, anclado a algo ejecutable
+
+El caso son cuatro bloques de prosa y tres cifras redondas. No nombra un solo
+archivo, comando ni número medido — y el estado inicial existe y es medible:
+192 modelos entrenados hasta el 8 de mayo, MAPE de validación 10.4%, 17,472
+días-modelo, MAPE de producción 13.8%, sesgo +0.8%. Hoy el caso y el
+laboratorio son dos cosas que no se tocan.
+
+**Alcance**
+- [ ] El estado inicial del caso, medido, con el comando que lo produce
+- [ ] Qué archivo es cada pieza del caso: `ventas.csv` es el mundo,
+      `modelos/` son los 192, `metricas.csv` es lo que mira el agente
+- [ ] La misma ancla vale para el domingo, desde el mismo archivo
+
+**Tests esperados**
+- [ ] Las cifras del caso y las de la telemetría no se contradicen
+
+**Fuera de alcance**
+- Convertir el caso en un reto. Sigue siendo el marco.
+
+---
+
+## Batch 40 — La cadena de comandos, visible
+
+El material desestructura `make` → `docker compose` → `python -m plataforma X`
+y se detiene ahí. Nunca se ve qué hace `escenario` por dentro, ni la cadena
+completa que produce el mundo sano, lo rompe y lo repara. Que `romper` y
+`reparar` sean la misma receta con la primera línea cambiada está dicho en una
+nota del docente y nunca en pantalla.
+
+**Alcance**
+- [ ] La cadena entera en una lámina: `seed` = datos → entrenar → pronosticar →
+      metricas; `romper` y `reparar` como la misma receta, y la línea que las
+      separa
+- [ ] Por qué ninguna de las dos reentrena, que es lo que hace que los 192
+      modelos sean los mismos toda la tarde
+- [ ] El snippet de `escenario.py` donde `feed_caido` **borra filas** en vez de
+      escribir ceros — doce líneas que sostienen la distinción anomalía/deriva
+      del reto 4
+- [ ] El comentario calibrado de `CAIDA_SESGO_SILENCIOSO`: por qué 0.18 era
+      demasiado y dejaba de ser silencioso
+
+**Fuera de alcance**
+- Explicar `datos.py` entero. Solo lo que ilustra la intención.
+
+---
+
+## Batch 41 — El repositorio, a un clic
+
+En 174 ítems hay dos enlaces al laboratorio, los dos en los últimos minutos del
+domingo. Los doce bloques de código que citan `ruta:` la muestran como texto
+muerto: el alumno ve `agente/accion.py` y no tiene cómo llegar.
+
+**Alcance**
+- [ ] `ruta:` se dibuja como enlace al archivo en GitHub, en la línea exacta
+      cuando se sabe
+- [ ] La base del repositorio se configura una vez, no se repite en cada ítem
+- [ ] Un tipo `diff` para enseñar un cambio como cambio: el antes y el después
+      de una edición, que es como se lee un arreglo de verdad
+- [ ] El `diff` se estrena con la trampa que más cuesta del reto 4:
+      `messages_key="mensajes"`
+
+**Tests esperados**
+- [ ] Una `ruta:` que no existe en el laboratorio falla en validación
+- [ ] El `diff` cuenta sus pasos como el resto de los ítems recorribles
+
+**Fuera de alcance**
+- Traer el código del repositorio en tiempo de construcción. Se copia y se
+  enlaza, como hasta ahora.
+
+---
+
+## Batch 42 — Los conceptos que se usan sin nombrarse
+
+Cada reto usa estadística y modelado que el material da por sabidos. Se nombra
+«regresión Ridge» y se pasa; las features se listan y nunca se ven; la
+cobertura se explica tres veces sin mostrar de dónde sale el intervalo, que es
+un `p ± 1.96σ` de doce caracteres en `pronosticar.py`.
+
+**Alcance**
+- [ ] Qué es Ridge y por qué regularizar, en el reto donde importa
+- [ ] Las features reales del modelo, desde `plataforma/modelo.py`
+- [ ] De dónde sale el intervalo de predicción, y por eso qué mide la cobertura
+- [ ] El corte de entrenamiento y validación, que es lo que hace comparable el
+      10.4% con el 13.8%
+- [ ] Cada reto declara qué concepto introduce, en sus objetivos
+
+**Fuera de alcance**
+- Un módulo de estadística. Cada concepto entra pegado al reto que lo usa.
 
 ---
 
