@@ -95,10 +95,13 @@ habilitado en el proyecto: `gen` no lo usa.
 
 ### Lo que queda pendiente del alcance original
 
-- [ ] Política sobre `realtime.messages` que solo deje publicar al docente. Hoy
-      el canal está abierto: cualquiera que sepa el nombre del tema podría
-      publicar una pauta falsa. Con veinte alumnos que no saben que existe es
-      un riesgo teórico, pero hay que cerrarlo.
+- [ ] Aplicar `supabase/politicas.sql` en el editor SQL del proyecto. Hasta que
+      eso pase, el canal está abierto: cualquiera que sepa el nombre del tema
+      podría publicar una pauta falsa, y las preguntas y respuestas de los
+      alumnos son legibles entre ellos. Deben quedar **siete** políticas.
+      Después de aplicarlo hay que volver a probar que la clase se sigue
+      moviendo, que el contador de conectados no se queda en cero (eso sería la
+      presencia bloqueada) y que un alumno puede responder una pregunta.
 
 ## Batch 9 — Preguntas del alumno hacia el docente
 

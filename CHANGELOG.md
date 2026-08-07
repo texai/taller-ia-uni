@@ -41,6 +41,22 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Políticas de Realtime, corregidas antes de aplicarlas
+- Fuera el `alter table realtime.messages enable row level security`: esa tabla
+  es de Supabase y el editor SQL responde `42501: must be owner of table
+  messages`. No hacía falta — ahí la RLS ya viene activada.
+- **El canal `:respuestas` no estaba contemplado.** Se escribió en el batch 9 y
+  el 10 agregó un canal más. Con las políticas viejas, las respuestas de los
+  alumnos quedaban legibles para todos —justo lo que `CONVENTIONS.md` §12
+  prohíbe— y además ningún alumno podía enviarlas, porque insertar ahí caía
+  bajo la política de la pauta, que es solo del docente.
+- **La presencia habría dejado de funcionar.** Un broadcast y un anuncio de
+  presencia son los dos un INSERT en `realtime.messages`. Sin distinguirlos por
+  la columna `extension`, cerrar el canal principal al docente dejaba a los
+  alumnos sin poder anunciarse — y con ellos se iba el denominador de
+  "respondieron todos", que sale de Presence.
+- Ahora son siete políticas, con los tres canales nombrados explícitamente.
+
 ### Avisos de tiempo en el mando (batch 12)
 - Nuevo `src/lib/avisos.ts`, puro y con 14 tests: `avisosDeTiempo` devuelve lo
   que hay que decir ahora mismo, de lo más urgente a lo menos. Tres avisos —
