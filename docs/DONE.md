@@ -1218,3 +1218,79 @@ curso en un navegador de verdad.
 - `npm run validar-contenido` pasa: 65 ítems en la sesión 1, 240 minutos.
 - `npm run humo`: 122 pantallas, 0 con error.
 - `npm test` (112), typecheck, lint y build limpios.
+
+---
+
+## Batch 18 — Contenido · S1·U4 `reto` — El primer agente, sin arquitectura
+**2026-08-07**
+
+Ver fallar a un agente que **funciona**. Es diagnóstico, no construcción — y es
+la pregunta que abre la sesión 2. Con esto la sesión del sábado queda escrita
+entera.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] Queda claro que el agente funciona: llama herramientas y encuentra cosas
+- [ ] Las patologías se muestran con salidas reales, no descritas
+- [ ] La unidad cierra con una pregunta abierta, no con una respuesta
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los de la unidad
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### 14 ítems, 65 minutos
+
+**El brief decía 55 y la estructura reserva 65.** Lo cazó la comprobación que
+el batch 15 agregó a `validar-contenido`: los ítems de la sesión sumaban 230 y
+la sesión dura 240. Los diez minutos que faltaban fueron a donde más rinden —
+la comparación de las tres corridas pasó de 8 a 12— y el resto se repartió en
+las patologías, las citas y la pausa.
+
+### La decisión de fondo: primero decir que funciona
+
+`s1-r3-que-hace-bien` es nuevo y no estaba en el esqueleto. Llama las
+herramientas correctas sin que nadie le diga cuáles, encadena, encuentra cosas
+de verdad y suena convincente — con veinte líneas y ninguna arquitectura.
+
+Sin ese ítem la clase sale creyendo que ReAct es malo, y esa es la lección
+equivocada: ReAct es un piso muy alto por muy poco código. El problema aparece
+cuando hay que confiar en él sin mirar.
+
+### Las citas son literales, y se dice de dónde salen
+
+Las dos `cita-agente` son transcripciones de `retos/incidencias.md`, no
+paráfrasis. Y las dos llevan una advertencia honesta en sus `notas`: **el
+agente dijo eso reflexionando sobre su propio diagnóstico**, o sea con un nodo
+que el bucle pelado no tiene. Es material real de la patología y a la vez un
+adelanto de lo que se construye mañana, y confundirlo sería vender como salida
+del ReAct algo que no lo es.
+
+La primera es la mejor del taller: *"Dije '9,436 unidades de sobre-stock' pero
+eso es el error acumulado del pronóstico"*. El número era real y la frase era
+falsa — que es exactamente lo que hace peligrosa a esa patología.
+
+### Otras decisiones
+
+- **`s1-r3-divergencia` es nuevo** y dice qué diverge exactamente: por dónde
+  entró, dónde paró, y qué severidad puso. Las tres corridas son *defendibles*;
+  no es que una acierte. La frase que sostiene la unidad —"ninguna sabe cuándo
+  tiene suficiente evidencia"— vive acá, y mañana tiene nombre: reflexión.
+- **Temperatura cero, dicho en voz alta.** La reacción natural en clase es
+  "bájale la temperatura", y ya está en cero. Lo que varía no es el muestreo,
+  es por dónde entró a mirar.
+- **La tabla de patologías ganó una tercera columna, "qué cuesta"**, y resalta
+  la de dramatizar: un agente que se equivoca en el diagnóstico se corrige; uno
+  que infla el impacto entrena a todos a desconfiar también de los números
+  correctos.
+- **La pregunta no lleva `respuesta` a propósito.** Tres de las cuatro opciones
+  son piezas reales de lo de mañana, y la cuarta —el prompt más largo— es la
+  que hay que discutir.
+- **El bucle del ítem `codigo` está completo**, no insinuado: son doce líneas y
+  ahí está todo ReAct.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 67 ítems en la sesión 1, 240 minutos, sin
+  avisos.
+- `npm run humo`: 124 pantallas, 0 con error.
+- `npm test` (112), typecheck, lint y build limpios.

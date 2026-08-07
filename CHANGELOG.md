@@ -41,6 +41,28 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Contenido · S1·U4, el primer agente sin arquitectura (batch 18)
+- 14 ítems, 65 minutos. **Con esto la sesión del sábado queda escrita entera**:
+  cuatro unidades, 67 ítems, 240 minutos.
+- El brief decía 55 minutos y la estructura reserva 65. Lo cazó la comprobación
+  que el batch 15 agregó a `validar-contenido` — los ítems sumaban 230 contra
+  las cuatro horas de la sesión.
+- Nuevo `s1-r3-que-hace-bien`: antes de romperlo, decir que el bucle funciona.
+  Sin eso la clase se lleva la lección equivocada — ReAct es un piso muy alto
+  por muy poco código, y el problema aparece al confiar en él sin mirar.
+- Las dos `cita-agente` son transcripciones literales de `incidencias.md`, con
+  una advertencia en las notas: el agente dijo eso **reflexionando**, con un
+  nodo que el bucle pelado no tiene.
+- La pregunta de cierre no lleva `respuesta` a propósito.
+
+### Una cifra más del laboratorio, corregida
+- `incidencias.md` decía que panadería marcaba "+9.2% promediando y +0.7% por
+  cociente de totales". **Son dos cantidades distintas**: +9.2% es el nivel a 14
+  días promediando porcentajes (medido +9.4%) y +0.7% es el delta contra la
+  base de 45 días por cociente de totales (medido +0.70, exacto). Juntas
+  sugieren una inflación de trece veces que no existe: es 1.4× en el nivel y 3×
+  en el delta. Corregido con las cuatro cifras en `texai/taller-ia-uni-lab`.
+
 ### Los ítems de código reventaban la lámina al hidratar
 - `Codigo`, `Terminal` y `Demo` llamaban a Shiki con `await` dentro del
   componente. Correcto en un componente de servidor — pero `Dictado` es de

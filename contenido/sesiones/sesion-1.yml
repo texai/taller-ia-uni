@@ -1006,21 +1006,65 @@ unidades:
       - Llegar al domingo con una pregunta abierta, no con una respuesta
     requisitos:
       - Tener herramientas de percepción que no alarmen sobre lo normal
+      - Una llave de LLM en `.env`, o `PROVEEDOR_LLM=mock`
     items:
       - id: s1-r3-titulo
         tipo: titulo
         titulo: "Reto 3 · Un LLM con herramientas, y nada más"
+        entradilla: Va a funcionar. Ese es el problema.
         minutos: 2
+        notas: |
+          Decirlo desde el principio: este reto es de diagnóstico, no de
+          construcción. No vamos a arreglar nada hoy. Lo que hay que sacar de
+          acá es una pregunta bien formulada para mañana.
 
       - id: s1-r3-bucle
         tipo: codigo
         titulo: El bucle entero
-        lenguaje: python
-        minutos: 6
         entradilla: Es corto a propósito
+        lenguaje: python
+        minutos: 4
         contenido: |
-          # Pendiente — batch 18
           llm = obtener_llm().bind_tools(HERRAMIENTAS)
+
+          mensajes = [SystemMessage(INSTRUCCIONES), HumanMessage(encargo)]
+          while True:
+              respuesta = llm.invoke(mensajes)
+              mensajes.append(respuesta)
+              if not respuesta.tool_calls:
+                  break
+              for llamada in respuesta.tool_calls:
+                  resultado = HERRAMIENTAS[llamada["name"]].invoke(llamada["args"])
+                  mensajes.append(ToolMessage(resultado, tool_call_id=llamada["id"]))
+        notas: |
+          Esto es ReAct entero: pensar, actuar, observar, repetir. No hay más.
+
+          `bind_tools` es lo único no obvio: le pasa al modelo el esquema de
+          cada herramienta —nombre, argumentos y docstring— para que pueda
+          pedirlas. La docstring que escribieron en el reto 2 es lo que el
+          modelo lee acá.
+
+      - id: s1-r3-que-hace-bien
+        tipo: markdown
+        titulo: Y funciona
+        minutos: 3
+        contenido: |
+          Conviene decirlo antes de romperlo, porque es verdad y porque es la
+          razón de que este patrón esté en todas partes:
+
+          - **Llama las herramientas correctas** sin que nadie le diga cuáles.
+          - **Encadena**: mira el resumen, ve algo raro, y pide el detalle de
+            esa categoría.
+          - **Encuentra cosas de verdad.** El escenario de la campaña lo saca
+            casi siempre.
+          - **Suena convincente.** Escribe un diagnóstico que cualquiera
+            firmaría.
+
+          Con veinte líneas y ninguna arquitectura.
+        notas: |
+          No saltarse esto. Si la clase sale creyendo que ReAct es malo, se
+          llevó la lección equivocada: ReAct es un piso muy alto por muy poco
+          código. El problema aparece cuando hay que confiar en él sin mirar.
 
       - id: s1-r3-correr
         tipo: terminal
@@ -1029,71 +1073,193 @@ unidades:
         comandoWindows: .\taller.ps1 agente --verboso
         duracion: 43
         minutos: 3
+        notas: |
+          `--verboso` imprime cada llamada a herramienta con sus argumentos.
+          Es lo que hace que esto sea observable en vez de mágico.
+
+          Si alguien no tiene llave, `PROVEEDOR_LLM=mock` recorre el bucle
+          igual. No razona, pero nadie se queda mirando la pantalla.
 
       - id: s1-r3-tres-veces
         tipo: demo
         titulo: El mismo escenario, tres veces
-        minutos: 10
+        entradilla: Mismo mundo, misma pregunta, temperatura cero
+        minutos: 12
         pasos:
-          - comando: make agente ARGS="--fecha 2026-08-09"
-          - comando: make agente ARGS="--fecha 2026-08-09"
-          - comando: make agente ARGS="--fecha 2026-08-09"
-        observar: Pendiente — batch 18
+          - comando: make romper ESCENARIO=sesgo_silencioso
+          - comando: make agente ARGS="--verboso"
+          - comando: make agente ARGS="--verboso"
+          - comando: make agente ARGS="--verboso"
+        observar: >-
+          Comparar las tres salidas lado a lado. Qué herramientas llamó cada
+          una y en qué orden, qué categorías nombró, y sobre todo qué severidad
+          le puso. No van a coincidir — y el mundo era exactamente el mismo las
+          tres veces.
+        respaldo: >-
+          Si las llaves se agotan, basta con dos corridas. Y si nadie tiene
+          llave, ir a las salidas guardadas del ítem siguiente: lo que hay que
+          ver es la divergencia, no correrlo uno mismo.
+        notas: |
+          Con temperatura 0. Vale la pena decirlo en voz alta, porque la
+          reacción natural es "bajale la temperatura" — ya está en cero. Lo que
+          varía no es el muestreo del modelo, es por dónde entró a mirar.
 
-      - id: s1-r3-cita-1
-        tipo: cita-agente
-        titulo: Primera corrida
-        cita: Pendiente — batch 18
-        procedencia: Pendiente — batch 18
-        minutos: 5
+          Diez minutos de comparación real. Es la parte de la unidad que más
+          rinde y la que más tienta a acortar.
 
-      - id: s1-r3-cita-2
-        tipo: cita-agente
-        titulo: Segunda corrida, mismo mundo
-        cita: Pendiente — batch 18
-        procedencia: Pendiente — batch 18
-        minutos: 5
+      - id: s1-r3-divergencia
+        tipo: markdown
+        titulo: Qué diverge, exactamente
+        minutos: 4
+        contenido: |
+          No es que una corrida acierte y otra falle. Las tres son
+          **defendibles**. Lo que cambia es:
+
+          - **Por dónde entró.** Quien empieza por `agregado_por("tienda")` ve
+            un mundo distinto del que empieza por `comparar_periodos`.
+          - **Dónde paró.** Ninguna sabe cuándo tiene suficiente evidencia,
+            así que paran cuando encuentran algo que suena bien.
+          - **Qué severidad puso.** Sin una escala anclada a nada, la
+            severidad es opinión editorial.
+        notas: |
+          "Ninguna sabe cuándo tiene suficiente evidencia" es la frase que hay
+          que dejar caer acá. Es literalmente lo que le falta al bucle, y
+          mañana tiene un nombre: reflexión.
 
       - id: s1-r3-patologias
         tipo: tabla
         titulo: Las cuatro patologías
+        entradilla: Ninguna es del modelo. Todas son de la forma del bucle.
         minutos: 6
-        columnas: [Qué hace, Por qué importa]
+        columnas: [Qué hace, Por qué pasa, Qué cuesta]
         filas:
-          - ["Concluye con lo primero que encuentra", "Pendiente — batch 18"]
-          - ["Ordena por la señal más ruidosa", "Pendiente — batch 18"]
-          - ["Dramatiza el impacto de negocio", "Pendiente — batch 18"]
-          - ["Mañana redescubre lo mismo", "Pendiente — batch 18"]
+          - ["Concluye con lo primero que encuentra", "Nada le dice cuándo tiene suficiente", "Diagnósticos que no contrastan contra una línea base"]
+          - ["Ordena por la señal más ruidosa", "El MAPE tiene los números más grandes", "Reporta primero lo que menos importa"]
+          - ["Dramatiza el impacto de negocio", "Ninguna cifra tiene que defenderse", "Números que suenan a plata y no lo son"]
+          - ["Mañana redescubre lo mismo", "No hay memoria entre corridas", "Alerta repetida hasta que se la ignora"]
+        resaltar: [2]
+        notas: |
+          Las cuatro salieron de corridas reales, no de una lista de riesgos.
+
+          La tercera está resaltada porque es la que la clase menos espera y la
+          más peligrosa: un agente que se equivoca en el diagnóstico se corrige;
+          un agente que infla el impacto entrena a todos a desconfiar de los
+          números correctos también.
+
+      - id: s1-r3-cita-1
+        tipo: cita-agente
+        titulo: Dramatizando, en sus propias palabras
+        cita: >-
+          Inventé impacto de negocio. Dije "9,436 unidades de sobre-stock" pero
+          eso es el error acumulado del pronóstico, no sobre-stock. Estoy
+          dramatizando.
+        procedencia: Reflexión del agente sobre su propio diagnóstico
+        comentario: >-
+          Las 9,436 unidades existían: era la suma de los errores absolutos.
+          Pero un error de pronóstico que a veces sobra y a veces falta no es
+          inventario de más. El número era real y la frase era falsa.
+        minutos: 5
+        notas: |
+          Esto lo escribió el agente, y no en la corrida pelada: lo dijo cuando
+          se le agregó un nodo que lo obliga a criticarse. Ese nodo es lo
+          primero que construimos mañana. Decirlo así, sin adelantar más.
+
+      - id: s1-r3-cita-2
+        tipo: cita-agente
+        titulo: Y confundiendo significancia con evidencia
+        cita: >-
+          Usé p-valor bajo como evidencia de anomalía de datos, pero p-valor
+          bajo solo significa cambio estadísticamente significativo.
+        procedencia: Reflexión del agente sobre su propio diagnóstico
+        comentario: >-
+          Es exactamente la trampa 3 del reto anterior, cometida por el agente
+          en vez de por quien escribe la herramienta. La herramienta puede estar
+          bien calibrada y el razonamiento encima seguir leyendo mal lo que le
+          entregan.
+        minutos: 4
+        notas: |
+          Enlazar con el reto 2: ahí el riesgo era poner mal el umbral; acá es
+          leer mal la bandera. Son dos capas distintas y las dos hay que
+          cuidarlas.
 
       - id: s1-r3-prompt
         tipo: markdown
         titulo: Por qué no se arregla con un prompt más largo
-        contenido: |
-          Pendiente — batch 18.
         minutos: 5
+        contenido: |
+          La reacción natural es escribir instrucciones mejores: *"no
+          dramatices"*, *"contrasta contra una línea base"*, *"no repitas
+          alertas"*.
+
+          Se puede probar, y se degrada:
+
+          - Un prompt con quince reglas hace que el modelo cumpla unas y olvide
+            otras, y **cuáles olvida cambia en cada corrida**.
+          - No hay forma de saber si cumplió. Un prompt no deja rastro: o
+            miras la salida entera, o confías.
+          - Y no arregla la memoria. Ninguna instrucción hace que la corrida de
+            mañana sepa lo que dijo la de hoy.
+
+          El problema no es que el modelo no sepa qué hacer. Es que **no hay
+          ningún sitio donde eso pueda pasar**: ni un paso que critique, ni uno
+          que reescriba, ni algo que persista entre corridas.
+        notas: |
+          Si alguien insiste con el prompt largo, esta es la pregunta que
+          cierra: ¿cómo comprobarías que lo cumplió? En un grafo, el paso o
+          corrió o no corrió, y queda registrado.
 
       - id: s1-r3-pregunta
         tipo: pregunta
         titulo: ¿Qué le falta?
-        pregunta: Pendiente — batch 18
+        pregunta: >-
+          Al bucle de hoy, ¿qué le agregarías primero para poder confiar en su
+          diagnóstico?
         visibilidad: publica
         permiteOmitir: true
-        minutos: 4
+        minutos: 5
+        opciones:
+          - Un prompt más detallado
+          - Que critique su propio diagnóstico antes de emitirlo
+          - Memoria de lo que ya reportó
+          - Más herramientas
+        notas: |
+          A propósito sin respuesta correcta marcada: las tres últimas son
+          piezas reales de lo que se construye mañana, y la primera es la que
+          hay que discutir.
+
+          Revelar y dejar que discutan. Si gana "memoria", perfecto — es el
+          único que no se puede simular con nada más.
 
       - id: s1-r3-golpe
         tipo: titulo
         titulo: Nada de esto se arregla con un prompt más largo
         destacado: ¿Qué le falta a este bucle?
-        minutos: 4
+        minutos: 3
+        notas: |
+          Dejarlo en pantalla en silencio unos segundos. Es el final del
+          sábado y la pregunta con la que tienen que irse.
 
       - id: s1-r3-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
         minutos: 5
+        disparadores:
+          - ¿Alguno tiene hoy un agente en producción? ¿Cómo saben que no divaga?
+          - ¿Qué harían ustedes para que dos corridas del mismo día coincidieran?
+          - ¿Dónde más han visto un número real usado para decir algo falso?
 
       - id: s1-cierre
         tipo: transicion
         titulo: Cierre, y qué viene mañana
-        vimos: Un mundo que se degrada en silencio, herramientas que lo detectan, y un agente que divaga
-        viene: La arquitectura cognitiva que convierte ese bucle en algo que se puede creer
-        minutos: 10
+        vimos: >-
+          Un mundo que se degrada en silencio, herramientas que sí lo detectan,
+          y un agente que las usa bien y aun así divaga
+        viene: >-
+          Las capas que convierten ese bucle en algo que se puede creer:
+          percepción, diagnóstico, reflexión, revisión, acción y memoria
+        minutos: 4
+        notas: |
+          Recordar la hora de mañana —09:00— y que no hace falta traer nada
+          levantado: se arranca con `make arriba`. Quien no vino hoy puede
+          seguir igual.
+

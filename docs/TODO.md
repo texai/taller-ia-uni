@@ -236,44 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 18 — Contenido · S1·U4 `reto` — El primer agente, sin arquitectura
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Ver fallar a un agente que funciona. Es diagnóstico, no construcción — y es la pregunta que abre la sesión 2.
-
-**Duración** 55 minutos → del orden de 18 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- `retos/README.md` — Reto 3
-- `agente/llm.py` — `obtener_llm` y `bind_tools`
-- Las cuatro patologías documentadas de corridas reales del ReAct pelado
-
-**Tipos de ítem sugeridos**
-- `codigo` con el bucle ReAct completo, que es corto a propósito
-- `demo` corriendo el mismo escenario tres veces
-- `cita-agente` con las salidas divergentes
-- `tabla` con las cuatro patologías
-- `titulo` de cierre: *nada de esto se arregla con un prompt más largo*
-- `transicion` hacia la sesión 2
-
-**Criterios de aceptación**
-- [ ] Queda claro que el agente **funciona**: llama herramientas y encuentra cosas
-- [ ] Las patologías se muestran con salidas reales, no descritas
-- [ ] La unidad cierra con una pregunta abierta, no con una respuesta
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 55 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 19 — Contenido · S2·U1 `repaso` — Qué le faltaba al bucle de ayer
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura
