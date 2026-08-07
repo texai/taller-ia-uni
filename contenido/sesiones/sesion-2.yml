@@ -23,6 +23,7 @@ unidades:
     objetivos:
       - Recuperar el hilo tras una noche
       - Emparejar cada patología de ayer con la capa que la resuelve
+      - Ver el grafo completo una vez, antes de construirlo
     requisitos:
       - Nada. Se puede seguir sin haber estado el sábado.
     items:
@@ -31,43 +32,140 @@ unidades:
         titulo: Tomar asistencia
         nota: Segunda sesión. Anotar también a quien no vino ayer.
 
+      - id: s2-portada
+        tipo: titulo
+        titulo: La arquitectura cognitiva
+        entradilla: Hoy construimos lo que le faltaba al bucle
+        minutos: 2
+        notas: |
+          Antes de empezar: `make arriba`. Nadie necesita haber dejado nada
+          levantado de ayer, y quien viene por primera vez arranca igual.
+
+      - id: s2-para-quien-no-vino
+        tipo: markdown
+        titulo: El caso, en un minuto
+        entradilla: Para quien no estuvo ayer — y de repaso para quien sí
+        minutos: 3
+        contenido: |
+          Una cadena de retail con 24 tiendas y 8 categorías pronostica su
+          demanda cada noche: **192 modelos en producción**. Un job de
+          madrugada los carga y proyecta 14 días.
+
+          Cuando el mundo cambia, los modelos siguen igual. Y hay una forma de
+          fallar que no dispara ninguna alarma: la demanda cae despacio en toda
+          la cadena, el error medio casi no se mueve, pero el modelo empieza a
+          pronosticar **de más** — y eso son decenas de miles de unidades en
+          almacén que nadie compró para tener paradas.
+
+          Ayer construimos las herramientas que sí lo detectan, y encima un
+          agente que las usa bien. **Funciona.** Llama las herramientas
+          correctas, encuentra cosas, y suena convincente.
+
+          El problema es que dos corridas del mismo mundo dan dos diagnósticos
+          distintos.
+        notas: |
+          Tres minutos, cronometrados. La tentación es recontar el sábado
+          entero; quien no vino no necesita la historia, necesita el caso y el
+          problema. Todo lo demás lo va a recuperar sobre la marcha.
+
       - id: s2-donde-quedamos
         tipo: transicion
         titulo: Dónde quedamos
-        vimos: Un agente que funciona, llama herramientas, y aun así divaga
-        viene: Lo que le falta, que no es un prompt más largo
-        minutos: 5
+        vimos: >-
+          Un agente que funciona, llama herramientas y aun así divaga: cuatro
+          patologías, ninguna del modelo
+        viene: >-
+          Las capas que lo arreglan, que no son un prompt más largo sino
+          sitios donde algo pueda pasar
+        minutos: 3
 
       - id: s2-patologias
         tipo: tabla
         titulo: Las cuatro patologías, y qué las resuelve
-        minutos: 6
-        columnas: [Patología, Capa que la resuelve]
+        entradilla: Cada una tiene un sitio donde arreglarse
+        minutos: 5
+        columnas: [Patología, Capa que la resuelve, Cómo]
         filas:
-          - ["Concluye con lo primero que encuentra", "Pendiente — batch 19"]
-          - ["Ordena por la señal más ruidosa", "Pendiente — batch 19"]
-          - ["Dramatiza el impacto", "Pendiente — batch 19"]
-          - ["Mañana redescubre lo mismo", "Pendiente — batch 19"]
+          - ["Concluye con lo primero que encuentra", "Reflexión", "Intenta refutar la hipótesis; si le falta evidencia, devuelve el control a percepción"]
+          - ["Ordena por la señal más ruidosa", "Percepción", "La herramienta entrega ordenado por la señal cara y pone el recuento primero"]
+          - ["Dramatiza el impacto", "Reflexión + revisión", "Cuestionarse no basta: hace falta poder reescribir el diagnóstico"]
+          - ["Mañana redescubre lo mismo", "Memoria", "Consulta el historial antes de diagnosticar y lo escribe después"]
+        resaltar: [2]
+        notas: |
+          La fila resaltada es la que explica por qué hay dos capas y no una.
+          **Cuestionarse sin poder corregirse no sirve de nada**: el
+          diagnóstico saldría contradiciendo a sus propias objeciones. Esa
+          frase es la tesis de la unidad siguiente.
+
+          Falta una capa en esta tabla y vale la pena decirlo: la **acción**.
+          No arregla ninguna patología — es capacidad nueva, y trae sus propios
+          problemas. Es el reto 5.
 
       - id: s2-el-grafo
         tipo: diagrama
         titulo: El grafo completo
         entradilla: Sin explicar todavía. Solo para que lo vean entero una vez.
         clase: flujo
-        minutos: 8
+        minutos: 6
         contenido: |
-          Pendiente — batch 19.
+          flowchart LR
+            P["percepcion"] --> D["diagnostico"]
+            D --> R["reflexion"]
+            R -->|falta evidencia| P
+            R -->|la critica quedo en pie| V["revision"]
+            R -->|confirmado| C["recomendacion"]
+            V --> C
+            C --> A["accion"]
+            D <-.->|lee antes, escribe despues| M[("memoria")]
         notas: |
-          No explicarlo acá. Se presenta y se pasa. La explicación es la unidad
+          NO explicarlo acá. Se presenta y se pasa: la explicación es la unidad
           siguiente, y adelantarla le quita el efecto.
+
+          Lo único que vale señalar con el dedo son las dos flechas que vuelven
+          hacia atrás. Todo lo demás de este dibujo es una tubería; esas dos
+          son lo que lo convierte en algo que se puede creer.
+
+      - id: s2-que-no-es
+        tipo: markdown
+        titulo: Qué es realmente una "capa"
+        minutos: 3
+        contenido: |
+          No es un prompt más largo ni una instrucción mejor. Es **un nodo con
+          un solo trabajo**, que corre o no corre y deja rastro.
+
+          La diferencia práctica: a un prompt que dice *"no dramatices"* no se
+          le puede preguntar si lo cumplió. A un nodo de reflexión sí — o
+          produjo objeciones o no las produjo, y están escritas.
+
+          El mismo modelo, con las mismas herramientas, pero obligado a pasar
+          por sitios donde solo puede hacer una cosa.
+        notas: |
+          Si alguien pregunta por qué no un solo prompt gigante: porque un
+          prompt con quince reglas cumple unas y olvida otras, y cuáles olvida
+          cambia en cada corrida. Un grafo no olvida un nodo.
 
       - id: s2-pregunta-agregar
         tipo: pregunta
         titulo: ¿Qué le agregarías?
-        pregunta: Pendiente — batch 19
+        pregunta: >-
+          Mirando el grafo: ¿cuál de estas capas creen que arregla MÁS de las
+          cuatro patologías de ayer?
         visibilidad: publica
         permiteOmitir: true
-        minutos: 6
+        minutos: 3
+        opciones:
+          - Percepción
+          - Reflexión
+          - Revisión
+          - Memoria
+        respuesta: Reflexión
+        notas: |
+          Reflexión aparece en dos de las cuatro filas de la tabla, así que es
+          la correcta — pero lo interesante es la discusión, no el acierto.
+
+          Si gana memoria: buena señal, es la que más gente reconoce de su
+          propio trabajo. Si gana revisión, es que leyeron bien la fila
+          resaltada. Cualquiera de las dos abre la unidad siguiente.
 
   # ------------------------------------------------------------------ 09:25
   - id: s2-reto-4

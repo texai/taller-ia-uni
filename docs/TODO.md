@@ -236,42 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 19 — Contenido · S2·U1 `repaso` — Qué le faltaba al bucle de ayer
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Recuperar el hilo tras una noche, y convertir las cuatro patologías de ayer en el planteamiento de la arquitectura.
-
-**Duración** 25 minutos → del orden de 8 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- La unidad 4 de la sesión 1
-- `agente/grafo.py` — el diagrama del módulo
-
-**Tipos de ítem sugeridos**
-- `asistencia`
-- `transicion` con el mapa: dónde quedamos
-- `tabla` recordando las cuatro patologías
-- `diagrama` del grafo completo, todavía sin explicar
-- `pregunta` pública: ¿qué le agregarías?
-
-**Criterios de aceptación**
-- [ ] Se puede seguir sin haber estado el sábado
-- [ ] Cada patología se empareja con la capa que la resuelve
-- [ ] No se explica el grafo todavía: solo se presenta
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 25 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 20 — Contenido · S2·U2 `reto` — La arquitectura cognitiva
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura

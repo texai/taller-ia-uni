@@ -1294,3 +1294,71 @@ falsa — que es exactamente lo que hace peligrosa a esa patología.
   avisos.
 - `npm run humo`: 124 pantallas, 0 con error.
 - `npm test` (112), typecheck, lint y build limpios.
+
+---
+
+## Batch 19 — Contenido · S2·U1 `repaso` — Qué le faltaba al bucle de ayer
+**2026-08-07**
+
+Recuperar el hilo tras una noche, y convertir las cuatro patologías del sábado
+en el planteamiento de la arquitectura.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] Se puede seguir sin haber estado el sábado
+- [ ] Cada patología se empareja con la capa que la resuelve
+- [ ] No se explica el grafo todavía: solo se presenta
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 25 de la unidad
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### 8 ítems, 25 minutos
+
+**`s2-para-quien-no-vino` es el ítem que cumple el criterio difícil.** Tres
+minutos cronometrados con el caso y el problema, no con la historia del sábado.
+La nota privada lo dice explícito, porque la tentación real en clase es
+recontarlo todo: quien no vino no necesita el relato, necesita saber que hay
+192 modelos, que hay una forma de fallar que no suena, y que dos corridas del
+mismo mundo dan dos diagnósticos distintos.
+
+### El emparejamiento, que es el corazón de la unidad
+
+La tabla ganó una tercera columna —**cómo** lo resuelve— porque nombrar la capa
+sin decir el mecanismo no enseña nada:
+
+| patología | capa | cómo |
+|---|---|---|
+| Concluye con lo primero | Reflexión | Intenta refutar; si falta evidencia, devuelve el control a percepción |
+| Ordena por la ruidosa | Percepción | La herramienta ordena por la señal cara y pone el recuento primero |
+| Dramatiza | **Reflexión + revisión** | Cuestionarse no basta: hace falta poder reescribir |
+| Redescubre lo mismo | Memoria | Consulta el historial antes de diagnosticar, y lo escribe después |
+
+La tercera fila está resaltada porque es la que explica por qué hay dos capas y
+no una — **cuestionarse sin poder corregirse no sirve de nada**, que es la
+tesis de la unidad siguiente.
+
+Y la nota privada señala lo que la tabla no puede: **falta una capa**. La
+acción no arregla ninguna patología, es capacidad nueva y trae sus propios
+problemas. Es el reto 5.
+
+### El grafo, y una decisión de dibujo
+
+`s2-que-no-es` es nuevo y responde a la objeción que siempre aparece: qué es
+"una capa" y en qué se diferencia de una instrucción mejor. La respuesta que
+funciona no es conceptual sino práctica — **a un prompt no se le puede
+preguntar si lo cumplió; a un nodo sí**.
+
+El diagrama se dibujó dos veces. La primera versión ponía la memoria con dos
+aristas —una hacia `diagnostico` y otra desde `recomendacion`—, que es lo que
+de verdad pasa, pero eso forma un ciclo y Mermaid mandó la memoria al extremo
+derecho con su flecha cruzando el dibujo entero. En un ítem cuyo único trabajo
+es *verse una vez*, eso no sirve. Quedó una sola arista bidireccional
+etiquetada "lee antes, escribe después": misma información, y la memoria se
+sitúa al lado del nodo con el que habla.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 41 ítems en la sesión 2, 240 minutos.
+- `npm run humo`: 127 pantallas, 0 con error.
+- Comprobado en el navegador: el grafo en sus dos versiones, y la tabla.

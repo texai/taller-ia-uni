@@ -41,6 +41,22 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Contenido · S2·U1, qué le faltaba al bucle (batch 19)
+- 8 ítems, 25 minutos. Abre el domingo emparejando cada patología del sábado
+  con la capa que la resuelve, y presenta el grafo sin explicarlo.
+- Nuevo `s2-para-quien-no-vino`: tres minutos con el caso y el problema, no con
+  la historia del sábado. Es el ítem que hace que la sesión 2 se pueda seguir
+  sin haber estado en la 1.
+- La tabla de patologías gana una columna "cómo": nombrar la capa sin decir el
+  mecanismo no enseña nada. Y una nota señala lo que la tabla no puede — falta
+  la acción, que no arregla ninguna patología porque es capacidad nueva.
+- Nuevo `s2-que-no-es`, contra la objeción que siempre aparece: a un prompt no
+  se le puede preguntar si lo cumplió; a un nodo sí.
+- El grafo se dibujó dos veces. Con la memoria como dos aristas se forma un
+  ciclo y Mermaid la manda al extremo con la flecha cruzando todo el dibujo.
+  Una sola arista bidireccional —"lee antes, escribe después"— dice lo mismo y
+  la deja junto al nodo con el que habla.
+
 ### Contenido · S1·U4, el primer agente sin arquitectura (batch 18)
 - 14 ítems, 65 minutos. **Con esto la sesión del sábado queda escrita entera**:
   cuatro unidades, 67 ítems, 240 minutos.
