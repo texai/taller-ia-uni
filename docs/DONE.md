@@ -1528,3 +1528,77 @@ midió llamando a `entrenar` con `solo={"categoria": ...}`:
 **Verificación**
 - `npm run validar-contenido` pasa: 60 ítems en la sesión 2, 240 minutos.
 - `npm run humo`: 146 pantallas, 0 con error.
+
+---
+
+## Batch 22 — Contenido · S2·U4 `cierre` — Los errores, y dónde estaban de verdad
+**2026-08-07**
+
+La última unidad. Que se lleven la tesis: cuando un agente se equivoca, la
+primera sospecha no debería ser el modelo.
+
+**Con esto el curso queda escrito entero.** 131 ítems, 480 minutos, sin un solo
+`Pendiente` en el contenido.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] Ninguno de los nueve errores estaba en el modelo de lenguaje
+- [ ] Se nombra que varios los encontró el propio agente
+- [ ] Cierra con qué se llevan y qué pueden hacer en su trabajo
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 50 de la unidad
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### 13 ítems, 50 minutos
+
+El brief decía 35 y la estructura reserva 50. Como en el batch 18, manda la
+estructura — el aviso de `validar-contenido` no deja pasar otra cosa.
+
+### La tabla produce la tesis sola
+
+`s2-c-errores` lista los nueve con **una sola columna a la derecha: dónde vivía
+el arreglo.** Un `HumanMessage`, un `return`, un parámetro, el simulador, la
+herramienta, la ventana, el umbral, el orden, la documentación.
+
+La nota privada dice cómo se dicta: leer esa columna entera, fila por fila, y
+dejar que la clase note lo que no aparece nunca. Y después `s2-c-donde-vivian`,
+una `metrica` con un solo número —**0**— y la unidad "estaban en el modelo de
+lenguaje".
+
+Dos ítems, y la conclusión la saca la sala.
+
+### Las dos citas que quedaban
+
+Los batches 18 y 20 ya habían usado *"estoy dramatizando"* y *"SÍ hay hallazgo:
+hay DERIVA"*. Para el cierre quedaban las dos mejores para esta tesis, y ninguna
+se había gastado:
+
+- **El umbral mal calibrado**: *"¿Por qué Callao y Arequipa son anomalía y
+  Miraflores no? La diferencia es solo de magnitud, no de naturaleza."* Es la
+  crítica correcta, escrita por el agente que la estaba sufriendo, y nosotros la
+  encontramos después leyendo sus objeciones. La nota saca la idea que
+  generaliza: **la reflexión sirve como instrumento**, no solo como freno — es
+  un revisor que lee tus umbrales todos los días.
+- **El campo sin definir**: *"lacteos-cusco tiene cobertura 0.0… eso es
+  contradictorio."* Tres objeciones gastadas peleando con un problema que no
+  existía, porque `cobertura` no estaba explicada. **Un nombre ambiguo sin
+  definición le cuesta razonamiento a un agente, igual que a una persona
+  nueva.**
+
+### El ítem que el brief no pedía, y que cierra el taller
+
+`s2-c-que-se-llevan`: cinco cosas para hacer el lunes, **ninguna de las cuales
+necesita un agente**. Métricas con dirección y no solo distancia; umbrales
+calibrados contra un período sano; campos del esquema definidos; contar cuántas
+rutas de tu API escriben; y frenar por radio de daño, nunca contra un campo que
+el propio agente redacta.
+
+Cada una sale de una unidad distinta del curso, y las cinco se pueden hacer sin
+permiso de nadie. Es lo que queda si mañana no vuelven a tocar LangGraph.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 131 ítems, 480 minutos, sin avisos.
+- `npm run humo`: 150 pantallas, 0 con error.
+- **Cero `Pendiente — batch` en los dos archivos de sesión.**

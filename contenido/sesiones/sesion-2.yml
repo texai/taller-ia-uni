@@ -1060,73 +1060,221 @@ unidades:
     tipo: cierre
     titulo: Los errores, y dónde estaban de verdad
     objetivos:
-      - Llevarse la tesis del taller
-      - Saber qué hacer con esto en el trabajo del lunes
+      - Ver dónde vivían de verdad los errores de este agente
+      - Llevarse una forma de mirar, no una arquitectura para copiar
+      - Saber qué hacer con esto el lunes
+    requisitos:
+      - Haber construido el agente, o al menos haberlo visto correr
     items:
       - id: s2-c-titulo
         tipo: titulo
-        titulo: Nueve errores construyendo esto
-        destacado: Ninguno estaba en el modelo
+        titulo: Los errores, y dónde estaban de verdad
+        entradilla: Nada de lo que viene es hipotético
+        minutos: 2
+        notas: |
+          Cada entrada de esta unidad ocurrió construyendo este laboratorio.
+          Decirlo en voz alta: no es una lista de riesgos, es una bitácora.
+
+      - id: s2-c-nueve
+        tipo: markdown
+        titulo: Nueve errores de diseño
         minutos: 3
+        contenido: |
+          Construir este agente costó nueve errores que valió la pena anotar.
+          No los de sintaxis: los que hacían que el agente **funcionara y
+          estuviera mal**.
+
+          Todos tienen una cosa en común, y es la tesis de esta media hora.
+
+          Antes de decirla, la tabla.
+        notas: |
+          No adelantar la conclusión. La tabla siguiente la produce sola si se
+          lee la columna de la derecha en voz alta, fila por fila.
 
       - id: s2-c-errores
         tipo: tabla
-        titulo: Dónde estaban de verdad
-        minutos: 10
-        columnas: [Error, Dónde vivía el arreglo]
+        titulo: Los nueve, y dónde vivía el arreglo
+        minutos: 7
+        columnas: [El error, Dónde vivía el arreglo]
         filas:
-          - ["El contexto no llegaba a la API", "Pendiente — batch 22"]
-          - ["El estado no se propagaba", "Pendiente — batch 22"]
-          - ["ToolNode leía otra clave", "Pendiente — batch 22"]
-          - ["Un simulador que no podía fallar", "Pendiente — batch 22"]
-          - ["Promediar porcentajes", "Pendiente — batch 22"]
-          - ["Medir lo normal con la ventana auditada", "Pendiente — batch 22"]
-          - ["Significancia confundida con relevancia", "Pendiente — batch 22"]
-          - ["Ordenar por la métrica ruidosa", "Pendiente — batch 22"]
-          - ["Un campo sin definir", "Pendiente — batch 22"]
+          - ["El contexto no llegaba a la API", "En cómo se abre la conversación: un `HumanMessage` con el encargo"]
+          - ["El estado no se propagaba", "En un `return`: la apertura tenía que volver al estado"]
+          - ["`ToolNode` leía la clave equivocada", "En un parámetro: `messages_key=\"mensajes\"`"]
+          - ["Un simulador que no podía fallar", "En el simulador: que llamara una herramienta de verdad"]
+          - ["Promediar porcentajes", "En la herramienta: cociente de totales, no media de cocientes"]
+          - ["Medir lo normal con la ventana que auditas", "En la ventana: la línea base tiene que ser anterior"]
+          - ["Significancia confundida con relevancia", "En el umbral: pedir p-valor **y** cambio apreciable"]
+          - ["Ordenar los hallazgos por la métrica ruidosa", "En el orden: por lo que digan las banderas"]
+          - ["Un campo sin definir", "En la documentación: explicar qué es `cobertura`"]
+        notas: |
+          Leer la columna derecha entera, fila por fila, y dejar que la clase
+          note lo que no aparece nunca.
+
+          Tres de cableado, uno del simulador, cuatro de estadística bien
+          calculada y mal planteada, uno de documentación. **Cero del modelo de
+          lenguaje.** Cero del prompt.
+
+      - id: s2-c-donde-vivian
+        tipo: metrica
+        titulo: De los nueve
+        valor: "0"
+        unidad: estaban en el modelo de lenguaje
+        contexto: >-
+          Ni uno. Y ninguno se habría arreglado cambiando de proveedor, ni
+          subiendo a un modelo mejor.
+        tono: neutro
+        minutos: 2
+        notas: |
+          Dejarlo en pantalla en silencio. Es el número que resume el taller.
 
       - id: s2-c-cita-1
         tipo: cita-agente
-        titulo: El agente criticando un umbral mal calibrado
-        cita: Pendiente — batch 22
-        procedencia: Pendiente — batch 22
-        minutos: 5
+        titulo: El agente encontró varios antes que nosotros
+        cita: >-
+          ¿Por qué Callao y Arequipa son anomalía y Miraflores no? La
+          diferencia es solo de magnitud, no de naturaleza.
+        procedencia: Reflexión, sobre un umbral que estaba mal calibrado
+        comentario: >-
+          Es la crítica correcta a un umbral mal puesto, escrita por el agente
+          que lo estaba sufriendo. Nosotros lo encontramos después, leyendo sus
+          objeciones.
+        minutos: 4
+        notas: |
+          La reflexión no solo sirve para que el agente no divague. Sirve como
+          instrumento: es un revisor que lee tus umbrales todos los días y
+          escribe lo que no cuadra. Varios de los nueve salieron de ahí.
 
       - id: s2-c-cita-2
         tipo: cita-agente
-        titulo: Y confundiendo significancia con causa
-        cita: Pendiente — batch 22
-        procedencia: Pendiente — batch 22
-        minutos: 5
+        titulo: Y un campo sin definir le costó tres objeciones
+        cita: >-
+          lacteos-cusco tiene cobertura 0.0 en los 30 días, pero el modelo
+          sigue generando predicciones. Eso es contradictorio.
+        procedencia: Reflexión, peleando con una contradicción que no existía
+        comentario: >-
+          `cobertura` no estaba explicada en ninguna parte. El agente la leyó
+          como "días con predicción disponible" en vez de "días en que la venta
+          real cayó dentro del intervalo", y gastó tres objeciones en algo que
+          no era un problema.
+        minutos: 4
+        notas: |
+          La lección se lleva a cualquier equipo: **un nombre ambiguo sin
+          definición le cuesta razonamiento a un agente, igual que a una
+          persona nueva.** Si tu esquema tiene un campo que hay que preguntar
+          qué significa, tu agente también lo va a preguntar — y va a inventar
+          la respuesta.
 
       - id: s2-c-incidencias
         tipo: markdown
-        titulo: Y trece del entorno
+        titulo: Y trece incidencias del entorno
+        minutos: 4
         contenido: |
-          Pendiente — batch 22.
-        minutos: 6
+          Aparte de los nueve de diseño, trece cosas se rompieron montando el
+          laboratorio. Seis solo en Windows.
+
+          Docker Desktop cerrado, `make` que no existe, la política de
+          ejecución de PowerShell, los finales de línea que Git convierte al
+          clonar, los avisos del sistema de archivos que no cruzan el montaje.
+          Disco lleno a mitad de la construcción. Un verificador que dejaba el
+          mundo roto.
+
+          Ninguna es interesante por sí sola. Juntas son la mitad del tiempo.
+        notas: |
+          Si la clase pasó por alguna de estas hoy o ayer, nombrarla. Que
+          aparezcan en una lista escrita de antemano cambia cómo se sienten:
+          no fue mala suerte de uno, es el terreno.
+
+      - id: s2-c-t1
+        tipo: error-comun
+        titulo: La que vale por sí sola
+        minutos: 3
+        sintoma: >-
+          Un 404 en una ruta que está en el archivo. Una interfaz que revienta
+          por una columna que llega como texto. Un `git pull` que parece no
+          haber hecho nada.
+        causa: >-
+          Tres síntomas, tres días distintos, y el mismo error las tres veces:
+          el contenedor sirve el código con el que arrancó, no el que hay en
+          disco.
+        arreglo: >-
+          Reiniciar el servicio. Pero lo que hay que llevarse es la pregunta:
+          **¿el proceso vio este archivo?** Es típica de cualquier laboratorio
+          con volúmenes montados.
+        notas: |
+          Nos costó tres veces reconocerla. Vale por sí sola como material,
+          porque la forma de pensar que la resuelve —preguntarse qué versión
+          del código está corriendo de verdad— sirve mucho más allá de Docker.
 
       - id: s2-c-tesis
         tipo: titulo
         titulo: Cuando un agente se equivoca, la primera sospecha no debería ser el modelo
         destacado: Casi siempre es lo que le diste de comer
         minutos: 4
+        notas: |
+          La frase del taller. Dejarla en pantalla y no explicarla: la tabla ya
+          la explicó.
+
+          Si alguien pregunta por el "casi": sí, a veces el modelo es el
+          problema. Pero es lo último que hay que mirar, no lo primero, y la
+          bitácora de este taller da nueve razones.
+
+      - id: s2-c-que-se-llevan
+        tipo: criterios
+        titulo: Qué hacer con esto el lunes
+        entradilla: Cinco cosas que no necesitan un agente para servir
+        minutos: 5
+        criterios:
+          - texto: Mira si tus métricas tienen dirección, no solo distancia
+            pista: Si tu tablero solo tiene MAPE, le falta la señal que habla de plata
+          - texto: Calibra tus umbrales contra un período sano, no contra tu intuición
+            pista: Y mide cuánto se mueve solo antes de decidir qué es una alarma
+          - texto: Define los campos de tu esquema, aunque creas que se entienden
+            pista: Lo que hay que preguntar, un agente lo inventa
+          - texto: Cuenta cuántas rutas de tu API escriben
+            pista: Esa lista, y no otra, es la superficie que hay que proteger
+          - texto: Si automatizas una acción, frénala por radio de daño
+            pista: Y nunca contra un campo que el propio agente redacta
+        notas: |
+          Las cinco son independientes del agente y se pueden hacer sin
+          permiso de nadie. Es lo que quiero que se lleven si mañana no vuelven
+          a tocar LangGraph.
 
       - id: s2-c-mapa
         tipo: transicion
         titulo: Las ocho horas, completas
-        vimos: Un mundo, una percepción, una arquitectura y una acción con freno
-        viene: Tu propia flota, el lunes
-        minutos: 5
+        vimos: >-
+          Una flota que se degrada en silencio, herramientas que sí lo
+          detectan, un agente que divaga, y una arquitectura que lo convierte
+          en algo que se puede creer y que además actúa
+        viene: >-
+          Lo suyo: el laboratorio queda, con sus cinco ramas de solución y sus
+          cuatro escenarios para seguir rompiendo
+        minutos: 4
+        notas: |
+          Es el último ítem de contenido. Recordar que el repositorio queda
+          público y que las ramas `reto-1-solucion` a `reto-5-solucion` están
+          ahí para comparar contra lo que cada uno escribió.
 
       - id: s2-c-repo
         tipo: enlace
-        titulo: El laboratorio queda con ustedes
+        titulo: El laboratorio
         url: https://github.com/texai/taller-ia-uni-lab
-        descripcion: Todo lo que corrimos, con make verificar como red de seguridad
+        descripcion: >-
+          Todo lo de estas ocho horas: la plataforma, el agente, los cinco
+          retos con sus ramas de solución, los cuatro escenarios, y la bitácora
+          de lo que se rompió construyéndolo.
         minutos: 2
 
       - id: s2-c-preguntas
         tipo: pausa-preguntas
-        titulo: Preguntas y despedida
-        minutos: 10
+        titulo: Lo que quede
+        minutos: 6
+        disparadores:
+          - ¿Qué de esto se llevarían a lo que están construyendo ahora?
+          - ¿Dónde creen que estaría el primer error de su propio agente?
+          - ¿Qué acción de su trabajo automatizarían primero, y con qué freno?
+          - ¿Qué campo de su esquema no sabrían explicarle a alguien nuevo?
+        notas: |
+          Seis minutos y son los últimos. Si no hay preguntas, la que siempre
+          funciona es la tercera: todo el mundo tiene una acción en la cabeza y
+          ninguna tiene freno todavía.

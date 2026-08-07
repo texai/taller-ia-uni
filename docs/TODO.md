@@ -236,44 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 22 — Contenido · S2·U4 `cierre` — Los errores, y dónde estaban de verdad
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Que se lleven la tesis: cuando un agente se equivoca, la primera sospecha no debería ser el modelo.
-
-**Duración** 35 minutos → del orden de 12 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- Los nueve errores de diseño del agente, documentados
-- Las trece incidencias del laboratorio
-- Las citas donde el agente diagnosticó errores nuestros antes que nosotros
-
-**Tipos de ítem sugeridos**
-- `tabla` con los nueve errores y dónde vivía cada arreglo
-- `cita-agente` con el agente criticando un umbral mal calibrado
-- `titulo` de cierre con la tesis
-- `enlace` al repositorio del laboratorio
-- `transicion` con el mapa completo de las ocho horas
-- `pausa-preguntas` final
-
-**Criterios de aceptación**
-- [ ] Ninguno de los nueve errores estaba en el modelo de lenguaje
-- [ ] Se nombra que varios los encontró el propio agente
-- [ ] Cierra con qué se llevan y qué pueden hacer con esto en su trabajo
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 35 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ---
 
 ## Plantilla de batch

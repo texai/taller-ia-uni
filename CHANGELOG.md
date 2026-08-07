@@ -41,6 +41,20 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Contenido · S2·U4, el cierre (batch 22) — y el curso queda escrito
+- 13 ítems, 50 minutos. **131 ítems y 480 minutos en total, sin un solo
+  `Pendiente` en el contenido.**
+- La tabla de los nueve errores lleva una sola columna a la derecha: dónde vivía
+  el arreglo. Leída entera, la conclusión la saca la sala — y el ítem siguiente
+  es una métrica con un solo número, **0**, y la unidad "estaban en el modelo de
+  lenguaje".
+- Las dos citas que quedaban sin usar son las mejores para esta tesis: el umbral
+  mal calibrado que criticó el propio agente, y las tres objeciones gastadas
+  contra un campo que nadie había definido.
+- Ítem nuevo que el brief no pedía: cinco cosas para hacer el lunes, ninguna de
+  las cuales necesita un agente. Es lo que queda si no vuelven a tocar
+  LangGraph.
+
 ### Contenido · S2·U3, de la recomendación a la acción (batch 21)
 - 18 ítems, 60 minutos. Las dos reglas de la política se explican por separado,
   el interruptor tiene su propio ítem, y la traducción del objetivo también.
