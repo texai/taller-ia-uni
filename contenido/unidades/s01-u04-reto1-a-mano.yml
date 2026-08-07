@@ -65,6 +65,63 @@ items:
       individuales se pierde: con 192 series, mirar de a una no converge.
       El camino es agregar y comparar cortes.
 
+  - id: s1-r1-criterios
+    tipo: criterios
+    titulo: Cuándo terminaste
+    entradilla: No son criterios de código. Este reto no se escribe, se busca.
+    minutos: 2
+    criterios:
+      - texto: Miraste la flota agregada por categoría, por región y por tienda
+        pista: Los tres cortes, no uno. La forma del problema es la respuesta
+      - texto: Sabes decir si el problema es de una categoría, de una tienda o de la cadena
+        pista: Es la tercera pregunta del encargo, y la única que importa
+      - texto: Lo hiciste dos veces, con el mismo método, sobre dos mundos distintos
+      - texto: Y en el segundo, no encontraste nada
+        pista: Eso no es fallar el reto. Es aprobarlo.
+    notas: |
+      **El cuarto criterio es el reto entero**, y decirlo antes de empezar
+      cambia la media hora que viene: la sala deja de tener miedo a no
+      encontrar. Sin esto, a los diez minutos del segundo escenario alguien
+      levanta la mano pensando que se le rompió algo.
+
+      Es el único reto sin criterios de código, porque es el único donde no se
+      escribe nada. Pero tener criterios igual importa: un reto sin condición
+      de término se convierte en «trabajen un rato», que es lo que estas
+      láminas existen para no volver a decir.
+
+      Los tres cortes del primer criterio son los tres que `agregado_por` va a
+      ofrecer mañana como parámetro. Sembrarlo sin nombrarlo.
+
+  - id: s1-r1-listo
+    tipo: lectura
+    titulo: ¿Estás en condiciones de empezar?
+    entradilla: Veinte segundos, ahora. Antes de cuarenta minutos de ejercicio.
+    minutos: 3
+    comandos:
+      - make verificar ARGS="--reto 1"
+    observar: >-
+      Que las dos comprobaciones pasen. `192 modelos en produccion` pregunta a
+      la API cuántos modelos distintos hay en la telemetría; `hay telemetria
+      suficiente` cuenta que sean más de 15,000 filas. Si el entorno no está en
+      pie no sale un error de Python: sale
+      `¿Esta levantado el entorno?  make arriba && make seed`.
+    notas: |
+      **20 segundos, y ahorran media hora.** Hasta ahora el único filtro era la
+      mano alzada del trabajo previo, y con eso alguien se pasa el reto entero
+      mirando un mundo a medio poblar y creyendo que el problema es suyo.
+
+      Es la primera vez que se ve el verificador, que vuelve en los retos 2, 3,
+      4 y 5. Decir la forma: `make verificar` los corre los cinco, y
+      `ARGS="--reto N"` corre uno.
+
+      **Y decir lo que este no comprueba**, porque es raro y enseña: no mira si
+      encontraste el problema. Este reto no tiene solución que verificar —
+      comprueba que el entorno esté en pie, que es lo único que puede
+      arruinarte la media hora que viene.
+
+      Es una ventana corta a propósito. Si a alguien le falla, que lo diga
+      ahora: los tres rescates de la unidad anterior siguen valiendo.
+
   - id: s1-glosario-escenarios
     tipo: glosario
     titulo: Tres palabras antes de romper nada

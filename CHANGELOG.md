@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Cada reto cierra su círculo
+- **El reto 1 tiene criterios**, y el cuarto es el que cambia la media hora:
+  *«y en el segundo, no encontraste nada — eso no es fallar el reto, es
+  aprobarlo»*. Sin decirlo antes, a los diez minutos del sesgo silencioso
+  alguien levanta la mano creyendo que se le rompió algo.
+- **Y comprueba el entorno antes de empezar**: `make verificar ARGS="--reto 1"`,
+  veinte segundos, contra cuarenta minutos de ejercicio sobre un mundo a medio
+  poblar. Hasta ahora el único filtro era la mano alzada del trabajo previo.
+- **El reto 3 comprueba la llave**, y no que exista: manda una petición de
+  verdad y mira si el modelo **pide una herramienta**. Una llave con la cuota
+  agotada responde; lo que no hace es funcionar. Evita el peor momento posible
+  del sábado — descubrirlo a las 18:10 con la demo en pantalla.
+- Detrás va la **lámina de rescate** con los tres caminos, en un orden que no
+  es el de la comodidad: la llave gratuita primero, porque `mock` no razona y
+  con él la demo de las tres ejecuciones no funciona.
+- En el laboratorio, el verificador ya no dice «Las 1 comprobaciones pasaron».
+
 ### Ninguna palabra se usa antes de abrirse
 - El glosario tenía **39 términos y tres láminas cubriendo 13**. Los otros 26
   vivían solo en el panel flotante — a mano si alguien lo abre, y nadie lo abre

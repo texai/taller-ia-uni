@@ -3166,3 +3166,68 @@ que sí cumple: escenario, agregación por dimensión, y deriva contra anomalía
   de acento, los otros dos apagados y con la etiqueta «ya visto».
 - `npm run humo`: **319 pantallas abiertas, 0 con error**.
 - 221 ítems · 386 + 275 min.
+
+---
+
+## Batch 48 — Cada reto cierra su círculo
+**2026-08-07**
+
+La cadena que sostiene el taller es **reto → intención → concepto → comando →
+código → comprobación**, y dos de los cinco retos no llegaban al final.
+
+**Alcance** (todo hecho)
+- [x] `criterios` para el reto 1
+- [x] `make verificar ARGS="--reto 1"` al abrir el reto
+- [x] Lo mismo con `--reto 3`, antes de leer el bucle
+- [x] La lámina de rescate de la llave
+- [x] Los objetivos de los cinco retos, revisados tras el batch 47
+
+### El criterio que cambia la media hora
+
+El cuarto criterio del reto 1 es **«y en el segundo, no encontraste nada — eso
+no es fallar el reto, es aprobarlo»**. Decirlo *antes* de empezar quita el
+miedo a no encontrar; sin eso, a los diez minutos del sesgo silencioso alguien
+levanta la mano creyendo que se le rompió algo.
+
+Es el único reto sin criterios de código, porque es el único donde no se
+escribe nada. Pero un reto sin condición de término se convierte en «trabajen
+un rato», que es justo lo que estas láminas existen para no volver a decir.
+
+### La comprobación de la llave, y el peor momento del sábado
+
+`--reto 3` no comprueba que la llave exista: **manda una petición de verdad y
+mira si el modelo pide una herramienta**. Una llave con la cuota agotada
+responde; lo que no hace es funcionar. La distinción se lleva a cualquier
+despliegue — comprobar que una credencial existe no es comprobar que sirve.
+
+Va tres minutos antes de leer el bucle para no descubrir a las 18:10, con la
+demo en pantalla, que media sala no tiene llave. Y detrás va el `error-comun`
+con los tres caminos, en un orden que no es el de la comodidad: la llave
+gratuita primero, porque **`mock` no razona y con él la demo de las tres
+ejecuciones no funciona**.
+
+### Desviación
+
+`s1-r1-listo` iba a ser una `salida-anotada` y quedó como **`lectura`**. El
+reproche de ritmo lo forzó —26 minutos seguidos al abrir el reto— y al
+mirarlo, el tipo correcto era ese desde el principio: la sala corre un comando,
+no escucha una explicación, que es literalmente la definición de `lectura` en
+§8. Las anotaciones se repartieron entre `observar` y las notas.
+
+### Y una línea del laboratorio
+
+Con `--reto 3` y proveedor mock queda una sola comprobación, y el verificador
+imprimía **«Las 1 comprobaciones pasaron»**. Se proyecta delante de la clase,
+así que se arregló allá.
+
+---
+
+**Verificación**
+- Las salidas de `--reto 1` y `--reto 3` **corridas de verdad** contra la
+  plataforma local, incluido el caso sin entorno —que no lanza un error de
+  Python, sino `¿Esta levantado el entorno?`— y el caso con proveedor mock.
+- El validador rechazó una anotación ambigua (`✓ 7 herramientas expuestas`
+  aparecía en los dos bloques de la salida) y se reancló sin falsear la salida.
+- `validar-contenido` sin errores y sin reproches de ritmo.
+- `npm run humo`: **326 pantallas abiertas, 0 con error**.
+- 167 pruebas, lint, typecheck y build limpios. 225 ítems · 397 + 275 min.

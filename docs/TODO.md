@@ -69,7 +69,7 @@ Referencias:
 | 45 | El caso, recorrido y no contado | ✅ Completado |
 | 46 | Con qué se fabrica un modelo | ✅ Completado |
 | 47 | Ninguna palabra se usa antes de abrirse | ✅ Completado |
-| 48 | Cada reto cierra su círculo | ⬜ Pendiente |
+| 48 | Cada reto cierra su círculo | ✅ Completado |
 | 49 | La pauta de comandos del docente | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
@@ -720,48 +720,6 @@ concretas, y están todas enumeradas.
 El orden no es negociable. El 44 son correcciones de dato y cuesta minutos; del
 45 al 48 son contenido y van **uno por conversación** (§13); el 49 se hace al
 final porque necesita que todos los comandos estén ya escritos.
-
----
-
-## Batch 48 — Cada reto cierra su círculo
-
-La cadena que sostiene el taller es **reto → intención → concepto → comando →
-código → comprobación**, y dos de los cinco retos no llegan al final.
-
-**El reto 1 es el único sin criterios de aceptación** y el único que no corre
-el verificador, aunque `--reto 1` existe en el laboratorio y comprueba justo lo
-que hace falta antes de un ejercicio de 40 minutos: 192 modelos vivos y
-telemetría suficiente. Con la mano alzada del trabajo previo como único filtro,
-alguien va a pasar el reto entero mirando un mundo a medio poblar y creyendo
-que el problema es suyo.
-
-**El reto 3 tampoco corre `--reto 3`**, que es literalmente la comprobación
-«¿mi llave responde y sabe llamar herramientas?». Es la que evita descubrir a
-las 18:10 que media sala no puede ejecutar la demo — y esa demo es el final del
-sábado.
-
-**Alcance**
-- [ ] `criterios` para el reto 1, en su sitio: después de `s1-r1-encargo`. No
-      son criterios de código —no se escribe ninguno— sino de lectura: los tres
-      cortes que hay que haber mirado y la pregunta que hay que poder
-      contestar.
-- [ ] `make verificar ARGS="--reto 1"` como ítem, al abrir el reto, con su
-      salida real anotada. Es el «¿estoy en condiciones de empezar?».
-- [ ] Lo mismo para el reto 3 con `--reto 3`, antes de `s1-r3-lectura`.
-- [ ] **La lámina de rescate de la llave.** El reto 3 depende de una llave de
-      LLM y hoy la única salida para quien llega sin ella está en notas
-      privadas. Un `error-comun` con los tres caminos: proveedor gratuito
-      (Google AI Studio, Groq), `PROVEEDOR_LLM=mock`, o mirar la pantalla del
-      de al lado. El prework ya lo explica; lo que falta es en clase.
-- [ ] Revisar que los cinco retos declaren en sus objetivos exactamente los
-      conceptos que enseñan, después de lo que mueva el batch 47.
-
-**Tests esperados**
-- [ ] `validar-contenido` limpio, `npm run humo` sin errores
-
-**Fuera de alcance**
-- Añadir comprobaciones nuevas al verificador del laboratorio. Se usan las que
-  ya existen.
 
 ---
 

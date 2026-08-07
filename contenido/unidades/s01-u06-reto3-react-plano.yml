@@ -109,6 +109,84 @@ items:
       llave de la clase en una tarde. Que haga falta un número arbitrario es,
       en sí mismo, la primera pista de lo que le falta.
 
+  - id: s1-r3-llave
+    tipo: salida-anotada
+    titulo: ¿Tu llave responde?
+    entradilla: La comprobación que hay que hacer ahora, no cuando falle la demo
+    comando: make verificar ARGS="--reto 3"
+    minutos: 3
+    salida: |
+      Reto 3 · el modelo responde
+        ✓ 7 herramientas expuestas
+        ✓ google responde y sabe llamar herramientas
+
+      Las 2 comprobaciones pasaron.
+
+      # y sin llave, con PROVEEDOR_LLM=mock:
+      Reto 3 · el modelo responde
+        ✓ 7 herramientas expuestas
+        · proveedor mock: no se comprueba el razonamiento
+
+      La comprobacion paso.
+    anotaciones:
+      - texto: "✓ google responde y sabe llamar herramientas"
+        explicacion: >-
+          No comprueba que la llave exista: le manda una petición de verdad y
+          mira si **pide una herramienta**. Una llave con la cuota agotada
+          responde; lo que no hace es funcionar, y eso solo se ve llamando.
+      - texto: "Las 2 comprobaciones pasaron."
+        explicacion: >-
+          Las dos: que las siete herramientas del reto 2 sigan expuestas —si
+          salen menos, el problema no es la llave— y que el proveedor conteste.
+      - texto: "· proveedor mock: no se comprueba el razonamiento"
+        explicacion: >-
+          Con `PROVEEDOR_LLM=mock` esta comprobación **se salta y lo dice**. No
+          finge un verde: el simulado recorre el bucle y no razona, así que
+          declararlo aprobado sería mentir sobre lo único que importa acá.
+    notas: |
+      **Es la lámina que evita el peor momento posible del sábado**: descubrir
+      a las 18:10, con la demo en pantalla, que media sala no tiene llave.
+      Tres minutos ahora, y quien esté sin llave tiene la lámina siguiente.
+
+      La distinción de la primera anotación vale por sí sola y se lleva a
+      cualquier despliegue: **comprobar que una credencial existe no es
+      comprobar que sirve**. Cuota agotada, modelo retirado, región equivocada —
+      las tres devuelven una llave perfectamente válida.
+
+  - id: s1-r3-sin-llave
+    tipo: error-comun
+    titulo: "Rescate · llegué sin llave de LLM"
+    minutos: 3
+    sintoma: >-
+      El verificador dice que el proveedor no responde, o directamente no hay
+      ninguna llave en el `.env`.
+    causa: >-
+      El trabajo previo pedía conseguir una, y no todo el mundo llega con
+      ella. También pasa con una llave buena: cuota agotada, o un modelo que
+      el proveedor retiró.
+    arreglo: >-
+      Tres caminos, en este orden. **Una llave gratuita en cinco minutos**:
+      Google AI Studio o Groq la dan al instante con una cuenta y sin tarjeta,
+      y se pone en `.env` con `PROVEEDOR_LLM` y la clave del proveedor.
+      **`PROVEEDOR_LLM=mock`**, que recorre el bucle entero sin llamar a
+      ningún modelo — sirve para comprobar el cableado y no razona. O **mirar
+      la pantalla del de al lado**, que para esta unidad alcanza: hoy no se
+      escribe nada, se lee y se compara.
+    notas: |
+      Va justo después de la comprobación porque es su respuesta. Que exista
+      escrita cambia cómo se siente quien levanta la mano: no es que se haya
+      quedado atrás, es un caso previsto con tres salidas.
+
+      **El orden importa y no es el de la comodidad.** La llave gratuita es la
+      primera porque es la única que deja ver lo que el reto existe para
+      enseñar: la divergencia entre tres ejecuciones. `mock` no razona, así que
+      con él la demo de las tres ejecuciones **no funciona** — y conviene
+      decírselo a quien lo elija, para que se acerque a mirar la pantalla de un
+      compañero en ese momento.
+
+      Está todo en el trabajo previo, con las URL. Esta lámina es para quien no
+      lo hizo, que es exactamente quien no va a abrir el PDF ahora.
+
   - id: s1-r3-lectura
     tipo: lectura
     titulo: El bucle, en su archivo
