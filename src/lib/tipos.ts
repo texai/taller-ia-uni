@@ -497,6 +497,16 @@ export interface ItemPregunta extends ItemBase {
   /** `privada` por omisión: el recuento solo llega a la segunda pantalla. */
   visibilidad?: "privada" | "publica";
   /**
+   * Cuántos segundos dura, desde que el docente la abre.
+   *
+   * Es un valor por defecto y no una regla: se puede mover en el momento,
+   * desde la propia lámina. Está en el contenido porque el tiempo que merece
+   * una pregunta lo sabe quien la escribió — una cuenta mental de treinta
+   * segundos y una de discusión no duran lo mismo—, y porque decidirlo en
+   * vivo, con la sala esperando, es decidirlo mal.
+   */
+  segundos?: number;
+  /**
    * Por qué esa es la respuesta. Se muestra SOLO tras el revelado.
    *
    * Preguntar y revelar sin explicar deja el momento a medias: la clase ve qué

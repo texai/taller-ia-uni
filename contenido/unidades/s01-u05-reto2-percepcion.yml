@@ -148,6 +148,7 @@ items:
       Bebidas son 24 modelos, uno por tienda. Doce tienen un sesgo de +10%
       y doce de −10%. ¿Cuál es el sesgo de la categoría?
     visibilidad: publica
+    segundos: 75
     permiteOmitir: true
     respuesta: Depende de cuánto vende cada tienda
     minutos: 3
@@ -403,6 +404,7 @@ items:
       LIMA tiene 112 modelos; ORIENTE tiene 8. ¿Dónde va a salir el sesgo
       más grande?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: true
     respuesta: En ORIENTE, y por tener pocos modelos
     minutos: 3

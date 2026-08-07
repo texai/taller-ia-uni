@@ -108,6 +108,7 @@ items:
       Mirando el grafo: ¿cuál de estas capas creen que arregla MÁS de las
       cuatro patologías de ayer?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: true
     minutos: 3
     opciones:

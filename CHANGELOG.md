@@ -5,6 +5,31 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Las preguntas se leen antes de poder contestarlas
+- **Cuatro estados en vez de tres.** Al llegar a la lámina, la clase ve el
+  enunciado y nada más: ni opciones ni caja de texto. Antes salían juntos, y
+  media sala pulsa antes de terminar de leer.
+- El docente pulsa **«Enviar pregunta a la clase»** y ahí se abre. Los dos
+  lados ven la misma **cuenta atrás con barra**; el docente ve además cuántos
+  van sobre cuántos hay conectados.
+- Los **segundos vienen del contenido** —`segundos:`, uno por pregunta, según
+  si es una cuenta mental o una discusión— y se mueven en la propia lámina con
+  −15 / +15 antes de enviarla.
+- Al agotarse el plazo se cierra sola: los alumnos dejan de poder responder
+  mirando su propio reloj, y los resultados salen **en porcentaje, con la
+  respuesta correcta**, la gane o no. Nunca aparece quién respondió qué.
+- El plazo viaja como **instante y no como duración**, así que quien se conecta
+  a mitad ve el tiempo que queda de verdad. Y el recuento lo hace solo la
+  pantalla del docente: es la única que tiene todas las respuestas.
+- El enunciado se dibuja como markdown. Salía con los acentos graves puestos.
+
+### El índice sigue al cursor
+- Con casi doscientos ítems, avanzar unas cuantas láminas dejaba el ítem actual
+  fuera de la parte visible del panel. Ahora se desplaza solo, suave, y con
+  `nearest`: solo se mueve cuando hace falta, para no agitar el índice en cada
+  flecha.
+
+
 ### Los fragmentos de código llevan los números del archivo
 - Un `codigo` con `ruta` se numera con las líneas **del laboratorio**. Entre
   bloques no contiguos, un separador punteado: el fragmento se salta un trozo y

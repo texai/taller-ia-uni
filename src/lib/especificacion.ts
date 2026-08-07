@@ -144,6 +144,7 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
       "permiteOmitir",
       "visibilidad",
       "solucion",
+      "segundos",
     ],
   },
 };

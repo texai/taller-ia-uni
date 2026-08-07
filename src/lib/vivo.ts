@@ -119,6 +119,32 @@ export interface RespuestaAlumno {
  * Solo se emite DESPUÉS del revelado. Antes, lo único que se proyecta es
  * cuántos respondieron — nunca qué respondieron (ver `CONVENTIONS.md` §12).
  */
+/**
+ * Una pregunta abierta a la clase, con su plazo.
+ *
+ * Existe porque una pregunta pauteada tiene **dos momentos** y antes tenía
+ * uno: primero se lee —y la sala piensa, sin ver todavía dónde pulsar— y
+ * después se abre. Mostrar las opciones a la vez que el enunciado es lo que
+ * hace que la mitad de la clase pulse antes de leer.
+ *
+ * `hasta` es el instante en que se cierra, no una duración, y esa es la
+ * diferencia que importa: quien se conecte a mitad ve el tiempo que queda de
+ * verdad, no el que le tocaría si acabara de empezar. Los relojes de dos
+ * portátiles no coinciden al segundo y no hace falta que lo hagan.
+ */
+export interface Apertura {
+  preguntaId: string;
+  /** Marca de tiempo en la que deja de admitir respuestas. */
+  hasta: number;
+  /** Cuántos segundos se le dieron. Para dibujar la barra de progreso. */
+  segundos: number;
+}
+
+export const EVENTO_APERTURA = "pregunta-abierta";
+
+/** Segundos que dura una pregunta si el contenido no dice otra cosa. */
+export const SEGUNDOS_POR_DEFECTO = 60;
+
 export interface Revelado {
   preguntaId: string;
   /** Opción → cuántos la eligieron. */

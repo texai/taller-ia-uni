@@ -191,6 +191,7 @@ items:
       Mismo mundo, misma pregunta, temperatura 0, tres ejecuciones seguidas.
       ¿Cuánto se van a parecer los tres diagnósticos?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: false
     respuesta: Coincidirán en el hallazgo, no en la severidad ni en el orden
     minutos: 3
@@ -373,6 +374,7 @@ items:
       Al bucle de hoy, ¿qué le agregarías primero para poder confiar en su
       diagnóstico?
     visibilidad: publica
+    segundos: 60
     permiteOmitir: true
     minutos: 3
     opciones:

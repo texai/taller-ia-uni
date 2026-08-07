@@ -173,6 +173,7 @@ items:
       mismo podría recomendar, ¿cuál dejarías que dispare sin preguntarle a
       nadie?
     visibilidad: publica
+    segundos: 60
     permiteOmitir: true
     respuesta: Reentrenar una categoría con deriva confirmada
     minutos: 3

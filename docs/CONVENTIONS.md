@@ -542,17 +542,36 @@ cliente.
 Un ítem `pregunta` puede ser **privada** —el recuento llega solo a la segunda
 pantalla— o **pública**, y entonces se proyecta.
 
-En las públicas hay tres estados, y el orden importa:
+Hay **cuatro** estados, y el orden importa:
 
-1. **Respondiendo.** En la pantalla proyectada se ve la pregunta y *cuántas
-   personas ya contestaron*. **Nunca qué contestaron.**
-2. **Revelado.** Ocurre por una de dos vías: **un clic del docente**, que puede
-   cortar cuando quiera, o **automáticamente cuando ya respondieron todos**,
-   porque a esa altura ya no hay a quién sesgar.
+0. **Leyendo.** La lámina muestra el enunciado y nada más — ni opciones ni caja
+   de texto, en ninguna de las dos pantallas. La clase piensa; el docente ve
+   además cuántos segundos va a durar y puede moverlos ahí mismo.
+1. **Abierta.** El docente pulsa *enviar*, y a partir de ese instante los
+   alumnos pueden responder. Los dos lados ven la misma cuenta atrás. En la
+   pantalla proyectada se ve *cuántas personas ya contestaron*, **nunca qué
+   contestaron**.
+2. **Cerrada.** Al agotarse el plazo —o antes, si el docente corta— no se
+   admiten más respuestas y salen los resultados **en porcentaje**, con la
+   respuesta correcta, la gane o no.
 3. **En vivo.** Ya revelado, el recuento sigue actualizándose si alguien
    responde tarde.
 
-El primer estado es toda la razón de la convención. Si los resultados se
+**Por qué el estado 0.** Antes el enunciado y las opciones aparecían juntos, y
+media sala pulsa antes de terminar de leer: leer y decidir son dos cosas y
+enseñarlas a la vez convierte la pregunta en un reflejo. Los segundos vienen
+del contenido —`segundos:`, y quien escribió la pregunta sabe si es una cuenta
+mental o una discusión— y se pueden mover en el momento, porque una sala lenta
+no es un error del material.
+
+**El plazo viaja como instante, no como duración.** Quien se conecta a mitad ve
+el tiempo que queda de verdad, y dos relojes que no coinciden al segundo dan
+igual. Los alumnos dejan de poder responder mirando su propio reloj, sin
+esperar ningún mensaje; **el recuento, en cambio, lo hace solo la pantalla del
+docente**, que es la única que tiene todas las respuestas — si lo hiciera cada
+uno con lo suyo, cada pantalla enseñaría un número distinto.
+
+El estado 1 es toda la razón de la convención. Si los resultados se
 proyectan mientras la gente contesta, los que faltan copian al grupo y la
 pregunta deja de medir lo que quería medir. El contador sí puede verse —sirve
 para saber cuándo cortar— porque no dice hacia dónde va la respuesta.

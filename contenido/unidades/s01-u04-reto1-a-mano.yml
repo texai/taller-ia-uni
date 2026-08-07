@@ -414,6 +414,7 @@ items:
       TODA la cadena, sin nada específico que buscar. ¿Qué señal se va a
       mover?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: false
     respuesta: El sesgo, y el MAPE casi nada
     minutos: 3
@@ -640,6 +641,7 @@ items:
       Si tuvieras que poner UNA alarma sobre esta flota, y solo una, ¿sobre
       qué señal la pondrías?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: true
     minutos: 3
     opciones:

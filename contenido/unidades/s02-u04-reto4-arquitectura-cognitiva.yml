@@ -523,6 +523,7 @@ items:
       Si el grafo no tiene ningún nodo que pueda reescribirlo, ¿qué sale
       impreso?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: true
     respuesta: El diagnóstico demolido, con sus propias objeciones debajo
     minutos: 3
@@ -796,6 +797,7 @@ items:
       Las métricas de la flota se ven impecables — mejor que ayer, incluso.
       ¿Qué debería recomendar el agente?
     visibilidad: publica
+    segundos: 60
     permiteOmitir: false
     respuesta: Revisar el feed de esa tienda, y no tocar ningún modelo
     minutos: 3

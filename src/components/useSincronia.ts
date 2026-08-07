@@ -11,12 +11,15 @@ import {
   contar,
   EVENTO_RESPUESTA,
   EVENTO_REVELADO,
+  EVENTO_APERTURA,
   EVENTO_PAUTA,
   EVENTO_PREGUNTA,
   EVENTO_PREGUNTA_VIVA,
   esMasNueva,
   MAX_PREGUNTA,
   nombreCanal,
+  SEGUNDOS_POR_DEFECTO,
+  type Apertura,
   type EstadoCanal,
   type Pauta,
   type PreguntaAlumno,
@@ -76,6 +79,8 @@ export function useSincronia({
   const [revelado, setRevelado] = useState<Revelado | null>(null);
   /** La pregunta lanzada al vuelo, si hay alguna abierta ahora mismo. */
   const [preguntaViva, setPreguntaViva] = useState<PreguntaViva | null>(null);
+  /** La pregunta del material que está admitiendo respuestas, con su plazo. */
+  const [apertura, setApertura] = useState<Apertura | null>(null);
   /** Cuántos alumnos hay conectados. Es el denominador de "respondieron
    *  todos", y sale de Presence: nunca hay que declarar el tamaño del grupo. */
   const [conectados, setConectados] = useState(0);
@@ -89,6 +94,7 @@ export function useSincronia({
   /** Cuándo se emitió la última, para no pasarse del tope del canal. */
   const ultimoEnvio = useRef(0);
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aperturaRef = useRef<Apertura | null>(null);
   const ultimaPresencia = useRef(0);
   const presencia = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -221,6 +227,13 @@ export function useSincronia({
         setRevelado(payload as Revelado);
       });
 
+      // Abrir una pregunta del material: a partir de acá, y hasta `hasta`,
+      // los alumnos pueden responder. Antes solo veían el enunciado.
+      c.on("broadcast", { event: EVENTO_APERTURA }, ({ payload }) => {
+        if (deOtra()) return;
+        setApertura(payload as Apertura);
+      });
+
       // Una pregunta lanzada al vuelo viaja entera, porque no está en el
       // material. Va por el canal público —la ven todos— y se dibuja encima de
       // lo que hubiera en pantalla.
@@ -247,6 +260,13 @@ export function useSincronia({
             void c.send({ type: "broadcast", event: EVENTO_PAUTA, payload: p });
             void c.track({ pauta: p });
             pendiente.current = null;
+          }
+          // Si hay una pregunta abierta y todavía le queda tiempo, se
+          // reemite: quien acabe de reconectar tiene que poder responderla, y
+          // con el plazo que queda de verdad.
+          const a = aperturaRef.current;
+          if (esDocente && a && a.hasta > Date.now()) {
+            void c.send({ type: "broadcast", event: EVENTO_APERTURA, payload: a });
           }
           // Y el alumno vuelve a anunciarse, o dejaría de contar en el
           // denominador de «respondieron todos».
@@ -439,6 +459,31 @@ export function useSincronia({
     [esDocente, anunciar],
   );
 
+  /**
+   * El docente abre una pregunta del material.
+   *
+   * Hasta que la abre, la clase ve el enunciado y nada más. Esa espera es
+   * deliberada: leer y decidir son dos cosas, y enseñarlas juntas hace que
+   * media sala pulse antes de terminar de leer.
+   */
+  const abrir = useCallback(
+    (preguntaId: string, segundos: number): Apertura | null => {
+      const c = canal.current;
+      if (!c || !esDocente) return null;
+      const nueva: Apertura = {
+        preguntaId,
+        segundos,
+        hasta: Date.now() + segundos * 1000,
+      };
+      aperturaRef.current = nueva;
+      setApertura(nueva);
+      setRevelado(null);
+      void c.send({ type: "broadcast", event: EVENTO_APERTURA, payload: nueva });
+      return nueva;
+    },
+    [esDocente],
+  );
+
   /** El alumno manda una pregunta. Devuelve si salió. */
   const preguntar = useCallback(
     (texto: string, autor: string, itemId: string, itemTitulo: string, paso: number) => {
@@ -574,5 +619,8 @@ export function useSincronia({
     preguntaViva,
     lanzar,
     cerrarViva,
+    apertura,
+    abrir,
+    SEGUNDOS_POR_DEFECTO,
   };
 }

@@ -41,6 +41,7 @@ items:
       Nueve errores de diseño salieron construyendo este laboratorio.
       ¿Cuántos creen que estaban en el modelo de lenguaje?
     visibilidad: publica
+    segundos: 30
     permiteOmitir: false
     respuesta: Ninguno
     minutos: 3

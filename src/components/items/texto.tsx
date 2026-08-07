@@ -74,6 +74,12 @@ const TAMANO_PROSA = {
   base: "[&_p]:text-base [&_li]:text-base",
   lg: "[&_p]:text-lg [&_li]:text-lg",
   xl: "[&_p]:text-xl [&_li]:text-xl",
+  // Para un enunciado que hace de título. Las preguntas llevan `código` y
+  // negritas desde siempre, y como `<h2>` salían con los acentos graves
+  // puestos — que en una pregunta proyectada distrae justo cuando hay que
+  // leerla rápido.
+  titulo:
+    "[&_p]:text-3xl [&_p]:font-semibold [&_p]:tracking-tight sm:[&_p]:text-5xl",
 } as const;
 
 export function Prosa({

@@ -8,7 +8,7 @@
  */
 
 import type { Item, Sesion } from "@/lib/tipos";
-import type { Revelado } from "@/lib/vivo";
+import type { Apertura, Revelado } from "@/lib/vivo";
 import { FAMILIA } from "@/lib/tipos";
 
 import { Marco } from "./marco";
@@ -51,6 +51,9 @@ export interface PropsItem {
     respondieron?: number;
     conectados?: number;
     onResponder?: (v: { opcion?: string; texto?: string; omitida?: boolean }) => void;
+    /** La pregunta que está admitiendo respuestas, con su plazo. */
+    apertura?: Apertura | null;
+    onAbrir?: (segundos: number) => void;
     onRevelar?: () => void;
   };
 }

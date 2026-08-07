@@ -215,6 +215,7 @@ items:
       De esas tres recetas —`seed`, `romper` y `reparar`—, ¿cuáles vuelven a
       entrenar los 192 modelos?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: true
     respuesta: Solo seed, y solo la primera vez
     minutos: 3
@@ -584,6 +585,7 @@ items:
       últimos 14 días, la realidad cae dentro del intervalo el 97% de las
       veces. ¿Qué está pasando?
     visibilidad: publica
+    segundos: 45
     permiteOmitir: true
     respuesta: El modelo se está cubriendo las espaldas
     minutos: 3
@@ -834,6 +836,7 @@ items:
       En donde trabajas, si un modelo en producción empieza a fallar hoy,
       ¿cómo se entera alguien?
     visibilidad: publica
+    segundos: 60
     permiteOmitir: true
     minutos: 3
     opciones:

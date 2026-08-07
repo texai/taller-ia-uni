@@ -109,6 +109,8 @@ export function Dictado({
     conectados,
     cuantosRespondieron,
     preguntaViva,
+    apertura,
+    abrir,
   } = useSincronia({
     curso,
     sesion: sesion.id,
@@ -217,6 +219,56 @@ export function Dictado({
     window.addEventListener("keydown", alPulsar);
     return () => window.removeEventListener("keydown", alPulsar);
   }, [mover]);
+
+  /**
+   * El índice sigue al cursor.
+   *
+   * Con casi doscientos ítems, avanzar unas cuantas láminas dejaba el ítem
+   * actual fuera de la parte visible del panel: la clase avanzaba y el índice
+   * seguía enseñando el principio de la sesión, así que había que buscar a
+   * mano dónde se estaba. Ahora se desplaza solo.
+   *
+   * `block: "nearest"` y no `"center"` a propósito: centrar mueve el panel en
+   * cada paso aunque el ítem ya se vea, y un índice que se agita cada vez que
+   * se pulsa una flecha cansa más de lo que ayuda. Así solo se mueve cuando
+   * hace falta, y lo justo.
+   */
+  const activo = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const nodo = activo.current;
+    if (!nodo) return;
+    nodo.scrollIntoView({
+      block: "nearest",
+      // Suave, salvo para quien pidió al sistema que no le animen nada.
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }, [pos.unidad, pos.item]);
+
+  /**
+   * Cuando se acaba el tiempo, el docente publica el resultado. Solo él.
+   *
+   * Los alumnos dejan de poder responder por su cuenta, mirando el reloj —no
+   * hace falta que llegue ningún mensaje para eso— pero **el recuento solo lo
+   * puede hacer quien tiene las respuestas**, y eso es la pantalla del
+   * docente. Si lo hiciera cada uno con lo suyo, cada pantalla enseñaría un
+   * número distinto.
+   */
+  useEffect(() => {
+    if (!modoDocente || !apertura || !item) return;
+    if (item.tipo !== "pregunta" || apertura.preguntaId !== item.id) return;
+    if (revelado?.preguntaId === item.id) return;
+    const falta = apertura.hasta - Date.now();
+    const cerrar = () => revelar(item.id, item.respuesta, item.solucion);
+    if (falta <= 0) {
+      cerrar();
+      return;
+    }
+    const id = setTimeout(cerrar, falta);
+    return () => clearTimeout(id);
+  }, [modoDocente, apertura, item, revelado, revelar]);
 
   // El docente publica cada movimiento.
   useEffect(() => {
@@ -364,6 +416,7 @@ export function Dictado({
                           color: actual ? "var(--tinta)" : "var(--tinta-suave)",
                           fontWeight: actual ? 600 : 400,
                         }}
+                        ref={actual ? activo : undefined}
                         aria-current={actual ? "true" : undefined}
                       >
                         <span
@@ -523,6 +576,10 @@ export function Dictado({
                     item.tipo === "pregunta"
                       ? revelar(item.id, item.respuesta, item.solucion)
                       : undefined,
+                  apertura,
+                  onAbrir: (segundos: number) => {
+                    if (item.tipo === "pregunta") abrir(item.id, segundos);
+                  },
                 }}
               />
               {/*
