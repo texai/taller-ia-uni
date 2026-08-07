@@ -32,11 +32,12 @@ items:
     comando: make seed  ·  y después → resumen_flota(dias=14)
     minutos: 4
     salida: |
-      # lo que deja make seed, en disco
-      ventas.csv         76,800 filas      el mundo, dos años de historia
-      modelos/              192 artefactos  856 KB en total
-      predicciones.csv   17,472 filas      lo que escribió el job
-      metricas.csv       17,472 filas      lo único que el agente puede mirar
+      # lo que deja make seed, en el volumen `datos` (montado en /datos)
+      /datos/ventas.csv            76,800 filas   el mundo, dos años de historia
+      /datos/modelos/                 192 .joblib  856 KB en total
+      /datos/predicciones.csv      17,472 filas   lo que escribió el job
+      /datos/metricas.csv          17,472 filas   lo unico que el agente mira
+      /datos/ejecuciones_job.csv        1 fila    la bitacora del job
 
       # y lo que dicen esas metricas
       {
@@ -49,7 +50,7 @@ items:
         "modelos_con_mape_sobre_25": 8
       }
     anotaciones:
-      - texto: "metricas.csv       17,472 filas"
+      - texto: "/datos/metricas.csv          17,472 filas"
         explicacion: >-
           192 modelos por 91 días. **Es todo lo que hay para saber si algo va
           mal**, y es exactamente por lo que nadie lo mira: no hay forma de
@@ -75,9 +76,14 @@ items:
       Hasta ahora el caso era una historia; estos son sus archivos y sus
       números.
 
-      Los cuatro archivos merecen medio minuto: que quede claro que el
-      laboratorio no es una simulación de mentira, son 76,800 filas de
-      historia y 192 artefactos de verdad en disco.
+      La lista merece medio minuto: que quede claro que el laboratorio no es
+      una simulación de mentira, son 76,800 filas de historia y 192 artefactos
+      de verdad en disco.
+
+      **Dónde están, si alguien pregunta:** en el volumen `datos` de Docker, no
+      en la carpeta del repositorio. Por eso sobreviven a `make abajo` y por eso
+      `make reset` —que es `down -v`— los borra. Para verlos:
+      `docker compose run --rm plataforma ls -la /datos`.
 
       El par 13.8 / +0.8 hay que pedir que lo anoten. Vuelve seis veces.
 

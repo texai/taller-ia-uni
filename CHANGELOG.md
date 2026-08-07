@@ -5,6 +5,27 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### `/profe/inicio` devolvía un error de servidor en producción
+- La causa no era el material: **eran cuatro imágenes que sí existen y sí se
+  ven.** El cargador comprueba que cada `imagen` y cada `archivo` existan bajo
+  `public/contenido/`, y las páginas del docente son dinámicas — cargan el
+  curso en cada petición, dentro de una función serverless donde `public/` no
+  viaja porque lo sirve el CDN. La comprobación fallaba y tumbaba la carga
+  entera del curso.
+- Arreglado por los dos lados: `public/contenido/**` entra en el trazado de
+  archivos, y la comprobación **se salta si la carpeta de assets no existe**.
+  Que falte un archivo suelto sigue siendo un error —eso es material roto y se
+  ve al construir—; que falte la carpeta entera no dice nada del contenido,
+  dice dónde está corriendo.
+- Ninguna promesa de `reto-N-solucion` queda en pie: sobrevivía una en la
+  apertura del sábado —«incluida la solución de cada reto, en su propia rama»—
+  y con ella toda la expectativa vieja: «se escribe código en tres de los
+  cinco», «Reto 2 · Escribe la herramienta», los objetivos de los retos 4 y 5.
+  Ahora el minuto tres del sábado dice lo que el taller es de verdad.
+- El caso decía «cuatro archivos» y nombraba tres. Son cinco y una carpeta, y
+  ahora dicen dónde viven: el volumen `datos`, montado en `/datos`.
+
+
 ### El hilo narrativo, cosido (batches 38 a 42)
 - **El reto 1 ya enseña lo que pedía hacer**: ocho líneas de pandas escritas, y
   tres salidas reales medidas contra los tres estados del mundo. La que rescata

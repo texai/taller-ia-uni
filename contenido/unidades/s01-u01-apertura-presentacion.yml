@@ -30,29 +30,37 @@ items:
     criterios:
       - texto: Cinco retos, todos sobre el mismo caso y el mismo laboratorio
         pista: Nada de ejemplos de juguete que cambian entre lámina y lámina
-      - texto: Se escribe código en tres de los cinco. En los otros dos se lee y se mira
-        pista: El reto 3 es el único donde no se toca una tecla, y es de los que más rinden
+      - texto: El laboratorio viene completo. Se lee, se corre, y se rompe a propósito
+        pista: En cuatro horas no hay tiempo de depurar código; sí de entender qué hace cada pieza y por qué
+      - texto: En cada reto hay un rato para abrir archivos concretos y correr comandos
+        pista: Con la lista en pantalla y el reloj a la vista. Nadie tiene que adivinar qué mirar
       - texto: Al final tienes un agente con arquitectura cognitiva vigilando 192 modelos
         pista: Percibe, recuerda, razona, se cuestiona a sí mismo, y actúa
       - texto: El taller se evalúa solo por asistencia
         pista: No hay entregable ni examen. Lo que te llevas es el repositorio y lo que entendiste
       - texto: Todo lo que veas hoy está en un repositorio público, y sigue estando el lunes
-        pista: Incluida la solución de cada reto, en su propia rama
+        pista: La plataforma, el agente, el verificador y los cuatro escenarios para seguir rompiendo
     notas: |
       **Tres minutos, y decirlos completos.** Una sala que sabe cómo termina
       el día escucha distinto: deja de preguntarse si esto va a servirle y
       empieza a mirar el contenido.
 
-      Los dos criterios que más tranquilizan son el cuarto y el quinto. El
+      Los dos criterios que más tranquilizan son el quinto y el sexto. El
       de la evaluación quita la ansiedad del examen, que en un taller de
       ocho horas es la mitad de la atención perdida. El del repositorio
       quita la ansiedad de copiar todo a mano — nadie necesita transcribir
       una lámina.
 
-      El segundo criterio es el que hay que decir mirando a la sala: en el
-      reto 3 no se escribe nada y es el que arma la sesión 2 entera. Si
-      alguien llega con la expectativa de teclear cuatro horas seguidas,
-      mejor corregirla ahora.
+      **El segundo hay que decirlo mirando a la sala, y sin disculparse.** El
+      laboratorio trae las herramientas y el grafo ya escritos, y es una
+      decisión: en cuatro horas con veinte personas, un error de sintaxis de
+      alguien se lleva el reto entero. Lo que sí da tiempo es a abrir el
+      archivo, entender por qué está así, correrlo y romperlo. Si alguien
+      llega esperando teclear cuatro horas seguidas, mejor corregirlo en el
+      minuto tres que en el reto 2.
+
+      Y si alguien quiere escribirlo igual, perfecto: el verificador está ahí
+      para decirle si lo suyo pasa. `make verificar ARGS="--reto 2"`.
 
   - id: s1-docente
     tipo: markdown

@@ -1031,3 +1031,34 @@ test("el enlace al laboratorio ancla las líneas como las ancla GitHub", () => {
   assert.match(sitio.enlaceALab("agente/grafo.py", "381-404"), /#L381-L404$/);
   assert.match(sitio.enlaceALab("agente/grafo.py", "381"), /#L381$/);
 });
+
+test("sin la carpeta de assets el curso carga igual, y con ella un archivo que falta sigue fallando", () => {
+  // Es la diferencia entre «esto corre donde `public/` no viaja» —una función
+  // serverless— y «este material está roto». Confundirlas devolvía un 500 en
+  // las páginas del docente con todo el contenido correcto.
+  const items = `
+      - id: con-imagen
+        tipo: imagen
+        titulo: Una captura
+        archivo: img/no-esta.png
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      // Sin carpeta de assets: carga.
+      assert.equal(mod.cargarCurso(raiz).sesiones.length, 1);
+    },
+  );
+
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(items),
+      "../public/contenido/img/otra.png": "x",
+    },
+    (raiz) => {
+      // Con carpeta y sin el archivo: falla nombrándolo.
+      assert.throws(() => mod.cargarCurso(raiz), /no-esta\.png/);
+    },
+  );
+});

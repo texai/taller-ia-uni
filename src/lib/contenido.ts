@@ -182,7 +182,20 @@ function resolverArchivo(
   // vive en `public/contenido/img/flota.png` y se pide en
   // `/contenido/img/flota.png`.
   if (item.tipo === "imagen" || item.tipo === "archivo") {
-    if (!existsSync(join(raizDeAssets(raiz), ruta))) {
+    // La comprobación se salta entera si la carpeta de assets NO EXISTE, y esa
+    // distinción es la que evita un 500.
+    //
+    // Las páginas del docente son dinámicas: cargan el curso en cada
+    // petición, dentro de una función serverless donde `public/` no viaja —
+    // lo sirve el CDN. Sin esta guarda, cuatro imágenes que sí existen y sí se
+    // ven hacían fallar la carga entera del curso, y `/profe/inicio` devolvía
+    // «A server error occurred» con todo el material correcto.
+    //
+    // Que falte un archivo suelto sigue siendo un error, porque eso sí es
+    // material roto y se descubre al construir. Que falte la carpeta entera no
+    // dice nada del contenido: dice dónde está corriendo esto.
+    const assets = raizDeAssets(raiz);
+    if (existsSync(assets) && !existsSync(join(assets, ruta))) {
       problemas.push(
         `${donde}: no existe el archivo \`public/contenido/${ruta}\``,
       );

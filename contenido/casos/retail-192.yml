@@ -48,9 +48,11 @@ bloques:
       Los otros 152 modelos no los mira nadie.
   - titulo: De qué está hecho, en disco
     contenido: >-
-      Todo esto son cuatro archivos y una carpeta. `ventas.csv` es el mundo:
-      76,800 filas, dos años de historia. `modelos/` son los 192 artefactos,
-      856 KB en total. `predicciones.csv` es lo que escribió el job anoche y
-      `metricas.csv` es lo único que el agente va a poder mirar — 17,472 filas,
-      una por modelo y por día. Se generan con `make seed` y caben en un
-      volumen de Docker.
+      Todo esto vive en el volumen `datos` de Docker, montado en `/datos`.
+      `ventas.csv` es el mundo: 76,800 filas, dos años de historia.
+      `modelos/` son los 192 artefactos, 856 KB en total.
+      `predicciones.csv` es lo que escribió el job anoche.
+      `metricas.csv` es lo único que el agente va a poder mirar: 17,472 filas,
+      una por modelo y por día. Y `ejecuciones_job.csv` es la bitácora del job
+      —si corrió, cuánto tardó, cuántas filas entregó—, que el domingo resulta
+      ser la más importante de las cinco.

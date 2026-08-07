@@ -4,7 +4,7 @@ id: s2-reto-4
 tipo: reto
 titulo: La arquitectura cognitiva
 objetivos:
-  - Construir un grafo donde cada nodo hace un trabajo y solo uno
+  - Leer un grafo donde cada nodo hace un trabajo y solo uno, y saber por qué
   - Entender por qué una reflexión que no puede corregir es decorativa
   - Darle memoria, para que no repita la alerta de ayer
   - "Conceptos: grafo de estado, y anomalía de datos contra deriva de modelo"

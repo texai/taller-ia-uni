@@ -5,7 +5,7 @@ tipo: reto
 titulo: La herramienta de percepción
 objetivos:
   - Entender que la calidad de un agente se decide antes del LLM
-  - Escribir una herramienta que agregue y no vuelque filas
+  - Saber qué separa una herramienta de percepción de un volcado de filas
   - Calibrar umbrales contra la flota sana, no contra la intuición
   - "Conceptos: deriva, línea base, significancia contra relevancia, y el test KS"
 requisitos:
@@ -14,7 +14,7 @@ requisitos:
 items:
   - id: s1-r2-titulo
     tipo: titulo
-    titulo: "Reto 2 · Escribe la herramienta"
+    titulo: "Reto 2 · La herramienta de percepción"
     entradilla: "Criterio: en la flota sana, cero banderas"
     minutos: 2
     notas: |
@@ -26,12 +26,12 @@ items:
   - id: s1-r2-mapa
     tipo: diagrama
     titulo: Los pasos de este reto
-    entradilla: Una hora. Se escribe código, y hay tres formas de escribirlo mal.
+    entradilla: Una hora. Doce líneas de código, y tres formas de escribirlas mal.
     clase: flujo
     minutos: 2
     contenido: |
       flowchart TD
-        A["1 · las tres reglas<br/>de una herramienta"] --> B["2 · escribir<br/>comparar_periodos"]
+        A["1 · las tres reglas<br/>de una herramienta"] --> B["2 · leer<br/>comparar_periodos"]
         B --> C["3 · esquivar tres trampas<br/>sesgo · ventana · umbral"]
         C --> D["4 · comprobarlo<br/>verificar --reto 2"]
         D --> E{{"criterio: en la flota sana,<br/>ninguna bandera"}}
@@ -535,16 +535,16 @@ items:
 
   - id: s1-r2-pausa-taller
     tipo: pausa-preguntas
-    titulo: Pausa · antes de escribir código
+    titulo: Pausa · antes de abrir el archivo
     minutos: 2
     disparadores:
       - ¿Quedó claro por qué se calibra contra la flota sana y no contra un umbral de manual?
       - De las tres trampas, ¿cuál les parece la más fácil de cometer?
       - ¿Alguien ya la cometió en producción?
     notas: |
-      Dos minutos justo antes de que empiecen a teclear. Es la última
-      ventana barata: una duda de las tres trampas resuelta acá vale por
-      diez minutos de depuración con el laboratorio corriendo.
+      Dos minutos justo antes de que abran el archivo. Es la última ventana
+      barata: una duda de las tres trampas resuelta acá vale por diez minutos
+      leyendo código sin entender qué se está buscando.
 
   - id: s1-r2-criterios
     tipo: criterios
