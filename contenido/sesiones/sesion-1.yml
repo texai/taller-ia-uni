@@ -42,12 +42,37 @@ unidades:
           el rescate va en paralelo durante los próximos quince minutos, sin
           detener la clase.
 
+      - id: s1-prework
+        tipo: archivo
+        titulo: El trabajo previo
+        entradilla: Está en el aula virtual desde hace una semana. Si no lo hiciste, todavía sirve.
+        archivo: archivos/taller-ia-uni-prework.pdf
+        descripcion: >-
+          Instalar Docker, clonar el laboratorio y dejar el entorno probado.
+          Cuarenta minutos, y terminan en un comando que dice si está todo en
+          verde.
+        minutos: 2
+        notas: |
+          **Preguntar a mano alzada quién lo hizo.** Es el único dato que
+          cambia cómo se dicta la primera hora: si hay muchas manos abajo, el
+          rescate va en paralelo mientras la clase sigue, y los tres ítems de
+          rescate de la unidad siguiente pasan de ser un por si acaso a ser
+          material.
+
+          Está en el aula virtual de la universidad, no acá. Se pone también
+          acá porque quien llega sin haberlo hecho necesita poder bajarlo en
+          ese momento, y buscar en otra plataforma con la clase empezada es
+          exactamente lo que no va a hacer.
+
+          Lo importante no es que lo lean ahora: es que sepan que lo que falla
+          en la próxima media hora está resuelto ahí dentro.
+
       - id: s1-recap
         tipo: diagrama
         titulo: Lo que ya traen puesto
         entradilla: Cuatro cosas del programa se juntan hoy, y dejan una pregunta abierta
         clase: componentes
-        minutos: 4
+        minutos: 3
         contenido: |
           flowchart LR
             D["Docker<br/>empaquetar un modelo"] --> F
@@ -174,7 +199,7 @@ unidades:
         tipo: diagrama
         titulo: La solución completa, por componentes
         clase: componentes
-        minutos: 4
+        minutos: 3
         contenido: |
           flowchart LR
             V[("ventas.csv<br/>el mundo")] --> E["entrenar<br/>192 Ridge"]
@@ -275,7 +300,7 @@ unidades:
         titulo: Poblar el mundo
         entradilla: Y esto es make seed
         comando: docker compose run --rm plataforma python -m plataforma seed
-        minutos: 4
+        minutos: 3
         segmentos:
           - texto: run
             explicacion: >-
@@ -316,12 +341,17 @@ unidades:
       - id: s1-seed-salida
         tipo: salida-anotada
         titulo: Y esto es lo que imprime
-        entradilla: Cinco minutos de espera, cinco líneas de salida, y las cuatro flechas del diagrama
+        entradilla: Cuatro etapas, y las cuatro flechas del diagrama de arquitectura
         comando: docker compose run --rm plataforma python -m plataforma seed
         salida: |
           1/4 Generando historico de ventas...
           2/4 Entrenando la flota (192 modelos)...
+            48/192 modelos entrenados...
+            96/192 modelos entrenados...
+            144/192 modelos entrenados...
+            192/192 modelos entrenados...
           3/4 Corriendo el job batch de pronostico...
+            17472 predicciones de 192 modelos
           4/4 Calculando metricas...
 
           Listo. 192 modelos con 17,472 dias-modelo de telemetria.
@@ -362,8 +392,13 @@ unidades:
           modelo puede estar perfectamente sano y la tubería caída desde el
           martes.
 
+          **Lo que tarda no es esto.** El `seed` medido corre en medio minuto;
+          los cinco minutos de la primera vez son de `make arriba` construyendo
+          las tres imágenes. Decirlo evita la pregunta de por qué la segunda
+          vez va tan rápido.
+
           Quien hizo el trabajo previo ya tiene todo esto y solo necesita
-          `make arriba`. Tarda unos cinco minutos la primera vez.
+          `make arriba`.
 
       - id: s1-flota-pausa
         tipo: pausa-preguntas
@@ -602,6 +637,29 @@ unidades:
           Se apagan con `make abajo`, que es `docker compose down`. Sin la
           `-v`: esa borraría los volúmenes, y con ellos los 192 modelos.
 
+      - id: s1-ui-captura
+        tipo: imagen
+        titulo: Lo que se ve, si todo levantó
+        entradilla: La misma pantalla, capturada. Sirve de respaldo y de referencia.
+        archivo: img/ui-flota-sana.png
+        pie: >-
+          192 modelos, 17,472 días-modelo, MAPE medio 13.8%, sesgo +0.8%,
+          cobertura 88.7%. Es el mundo sano, y es contra estos cuatro números
+          que se van a leer todos los demás.
+        minutos: 2
+        notas: |
+          **Es el respaldo de la demo anterior**, y por eso va justo después.
+          Si la interfaz no levantó en el aula, esta lámina es la clase; si
+          levantó, sirve para dejar los cuatro números fijos mientras se
+          explica el resto.
+
+          Los cuatro números de arriba son el punto de comparación de las ocho
+          horas. Vale la pena que la sala los anote: 13.8, +0.8, 88.7. Todo lo
+          que viene después es "cómo se movió esto".
+
+          El gráfico de abajo es plano y aburrido a propósito. Guardarlo en la
+          memoria: en el reto 5 vuelve, y no está plano.
+
       - id: s1-flota-dada
         tipo: criterios
         titulo: Las reglas del laboratorio
@@ -741,7 +799,7 @@ unidades:
         titulo: La telemetría, por la API
         entradilla: También está en http://localhost:8000/docs, con la interfaz de Swagger
         comando: curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
-        minutos: 4
+        minutos: 3
         segmentos:
           - texto: "-s"
             explicacion: >-
@@ -953,6 +1011,30 @@ unidades:
           NO dar la pista del sesgo todavía. La tabla siguiente es el momento
           del golpe, y si sale antes se desarma. Si alguien lo encuentra solo
           —pasa— pedirle que se lo guarde treinta segundos.
+
+      - id: s1-r1-tablero
+        tipo: imagen
+        titulo: Y esto era lo que mostraba el tablero
+        entradilla: Mientras buscabas, la pantalla que mira el negocio se veía así
+        archivo: img/ui-flota-sesgo.png
+        destacar: [25, 9, 12, 13]
+        pie: >-
+          El mundo con el sesgo silencioso encima. MAPE 14.5% contra 13.8% del
+          mundo sano: siete décimas. El gráfico es indistinguible del de hace
+          media hora.
+        minutos: 3
+        notas: |
+          **La lámina que cierra el reto 1.** Acaban de pasar diez minutos sin
+          encontrar nada, y esta imagen les dice que no era culpa suya.
+
+          Señalar el recuadro: el MAPE se movió siete décimas. Y después
+          señalar el sesgo al lado — +4.7% contra +0.8%— y el gráfico, que es
+          el mismo dibujo. **Un tablero con umbral sobre el MAPE no suena
+          nunca, y esta es la pantalla que lo demuestra.**
+
+          Son 36,981 unidades de más en almacén en catorce días, y la única
+          señal que lo dice está a dos centímetros de la que todo el mundo
+          mira.
 
       - id: s1-r1-tabla
         tipo: tabla
@@ -1767,7 +1849,7 @@ unidades:
         tipo: demo
         titulo: El mismo escenario, tres veces
         entradilla: Mismo mundo, misma pregunta, temperatura cero
-        minutos: 10
+        minutos: 9
         pasos:
           - comando: make romper ESCENARIO=sesgo_silencioso
           - comando: make agente ARGS="--verboso"
@@ -1899,7 +1981,7 @@ unidades:
           diagnóstico?
         visibilidad: publica
         permiteOmitir: true
-        minutos: 5
+        minutos: 4
         opciones:
           - Un prompt más detallado
           - Que critique su propio diagnóstico antes de emitirlo
@@ -1951,7 +2033,7 @@ unidades:
       - id: s1-r3-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
-        minutos: 4
+        minutos: 3
         disparadores:
           - ¿Alguno tiene hoy un agente en producción? ¿Cómo saben que no divaga?
           - ¿Qué harían ustedes para que dos corridas del mismo día coincidieran?

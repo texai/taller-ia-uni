@@ -5,6 +5,43 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Los cuatro huecos de la auditoría (batch 32)
+- **`imagen` y `archivo` no funcionaban.** Llevaban dos meses sin usarse y el
+  camino nunca se había terminado: el componente pedía `/contenido/…` y el
+  cargador validaba contra `contenido/…`, y nada servía esa URL. Los assets
+  viven ahora en `public/contenido/`, que es de donde Next sirve.
+- **La interfaz del reto 5 se lee, no solo se ejecuta.** Su docstring —que es
+  una tesis: *un panel que solo mostrara el diagnóstico final sería un tablero
+  más*—, veinte líneas del bloque de la reflexión donde lo que importa es que
+  ninguna decide nada, y un enlace al archivo entero en GitHub.
+- **Tres capturas de una corrida real**: la flota sana, la flota con el sesgo
+  silencioso —con el MAPE recuadrado, 14.5% contra 13.8%— y la flota con
+  quiebre de stock. La del sesgo cierra el reto 1: la sala acaba de pasar diez
+  minutos sin encontrar nada, y la imagen les dice que no era culpa suya.
+- **`estado_del_job` entra al curso.** El material prometía tres veces que un
+  modelo puede estar sano y el job caído; ahora enseña la herramienta, con la
+  línea que lo dice todo: `"estado": "ok"` y 17,304 predicciones en vez de
+  17,472. Son 168 filas, que es la tienda que dejó de reportar.
+- **`quiebre_stock`, el mundo que la política no frena.** Es el reverso del
+  sesgo silencioso: aquel no sonaba y había que actuar, este grita y no hay que
+  reentrenar. Y pasa las dos reglas de la política, porque el diagnóstico va a
+  ser `deriva`. Cierra el reto 5 diciendo dónde está el borde de lo que
+  construyeron.
+- El trabajo previo entra como descargable al inicio de la sesión 1. La salida
+  de `make seed` se corrigió contra la corrida real. `modelo-datos` gana su
+  segundo uso en la bitácora de reentrenamientos.
+
+### Los minutos son del docente, y una sesión se ve cliqueable (batch 31)
+- **`minutos` pasa a campo privado.** Un alumno que ve «4′» en cada ítem sabe
+  cuándo la clase va tarde, y con el reloj a la vista una pregunta buena a las
+  18:50 no se hace. Se filtra en el servidor, como las notas. Lo que el alumno
+  sí tiene es el total de la sesión: las horas de inicio y de fin.
+- Sin la columna de minutos, los títulos del índice dejan de truncarse.
+- **La portada.** Las dos sesiones eran cliqueables en toda la fila y no lo
+  parecían: sin borde, sin flecha, y con el único indicio en el `hover`, que en
+  una pantalla táctil no existe. Ahora cada una es una tarjeta con su borde, su
+  franja de acento con el horario, y una flecha.
+
 ### La salida anotada (batch 30)
 - Nuevo tipo **`salida-anotada`**: una salida de terminal explicada trozo a
   trozo, con el mismo recorrido por pasos que un comando anotado — se resalta

@@ -40,6 +40,17 @@ export function raizPorDefecto(): string {
   return join(process.cwd(), "contenido");
 }
 
+/**
+ * Dónde viven las imágenes y los descargables de esa misma raíz.
+ *
+ * Hermana de `raizPorDefecto` y derivada de ella, para que un árbol de prueba
+ * siga funcionando: si el contenido está en `/tmp/x/contenido`, sus assets
+ * están en `/tmp/x/public/contenido`.
+ */
+function raizDeAssets(raiz: string): string {
+  return join(raiz, "..", "public", "contenido");
+}
+
 export class ErrorDeContenido extends Error {
   constructor(public readonly problemas: string[]) {
     super(
@@ -157,11 +168,24 @@ function resolverArchivo(
   const ruta = conArchivo.archivo;
   if (!ruta) return;
 
-  // `imagen` y `archivo` referencian un asset que se sirve tal cual; no se
-  // lee su contenido.
+  // `imagen` y `archivo` no se leen: se sirven tal cual, y por eso viven en
+  // `public/contenido/` y no en `contenido/`.
+  //
+  // Es la única excepción a la regla de que el material vive en `contenido/`,
+  // y la impone Next: lo que se sirve por URL sale de `public/`. La primera
+  // versión los buscaba en `contenido/` mientras el componente los pedía en
+  // `/contenido/…`, así que los dos tipos validaban contra una carpeta y se
+  // dibujaban desde otra. Nadie lo notó porque en dos meses no se usó ninguno
+  // de los dos — que es exactamente cómo se ve un camino sin terminar.
+  //
+  // La ruta del YAML es la ruta de la URL, sin traducción: `img/flota.png`
+  // vive en `public/contenido/img/flota.png` y se pide en
+  // `/contenido/img/flota.png`.
   if (item.tipo === "imagen" || item.tipo === "archivo") {
-    if (!existsSync(join(raiz, ruta))) {
-      problemas.push(`${donde}: no existe el archivo \`contenido/${ruta}\``);
+    if (!existsSync(join(raizDeAssets(raiz), ruta))) {
+      problemas.push(
+        `${donde}: no existe el archivo \`public/contenido/${ruta}\``,
+      );
     }
     return;
   }

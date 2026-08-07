@@ -134,7 +134,7 @@ unidades:
         titulo: El grafo completo
         entradilla: Sin explicar todavía. Solo para que lo vean entero una vez.
         clase: flujo
-        minutos: 6
+        minutos: 5
         contenido: |
           flowchart LR
             P["percepcion"] --> D["diagnostico"]
@@ -298,7 +298,7 @@ unidades:
         tipo: diagrama-secuencia
         titulo: Una corrida, mensaje a mensaje
         archivo: puml/grafo-agente.puml
-        minutos: 11
+        minutos: 10
         notas: |
           Recorrerlo de a un mensaje. Proyectarlo entero de una vez es
           exactamente lo que este tipo de ítem existe para evitar.
@@ -571,7 +571,7 @@ unidades:
         titulo: Lo que el diagnóstico tiene que producir
         lenguaje: python
         ruta: agente/grafo.py
-        minutos: 3
+        minutos: 2
         contenido: |
           {
             "titulo": "...",
@@ -612,7 +612,7 @@ unidades:
       - id: s2-r4-reflexion-que-es
         tipo: markdown
         titulo: Qué le pregunta la reflexión a su propio diagnóstico
-        minutos: 3
+        minutos: 2
         contenido: |
           No es "revisa esto". Son cuatro preguntas concretas:
 
@@ -642,7 +642,7 @@ unidades:
         comentario: >-
           Ayer esta patología se veía desde afuera. Hoy la ve él. Esa es toda la
           diferencia que hace un nodo cuyo único trabajo es refutarse.
-        minutos: 3
+        minutos: 2
         notas: |
           Si la vieron ayer, decirlo: es la misma cita. Ayer era el síntoma;
           hoy es la prueba de que el nodo funciona.
@@ -776,7 +776,7 @@ unidades:
       - id: s2-r4-memoria-tres
         tipo: criterios
         titulo: Las tres frases que un tablero nunca dice
-        minutos: 3
+        minutos: 2
         criterios:
           - texto: "«Esto ya lo reporté»"
             pista: Y por eso no vuelve a alertar
@@ -794,7 +794,7 @@ unidades:
         titulo: Ábranla y miren qué hay dentro
         entradilla: make memoria — la única forma de ver lo que el agente recuerda
         comando: docker compose run --rm agente python -m agente memoria
-        minutos: 4
+        minutos: 3
         salida: |
           [
             {
@@ -867,6 +867,58 @@ unidades:
           "Vendimos cero" y "no sabemos cuánto vendimos" son cosas distintas, y
           el agente tiene que notarlo. Es el cuarto mundo del criterio de
           aceptación y el que más gente falla.
+
+      - id: s2-r4-job
+        tipo: salida-anotada
+        titulo: La herramienta que mira la tubería
+        entradilla: estado_del_job — un modelo puede estar sano y el job caído desde el martes
+        comando: → estado_del_job()
+        minutos: 4
+        salida: |
+          {
+            "corridas": [
+              { "fecha_corrida": "2026-08-08", "estado": "ok",
+                "modelos": "192", "predicciones": "17472", "duracion_s": "5.02" },
+              { "fecha_corrida": "2026-08-08", "estado": "ok",
+                "modelos": "192", "predicciones": "17304", "duracion_s": "5.28" },
+              { "fecha_corrida": "2026-08-09", "estado": "ok",
+                "modelos": "192", "predicciones": "17472", "duracion_s": "5.39" }
+            ],
+            "total_registradas": 66
+          }
+        anotaciones:
+          - texto: '"predicciones": "17304"'
+            explicacion: >-
+              **El job dice `ok` y le faltan 168 filas.** 17,472 menos 17,304
+              son ocho categorías por veintiún días: es arequipa, la tienda que
+              dejó de reportar. Nada falló. Simplemente hay un pedazo del mundo
+              que no llegó, y la única señal es un número que hay que comparar
+              contra el de ayer.
+          - texto: '"duracion_s": "5.02"'
+            explicacion: >-
+              Cuánto tardó. Un job que empieza a tardar el doble está diciendo
+              algo antes de fallar, y es de las pocas cosas que se ven venir.
+          - texto: '"total_registradas": 66'
+            explicacion: >-
+              La herramienta devuelve las diez últimas y dice cuántas hay. Es
+              una decisión de diseño de percepción, la misma del reto 2: se
+              entrega una lectura, no un volcado. Sesenta y seis corridas
+              enteras en el prompt no caben, y no harían falta.
+        notas: |
+          **Esta lámina paga una promesa que el curso hace tres veces.** Desde
+          la sesión 1 se viene repitiendo que un modelo puede estar sano y el
+          job caído desde el martes, y hasta acá no se había enseñado la
+          herramienta que lo mira.
+
+          El punto que la sala tiene que llevarse: **el fallo más común en
+          producción no es un modelo malo, es una tubería rota**, y una tubería
+          rota casi nunca levanta una excepción. Termina bien y entrega de
+          menos.
+
+          Conecta directo con el mundo `feed_caido` de la lámina anterior: allá
+          se ve como una anomalía en las métricas, acá se ve como 168 filas que
+          no están. Dos herramientas distintas mirando el mismo agujero, que es
+          lo que hace que el agente pueda decir de qué se trata.
 
       - id: s2-r4-pregunta-feed
         tipo: pregunta
@@ -941,7 +993,7 @@ unidades:
       - id: s2-r4-correr
         tipo: demo
         titulo: Correrlo contra los cuatro mundos
-        minutos: 3
+        minutos: 2
         pasos:
           - comando: make romper ESCENARIO=feed_caido
           - comando: make agente ARGS="--verboso"
@@ -1307,7 +1359,7 @@ unidades:
       - id: s2-r5-urgencia
         tipo: error-comun
         titulo: "El error propio · frenar por urgencia"
-        minutos: 3
+        minutos: 2
         sintoma: >-
           La acción no se disparaba nunca. El agente recomendaba reentrenar, la
           política lo dejaba pasar en el papel, y no pasaba nada.
@@ -1369,7 +1421,7 @@ unidades:
         tipo: comando-anotado
         titulo: Correrlo con permiso para actuar
         comando: docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso
-        minutos: 3
+        minutos: 2
         segmentos:
           - texto: "--rm"
             explicacion: >-
@@ -1399,7 +1451,7 @@ unidades:
       - id: s2-r5-deriva
         tipo: demo
         titulo: Sobre deriva, reentrena
-        minutos: 6
+        minutos: 5
         pasos:
           - comando: make reparar && make romper ESCENARIO=sesgo_silencioso
           - comando: make actuar ARGS="--verboso"
@@ -1421,7 +1473,7 @@ unidades:
       - id: s2-r5-anomalia
         tipo: demo
         titulo: Sobre anomalía, se frena
-        minutos: 6
+        minutos: 5
         pasos:
           - comando: make reparar && make romper ESCENARIO=feed_caido
           - comando: make actuar ARGS="--verboso"
@@ -1444,7 +1496,7 @@ unidades:
         tipo: comparacion
         titulo: Los dos resultados, lado a lado
         entradilla: El mismo agente, el mismo permiso, dos mundos. Esto es lo que imprime cada uno.
-        minutos: 3
+        minutos: 2
         izquierda:
           titulo: sesgo_silencioso → ejecuta
           contenido: |
@@ -1487,6 +1539,67 @@ unidades:
           habría pasado la política. Es el modo en que conviene dejarlo cuando
           la clase termine.
 
+      - id: s2-r5-quiebre
+        tipo: imagen
+        titulo: El mundo que esta política no frena
+        entradilla: quiebre_stock, el cuarto escenario. Acá el tablero sí grita.
+        archivo: img/ui-flota-quiebre.png
+        destacar: [66, 30, 32, 32]
+        pie: >-
+          MAPE 21.2% contra 13.8% del mundo sano, y carnes disparada por encima
+          del 100%. Treinta y dos modelos cruzan el umbral. Ningún tablero se
+          queda callado con esto.
+        minutos: 3
+        notas: |
+          **Es el reverso exacto del sesgo silencioso**, y por eso se deja para
+          el final. Aquel no sonaba y había que actuar; este suena como una
+          alarma de incendios y **no hay que reentrenar**.
+
+          Lo que pasó: hubo faltantes de stock en carnes. La venta observada
+          cayó porque no había producto, no porque la demanda bajara. El modelo
+          pronosticó la demanda real y quedó altísimo contra una venta que
+          estaba topada por el almacén.
+
+          Dejar que la sala lo mire diez segundos antes de explicarlo. Casi
+          todos van a decir «hay que reentrenar carnes».
+
+      - id: s2-r5-quiebre-politica
+        tipo: markdown
+        titulo: Por qué la política lo deja pasar
+        minutos: 2
+        contenido: |
+          La política que acabamos de escribir frena sobre `anomalia`. Y este
+          diagnóstico **no va a ser una anomalía**: las herramientas ven deriva
+          de error y deriva de sesgo en una categoría, exactamente la forma de
+          `campana_promocional`. El agente va a diagnosticar `deriva`, con
+          alcance de categoría y evidencia sólida.
+
+          Alcance de categoría, reversible, diagnóstico de deriva: **pasa las
+          dos reglas**. Y reentrenar es lo peor que se puede hacer, porque le
+          enseña al modelo la demanda deprimida por el faltante. Mañana
+          pronostica de menos, se repone de menos, y el faltante se repite.
+
+          **La espiral se retroalimenta, y cada vuelta parece más justificada
+          que la anterior.**
+        notas: |
+          El cierre honesto de la unidad, y hay que decirlo con todas las
+          letras: **la política que construyeron tiene un agujero, y lo acaban
+          de ver.**
+
+          No lo arreglamos hoy. Arreglarlo necesita una señal que la telemetría
+          no tiene —si hubo stock o no—, y esa es la conversación que vale:
+          **un agente no puede decidir mejor que los datos que le llegan.** La
+          regla que faltaría no es de razonamiento, es de instrumentación.
+
+          Si alguien pregunta qué haría falta: cruzar el pronóstico contra el
+          inventario, o marcar los días con quiebre para que no entren al
+          reentrenamiento. Las dos son cambios en la plataforma, no en el
+          agente.
+
+          Es también la respuesta a «¿entonces el agente sirve?». Sirve, y
+          tiene un borde. Saber dónde está el borde es lo que separa a alguien
+          que lo puso en producción de alguien que lo demostró.
+
       - id: s2-r5-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
@@ -1515,17 +1628,36 @@ unidades:
           exactamente la superficie que hay que proteger.
 
       - id: s2-r5-bitacora
-        tipo: markdown
+        tipo: modelo-datos
         titulo: Y queda registrado
+        entradilla: Lo que escribe la única ruta que escribe
         minutos: 2
-        contenido: |
-          Cada reentrenamiento deja una entrada: cuándo, cuánto tardó, **con
-          qué motivo**, y qué modelos tocó.
-
-          El motivo lo escribe el agente. Es lo único suyo que va a la
-          bitácora, y es lo que permite reconstruir después por qué existe un
-          artefacto de las 3:40 de la mañana.
+        tablas:
+          - nombre: reentrenamientos.json
+            descripcion: Una entrada cada vez que el agente toca un modelo
+            columnas:
+              - nombre: momento
+                tipo: fecha y hora
+                nota: Cuándo empezó, al segundo
+              - nombre: duracion_s
+                tipo: número
+                nota: Cuánto tardó
+              - nombre: modelos
+                tipo: número
+                nota: Cuántos artefactos se reescribieron
+              - nombre: alcance
+                tipo: texto
+                nota: El filtro aplicado. categoria:bebidas
+              - nombre: motivo
+                tipo: texto
+                nota: Lo único que escribe el agente con sus palabras
         notas: |
+          **La columna que importa es `motivo`.** Las otras cuatro las pone la
+          plataforma; esa la escribe el agente, y es lo que permite reconstruir
+          en enero por qué existe un artefacto de las 3:40 de la mañana de un
+          martes. Sin ella la bitácora dice *qué* pasó y no *por qué*, que es
+          justo la mitad que hace falta cuando alguien pregunta.
+
           **No hay un `make` para esto**, y conviene decirlo en vez de
           inventarlo: la bitácora se lee por la API, que es como la leería
           cualquier cosa que no sea esta clase.
@@ -1534,6 +1666,99 @@ unidades:
 
           También sale en la interfaz de :8501. Sin bitácora, la primera
           pregunta del lunes —"¿quién reentrenó esto?"— no tiene respuesta.
+
+      - id: s2-r5-ui-tesis
+        tipo: codigo
+        titulo: La interfaz, y la decisión que la define
+        entradilla: Su docstring dice para qué existe, y es una tesis
+        lenguaje: python
+        ruta: ui/app.py
+        resaltar: ["7-9"]
+        minutos: 4
+        contenido: |
+          """La interfaz del agente.
+
+          Dos pestañas y una idea. "La flota" muestra el problema: miles de filas donde
+          en algun lugar hay un modelo costando plata. "El agente" muestra como se
+          resuelve, y sobre todo COMO — paso a paso, con las herramientas que llamo, la
+          hipotesis que formulo, la critica que se hizo y la correccion si la hubo.
+
+          Un panel que solo mostrara el diagnostico final seria un tablero mas. Lo que
+          distingue a un agente es el razonamiento, asi que el razonamiento es lo que se
+          proyecta.
+          """
+        notas: |
+          **Las tres líneas resaltadas son el argumento de la interfaz entera**,
+          y valen por sí solas aunque nadie escriba una línea de Streamlit.
+
+          Un panel que solo muestre el diagnóstico final es un tablero más — y
+          los tableros ya los tienen, y ya vimos que no suenan. Lo que hace
+          distinto a un agente es que su razonamiento se puede leer: qué
+          herramientas llamó, qué hipótesis formuló, qué objeciones se puso y
+          si se corrigió.
+
+          Es la respuesta a la pregunta que siempre aparece: **«¿cómo sé que no
+          divaga?»**. Se lee. Un agente cuya ejecución no se puede inspeccionar
+          es un agente en el que hay que creer, y creer no escala a 192
+          modelos.
+
+          La interfaz **viene dada**: son 286 líneas y no se escriben hoy. Lo
+          que sí se hace es abrirla y leerla, que es lo que estamos haciendo.
+
+      - id: s2-r5-ui-reflexion
+        tipo: codigo
+        titulo: Cómo se dibuja el razonamiento
+        entradilla: Veinte líneas de Streamlit, y ninguna decide nada
+        lenguaje: python
+        ruta: ui/app.py · el bloque de la reflexión
+        resaltar: [2, 12]
+        minutos: 3
+        contenido: |
+          critica = final.get("critica", {})
+          corregido = critica.get("veredicto") == "insuficiente"
+
+          _tarjeta_diagnostico(final.get("hipotesis", {}), corregido)
+
+          st.subheader("Reflexion")
+          st.caption(
+              f"veredicto: **{critica.get('veredicto', '?')}** · "
+              f"vueltas: {final.get('vueltas', 0)}"
+          )
+          objeciones = critica.get("objeciones") or []
+          for o in objeciones:
+              st.markdown(f"- {o}")
+          if not objeciones:
+              st.caption("No se puso ninguna objecion a si mismo.")
+          if corregido:
+              st.success("El diagnostico de arriba ya incorpora estas objeciones.")
+        notas: |
+          Lo que hay que ver es lo que **no** hay: ninguna de estas líneas
+          decide nada. La interfaz solo lee el estado que el grafo dejó y lo
+          dibuja. `corregido` es una comparación de una cadena; el mensaje
+          verde es un `if`.
+
+          Toda la inteligencia está en el grafo, y eso es exactamente lo que
+          uno quiere: **una interfaz que razona es una interfaz que puede
+          contradecir al agente**, y entonces hay dos versiones de la verdad y
+          ninguna auditable.
+
+          La misma línea que ayer imprimimos en la consola —«reescrito tras la
+          reflexión»— es esta de acá. Un estado, dos presentaciones.
+
+      - id: s2-r5-ui-repo
+        tipo: enlace
+        titulo: El archivo entero
+        url: https://github.com/texai/taller-ia-uni-lab/blob/main/ui/app.py
+        descripcion: >-
+          286 líneas. Las cuatro pestañas, la tarjeta de diagnóstico, el
+          historial y la bitácora. Vale la pena leerlo entero después del
+          taller, con calma.
+        minutos: 1
+        notas: |
+          Abrirlo en vivo si hay red y bajar hasta `_tarjeta_diagnostico`, que
+          es la parte que nadie escribiría igual la primera vez: la severidad
+          como color, la evidencia como lista, y el aviso de corrección como
+          una franja verde en vez de una nota al pie.
 
       - id: s2-r5-panel
         tipo: demo
@@ -1649,7 +1874,7 @@ unidades:
       - id: s2-c-errores
         tipo: tabla
         titulo: Los nueve, y dónde vivía el arreglo
-        minutos: 6
+        minutos: 5
         columnas: [El error, Dónde vivía el arreglo]
         filas:
           - ["El contexto no llegaba a la API", "En cómo se abre la conversación: un `HumanMessage` con el encargo"]
@@ -1790,7 +2015,7 @@ unidades:
         tipo: criterios
         titulo: Qué hacer con esto el lunes
         entradilla: Cinco cosas que no necesitan un agente para servir
-        minutos: 4
+        minutos: 3
         criterios:
           - texto: Mira si tus métricas tienen dirección, no solo distancia
             pista: Si tu tablero solo tiene MAPE, le falta la señal que habla de plata
@@ -1817,7 +2042,7 @@ unidades:
         viene: >-
           Lo suyo: el laboratorio queda, con sus cinco ramas de solución y sus
           cuatro escenarios para seguir rompiendo
-        minutos: 4
+        minutos: 3
         notas: |
           Es el último ítem de contenido. Recordar que el repositorio queda
           público y que las ramas `reto-1-solucion` a `reto-5-solucion` están
@@ -1836,7 +2061,7 @@ unidades:
       - id: s2-c-preguntas
         tipo: pausa-preguntas
         titulo: Lo que quede
-        minutos: 5
+        minutos: 4
         disparadores:
           - ¿Qué de esto se llevarían a lo que están construyendo ahora?
           - ¿Dónde creen que estaría el primer error de su propio agente?

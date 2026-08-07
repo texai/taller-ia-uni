@@ -49,6 +49,10 @@ Referencias:
 | 28 | Diagrama de pasos al abrir cada reto | ✅ Completado |
 | 29 | El ritmo: preguntas y pausas repartidas | ✅ Completado |
 | 30 | La salida anotada | ✅ Completado |
+| | **Tercera ronda — la auditoría del inventario** | |
+| 31 | Los minutos son del docente · la portada cliqueable | ✅ Completado |
+| 32 | Los cuatro huecos: interfaz, capturas, job, quiebre | ✅ Completado |
+| 33 | Presentación del taller y ficha del docente | 🔵 En curso |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 

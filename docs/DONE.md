@@ -2242,3 +2242,144 @@ dibujaría perfecta, y las anotaciones no se verían nunca.
   justamente los pasos nuevos.
 - Las cinco salidas recorridas paso a paso a 1440×900: bloque y explicación
   caben juntos en todas.
+
+---
+
+## Batch 31 — Los minutos son del docente, y una sesión se ve cliqueable
+
+Dos arreglos de la aplicación, los dos sobre lo que el alumno ve.
+
+**`minutos` pasa a campo privado.** El presupuesto de tiempo lo escribe el
+docente para dictar. Un alumno que ve «4′» en cada ítem sabe cuándo la clase va
+tarde, y con el reloj a la vista una pregunta buena a las 18:50 no se hace. Se
+filtra en el servidor, como las notas y la respuesta correcta — no se oculta
+con CSS. Lo que el alumno sí tiene es el total de la sesión, que ya estaba en
+la cabecera: las horas de inicio y de fin. Efecto secundario bienvenido: sin la
+columna de minutos, los títulos del índice dejan de truncarse.
+
+**La portada.** Las dos sesiones eran cliqueables en toda la fila y no lo
+parecían: sin borde, sin flecha, y con el único indicio en el `hover`, que en
+una pantalla táctil no existe. Ahora cada una es una tarjeta con su borde, una
+franja de acento con el horario, y una flecha que se desplaza al pasar por
+encima.
+
+---
+
+## Batch 32 — Los cuatro huecos de la auditoría
+
+La auditoría del inventario encontró cuatro cosas que el laboratorio tiene y el
+aula no veía. Se cierran las cuatro, y para hacerlo hubo que **levantar el
+laboratorio de verdad**: sin demonio de Docker en este contenedor, pero con las
+dependencias presentes, la plataforma corre nativa con `RUTA_DATOS` apuntando a
+un directorio temporal. Todos los números y todas las capturas de acá salen de
+una corrida real, no de una reconstrucción.
+
+### Antes que nada: `imagen` y `archivo` no funcionaban
+
+Los dos tipos llevaban dos meses sin usarse, y resultó que **el camino nunca se
+terminó**. El componente pedía `/contenido/…` y el cargador validaba contra
+`contenido/…`; nada servía esa URL. Validaban contra una carpeta y se dibujaban
+desde otra, y nadie lo notó porque no había ni una imagen en el curso — que es
+exactamente cómo se ve un camino sin terminar.
+
+Los assets viven ahora en `public/contenido/`, que es de donde Next sirve por
+URL, y la ruta del YAML es la de la URL sin traducción. El cargador los busca
+ahí y lo dice en el mensaje de error.
+
+### 1 · La interfaz se lee, no solo se ejecuta
+
+Tres ítems nuevos en el reto 5. El primero es el **docstring de `ui/app.py`**,
+con tres líneas resaltadas que son la tesis de la interfaz entera: *un panel
+que solo mostrara el diagnóstico final sería un tablero más; lo que distingue a
+un agente es el razonamiento, así que el razonamiento es lo que se proyecta*.
+
+El segundo son veinte líneas del bloque de la reflexión, y lo que hay que ver
+es lo que **no** hay: ninguna decide nada. La interfaz lee el estado que dejó
+el grafo y lo dibuja. Una interfaz que razona puede contradecir al agente, y
+entonces hay dos versiones de la verdad y ninguna auditable.
+
+El tercero es un `enlace` al archivo en GitHub — segundo uso de ese tipo — para
+leerlo entero después del taller. Y se dice explícitamente que **viene dada**:
+286 líneas que no se escriben hoy.
+
+### 2 · Tres capturas, tomadas de una corrida real
+
+| Imagen | Dónde | Qué hace |
+|---|---|---|
+| `ui-flota-sana` | tras la demo de la interfaz | Respaldo si no levanta, y los cuatro números de referencia |
+| `ui-flota-sesgo` | cierre del reto 1 | **El tablero mientras buscabas**, con el MAPE recuadrado |
+| `ui-flota-quiebre` | final del reto 5 | El tablero gritando, con la subida de carnes recuadrada |
+
+La segunda es la que más rinde: la sala acaba de pasar diez minutos sin
+encontrar nada, y la imagen les dice que no era culpa suya. El recuadro de
+`destacar` —otro campo que existía sin usarse— cae sobre el MAPE: 14.5% contra
+13.8%, siete décimas, y el gráfico indistinguible del de hace media hora.
+
+La pestaña «El agente» no se pudo capturar: sin llave de LLM el proveedor
+simulado no razona y la pantalla sale con textos de relleno. Queda como la
+única demo sin respaldo en imagen.
+
+### 3 · `estado_del_job`, la promesa que faltaba
+
+El curso repetía tres veces que un modelo puede estar sano y el job caído desde
+el martes. Ahora enseña la herramienta que lo mira, con su salida real y **la
+línea que lo dice todo**: una corrida con `"estado": "ok"` y 17,304
+predicciones en vez de 17,472. Son 168 filas: ocho categorías por veintiún
+días, que es exactamente la tienda que dejó de reportar.
+
+El job no falló. Terminó bien y entregó de menos, que es cómo se rompe una
+tubería de verdad.
+
+### 4 · `quiebre_stock`, el mundo que la política no frena
+
+Medido contra el mismo mundo sano, los cuatro escenarios son cuatro formas
+distintas:
+
+| | MAPE | sesgo | deriva de error | anomalías |
+|---|---|---|---|---|
+| sano | 13.8% | +0.8% | — | 0 |
+| campana_promocional | 16.0% | −10.6% | bebidas | 0 |
+| sesgo_silencioso | 14.5% | +4.7% | 2 categorías | 0 |
+| feed_caido | 13.7% | +0.8% | — | arequipa |
+| **quiebre_stock** | **21.2%** | +2.8% | carnes | 0 |
+
+`quiebre_stock` es **el reverso exacto del sesgo silencioso**, y por eso se
+puso al final del reto 5 y no antes. Aquel no sonaba y había que actuar; este
+suena como una alarma de incendios y **no hay que reentrenar**: la venta
+observada cayó porque no había producto, no porque bajara la demanda.
+
+Y lo que lo convierte en el cierre correcto de la unidad: **la política que
+acaban de escribir no lo frena.** Frena sobre `anomalia`, y este diagnóstico va
+a ser `deriva` con alcance de categoría y evidencia sólida — pasa las dos
+reglas. Reentrenar le enseña al modelo la demanda deprimida, mañana pronostica
+de menos, se repone de menos, y el faltante se repite. La espiral se
+retroalimenta y cada vuelta parece más justificada que la anterior.
+
+No se arregla hoy, y decirlo es el punto: **un agente no puede decidir mejor
+que los datos que le llegan.** La regla que faltaría no es de razonamiento, es
+de instrumentación.
+
+### De paso
+
+- **El trabajo previo entra al material** como ítem `archivo` descargable, al
+  principio de la sesión 1. Está en el aula virtual de la universidad desde
+  hace una semana; se pone también acá porque quien llega sin haberlo hecho
+  necesita bajarlo en ese momento, y buscar en otra plataforma con la clase
+  empezada es lo que no va a hacer.
+- **La salida de `make seed` era una versión resumida.** La real trae las
+  líneas de progreso —`48/192 modelos entrenados…`— y el recuento de
+  `17472 predicciones de 192 modelos`. Corregida contra la corrida.
+- **Los cinco minutos del `seed` no son del `seed`.** Medido, corre en medio
+  minuto; los cinco de la primera vez son de `make arriba` construyendo las
+  tres imágenes.
+- **`modelo-datos` gana su segundo uso**: la bitácora de reentrenamientos, que
+  era prosa, ahora se dibuja con sus cinco columnas. La que importa es
+  `motivo`, la única que escribe el agente con sus palabras.
+
+**Verificación**
+- Laboratorio levantado nativo: `seed` real, cuatro escenarios medidos, tres
+  capturas tomadas con Playwright a 2× sobre la interfaz de verdad.
+- `validar-contenido`: 12 unidades, 165 ítems, 240 + 240 min, sin avisos.
+- `npm test` (140 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 226 pantallas, 0 con error.
+- Los assets responden 200 en `/contenido/img/…` y `/contenido/archivos/…`.
