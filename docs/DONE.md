@@ -2538,3 +2538,81 @@ que tienen que salir al final.
 - Las siete políticas aplicadas en el proyecto real, comprobadas con
   `pg_policies`.
 - 36 términos en el glosario.
+
+---
+
+## Batch 36 — Las tres herramientas que faltaban
+**2026-08-07**
+
+De las siete herramientas de percepción que el agente tiene, tres no se veían
+nunca: `listar_modelos` y `detalle_modelo` no aparecían en ninguna lámina, y
+`agregado_por` estaba nombrada una vez y jamás mostrada. Un taller que promete
+enseñar percepción y enseña cuatro de siete tiene un hueco.
+
+**Alcance** (todo hecho)
+- [x] Las tres se muestran con salida real, medida contra el mundo sano
+- [x] Cada una entra donde su lección ya está pasando, no en un catálogo aparte
+
+---
+
+### Cómo quedó, y en qué se desvió de lo planificado
+
+**No hay una lámina «las siete herramientas».** La tentación era un catálogo, y
+un catálogo se olvida. Cada una entró donde su lección ya estaba ocurriendo, y
+eso decidió también qué salida mostrar de cada una.
+
+| Herramienta | Dónde | Qué enseña |
+|---|---|---|
+| `listar_modelos` | s01-u03, tras la captura de la interfaz | El inventario, y la brecha laboratorio/producción |
+| `agregado_por` | s01-u05, tras «por qué el umbral de tienda es más alto» | El ruido tiene tamaño de muestra |
+| `detalle_modelo` | s01-u05, tras «la docstring es prompt» | El error también es prompt |
+
+**La brecha, en dos números.** `listar_modelos` devuelve
+`mape_validacion_medio: 10.382`, y la lámina anterior deja fijado el 13.8% de
+producción. Es la distancia entre «el modelo pasó la prueba» y «el modelo está
+sirviendo», sin ninguna metáfora, y sale gratis de una herramienta que hasta
+ahora no se mostraba. Va acompañada de `entrenados_hasta: 2026-05-08`: tres
+meses sin reentrenar, que es lo normal y no un descuido del laboratorio.
+
+**`agregado_por` explica de dónde salió la tabla de umbrales.** Se llama con
+`dimension="region"` y no con `tienda` por una razón de tamaño —cinco grupos
+caben en una lámina y catorce no— pero resultó ser la mejor de las tres
+dimensiones para lo que había que enseñar: con la flota **sana**, ORIENTE
+(8 modelos) tiene el sesgo más alto de todos, +8.7%, y CENTRO (8 modelos) tiene
+el MAPE más bajo, 10.9. Los dos grupos chicos ocupan los dos bordes de la
+tabla, y LIMA, con 112 modelos, clava el 13.78 de la flota entera. El ruido no
+tiene signo: tiene tamaño de muestra.
+
+**La pregunta salió de un reproche del validador.** Meter esa lámina dejó el
+reto 2 con 27 minutos seguidos sin que pasara nada, y `reprochesDeRitmo` lo
+dijo. La solución no fue mover la lámina sino poner delante una pregunta a la
+sala —«flota sana, ¿dónde va a salir el sesgo más grande?»—, que parte el tramo
+y además hace que el +8.7% signifique algo cuando aparece. La opción que elige
+media sala es «en ninguna: si nada está roto, todas rondan cero», y romper esa
+intuición es lo que hace que los umbrales por dimensión tengan sentido.
+
+**`detalle_modelo` entra por su camino de error**, que es lo mejor que tiene.
+Llamada con `panaderia_callao` —guion bajo donde va guion, el error que un LLM
+comete— no devuelve «no existe»: devuelve el formato, un ejemplo, y
+`quiza_buscabas` con el candidato. Va justo después de la lámina que dice que
+la docstring es prompt, porque el valor de retorno también lo es, y el de error
+más que ninguno: es lo que el modelo lee justo antes de decidir el siguiente
+paso. Una herramienta que falla muda convierte una llamada equivocada en tres.
+
+**Los minutos, y por qué se pasan.** Las tres láminas más la pregunta son 13
+minutos, y la sesión 1 estaba en 240 exactos. Se consultó y la respuesta fue
+que se podían pasar. Queda en **253 sobre 240**, un 5.4%, y el validador lo
+avisa en cada ejecución en vez de dejarlo pasar en silencio. Es una decisión,
+no un descuido: la alternativa era recortar trece minutos de material que ya
+estaba justificado.
+
+**Verificación**
+- Las tres salidas salieron de correr las herramientas contra el laboratorio,
+  no de escribirlas a mano. `resumen_flota` confirma que el mundo medido era el
+  sano: MAPE 13.782, sesgo +0.801.
+- `validar-contenido`: 12 unidades, 174 ítems, 253 + 240 min, sin errores y con
+  el aviso de minutos.
+- `npm test` (145 pasan), lint y build limpios.
+- `npm run humo`: 245 pantallas, 0 con error.
+- Las tres láminas vistas en el navegador. La primera se acortó porque el botón
+  del glosario le tapaba la última línea.

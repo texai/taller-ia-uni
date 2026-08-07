@@ -556,6 +556,64 @@ items:
       El gráfico de abajo es plano y aburrido a propósito. Guardarlo en la
       memoria: en el reto 5 vuelve, y no está plano.
 
+  - id: s1-inventario
+    tipo: salida-anotada
+    titulo: La misma flota, como la lee un agente
+    entradilla: listar_modelos — el inventario, antes de cualquier diagnóstico
+    comando: → listar_modelos()
+    minutos: 4
+    salida: |
+      {
+        "total_modelos": 192,
+        "por_categoria": {
+          "abarrotes": 24, "bebidas": 24, "carnes": 24, "congelados": 24,
+          "cuidado-personal": 24, "lacteos": 24, "limpieza": 24,
+          "panaderia": 24
+        },
+        "por_region": {
+          "LIMA": 112, "NORTE": 32, "SUR": 32, "CENTRO": 8, "ORIENTE": 8
+        },
+        "entrenados_hasta": "2026-05-08",
+        "mape_validacion_medio": 10.382
+      }
+    anotaciones:
+      - texto: '"total_modelos": 192'
+        explicacion: >-
+          Ocho categorías por veinticuatro tiendas. Es **la misma pantalla de
+          hace un minuto**, en el objeto que un agente sí puede leer: la
+          interfaz tiene 192 filas y esto tiene doce líneas. Dicen lo mismo, y
+          solo uno de los dos cabe en un prompt.
+      - texto: '"LIMA": 112'
+        explicacion: >-
+          Las regiones no son parejas y no es un descuido: LIMA tiene 112
+          modelos, CENTRO y ORIENTE tienen ocho cada una. Guardarlo — en el
+          reto 2 esta desigualdad decide un umbral.
+      - texto: '"entrenados_hasta": "2026-05-08"'
+        explicacion: >-
+          Tres meses. Ningún modelo de esta flota ha vuelto a entrenarse desde
+          mayo, y así es como se ven casi todas las flotas reales. El modelo no
+          se entera de que pasó el tiempo; la telemetría sí.
+      - texto: '"mape_validacion_medio": 10.382'
+        explicacion: >-
+          **Acá está la brecha, en dos números.** El día que se entrenaron se
+          equivocaban 10.4%. Hoy, en producción, 13.8% — el número de la
+          lámina anterior. Nadie rompió nada: es el mundo alejándose del día
+          del entrenamiento.
+    notas: |
+      **Es la primera herramienta del agente que ve la clase**, y va acá
+      justo porque todavía no hay agente: se lee como lo que es, una función
+      que devuelve un objeto. Mañana la llama un LLM y no cambia nada.
+
+      La comparación con la captura anterior es el punto de la lámina y
+      conviene hacerla en voz alta: 10.4 contra 13.8. Si alguien pregunta por
+      qué no se reentrena y ya, la respuesta corta es que reentrenar sobre
+      datos que no se entienden repite el problema con números nuevos —y es
+      exactamente el freno que se construye en el reto 5.
+
+      `mape_validacion_medio` sale del registro de los modelos, no de la
+      telemetría: es lo que cada uno midió contra su propio conjunto de
+      validación al entrenarse.
+
   - id: s1-flota-dada
     tipo: criterios
     titulo: Las reglas del laboratorio

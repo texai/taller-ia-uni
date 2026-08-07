@@ -101,6 +101,46 @@ items:
       Señalar que la docstring NO es documentación: es lo que el LLM lee
       para decidir cuándo llamarla. Es prompt, y se escribe como prompt.
 
+  - id: s1-r2-fallar-bien
+    tipo: salida-anotada
+    titulo: Y el error también es prompt
+    entradilla: detalle_modelo, llamada con un identificador que no existe
+    comando: → detalle_modelo("panaderia_callao")
+    minutos: 3
+    salida: |
+      {
+        "error": "No existe el modelo 'panaderia_callao'.",
+        "formato": "dem-<categoria>-<tienda>, por ejemplo dem-panaderia-callao",
+        "quiza_buscabas": ["dem-panaderia-callao"]
+      }
+    anotaciones:
+      - texto: '"error"'
+        explicacion: >-
+          El modelo se inventó el identificador —usó guion bajo donde iba
+          guion—, y eso va a pasar. Lo que importa no es que falle: es qué
+          recibe cuando falla.
+      - texto: '"formato"'
+        explicacion: >-
+          La forma del identificador, con un ejemplo. Un «no existe» a secas
+          invita a reintentar con otra variante del nombre, y ahí se van cinco
+          llamadas y medio minuto de la clase.
+      - texto: '"quiza_buscabas"'
+        explicacion: >-
+          Y encima le da el candidato. La siguiente llamada acierta. **Esto es
+          diseño de herramienta, no cortesía**: el LLM no tiene ninguna otra
+          fuente sobre este mundo que lo que devuelven las herramientas.
+    notas: |
+      Enganchar con la lámina anterior: si la docstring es prompt, el valor de
+      retorno también lo es —y el de error, más que ninguno, porque es el que
+      se lee justo antes de decidir el siguiente paso.
+
+      La regla que se llevan: **una herramienta que falla muda convierte una
+      llamada equivocada en tres.** Con veinte llamadas por ejecución eso es
+      la diferencia entre un agente que responde y uno que da vueltas.
+
+      Esta no se escribe en el reto —ya está escrita— pero se mira dos minutos
+      porque el criterio se aplica a la que sí van a escribir.
+
   - id: s1-r2-pregunta-sesgo
     tipo: pregunta
     titulo: Una cuenta rápida
@@ -315,6 +355,110 @@ items:
     notas: |
       Si alguien conoce la raíz de n, es el momento. Si no, basta con la
       intuición: menos cosas, más ruido.
+
+  - id: s1-r2-pregunta-region
+    tipo: pregunta
+    titulo: Antes de mirar la salida
+    pregunta: >-
+      Flota SANA, sin nada roto. Se agrupa por región y se mira el sesgo.
+      LIMA tiene 112 modelos; ORIENTE tiene 8. ¿Dónde va a salir el sesgo
+      más grande?
+    visibilidad: publica
+    permiteOmitir: true
+    respuesta: En ORIENTE, y por tener pocos modelos
+    minutos: 3
+    opciones:
+      - En LIMA, que tiene catorce veces más modelos
+      - En ORIENTE, y por tener pocos modelos
+      - "En ninguna: si nada está roto, todas rondan cero"
+      - Es impredecible, depende del día
+    notas: |
+      Va antes de la salida a propósito: el número de ORIENTE no impresiona a
+      nadie si primero se lee que es 8.7%.
+
+      La tercera opción es la que elige media sala, y es la intuición que hay
+      que romper para que los umbrales del reto tengan sentido.
+    solucion:
+      explicacion: |
+        **En ORIENTE, y por tener pocos modelos.** Con la flota intacta, el
+        sesgo de ORIENTE es +8.7% y el de LIMA es −0.3%.
+
+        No es que ORIENTE esté peor: es que promediar ocho cosas produce un
+        número que salta, y promediar ciento doce produce un número que casi
+        no se mueve. El grupo grande se traga sus propios extremos; el chico
+        los muestra enteros.
+
+        Por eso «todas rondan cero» es falso incluso en un mundo sano, y por
+        eso un umbral único —el mismo número para categoría, región y
+        tienda— marca como rotos a los grupos chicos, todos los días, sin
+        que pase nada.
+      descartes:
+        - opcion: En LIMA, que tiene catorce veces más modelos
+          razon: >-
+            Es la intuición de "más modelos, más problemas", y va al revés:
+            más modelos es más promedio, y más promedio es menos ruido.
+        - opcion: "En ninguna: si nada está roto, todas rondan cero"
+          razon: >-
+            Solo el grupo grande ronda cero. Es exactamente la creencia que
+            hace que alguien ponga un umbral de 1 pp y viva alarmado.
+        - opcion: Es impredecible, depende del día
+          razon: >-
+            El valor exacto cambia; cuál grupo salta, no. El tamaño de la
+            muestra no depende del día.
+
+  - id: s1-r2-agregado
+    tipo: salida-anotada
+    titulo: La herramienta con la que se midió esa tabla
+    entradilla: agregado_por — la flota SANA, agrupada por región
+    comando: → agregado_por(dimension="region", dias=14)
+    minutos: 3
+    salida: |
+      {
+        "dimension": "region",
+        "ventana_dias": 14,
+        "grupos": [
+          { "region": "ORIENTE", "n_modelos": 8,   "mape": 14.616,
+            "sesgo_pct": 8.732,  "cobertura": 0.893, "unidades_de_mas": 2261 },
+          { "region": "SUR",     "n_modelos": 32,  "mape": 14.068,
+            "sesgo_pct": 2.548,  "cobertura": 0.895, "unidades_de_mas": 3127 },
+          { "region": "NORTE",   "n_modelos": 32,  "mape": 13.996,
+            "sesgo_pct": 1.701,  "cobertura": 0.842, "unidades_de_mas": 2155 },
+          { "region": "LIMA",    "n_modelos": 112, "mape": 13.782,
+            "sesgo_pct": -0.324, "cobertura": 0.895, "unidades_de_mas": -1653 },
+          { "region": "CENTRO",  "n_modelos": 8,   "mape": 10.947,
+            "sesgo_pct": 2.114,  "cobertura": 0.911, "unidades_de_mas": 642 }
+        ]
+      }
+    anotaciones:
+      - texto: '"sesgo_pct": 8.732'
+        explicacion: >-
+          El sesgo más alto de la flota, y **no pasa absolutamente nada**: este
+          es el mundo sano. ORIENTE son ocho modelos, y ocho números promediados
+          saltan.
+      - texto: '"n_modelos": 112'
+        explicacion: >-
+          LIMA promedia 112 modelos y su MAPE es 13.78 — el de la flota entera,
+          al segundo decimal. Un grupo grande casi no se mueve: se traga sus
+          propios extremos.
+      - texto: '"mape": 10.947'
+        explicacion: >-
+          CENTRO también son ocho modelos, y está en el otro extremo. **Los dos
+          grupos chicos ocupan los dos bordes de la tabla.** Esa es toda la
+          lección: el ruido no tiene signo, tiene tamaño de muestra.
+    notas: |
+      Es la herramienta que produjo la tabla de umbrales de hace dos láminas, y
+      decirlo cierra el círculo: los números no salieron de la intuición de
+      nadie, salieron de correr esto contra un mundo intacto.
+
+      La misma llamada con `dimension="categoria"` o `"tienda"` es la que
+      revela la **forma** de un problema. Si la degradación se concentra en una
+      categoría y aparece en todas las tiendas, la causa es del producto; si se
+      concentra en una tienda y toca todas las categorías, la causa es de esa
+      tienda. Es el reto 4 entero, adelantado en una frase.
+
+      Si alguien pregunta por `unidades_de_mas`: es la única columna que habla
+      de plata. LIMA está en −1,653 y ORIENTE en +2,261 sobre un mundo donde
+      nada está roto.
 
   - id: s1-r2-umbrales-elegidos
     tipo: codigo

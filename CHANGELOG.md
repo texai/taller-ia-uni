@@ -5,14 +5,40 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Las tres herramientas que faltaban (batch 36)
+- De las siete herramientas de percepción, tres nunca se mostraban:
+  `listar_modelos` y `detalle_modelo` no aparecían, y `agregado_por` estaba
+  nombrada una vez. Ahora las siete se ven, con salida real medida contra el
+  mundo sano.
+- **`listar_modelos`** cierra la brecha laboratorio/producción en dos números:
+  MAPE de validación **10.4%** contra el **13.8%** de producción, y una flota
+  sin reentrenar desde mayo.
+- **`agregado_por`**, en el reto 2, es la herramienta que produjo la tabla de
+  umbrales. Con la flota *sana*, ORIENTE (8 modelos) tiene sesgo +8.7% y LIMA
+  (112) tiene −0.3%: el ruido no tiene signo, tiene tamaño de muestra. Va
+  precedida de una pregunta a la sala, que además parte un tramo de 27 minutos
+  sin respiro.
+- **`detalle_modelo`** entra por su camino de error: `quiza_buscabas`. Si la
+  docstring es prompt, el valor de retorno también — y el de error, más que
+  ninguno.
+- La sesión 1 pasa a 253 minutos sobre 240. Es deliberado y el validador lo
+  avisa.
+
+### La palabra es ejecución, también en la salida de las herramientas
+- `estado_del_job` devolvía `corridas` y `fecha_corrida`, y eso se proyecta.
+  Cambiar solo la lámina habría sido mentir sobre lo que imprime el comando,
+  así que la palabra se cambió en el laboratorio: `/v1/job/ejecuciones`,
+  `ejecuciones_job.csv`, `fecha_ejecucion`. El endpoint lee el archivo viejo si
+  el nuevo no existe, para que a nadie se le vacíe la herramienta en clase.
+
 ### El vocabulario, y un SQL que se puede correr dos veces (batch 35)
 - **Kolmogorov-Smirnov se explica en vez de desaparecer**: está en el código
   del taller y el alumno lo va a ver ahí igual. Tres entradas nuevas al
   glosario (test KS, p-valor, percentil) y la explicación pegada a las dos
   menciones en prosa.
-- **«corrida» → «ejecución»** en todo el contenido, saltando `fecha_corrida` y
-  `"corridas"`: son la salida real del laboratorio y cambiarlas haría que la
-  lámina mienta sobre lo que imprime el comando.
+- **«corrida» → «ejecución»** en todo el contenido. `fecha_corrida` y
+  `"corridas"` se saltaron por ser la salida real del laboratorio; ese salto se
+  corrigió después renombrando en el laboratorio (ver arriba).
 - **«tubería» → «pipeline»** donde significa un pipeline de datos (tres sitios).
   Donde no lo significaba se usó la palabra correcta: «el pipe» para el pipe de
   shell, «cableado» para «todo lo demás de este dibujo es fontanería».

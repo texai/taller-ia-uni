@@ -55,6 +55,7 @@ Referencias:
 | 33 | Presentación, ficha del docente, un archivo por unidad | ✅ Completado |
 | 34 | El glosario | ✅ Completado |
 | 35 | El vocabulario, y un SQL idempotente | ✅ Completado |
+| 36 | Las tres herramientas que faltaban | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
