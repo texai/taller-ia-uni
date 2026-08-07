@@ -806,3 +806,111 @@ test("el curso real no filtra minutos hacia el alumno", () => {
   // Y las horas de la sesión sí viajan: son el total que el alumno puede ver.
   assert.match(publico, /"horaInicio"/);
 });
+
+// --------------------------------------------------------------------------
+// Una unidad en su propio archivo
+// --------------------------------------------------------------------------
+
+const UNIDAD_SUELTA = `
+id: u1
+tipo: reto
+titulo: Unidad en su archivo
+items:
+  - id: i1
+    tipo: titulo
+    titulo: Hola
+    minutos: 4
+`;
+
+function sesionQueApunta(archivos: string[]): string {
+  return `
+id: sesion-1
+numero: 1
+titulo: Sesión de prueba
+unidades:
+${archivos.map((a) => `  - archivo: ${a}`).join("\n")}
+`;
+}
+
+test("una unidad puede vivir en su propio archivo", () => {
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionQueApunta(["unidades/s01-u01-prueba.yml"]),
+      "unidades/s01-u01-prueba.yml": UNIDAD_SUELTA,
+    },
+    (raiz) => {
+      const unidad = mod.cargarCurso(raiz).sesiones[0]?.unidades[0];
+      assert.equal(unidad?.id, "u1");
+      assert.equal(unidad?.titulo, "Unidad en su archivo");
+      assert.equal(unidad?.items.length, 1);
+    },
+  );
+});
+
+test("un archivo de unidad que no existe falla nombrándolo", () => {
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionQueApunta(["unidades/no-existe.yml"]),
+    },
+    (raiz) => {
+      assert.throws(() => mod.cargarCurso(raiz), /no-existe\.yml/);
+    },
+  );
+});
+
+test("una unidad repartida entre el archivo y la sesión falla", () => {
+  // Media unidad acá y media allá es la clase de cosa que se descubre cuando
+  // alguien edita el sitio equivocado y no pasa nada.
+  const sesion = `
+id: sesion-1
+numero: 1
+titulo: Sesión de prueba
+unidades:
+  - archivo: unidades/s01-u01-prueba.yml
+    titulo: Otro título
+`;
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesion,
+      "unidades/s01-u01-prueba.yml": UNIDAD_SUELTA,
+    },
+    (raiz) => {
+      assert.throws(() => mod.cargarCurso(raiz), /no repartida entre los dos/);
+    },
+  );
+});
+
+test("los errores de una unidad nombran su archivo, no el de la sesión", () => {
+  // Sin esto, un error del reto 4 diría «sesion-2.yml» y habría que buscarlo
+  // entre novecientas líneas que ya no están ahí.
+  const rota = `
+id: u1
+tipo: reto
+titulo: Unidad rota
+items:
+  - id: i1
+    tipo: terminal
+`;
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionQueApunta(["unidades/s01-u01-rota.yml"]),
+      "unidades/s01-u01-rota.yml": rota,
+    },
+    (raiz) => {
+      assert.throws(() => mod.cargarCurso(raiz), /s01-u01-rota\.yml · unidad/);
+    },
+  );
+});
+
+test("el curso real vive en archivos por unidad, y el orden es el del nombre", () => {
+  const curso = mod.cargarCurso();
+  for (const sesion of curso.sesiones) {
+    assert.equal(sesion.unidades.length, 6, `${sesion.id} tiene 6 unidades`);
+  }
+  assert.equal(curso.sesiones[0]?.unidades[0]?.id, "s1-apertura");
+  assert.equal(curso.sesiones[1]?.unidades[5]?.id, "s2-cierre");
+});

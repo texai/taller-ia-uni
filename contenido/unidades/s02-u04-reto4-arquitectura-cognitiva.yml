@@ -1,0 +1,917 @@
+
+# ------------------------------------------------------------------ 09:25
+id: s2-reto-4
+tipo: reto
+titulo: La arquitectura cognitiva
+objetivos:
+  - Construir un grafo donde cada nodo hace un trabajo y solo uno
+  - Entender por qué una reflexión que no puede corregir es decorativa
+  - Darle memoria, para que no repita la alerta de ayer
+requisitos:
+  - Herramientas de percepción funcionando
+  - Haber visto divagar al ReAct pelado
+items:
+  - id: s2-r4-titulo
+    tipo: titulo
+    titulo: "Reto 4 · La arquitectura cognitiva"
+    entradilla: El corazón del taller
+    minutos: 2
+    notas: |
+      Noventa minutos. Avisar que el receso va a mitad y que la parte
+      difícil —por qué existe `revision`— viene después.
+
+  - id: s2-r4-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Noventa minutos, cinco pasos, y el receso a la mitad
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · el estado<br/>y los seis nodos"] --> B["2 · cablear el grafo<br/>y sus dos vueltas"]
+        B --> C["3 · reflexion<br/>y revision"]
+        C --> D["4 · memoria<br/>leer antes, escribir despues"]
+        D --> E["5 · correrlo contra<br/>los cuatro mundos"]
+        E --> F{{"criterio: cuatro mundos,<br/>cuatro lecturas distintas"}}
+    notas: |
+      El reto más largo del taller, y el único con cinco pasos. Decir dónde
+      cae el receso —entre el 2 y el 3— para que nadie calcule mal su
+      propio ritmo.
+
+      El paso 3 es el difícil, y es donde está la idea de la que cuelga la
+      unidad: cuestionarse sin poder corregirse no sirve de nada.
+  - id: s2-r4-un-nodo
+    tipo: markdown
+    titulo: Un nodo, un trabajo
+    minutos: 2
+    contenido: |
+      La diferencia entre el bucle de ayer y esto no es que haya más
+      instrucciones. Es que hay **sitios**.
+
+      Cada nodo hace una cosa y solo una, y el que percibe no concluye. Eso
+      suena a purismo hasta que se ve la consecuencia: un nodo que solo
+      puede hacer una cosa **o la hizo o no la hizo**, y queda escrito en
+      el estado. Un prompt con quince reglas no deja ese rastro.
+    notas: |
+      "El que percibe no concluye" es la frase corta. Si alguien objeta que
+      es el mismo modelo con otro prompt: sí, es el mismo modelo. Lo que
+      cambia es que ahora hay un sitio donde comprobar qué pasó.
+
+  - id: s2-r4-los-seis
+    tipo: tabla
+    titulo: Los seis nodos
+    entradilla: Y lo único que hace cada uno
+    minutos: 2
+    columnas: [Nodo, Su único trabajo]
+    filas:
+      - ["percepción", "Decide qué mirar y llama herramientas. No concluye nada."]
+      - ["diagnóstico", "Convierte la evidencia en una hipótesis, con alcance y severidad."]
+      - ["reflexión", "Intenta refutarse. Si le falta evidencia, devuelve el control a percepción."]
+      - ["revisión", "Si la crítica sigue en pie y se acabaron las vueltas, reescribe el diagnóstico."]
+      - ["recomendación", "Emite acciones concretas."]
+      - ["acción", "Ejecuta lo que una política de código deja pasar. Sin LLM."]
+    resaltar: [5]
+    notas: |
+      La última fila está resaltada porque es la única sin LLM: la política
+      es código Python. Es el reto 5 y conviene sembrarlo ya.
+
+  - id: s2-r4-secuencia
+    tipo: diagrama-secuencia
+    titulo: Una corrida, mensaje a mensaje
+    archivo: puml/grafo-agente.puml
+    minutos: 10
+    notas: |
+      Recorrerlo de a un mensaje. Proyectarlo entero de una vez es
+      exactamente lo que este tipo de ítem existe para evitar.
+
+      Los dos que hay que dejar respirar son el 7 —la reflexión mandando de
+      vuelta a percepción— y el 10, la crítica que queda en pie. Todo lo
+      demás es tubería.
+    mensajes:
+      - texto: "comparar_periodos(14, 45, categoria)"
+        explicacion: >-
+          Percepción empieza por el panorama, no por un modelo suelto.
+          Compara los últimos 14 días contra una base de 45: un número solo
+          no dice nada sin su historia.
+      - texto: "banderas por categoria"
+        explicacion: >-
+          La herramienta no devuelve filas: devuelve el recuento primero y
+          las banderas ya evaluadas. El ruido lo descartó ella, con los
+          umbrales del reto 2.
+      - texto: "detectar_anomalias(21)"
+        explicacion: >-
+          Antes de concluir que un modelo se degradó, hay que descartar que
+          el problema sea de datos. Deriva y anomalía se arreglan de formas
+          opuestas.
+      - texto: "sin anomalias"
+        explicacion: >-
+          Nada roto. Ahora sí, lo que se vea es del modelo y no del feed —
+          y esa frase es la que permite recomendar reentrenar sin miedo.
+      - texto: "evidencia reunida"
+        explicacion: >-
+          Percepción deja de llamar herramientas y resume en texto plano.
+          No dice qué pasa; dice qué vio. Esa separación es todo el nodo.
+      - texto: "hipotesis con alcance y severidad"
+        explicacion: >-
+          Diagnóstico convierte la evidencia en una hipótesis. El alcance
+          —un modelo, una categoría, una tienda, la flota— importa más que
+          la severidad: dice de quién es la causa.
+      - texto: "falta evidencia, vuelve a mirar"
+        explicacion: >-
+          Acá está la primera flecha hacia atrás. La reflexión no objetó
+          por objetar: dijo qué herramienta falta llamar y por qué. El
+          control vuelve a percepción, con el encargo concreto.
+      - texto: "evidencia ampliada"
+        explicacion: >-
+          La segunda pasada mira lo que la crítica pidió. Es la diferencia
+          entre un agente que se corrige y uno que solo se disculpa.
+      - texto: "hipotesis revisada"
+        explicacion: >-
+          Diagnóstico vuelve a formular, ahora con más evidencia. Puede
+          cambiar el alcance, el tipo o la severidad — o sostener lo mismo
+          con mejor respaldo.
+      - texto: "la critica quedo en pie"
+        explicacion: >-
+          Segunda vuelta y la objeción sigue viva. Se acabaron las vueltas.
+          Acá es donde un agente sin `revision` emitiría igual el
+          diagnóstico que su propia crítica acaba de demoler.
+      - texto: "diagnostico reescrito"
+        explicacion: >-
+          Revisión reescribe haciéndose cargo de las objeciones, sin mirar
+          evidencia nueva: con la que hay alcanza, y es la misma que
+          sostiene la crítica.
+      - texto: "recomendaciones"
+        explicacion: >-
+          Recién ahora se emiten acciones. Sobre un diagnóstico que
+          sobrevivió a su propia crítica, no sobre el primero que salió.
+      - texto: "la politica decide que se ejecuta"
+        explicacion: >-
+          Y el último paso no tiene LLM. Una política de código decide qué
+          se ejecuta de verdad. Es el reto 5, y es la parte que más se
+          parece a producción.
+
+  - id: s2-r4-estado
+    tipo: codigo
+    titulo: El estado
+    entradilla: Lo que viaja de nodo a nodo
+    lenguaje: python
+    ruta: agente/grafo.py
+    minutos: 3
+    contenido: |
+      class Estado(TypedDict):
+          fecha: str
+          mensajes: Annotated[list[AnyMessage], add_messages]
+          evidencia: list[str]
+          hipotesis: dict[str, Any]
+          critica: dict[str, Any]
+          recomendaciones: list[dict[str, Any]]
+          acciones: list[dict[str, Any]]
+          vueltas: int
+    notas: |
+      Cada campo es la salida de un nodo. Leer el estado es leer el
+      expediente de la corrida: qué vio, qué concluyó, qué se objetó, qué
+      recomendó y qué ejecutó.
+
+  - id: s2-r4-estado-por-que
+    tipo: markdown
+    titulo: Por qué `add_messages` y no una lista
+    minutos: 2
+    contenido: |
+      Todos los campos del estado se **reemplazan** cuando un nodo los
+      devuelve. `mensajes` no: `add_messages` hace que se **acumulen**.
+
+      Sin eso, cada nodo pisaría la conversación entera y el siguiente
+      razonaría sobre un solo mensaje suelto. Con eso, la conversación
+      crece y todos los nodos ven lo que pasó antes.
+
+      Es una anotación de tres palabras y es la diferencia entre un grafo y
+      seis llamadas independientes.
+    notas: |
+      `vueltas` es el otro campo que merece un segundo: es un entero que
+      cuenta cuántas veces pasó por reflexión, y es lo que evita el bucle
+      infinito.
+
+  - id: s2-r4-pausa
+    tipo: pausa-preguntas
+    titulo: Pausa · el estado, antes de cablear
+    minutos: 3
+    disparadores:
+      - ¿Por qué el estado tiene una clave para los mensajes y otra para la hipótesis?
+      - ¿Alguien ha usado un grafo de este tipo fuera de LangGraph?
+      - ¿Qué pasa si dos nodos escriben la misma clave?
+    notas: |
+      El estado es el primer concepto duro del día y todo lo que sigue lo
+      da por entendido. Tres minutos acá se pagan solos.
+
+      Si nadie pregunta, lanzar la tercera: dos nodos escribiendo la misma
+      clave es exactamente la trampa de la lámina siguiente.
+
+  - id: s2-r4-percepcion
+    tipo: codigo
+    titulo: El nodo de percepción
+    lenguaje: python
+    ruta: agente/grafo.py
+    minutos: 3
+    contenido: |
+      def percepcion(estado: Estado) -> dict:
+          """Decide que mirar y llama herramientas. No concluye."""
+          llm = obtener_llm().bind_tools(HERRAMIENTAS)
+
+          if not estado["mensajes"]:
+              apertura = [SystemMessage(CONTEXTO), HumanMessage(encargo)]
+          else:
+              apertura = []
+
+          respuesta = llm.invoke(estado["mensajes"] + apertura)
+          return {"mensajes": apertura + [respuesta]}
+    notas: |
+      Dos cosas para señalar. El `if`: la apertura se arma una sola vez, en
+      la primera pasada. Y el `return`: la apertura viaja de vuelta al
+      estado — eso es el arreglo de la trampa que viene en dos ítems.
+
+  - id: s2-r4-apertura
+    tipo: error-comun
+    titulo: "Trampa · El estado que no se propaga"
+    minutos: 3
+    sintoma: >-
+      El agente llama una herramienta, recibe el resultado, y a partir de
+      ahí razona como si no supiera qué le pidieron. Concluye sobre una
+      lista de números sueltos.
+    causa: >-
+      La apertura —el `SystemMessage` con quién es y el `HumanMessage` con
+      el encargo— se pasaba a `invoke` pero no se devolvía en el estado. Al
+      volver de la herramienta, la conversación ya no la tenía.
+    arreglo: >-
+      Devolver `apertura + [respuesta]`, no solo `[respuesta]`. Lo que no
+      vuelve al estado, no existió.
+    notas: |
+      Es muda: el agente responde, suena razonable, y perdió el encargo.
+      Solo se nota comparando dos corridas con atención.
+
+  - id: s2-r4-messages-key
+    tipo: error-comun
+    titulo: "Trampa · ToolNode lee otra clave"
+    minutos: 3
+    sintoma: >-
+      El agente responde perfectamente y **nunca ejecutó una herramienta**.
+      Ni una. El diagnóstico está escrito sobre la nada.
+    causa: >-
+      `ToolNode` busca en el estado una clave llamada `messages`. Nuestro
+      estado la llama `mensajes`. No encuentra nada que ejecutar y pasa de
+      largo sin quejarse.
+    arreglo: "`ToolNode(HERRAMIENTAS, messages_key=\"mensajes\")`."
+    notas: |
+      Esta es la que cuesta una hora, y las dos son mudas. Anticiparlas es
+      la mitad del valor de esta unidad: quien las conoce las reconoce en
+      treinta segundos.
+
+      Si alguien escribe el estado en inglés no le pasa ninguna de las dos
+      — y vale la pena decirlo, porque la conclusión no es "escriban en
+      inglés" sino que un nombre distinto al que espera una librería es una
+      trampa que no avisa.
+
+  - id: s2-r4-aristas
+    tipo: codigo
+    titulo: El cableado
+    entradilla: Dos aristas condicionales, y todas las demás fijas
+    lenguaje: python
+    ruta: agente/grafo.py
+    minutos: 4
+    contenido: |
+      g.add_node("percepcion", percepcion)
+      g.add_node("herramientas", ToolNode(HERRAMIENTAS, messages_key="mensajes"))
+      g.add_node("diagnostico", diagnostico)
+      g.add_node("reflexion", reflexion)
+      g.add_node("revision", revision)
+      g.add_node("recomendacion", recomendacion)
+      g.add_node("accion", accion)
+
+      g.add_edge(START, "percepcion")
+      g.add_conditional_edges("percepcion", _hay_herramientas)
+      g.add_edge("herramientas", "percepcion")
+      g.add_edge("diagnostico", "reflexion")
+      g.add_conditional_edges("reflexion", _tras_reflexion)
+      g.add_edge("revision", "recomendacion")
+      g.add_edge("recomendacion", "accion")
+      g.add_edge("accion", END)
+    notas: |
+      Todo el grafo cabe en quince líneas. Señalar que `herramientas`
+      siempre vuelve a `percepcion`: ese es el mini-bucle ReAct de ayer,
+      ahora encerrado dentro de un solo nodo del grafo grande.
+
+  - id: s2-r4-tras-reflexion
+    tipo: codigo
+    titulo: Las tres salidas de la reflexión
+    entradilla: Toda la arquitectura está en esta función
+    lenguaje: python
+    ruta: agente/grafo.py
+    minutos: 3
+    contenido: |
+      def _tras_reflexion(estado) -> Literal["percepcion", "revision", "recomendacion"]:
+          if estado["critica"].get("veredicto") != "insuficiente":
+              return "recomendacion"
+          if estado.get("vueltas", 0) < MAX_VUELTAS:
+              return "percepcion"
+          return "revision"
+    notas: |
+      Tres ramas, y cada una es una decisión de diseño:
+
+      El diagnóstico se sostuvo → se recomienda. La crítica pide más
+      evidencia y quedan vueltas → se vuelve a mirar. Y la tercera es la
+      interesante: la crítica sigue en pie y ya no quedan vueltas.
+
+  - id: s2-r4-max-vueltas
+    tipo: markdown
+    titulo: Por qué hay un tope
+    minutos: 2
+    contenido: |
+      `MAX_VUELTAS = 2`.
+
+      Un agente que puede pedir más evidencia indefinidamente **no
+      termina**: siempre hay una herramienta más que llamar y siempre se
+      puede objetar algo. El tope no es una limitación técnica, es la
+      decisión de que en algún momento hay que emitir.
+
+      Y cuando el tope se agota con la crítica todavía viva, hace falta
+      alguien que se haga cargo. De ahí sale el nodo siguiente.
+    notas: |
+      Buen momento para preguntar cuántas vueltas pondrían ellos. La
+      respuesta honesta es que dos alcanzan porque la reflexión ya vio la
+      evidencia; más vueltas suelen ser el agente buscando permiso.
+
+  - id: s2-receso
+    tipo: receso
+    titulo: Receso
+    minutos: 15
+    notas: |
+      A mitad de la unidad a propósito: la segunda parte es la difícil, y
+      noventa minutos seguidos de grafo no los aguanta nadie.
+
+  - id: s2-r4-diagnostico
+    tipo: codigo
+    titulo: Lo que el diagnóstico tiene que producir
+    lenguaje: python
+    ruta: agente/grafo.py
+    minutos: 2
+    contenido: |
+      {
+        "titulo": "...",
+        "tipo": "deriva | anomalia | sin_hallazgos",
+        "alcance": "flota | categoria:bebidas | tienda:arequipa | dem-...",
+        "severidad": "alta | media | baja",
+        "explicacion": "...",
+        "evidencia": ["..."],
+        "impacto_negocio": "..."
+      }
+    notas: |
+      Pedir JSON y no prosa es lo que permite que los nodos siguientes
+      trabajen sobre campos y no sobre párrafos. `tipo` y `alcance` son los
+      dos que después deciden si se reentrena y a quién.
+
+  - id: s2-r4-alcance
+    tipo: markdown
+    titulo: La forma importa más que el tamaño
+    minutos: 2
+    contenido: |
+      La regla que el agente lleva en su contexto, y que decide el
+      `alcance`:
+
+      - Si la degradación aparece en **una categoría a lo largo de todas
+        las tiendas**, la causa es del producto.
+      - Si aparece en **una tienda a lo largo de todas las categorías**, la
+        causa es de esa tienda.
+      - Y si aparece en **todas**, la causa no es de ninguna: es de la
+        cadena, y el alcance correcto es la flota entera.
+
+      El tercer caso es el que un humano cansado lee mal. Ocho categorías
+      con bandera no son ocho problemas: son uno.
+    notas: |
+      Esto es exactamente lo que separa el escenario de la campaña del
+      sesgo silencioso, y es lo que hace que el criterio de aceptación pida
+      "las 8 categorías" y no "bebidas".
+
+  - id: s2-r4-reflexion-que-es
+    tipo: markdown
+    titulo: Qué le pregunta la reflexión a su propio diagnóstico
+    minutos: 2
+    contenido: |
+      No es "revisa esto". Son cuatro preguntas concretas:
+
+      - La evidencia que citas, ¿sostiene de verdad esta conclusión, o la
+        estás forzando?
+      - ¿Confundiste una anomalía de datos con una deriva del modelo?
+      - El alcance que declaraste, ¿es el correcto? ¿Miraste si el patrón
+        aparece también en otras categorías, tiendas o regiones?
+      - ¿Hay alguna herramienta que no llamaste y que cambiaría la
+        conclusión?
+
+      Y responde con un veredicto —`confirmado` o `insuficiente`—, una
+      lista de objeciones, y qué falta mirar.
+    notas: |
+      La instrucción termina con "usa insuficiente solo si falta evidencia
+      que cambiaría la conclusión, no por prurito". Sin eso, la reflexión
+      objeta siempre y el agente no termina nunca.
+
+  - id: s2-r4-dramatizando
+    tipo: cita-agente
+    titulo: El agente se acusa a sí mismo
+    cita: >-
+      Inventé impacto de negocio. Dije "9,436 unidades de sobre-stock" pero
+      eso es el error acumulado del pronóstico, no sobre-stock. Estoy
+      dramatizando.
+    procedencia: Reflexión, sobre su propio diagnóstico
+    comentario: >-
+      Ayer esta patología se veía desde afuera. Hoy la ve él. Esa es toda la
+      diferencia que hace un nodo cuyo único trabajo es refutarse.
+    minutos: 2
+    notas: |
+      Si la vieron ayer, decirlo: es la misma cita. Ayer era el síntoma;
+      hoy es la prueba de que el nodo funciona.
+
+  - id: s2-r4-pregunta-revision
+    tipo: pregunta
+    titulo: Antes de la respuesta
+    pregunta: >-
+      La reflexión acaba de demoler el diagnóstico y ya no quedan vueltas.
+      Si el grafo no tiene ningún nodo que pueda reescribirlo, ¿qué sale
+      impreso?
+    visibilidad: publica
+    permiteOmitir: true
+    respuesta: El diagnóstico demolido, con sus propias objeciones debajo
+    minutos: 3
+    opciones:
+      - El diagnóstico demolido, con sus propias objeciones debajo
+      - No sale nada; el agente se calla
+      - Sale solo la crítica
+      - El agente vuelve a percibir igual
+    notas: |
+      Esta pregunta existe porque el error pasó de verdad construyendo el
+      taller, y la sala llega a la respuesta sola en treinta segundos.
+      Revelar y pasar rápido: la lámina siguiente es la explicación larga.
+    solucion:
+      explicacion: |
+        **Sale el diagnóstico demolido, y debajo las objeciones que lo
+        demuelen.** El titular termina contradiciendo a las recomendaciones
+        impresas a dos centímetros.
+
+        Es el argumento entero de la unidad: **cuestionarse sin poder
+        corregirse no sirve de nada.** Una reflexión que solo objeta es
+        decorativa — peor que decorativa, porque produce un documento que se
+        contradice a sí mismo y que nadie puede firmar.
+
+        Por eso hay dos capas y no una. `reflexion` objeta; `revision`
+        reescribe haciéndose cargo de las objeciones. La tabla del repaso de
+        esta mañana ya lo decía en su fila resaltada: *cuestionarse no
+        basta, hace falta poder reescribir el diagnóstico*.
+      descartes:
+        - opcion: No sale nada; el agente se calla
+          razon: >-
+            Callarse sería una decisión, y nadie la programó. Un grafo
+            emite lo que tenga en el estado cuando llega al final.
+        - opcion: Sale solo la crítica
+          razon: >-
+            La crítica sin el diagnóstico no es accionable, y además no es
+            lo que el nodo de recomendación lee.
+        - opcion: El agente vuelve a percibir igual
+          razon: >-
+            Vuelve mientras le queden vueltas. La pregunta es justamente qué
+            pasa cuando se acaban.
+
+  - id: s2-r4-por-que-revision
+    tipo: markdown
+    titulo: Por qué existe `revision`
+    entradilla: La pregunta más importante de la unidad
+    minutos: 2
+    contenido: |
+      Una reflexión que solo puede **objetar** es decorativa.
+
+      Piensa qué pasa sin ese nodo. La crítica demuele el diagnóstico, se
+      acaban las vueltas, y el agente emite igual la hipótesis demolida.
+      El titular sale diciendo una cosa y las objeciones —escritas por él
+      mismo, tres párrafos más abajo— dicen la contraria.
+
+      Peor todavía: las recomendaciones se calculan sobre el titular. O
+      sea, sobre lo que su propia crítica ya declaró insostenible.
+
+      **Cuestionarse sin poder corregirse no sirve de nada.** Por eso hay
+      dos nodos y no uno.
+    notas: |
+      Esto pasó de verdad construyendo el taller, y es la razón de que el
+      nodo esté ahí. La cita siguiente es ese momento exacto.
+
+  - id: s2-r4-si-hay-deriva
+    tipo: cita-agente
+    titulo: Sabía la respuesta, y el grafo no lo dejaba decirla
+    cita: >-
+      Tengo banderas de sesgo encendidas en 8/8 categorías y 4/5 regiones.
+      Eso NO es ruido normal: es un patrón sistemático. SÍ hay hallazgo:
+      hay DERIVA.
+    procedencia: Reflexión, en el mundo del sesgo silencioso, con el titular en `sin_hallazgos`
+    comentario: >-
+      El diagnóstico decía "sin hallazgos". La crítica, del mismo modelo y
+      con la misma evidencia, decía que sí los había y explicaba por qué.
+      Sin `revision`, esa corrida se emitía con el titular equivocado y la
+      respuesta correcta enterrada en las objeciones.
+    minutos: 2
+    notas: |
+      Dejarla en pantalla. Es la mejor justificación de arquitectura del
+      taller entero, y la escribió el agente.
+
+  - id: s2-r4-revision
+    tipo: comparacion
+    titulo: Antes y después de la revisión
+    entradilla: Misma corrida, misma evidencia, sin llamar una herramienta más
+    minutos: 3
+    izquierda:
+      titulo: El diagnóstico que salía
+      contenido: >-
+        `sin_hallazgos`, severidad baja. Con ocho de ocho categorías
+        marcadas por deriva de sesgo, y todo eso citado en la evidencia.
+    derecha:
+      titulo: El diagnóstico reescrito
+      contenido: >-
+        `deriva`, alcance `flota`. Se hace cargo de la objeción: el patrón
+        aparece en todas las categorías, así que la causa no es de ninguna
+        — es de la cadena.
+    notas: |
+      Insistir en la entradilla: no miró nada nuevo. La instrucción de
+      `revision` dice explícitamente "ya no vas a mirar más evidencia: con
+      la que tienes alcanza, y es la misma que sostiene tus objeciones".
+
+  - id: s2-r4-memoria
+    tipo: markdown
+    titulo: Memoria
+    minutos: 2
+    contenido: |
+      Un JSON en disco. Deliberadamente simple: lo que importa no es el
+      motor de persistencia, sino **cuándo** se usa — el agente consulta su
+      historial ANTES de diagnosticar y lo escribe DESPUÉS.
+
+      Sin eso redescubre el mismo problema cada mañana y emite la misma
+      alerta, hasta que alguien deja de leerlas.
+    notas: |
+      Si alguien pregunta por qué no una base de datos: porque el archivo
+      no cambia ni una línea de la lección, y sí agregaría un contenedor
+      más a un laboratorio que ya construye tres imágenes.
+
+  - id: s2-r4-memoria-tres
+    tipo: criterios
+    titulo: Las tres frases que un tablero nunca dice
+    minutos: 2
+    criterios:
+      - texto: "«Esto ya lo reporté»"
+        pista: Y por eso no vuelve a alertar
+      - texto: "«Esto empeoró desde ayer»"
+        pista: Que es distinto de "esto está mal"
+      - texto: "«Esto es nuevo»"
+        pista: La única de las tres que un umbral podría dar
+    notas: |
+      Es el argumento más fácil de vender a alguien que ya tiene un
+      dashboard: las dos primeras son imposibles sin historial, y son las
+      dos que hacen que una alerta se lea.
+
+  - id: s2-r4-memoria-comando
+    tipo: salida-anotada
+    titulo: Ábranla y miren qué hay dentro
+    entradilla: make memoria — la única forma de ver lo que el agente recuerda
+    comando: docker compose run --rm agente python -m agente memoria
+    minutos: 3
+    salida: |
+      [
+        {
+          "fecha": "2026-08-08",
+          "registrado_en": "2026-08-08T17:12:40",
+          "titulo": "Deriva sostenida de sesgo en toda la flota",
+          "severidad": "alta",
+          "alcance": "flota",
+          "evidencia": [
+            "sesgo global -8.4% contra -0.6% en la ventana base",
+            "las 8 categorias con deriva de sesgo, ninguna con deriva de error"
+          ],
+          "recomendaciones": [
+            {
+              "accion": "reentrenar",
+              "objetivo": "la flota",
+              "urgencia": "alta"
+            }
+          ]
+        }
+      ]
+    anotaciones:
+      - texto: '"fecha": "2026-08-08"'
+        explicacion: >-
+          **Esto ya tenía contenido antes de empezar hoy.** Lo escribió el
+          agente de ayer, en el reto 3. La memoria deja de ser una promesa
+          del diseño y pasa a ser un archivo que se abre.
+      - texto: '"registrado_en"'
+        explicacion: >-
+          No es lo mismo que `fecha`. Una es cuándo corrió el agente; la
+          otra, de qué día habla el diagnóstico. Confundirlas es lo que hace
+          que un historial deje de servir para comparar.
+      - texto: '"evidencia"'
+        explicacion: >-
+          Se guarda la evidencia, no solo el titular. Sin ella, «esto ya lo
+          reporté» es una afirmación que no se puede comprobar mañana.
+      - texto: '"recomendaciones"'
+        explicacion: >-
+          Lo que pidió hacer. Comparado con lo que pide hoy, es lo que
+          permite decir la segunda de las tres frases que un tablero nunca
+          dice: **esto empeoró desde ayer**.
+    notas: |
+      Un JSON en disco, en el volumen `memoria`. Deliberadamente simple: lo
+      que importa no es el motor de persistencia, sino **que el agente
+      consulte el historial ANTES de diagnosticar y lo escriba DESPUÉS**.
+
+      Dos cosas más que decir sin lámina: un diagnóstico `sin_hallazgos`
+      **no se registra** —una guardia tranquila no ensucia la memoria— y
+      `--limpiar` la borra, que es útil para volver a demostrar la primera
+      corrida, la que dice "no hay diagnósticos previos".
+
+      El comando corre en el contenedor del agente porque la memoria es
+      suya. La plataforma no la ve, igual que en producción.
+
+  - id: s2-r4-feed-caido
+    tipo: error-comun
+    titulo: "La trampa · una tienda que dejó de reportar"
+    minutos: 3
+    sintoma: >-
+      Las métricas de la flota se ven impecables. Mejor que ayer, incluso.
+    causa: >-
+      Una tienda dejó de reportar. Sus filas no llegan en cero: **no
+      llegan**. Lo que desapareció del promedio fue justamente lo que
+      estaba mal, y el resto se ve mejor por contraste.
+    arreglo: >-
+      Es `anomalia`, no `deriva`. Y sobre todo: **no reentrenar**. Un
+      reentrenamiento sobre datos fantasma empeora un modelo que estaba
+      sano.
+    notas: |
+      "Vendimos cero" y "no sabemos cuánto vendimos" son cosas distintas, y
+      el agente tiene que notarlo. Es el cuarto mundo del criterio de
+      aceptación y el que más gente falla.
+
+  - id: s2-r4-job
+    tipo: salida-anotada
+    titulo: La herramienta que mira la tubería
+    entradilla: estado_del_job — un modelo puede estar sano y el job caído desde el martes
+    comando: → estado_del_job()
+    minutos: 4
+    salida: |
+      {
+        "corridas": [
+          { "fecha_corrida": "2026-08-08", "estado": "ok",
+            "modelos": "192", "predicciones": "17472", "duracion_s": "5.02" },
+          { "fecha_corrida": "2026-08-08", "estado": "ok",
+            "modelos": "192", "predicciones": "17304", "duracion_s": "5.28" },
+          { "fecha_corrida": "2026-08-09", "estado": "ok",
+            "modelos": "192", "predicciones": "17472", "duracion_s": "5.39" }
+        ],
+        "total_registradas": 66
+      }
+    anotaciones:
+      - texto: '"predicciones": "17304"'
+        explicacion: >-
+          **El job dice `ok` y le faltan 168 filas.** 17,472 menos 17,304
+          son ocho categorías por veintiún días: es arequipa, la tienda que
+          dejó de reportar. Nada falló. Simplemente hay un pedazo del mundo
+          que no llegó, y la única señal es un número que hay que comparar
+          contra el de ayer.
+      - texto: '"duracion_s": "5.02"'
+        explicacion: >-
+          Cuánto tardó. Un job que empieza a tardar el doble está diciendo
+          algo antes de fallar, y es de las pocas cosas que se ven venir.
+      - texto: '"total_registradas": 66'
+        explicacion: >-
+          La herramienta devuelve las diez últimas y dice cuántas hay. Es
+          una decisión de diseño de percepción, la misma del reto 2: se
+          entrega una lectura, no un volcado. Sesenta y seis corridas
+          enteras en el prompt no caben, y no harían falta.
+    notas: |
+      **Esta lámina paga una promesa que el curso hace tres veces.** Desde
+      la sesión 1 se viene repitiendo que un modelo puede estar sano y el
+      job caído desde el martes, y hasta acá no se había enseñado la
+      herramienta que lo mira.
+
+      El punto que la sala tiene que llevarse: **el fallo más común en
+      producción no es un modelo malo, es una tubería rota**, y una tubería
+      rota casi nunca levanta una excepción. Termina bien y entrega de
+      menos.
+
+      Conecta directo con el mundo `feed_caido` de la lámina anterior: allá
+      se ve como una anomalía en las métricas, acá se ve como 168 filas que
+      no están. Dos herramientas distintas mirando el mismo agujero, que es
+      lo que hace que el agente pueda decir de qué se trata.
+
+  - id: s2-r4-pregunta-feed
+    tipo: pregunta
+    titulo: La trampa, antes de caer en ella
+    pregunta: >-
+      Una tienda dejó de reportar: sus filas no llegan en cero, no llegan.
+      Las métricas de la flota se ven impecables — mejor que ayer, incluso.
+      ¿Qué debería recomendar el agente?
+    visibilidad: publica
+    permiteOmitir: false
+    respuesta: Revisar el feed de esa tienda, y no tocar ningún modelo
+    minutos: 3
+    opciones:
+      - Reentrenar los modelos de esa tienda
+      - Revisar el feed de esa tienda, y no tocar ningún modelo
+      - Nada; la flota se ve sana
+      - Reentrenar la flota, por si acaso
+    notas: |
+      El criterio de aceptación del reto, convertido en pregunta antes de
+      enunciarlo. La primera opción es la trampa y suele ganar: **si algo
+      va mal con una tienda, reentrenar sus modelos suena a lo correcto.**
+
+      Revelar y encadenar directo con los cuatro criterios.
+    solucion:
+      explicacion: |
+        **Revisar el feed, y no tocar ningún modelo.** El problema es de
+        datos, no de modelo, y las dos cosas se arreglan en sitios
+        distintos.
+
+        Reentrenar acá es el peor de los cuatro resultados posibles: el
+        modelo de arequipa está **sano**, y entrenarlo contra un histórico
+        en el que la tienda dejó de vender le enseña que la demanda se
+        desplomó. Se rompe un modelo que funcionaba, con datos fantasma, y
+        el daño no se ve hasta que el feed vuelve.
+
+        Por eso la telemetría no alcanza: la flota se ve mejor que ayer
+        —faltan justo las filas de una tienda que tiraba el promedio hacia
+        abajo— y hace falta una herramienta que pregunte *quién dejó de
+        hablar*, no *quién se equivoca más*.
+
+        Este es el mundo que separa un agente que ayuda de uno que hace
+        daño, y en el reto 5 se convierte en una regla de código: sobre
+        `anomalia`, no se reentrena. Nunca.
+      descartes:
+        - opcion: Reentrenar los modelos de esa tienda
+          razon: >-
+            Es la respuesta que más se elige y la que rompe algo. Entrena
+            con datos que no existen y degrada un modelo que estaba bien.
+        - opcion: Nada; la flota se ve sana
+          razon: >-
+            La flota se ve sana **porque** falta una tienda. Es el síntoma,
+            no la tranquilidad.
+        - opcion: Reentrenar la flota, por si acaso
+          razon: >-
+            "Por si acaso" sobre 192 modelos deja la cadena sin ninguno con
+            que comparar. Es la acción que en el reto 5 necesita una firma
+            humana.
+
+  - id: s2-r4-criterios
+    tipo: criterios
+    titulo: Cuatro mundos, cuatro lecturas
+    minutos: 2
+    criterios:
+      - texto: "Mundo sano → sin_hallazgos, severidad baja"
+        pista: Una guardia tranquila es un resultado, no un fracaso
+      - texto: "campana_promocional → deriva, categoria:bebidas"
+      - texto: "sesgo_silencioso → deriva, flota, las 8 categorías"
+        pista: Si dice "bebidas" leyó mal la forma del problema
+      - texto: "feed_caido → anomalia, tienda:arequipa, y NO reentrenar"
+        pista: Esta es la trampa. La flota se ve impecable.
+
+  - id: s2-r4-correr
+    tipo: demo
+    titulo: Correrlo contra los cuatro mundos
+    minutos: 2
+    pasos:
+      - comando: make romper ESCENARIO=feed_caido
+      - comando: make agente ARGS="--verboso"
+        esperado: "anomalia, tienda:arequipa, sin reentrenar"
+      - comando: make reparar
+    observar: >-
+      Mirar el veredicto de la reflexión en cada corrida. Cuando dice
+      `insuficiente`, seguir la vuelta: qué pidió mirar y si al volver
+      cambió algo. Es la parte del grafo que no se ve en el diagrama.
+    respaldo: >-
+      La implementación de referencia está en la rama `reto-4-solucion`.
+      Con `PROVEEDOR_LLM=mock` el grafo se recorre entero sin llave, lo que
+      sirve para comprobar el cableado aunque no razone.
+    notas: |
+      Cuatro minutos alcanzan para uno o dos mundos, no para los cuatro.
+      Correr `feed_caido` en clase —que es el que enseña— y dejar los otros
+      tres para que los prueben ellos.
+
+  - id: s2-r4-salida
+    tipo: salida-anotada
+    titulo: Cómo se lee una corrida · lo que hizo
+    entradilla: La primera mitad de lo que acaba de pasar por la pantalla
+    comando: docker compose run --rm agente python -m agente run --verboso
+    minutos: 3
+    salida: |
+      Agente de monitoreo · 2026-08-09
+      Diagnosticos previos:
+      - [2026-08-08] Deriva sostenida de sesgo en la flota (severidad: alta)
+
+        → resumen_flota(dias=14)
+        → comparar_periodos(dias_recientes=14, dias_base=45, dimension=categoria)
+        → detectar_anomalias(dias=21)
+        → comparar_periodos(dias_recientes=14, dias_base=45, dimension=tienda)
+
+      ──────────────────────────────────────────────────────────
+      DIAGNÓSTICO (reescrito tras la reflexión)
+      ──────────────────────────────────────────────────────────
+        Arequipa dejó de reportar ventas hace nueve días
+        tipo: anomalia · alcance: tienda:arequipa · severidad: alta
+
+        Evidencia:
+          · arequipa: 0 unidades en los ultimos 9 dias
+          · las otras 23 tiendas dentro de su rango habitual
+          · ninguna categoria muestra deriva de error ni de sesgo
+    anotaciones:
+      - texto: "Diagnosticos previos:"
+        explicacion: >-
+          **La memoria, y va primero.** Antes de mirar una sola métrica el
+          agente ya sabe qué reportó ayer. Se imprime acá porque es lo
+          primero que entra al prompt.
+      - texto: "dimension=tienda"
+        explicacion: >-
+          `comparar_periodos` aparece **dos veces**, y esta es la segunda:
+          misma herramienta, otra dimensión. Ocurrió después de la
+          reflexión, cuando el agente se dio cuenta de que estaba mirando
+          por el corte equivocado. **Eso es la vuelta atrás del grafo,
+          visible en la consola** en vez de dibujada en un diagrama.
+      - texto: "(reescrito tras la reflexión)"
+        explicacion: >-
+          Solo se imprime cuando el veredicto fue `insuficiente`. Es la
+          diferencia entre un agente que se cuestiona y uno que además
+          puede corregirse — la tesis de la unidad, impresa por el propio
+          programa.
+      - texto: "tipo: anomalia"
+        explicacion: >-
+          El campo del que cuelga todo el reto 5. `anomalia` significa que
+          el problema está en los datos y no en el modelo, y mañana esa
+          palabra será la diferencia entre reentrenar y frenar.
+    notas: |
+      Recorrer la salida señalando. Es la lámina que convierte "el agente
+      funciona" en "sé qué está haciendo el agente".
+
+      Los acentos que faltan son del laboratorio, no de la lámina: el
+      código evita caracteres no ASCII en lo que imprime, para que no se
+      rompan en la consola de Windows.
+
+  - id: s2-r4-salida-2
+    tipo: salida-anotada
+    titulo: Cómo se lee una corrida · lo que concluyó
+    entradilla: Y la segunda mitad, que es donde está lo interesante
+    comando: docker compose run --rm agente python -m agente run --verboso
+    minutos: 3
+    salida: |
+      ──────────────────────────────────────────────────────────
+      REFLEXIÓN
+      ──────────────────────────────────────────────────────────
+        veredicto: insuficiente · vueltas: 1
+          · el titular decia "deriva del modelo" y la evidencia
+            es de datos ausentes
+          · no se comprobo si el resto de la cadena estaba afectado
+
+        El diagnóstico de arriba ya incorpora estas objeciones.
+
+      ──────────────────────────────────────────────────────────
+      RECOMENDACIONES
+      ──────────────────────────────────────────────────────────
+        [alta] revisar_datos → tienda:arequipa
+            Antes de tocar ningun modelo hay que saber por que no
+            llegan ventas.
+
+        (diagnóstico guardado en memoria)
+
+      ──────────────────────────────────────────────────────────
+      HERRAMIENTAS LLAMADAS
+      ──────────────────────────────────────────────────────────
+        resumen_flota, comparar_periodos, detectar_anomalias,
+        comparar_periodos
+    anotaciones:
+      - texto: "vueltas: 1"
+        explicacion: >-
+          Cuántas veces volvió a percepción. Si dijera 3, el tope lo habría
+          cortado — y ese tope existe porque un agente que se cuestiona sin
+          límite no termina nunca.
+      - texto: 'el titular decia "deriva del modelo"'
+        explicacion: >-
+          **Las objeciones son suyas.** No las escribió la plataforma ni
+          están en el prompt: son lo que el nodo de reflexión le puso a su
+          propio borrador, y son la razón de que el diagnóstico de arriba
+          esté reescrito.
+      - texto: "[alta] revisar_datos → tienda:arequipa"
+        explicacion: >-
+          Recomienda revisar los datos, **no reentrenar**. Si alguien
+          pregunta por qué, esa es exactamente la conversación del reto 5:
+          es la decisión que separa arreglar algo de romper 24 modelos
+          sanos.
+      - texto: "(diagnóstico guardado en memoria)"
+        explicacion: >-
+          Cierra el bucle que abrió la primera línea de la lámina anterior.
+          Mañana esta frase aparecerá allá arriba, en «Diagnosticos
+          previos».
+      - texto: "HERRAMIENTAS LLAMADAS"
+        explicacion: >-
+          **Lo único que agrega `--verboso`.** Las flechas de la lámina
+          anterior salen siempre; la bandera añade este resumen final, que
+          sirve para comparar dos corridas de un vistazo sin releer la
+          salida entera.
+    notas: |
+      Cinco anotaciones y tres minutos: ir rápido. La que hay que dejar
+      respirar es la segunda — que las objeciones sean suyas es lo que hace
+      creíble todo lo demás.

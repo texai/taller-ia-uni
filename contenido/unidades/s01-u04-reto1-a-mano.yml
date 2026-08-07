@@ -1,0 +1,435 @@
+
+# ------------------------------------------------------------------ 16:00
+id: s1-reto-1
+tipo: reto
+titulo: Encontrar el problema a mano
+objetivos:
+  - Sentir que revisar 192 modelos a mano no escala
+  - Descubrir que la métrica que estaban mirando no era la que hablaba de plata
+  - Salir con la pregunta de cuánto tardarían haciendo esto cada mañana
+requisitos:
+  - Entorno levantado y con datos
+  - Saber qué son el MAPE, el sesgo y la cobertura
+items:
+  - id: s1-r1-titulo
+    tipo: titulo
+    titulo: "Reto 1 · Encuentra el problema a mano"
+    entradilla: Sin agente, sin LLM. Tú, la API y pandas.
+    minutos: 2
+    notas: |
+      Dejar claro que este reto no se "resuelve": se sufre. El segundo
+      escenario está hecho para que no lo encuentren, y eso es el punto.
+
+  - id: s1-r1-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Cuarenta minutos, cuatro pasos, y una pregunta al final
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · romper el mundo<br/>campana_promocional"] --> B["2 · buscarlo<br/>con la API y pandas"]
+        B --> C["3 · repararlo y romperlo<br/>otra vez: sesgo_silencioso"]
+        C --> D["4 · buscarlo<br/>con el mismo metodo"]
+        D --> E{{"lo que te llevas:<br/>cuanto tardas en encontrar<br/>lo que no suena"}}
+    notas: |
+      **Es el mapa del trabajo, no de la solución.** Dice qué se va a
+      hacer; cómo, lo descubren ellos.
+
+      Los cinco retos abren con un dibujo de esta misma forma —pasos
+      numerados de izquierda a derecha y un hexágono al final con lo que se
+      llevan— para que a partir del segundo nadie tenga que leerlo: ya sabe
+      dónde mirar.
+
+      El paso 3 es el que sorprende. Casi nadie espera que el reto sea
+      hacer lo mismo dos veces, y ahí está el punto: la segunda vez el
+      método no encuentra nada.
+  - id: s1-r1-encargo
+    tipo: markdown
+    titulo: El encargo
+    minutos: 2
+    contenido: |
+      Uno de los 192 modelos —o muchos— se está portando mal. Encuéntralo
+      con las herramientas de siempre.
+
+      Tres preguntas, en este orden:
+
+      1. ¿Cuál es el **MAPE medio de la flota** en los últimos 14 días?
+      2. ¿Qué **categoría** está peor? ¿En cuántas tiendas?
+      3. ¿El problema es de esa categoría, de una **región**, o de la
+         **cadena entera**?
+
+      La tercera es la que importa. Las dos primeras son para llegar a
+      ella.
+    notas: |
+      Insistir en el orden. Quien salta directo a mirar modelos
+      individuales se pierde: con 192 series, mirar de a una no converge.
+      El camino es agregar y comparar cortes.
+
+  - id: s1-r1-api
+    tipo: comando-anotado
+    titulo: La telemetría, por la API
+    entradilla: También está en http://localhost:8000/docs, con la interfaz de Swagger
+    comando: curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
+    minutos: 3
+    segmentos:
+      - texto: "-s"
+        explicacion: >-
+          Silencioso. Sin esto curl escupe una barra de progreso que se
+          mezcla con el JSON y ensucia todo lo que venga después en la
+          tubería.
+        otrosValores: ["-v", "-i"]
+      - texto: "categoria=bebidas"
+        explicacion: >-
+          Filtra por categoría. Los filtros del endpoint son
+          `modelo_id`, `categoria`, `tienda`, `region`, `desde` y `hasta`,
+          y se combinan entre sí.
+      - texto: "desde=2026-07-01"
+        explicacion: >-
+          Recorta la ventana. Sin fecha vienen los 90 días de todos los
+          modelos: 17,472 filas, que es exactamente lo que no se puede leer
+          a ojo.
+    notas: |
+      Es la primera vez que ven la API. Vale la pena abrir `/docs` en vivo
+      y dejar que exploren treinta segundos.
+
+  - id: s1-r1-romper
+    tipo: comando-anotado
+    titulo: Romper el mundo
+    entradilla: Primero el escenario visible. Esta es la primera de las tres etapas de make romper.
+    comando: docker compose run --rm plataforma python -m plataforma escenario --nombre campana_promocional
+    minutos: 3
+    segmentos:
+      - texto: escenario
+        explicacion: >-
+          El subcomando que degrada el mundo. Reescribe el histórico de
+          ventas ya generado: no toca los modelos ni las predicciones, solo
+          la realidad contra la que se van a medir.
+        otrosValores: ["datos", "entrenar", "pronosticar", "metricas", "seed"]
+      - texto: "--nombre campana_promocional"
+        explicacion: >-
+          Cuál de las cuatro degradaciones aplicar. Es obligatorio y no
+          admite un valor inventado: el programa lo valida contra su lista
+          y falla enumerando las opciones. Esta es una campaña de descuentos
+          en bebidas, mucho más agresiva que cualquiera del entrenamiento,
+          en las últimas cuatro semanas.
+        otrosValores: ["sesgo_silencioso", "feed_caido", "quiebre_stock"]
+    notas: |
+      Hay dos parámetros más que hoy no usamos y conviene nombrar:
+      `--categoria` y `--tienda` acotan el daño a un corte concreto, y
+      `--desde` mueve la fecha en que empieza. Sirven para armarse
+      escenarios propios después del taller.
+
+      El comando imprime cuántas filas tocó y termina diciendo
+      `ahora corre: make pronosticar && make metricas`. Esa es la pista de
+      lo que viene en el ítem siguiente.
+
+  - id: s1-r1-romper-receta
+    tipo: codigo
+    titulo: Por qué son tres comandos y no uno
+    entradilla: La receta de make romper, tal cual está en el Makefile
+    lenguaje: makefile
+    ruta: Makefile
+    minutos: 2
+    resaltar: ["2-3"]
+    contenido: |
+      romper:  ## Degrada los datos, rompe el mundo
+      	$(EN_PLATAFORMA) escenario --nombre $(ESCENARIO)
+      	$(MAKE) pronosticar
+      	$(MAKE) metricas
+    notas: |
+      Tres líneas, tres contenedores, en orden. Y lo que importa es **lo
+      que NO está en la lista**: no hay `entrenar`.
+
+      El mundo cambió, se volvió a correr el job con los modelos viejos, y
+      se midió. Los 192 modelos siguen siendo exactamente los mismos de
+      hace un minuto. Eso no es una simplificación del laboratorio: es
+      literalmente lo que pasa en producción, donde el reentrenamiento es
+      semanal o mensual y el mundo cambia cuando le da la gana.
+
+      `$(EN_PLATAFORMA)` es la variable de arriba del archivo:
+      `docker compose run --rm plataforma python -m plataforma`. Se define
+      una vez y se reutiliza en las seis recetas de la plataforma.
+
+  - id: s1-r1-a-mano
+    tipo: demo
+    titulo: Encontrarlo con pandas
+    minutos: 4
+    pasos:
+      - comando: "# agrupar por categoría, últimos 14 días, y ordenar por MAPE"
+      - comando: "# para la peor: agrupar por tienda y contar cuántas están mal"
+    observar: >-
+      Bebidas se despega del resto y no hay ninguna duda de cuál es. Está
+      mal en las 24 tiendas a la vez, así que no es una tienda: es la
+      categoría. Y el sesgo es fuertemente negativo — el modelo pronosticó
+      de MENOS, porque la promoción disparó la venta real y él no la vio
+      venir.
+    respaldo: >-
+      Si alguien se traba con pandas, la interfaz de :8501 ordena por MAPE
+      con un clic. El objetivo es la lectura, no el groupby.
+    notas: |
+      Medido acá: el MAPE de la flota sube de 13.8% a 16.0%, el de bebidas
+      pasa de 12.9% a 30.8% —más del doble de la flota— y 18 de las 24
+      tiendas de bebidas cruzan el 20%. Estos números se mueven algo según
+      el día en que cada uno generó su mundo; el que no se mueve es que
+      bebidas se despega sola.
+
+  - id: s1-r1-visible
+    tipo: metrica
+    titulo: Cinco minutos
+    valor: "1"
+    unidad: categoría, 24 tiendas, encontrada a ojo
+    contexto: Esto es lo que un tablero con umbrales sí detecta. Ninguna gracia.
+    tono: bueno
+    minutos: 2
+    notas: |
+      Bajar las expectativas a propósito. La sensación de "esto era fácil"
+      es lo que hace que el escenario siguiente duela.
+
+  - id: s1-r1-prediccion
+    tipo: pregunta
+    titulo: Antes de correrlo, apuesten
+    pregunta: >-
+      El segundo escenario es una caída lenta y pareja de la demanda en
+      TODA la cadena, sin nada específico que buscar. ¿Qué señal se va a
+      mover?
+    visibilidad: publica
+    permiteOmitir: false
+    respuesta: El sesgo, y el MAPE casi nada
+    minutos: 3
+    opciones:
+      - El MAPE, claramente
+      - El sesgo, y el MAPE casi nada
+      - Las dos por igual
+      - Ninguna de las dos
+    notas: |
+      **Que comprometan una respuesta antes de mirar.** El valor de esta
+      pregunta no es acertar: es que hayan apostado. Diez minutos después,
+      cuando el groupby no encuentre nada, la sala tiene algo propio contra
+      lo que contrastar.
+
+      No revelar todavía. Guardar el revelado para después del ejercicio a
+      mano — la tabla de las dos degradaciones es el momento.
+    solucion:
+      explicacion: |
+        **El sesgo, y el MAPE casi nada.** Y ese "casi nada" es el taller
+        entero.
+
+        El MAPE mide *cuánto* te equivocas, sin signo. Si la demanda cae un
+        poco en todas partes, el modelo se pasa un poco en todas partes: el
+        error absoluto apenas cambia. El sesgo mide *hacia qué lado*, y ahí
+        todos los errores empujan en la misma dirección y se suman.
+
+        Medido acá: el MAPE de la flota pasa de 13.8% a 14.5% —menos de lo
+        que se mueve entre dos semanas cualesquiera— y el sesgo de +0.7% a
+        +4.7%. Son más de 36,000 unidades de más en almacén en catorce días.
+
+        Un tablero con umbral sobre el MAPE no suena. Nunca.
+      descartes:
+        - opcion: El MAPE, claramente
+          razon: >-
+            Es la respuesta que más se elige y la que hace daño: es la
+            señal que está en todos los tableros, y es exactamente la que
+            no se entera.
+        - opcion: Las dos por igual
+          razon: >-
+            Se moverían las dos si la caída fuera brusca o concentrada. Lo
+            que hace silencioso a este escenario es que es lento y parejo.
+        - opcion: Ninguna de las dos
+          razon: >-
+            Sería cierto si el mundo no hubiera cambiado. Cambió, y hay una
+            señal que sí lo dice — el problema es que nadie la mira.
+
+  - id: s1-r1-silencioso
+    tipo: terminal
+    titulo: Ahora el silencioso
+    comando: make reparar && make romper ESCENARIO=sesgo_silencioso
+    comandoWindows: .\taller.ps1 reparar; .\taller.ps1 romper sesgo_silencioso
+    duracion: 40
+    minutos: 2
+    notas: |
+      Acá sí conviene el atajo: son seis contenedores seguidos y teclearlos
+      a mano no enseña nada nuevo.
+
+      **`reparar` es `romper` con la primera línea cambiada.** Donde uno
+      pone `escenario --nombre x`, el otro pone `datos`, que regenera el
+      histórico limpio desde la semilla. Las otras dos líneas son idénticas:
+      `pronosticar` y `metricas`. Por eso vuelve al mundo sano sin
+      reentrenar nada — los 192 modelos no se han tocado en toda la tarde.
+
+      Sin el `reparar` los dos escenarios se apilan y las lecturas dejan de
+      significar nada.
+
+      Este segundo escenario es una caída lenta y pareja de la demanda en
+      TODA la cadena. Nada específico que buscar.
+
+  - id: s1-r1-a-mano-2
+    tipo: demo
+    titulo: Búscalo otra vez
+    entradilla: Las mismas tres preguntas. Diez minutos.
+    minutos: 4
+    pasos:
+      - comando: "# el mismo groupby por categoría"
+      - comando: "# y por región, y por tienda"
+    observar: >-
+      Nada se despega. Ninguna categoría destaca, ninguna región destaca,
+      ninguna tienda destaca. El MAPE de la flota se movió menos de un
+      punto. Si tu criterio es "buscar lo que sobresale", acá no hay nada
+      que encontrar — y sin embargo el mundo cambió.
+    respaldo: >-
+      Dejar que se frustren un rato es parte del ejercicio. A los diez
+      minutos, cortar y pasar a la tabla.
+    notas: |
+      NO dar la pista del sesgo todavía. La tabla siguiente es el momento
+      del golpe, y si sale antes se desarma. Si alguien lo encuentra solo
+      —pasa— pedirle que se lo guarde treinta segundos.
+
+  - id: s1-r1-tablero
+    tipo: imagen
+    titulo: Y esto era lo que mostraba el tablero
+    entradilla: Mientras buscabas, la pantalla que mira el negocio se veía así
+    archivo: img/ui-flota-sesgo.png
+    destacar: [25, 9, 12, 13]
+    pie: >-
+      El mundo con el sesgo silencioso encima. MAPE 14.5% contra 13.8% del
+      mundo sano: siete décimas. El gráfico es indistinguible del de hace
+      media hora.
+    minutos: 3
+    notas: |
+      **La lámina que cierra el reto 1.** Acaban de pasar diez minutos sin
+      encontrar nada, y esta imagen les dice que no era culpa suya.
+
+      Señalar el recuadro: el MAPE se movió siete décimas. Y después
+      señalar el sesgo al lado — +4.7% contra +0.8%— y el gráfico, que es
+      el mismo dibujo. **Un tablero con umbral sobre el MAPE no suena
+      nunca, y esta es la pantalla que lo demuestra.**
+
+      Son 36,981 unidades de más en almacén en catorce días, y la única
+      señal que lo dice está a dos centímetros de la que todo el mundo
+      mira.
+
+  - id: s1-r1-tabla
+    tipo: tabla
+    titulo: Las dos degradaciones
+    entradilla: El mismo cambio en el mundo, visto por tres señales distintas
+    minutos: 3
+    columnas: [Señal, Antes, Después, Lectura]
+    filas:
+      - ["MAPE de la flota", "13.8%", "14.5%", "Se mueve menos que entre dos semanas cualesquiera"]
+      - ["Modelos sobre el umbral", "7 / 192", "14 / 192", "Se duplican, y aun así nadie levanta el teléfono"]
+      - ["Sesgo de la flota", "+0.7%", "+4.7%", "Seis veces. Y el signo dice hacia dónde"]
+    resaltar: [2]
+    notas: |
+      Acá está el taller entero. Darle tiempo.
+
+      Sobre las cifras: el MAPE y el sesgo están medidos y se sostienen
+      entre corridas al primer decimal. El conteo de modelos sobre umbral
+      depende del umbral que se elija y del día en que cada uno generó su
+      mundo — lo que se sostiene es que se duplican. Si alguien ve otro par
+      de números en su pantalla, esa es la razón, y vale la pena decirlo.
+
+  - id: s1-r1-metrica
+    tipo: metrica
+    titulo: Lo que costó
+    valor: "36,000"
+    unidad: unidades de más en almacén
+    contexto: En catorce días. Ninguna alarma sonó.
+    tono: malo
+    minutos: 2
+    notas: |
+      El número exacto varía por corrida: medido en dos mundos generados
+      con cinco días de diferencia dio 36,338 y 36,981. Por eso está
+      redondeado. Si alguien pregunta, la explicación es buena: el mundo se
+      genera contra la fecha del día.
+
+  - id: s1-r1-comparacion
+    tipo: comparacion
+    titulo: Qué vio cada señal
+    entradilla: El mismo mundo, los mismos datos, los mismos catorce días
+    minutos: 2
+    izquierda:
+      titulo: Lo que vio el MAPE
+      contenido: >-
+        "La flota está igual que siempre." Y tiene razón: el error se movió
+        0.7 puntos, dentro de lo que se mueve solo. El MAPE mide distancia,
+        y la distancia casi no cambió.
+    derecha:
+      titulo: Lo que vio el sesgo
+      contenido: >-
+        "La flota lleva dos semanas pronosticando de más, y cada vez más."
+        El sesgo mide dirección, y la dirección se disparó. Es la única de
+        las dos que estaba hablando de plata.
+    notas: |
+      Recordarles la definición de la unidad anterior: la misma resta, con
+      y sin valor absoluto. Toda la diferencia está en un par de barras.
+
+  - id: s1-r1-pregunta
+    tipo: pregunta
+    titulo: ¿Cuál alertarías?
+    pregunta: >-
+      Si tuvieras que poner UNA alarma sobre esta flota, y solo una, ¿sobre
+      qué señal la pondrías?
+    visibilidad: publica
+    permiteOmitir: true
+    minutos: 3
+    opciones:
+      - El MAPE
+      - El sesgo
+      - Los dos
+      - Ninguno de los dos solo
+    respuesta: Ninguno de los dos solo
+    notas: |
+      La respuesta que buscamos es la cuarta, y casi nadie la elige antes
+      de la discusión. Un umbral sobre el sesgo tampoco alcanza: el
+      escenario de la campaña movió el sesgo en la dirección contraria, y
+      una tienda muda no mueve ninguna de las dos.
+
+      No revelar hasta que hayan respondido todos. Después de revelar, la
+      frase de cierre: no falta una métrica mejor, falta algo que mire
+      varias a la vez y sepa cuál importa hoy.
+    solucion:
+      explicacion: |
+        Ninguno de los dos solo.
+
+        Acaban de ver que el MAPE no vio el sesgo silencioso. Pero el sesgo
+        tampoco alcanza: en la campaña promocional se movió en la dirección
+        CONTRARIA —el modelo pronosticó de menos, no de más— y una tienda
+        que deja de reportar no mueve ninguna de las dos señales.
+
+        No falta una métrica mejor. Falta algo que mire varias a la vez y
+        sepa cuál importa hoy.
+      descartes:
+        - opcion: El MAPE
+          razon: >-
+            Se movió 0.7 puntos con 36 mil unidades de sobre-stock encima.
+            Mide distancia, no dirección.
+        - opcion: El sesgo
+          razon: >-
+            Habría cazado el silencioso, sí. Pero en la campaña el sesgo se
+            fue a −32%, y un umbral por arriba no lo habría visto.
+        - opcion: Los dos
+          razon: >-
+            Mejor, y todavía insuficiente: la tienda muda no mueve ninguna
+            de las dos. Dos umbrales siguen siendo umbrales.
+
+  - id: s1-r1-cuanto-tardas
+    tipo: markdown
+    titulo: La pregunta que te llevas
+    minutos: 2
+    contenido: |
+      Hiciste esto para **dos escenarios y una categoría**, con la clase
+      entera acompañándote y sabiendo de antemano que algo estaba roto.
+
+      Ahora hazlo **cada mañana**, para 192 modelos, en ocho categorías,
+      veinticuatro tiendas y cinco regiones. Sin saber si hoy hay algo.
+
+      ¿Cuánto tardas? ¿Y cuántos lunes aguantas antes de mirar solo las
+      cinco tiendas más grandes y dejar los otros 152 modelos sin mirar?
+    notas: |
+      Es el puente al reto 2. Terminar acá y no explicar la solución: la
+      respuesta empieza después del receso.
+
+  - id: s1-receso
+    tipo: receso
+    titulo: Receso
+    minutos: 15

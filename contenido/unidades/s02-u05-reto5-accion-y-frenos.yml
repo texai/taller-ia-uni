@@ -1,0 +1,641 @@
+
+id: s2-reto-5
+tipo: reto
+titulo: De la recomendación a la acción
+objetivos:
+  - Ver qué cambia cuando equivocarse deja de costar una alerta
+  - Escribir un freno en código, y entender por qué no va en el prompt
+  - Distinguir una acción reversible de una que no lo es
+requisitos:
+  - Un grafo que diagnostique y recomiende
+  - Haber visto la trampa del feed caído
+items:
+  - id: s2-r5-titulo
+    tipo: titulo
+    titulo: "Reto 5 · De la recomendación a la acción"
+    entradilla: Lo que separa a un agente de un informe
+    minutos: 2
+    notas: |
+      Y lo que lo convierte en algo que da miedo, que es el punto de la
+      unidad. Hasta ahora todo lo que hicimos era de solo lectura.
+
+  - id: s2-r5-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Una hora. Y por primera vez el agente puede romper algo.
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · la politica<br/>dos reglas, doce lineas"] --> B["2 · a que modelos,<br/>exactamente"]
+        B --> C["3 · encender el permiso<br/>EJECUTAR_ACCIONES=1"]
+        C --> D["4 · sobre deriva reentrena,<br/>sobre anomalia frena"]
+        D --> E{{"lo que te llevas:<br/>el freno importa mas<br/>que el boton"}}
+    notas: |
+      El orden del mapa es el argumento de la unidad: **primero el freno,
+      después el permiso**. Escribir la política antes de encender
+      `EJECUTAR_ACCIONES` no es una casualidad del guion.
+
+      El paso 4 son las dos demostraciones, y son el criterio de
+      aceptación: el mismo agente, el mismo permiso, dos mundos, dos
+      decisiones opuestas.
+  - id: s2-r5-riesgo
+    tipo: markdown
+    titulo: Equivocarse deja de costar una alerta
+    minutos: 2
+    contenido: |
+      Mientras el agente solo miraba, equivocarse costaba **una alerta de
+      más**. Alguien la leía, se encogía de hombros, seguía.
+
+      Ahora equivocarse cuesta **24 modelos reentrenados con datos malos**.
+      Y un modelo contaminado no se nota hasta la semana siguiente, cuando
+      ya nadie relaciona una cosa con la otra.
+
+      El cambio no es de grado. Es de naturaleza.
+    notas: |
+      Dejar caer que en producción esto es la conversación completa: casi
+      nadie discute si un agente puede leer telemetría. Todo el mundo
+      discute si puede tocar algo.
+
+  - id: s2-r5-apagado
+    tipo: markdown
+    titulo: Viene apagado
+    minutos: 2
+    contenido: |
+      ```
+      EJECUTAR_ACCIONES=1
+      ```
+
+      Sin esa variable, el agente evalúa qué haría y **no hace nada**. Deja
+      escrito el veredicto de la política —qué ejecutaría, qué no, y por
+      qué— y termina.
+
+      Un agente que reentrena solo la primera vez que alguien lo corre es
+      una sorpresa desagradable. Que haya que encenderlo a mano no es
+      fricción de más: es parte de la lección.
+    notas: |
+      Este es el primer freno y el más barato. Preguntar quién dejaría esto
+      encendido por omisión en su empresa — nadie levanta la mano.
+
+  - id: s2-r5-quien-decide
+    tipo: markdown
+    titulo: El permiso no se le pregunta al modelo
+    minutos: 2
+    contenido: |
+      La política de acción es **código Python**. No es una instrucción en
+      el prompt, no es una herramienta que el agente pueda llamar, y no hay
+      forma de convencerla.
+
+      Se cumple aunque el LLM esté convencidísimo de lo contrario.
+
+      **El agente propone; estas reglas disponen.**
+
+      Es la misma idea que un ingeniero de guardia con acceso restringido:
+      puede diagnosticar lo que sea, pero hay palancas que no están a su
+      alcance a las tres de la mañana.
+    notas: |
+      Si alguien propone poner las reglas en el prompt, la respuesta es la
+      del sábado: no hay forma de comprobar que las cumplió. Acá el freno o
+      se aplicó o no se aplicó, y queda en el veredicto.
+
+  - id: s2-r5-politica
+    tipo: codigo
+    titulo: Las dos reglas que hacen el trabajo pesado
+    lenguaje: python
+    ruta: agente/accion.py
+    minutos: 4
+    contenido: |
+      es_anomalia = hipotesis.get("tipo") == "anomalia"
+
+      for rec in recomendaciones:
+          if rec["accion"] not in ACCIONES_AUTOMATIZABLES:
+              continue                      # investigar y revisar_datos van a un humano
+          if es_anomalia:
+              continue                      # regla 1: naturaleza del problema
+          if rec.get("urgencia") == "monitorear":
+              continue                      # el propio agente dijo que no toquemos
+          objetivo = _filtro_de(rec)
+          if not objetivo:
+              continue                      # regla 2: radio de daño — la flota entera
+          ejecutables.append(...)
+    notas: |
+      Señalar que `evaluar` está separada de `ejecutar` a propósito: la
+      política se puede leer, probar y discutir sin tocar la plataforma.
+      Es justo lo que uno quiere de las reglas que le dan la mano a un
+      agente.
+
+  - id: s2-r5-anomalia-regla
+    tipo: markdown
+    titulo: "Regla 1 · La naturaleza del problema"
+    minutos: 3
+    contenido: |
+      Si el diagnóstico es una **anomalía**, el problema está en los datos,
+      no en el modelo.
+
+      Reentrenar ahí no arregla nada: enseña ruido. El modelo estaba sano y
+      sale peor.
+
+      Es exactamente el error que el escenario `feed_caido` existe para
+      provocar, y la razón de que sea una regla de código y no un consejo.
+    notas: |
+      Enlazar con ayer: deriva se corrige reentrenando, anomalía no. La
+      distinción que parecía académica en la unidad anterior acá tiene
+      consecuencias sobre 24 artefactos.
+
+  - id: s2-r5-radio
+    tipo: markdown
+    titulo: "Regla 2 · El radio de daño"
+    minutos: 3
+    contenido: |
+      Reentrenar una **categoría** toca 24 modelos, uno por tienda. Se
+      revierte: se entrena de nuevo.
+
+      Reentrenar **la flota** toca los 192 a la vez. Y si el diagnóstico
+      estaba mal, no queda **ningún modelo sano contra el cual comparar**.
+      Eso no tiene marcha atrás útil.
+
+      Una acción sin vuelta atrás la firma una persona.
+    notas: |
+      El criterio no es "cuántos" sino "queda algo con qué comparar". Es
+      la pregunta que sirve para cualquier acción automatizada, no solo
+      para reentrenar.
+
+  - id: s2-r5-pregunta-politica
+    tipo: pregunta
+    titulo: ¿Cuál dejarías que ejecute solo?
+    pregunta: >-
+      El agente tiene permiso para actuar. De estas cuatro acciones que él
+      mismo podría recomendar, ¿cuál dejarías que dispare sin preguntarle a
+      nadie?
+    visibilidad: publica
+    permiteOmitir: true
+    respuesta: Reentrenar una categoría con deriva confirmada
+    minutos: 3
+    opciones:
+      - Reentrenar una categoría con deriva confirmada
+      - Reentrenar la flota completa
+      - Investigar por qué una tienda dejó de reportar
+      - Ninguna; que todo lo apruebe una persona
+    notas: |
+      La pregunta de diseño de la unidad, hecha antes de mostrar el código
+      de la política. Vale la pena dejar discutir un minuto: casi siempre
+      sale alguien defendiendo la última opción, y esa conversación es la
+      que hay que tener.
+
+      El criterio que se busca no es "qué tan seguro estoy" sino **qué tan
+      caro es equivocarse y cuánto cuesta deshacerlo**.
+    solucion:
+      explicacion: |
+        **Reentrenar una categoría con deriva confirmada.** Es la única de
+        las cuatro que cumple las dos condiciones: el diagnóstico es de
+        modelo —no de datos— y el radio de daño es reversible.
+
+        Las dos reglas que hacen todo el trabajo pesado:
+
+        1. **La naturaleza del problema.** Si el diagnóstico es una
+           anomalía, el problema está en los datos; reentrenar contra un
+           feed roto enseña ruido y arruina un modelo sano.
+        2. **El radio de daño.** Una categoría son 24 modelos y se revierte
+           entrenando de nuevo. La flota son 192 a la vez, y si el
+           diagnóstico estaba mal no queda ninguno sano con que comparar.
+           Una acción sin vuelta atrás necesita una firma.
+
+        Fíjense en lo que **no** es el criterio: no es la confianza del
+        agente. Un agente muy seguro de algo equivocado es exactamente el
+        caso que la política tiene que frenar, y por eso el freno no vive
+        en el prompt.
+      descartes:
+        - opcion: Reentrenar la flota completa
+          razon: >-
+            No por improbable, sino por irreversible: deja 192 modelos sin
+            punto de comparación. Es la que necesita una persona.
+        - opcion: Investigar por qué una tienda dejó de reportar
+          razon: >-
+            No se puede automatizar porque termina en un humano por
+            definición: si el agente pudiera cerrarla solo, no sería una
+            investigación.
+        - opcion: Ninguna; que todo lo apruebe una persona
+          razon: >-
+            Es defendible y es donde muchos equipos empiezan. Pero si nadie
+            puede actuar sin firma, el agente es un informe con pasos
+            extra — y el lunes por la mañana la firma no llega.
+
+  - id: s2-r5-urgencia
+    tipo: error-comun
+    titulo: "El error propio · frenar por urgencia"
+    minutos: 2
+    sintoma: >-
+      La acción no se disparaba nunca. El agente recomendaba reentrenar, la
+      política lo dejaba pasar en el papel, y no pasaba nada.
+    causa: >-
+      La primera versión frenaba por la **urgencia** que declaraba el
+      agente. Pero la urgencia es una opinión editorial suya, no una
+      propiedad de seguridad: reentrenar "esta semana" no es más peligroso
+      que reentrenar "ahora".
+    arreglo: >-
+      Frenar por **radio de daño**. Lo peligroso no es cuándo, es
+      reentrenar lo que no se debe, o demasiado de una vez.
+    notas: |
+      Esto pasó de verdad construyendo el taller y es de lo mejor que hay
+      para enseñar. La lección general: **no des permisos contra un campo
+      que el propio agente redacta.** Si el freno depende de algo que el
+      modelo escribe, el modelo puede aflojarlo sin querer — o queriendo.
+
+  - id: s2-r5-monitorear
+    tipo: markdown
+    titulo: La única opinión suya que sí se respeta
+    minutos: 2
+    contenido: |
+      Hay una excepción a lo anterior, y merece explicarse: si el agente
+      dice `urgencia: monitorear`, no se ejecuta.
+
+      Porque ahí el campo no está aflojando el freno: lo está apretando.
+      Es el agente diciendo *"todavía no hay que tocar nada"*, y hacerle
+      caso solo puede llevar a hacer de menos.
+    notas: |
+      La asimetría es el punto: se acepta lo que el agente diga para
+      FRENAR, nunca para avanzar. Vale para cualquier permiso.
+
+  - id: s2-r5-objetivo
+    tipo: codigo
+    titulo: A qué modelos, exactamente
+    entradilla: El objetivo se declara en campos, no en prosa
+    lenguaje: python
+    ruta: agente/accion.py
+    minutos: 2
+    contenido: |
+      def _filtro_de(rec: dict) -> dict | None:
+          tipo = (rec.get("objetivo_tipo") or "").strip()
+          valor = (rec.get("objetivo_valor") or "").strip()
+          if tipo == "flota":
+              return {}
+          if tipo in ("categoria", "tienda", "modelo_id") and valor:
+              return {tipo: valor}
+          return None
+    notas: |
+      Se exige `objetivo_tipo` y `objetivo_valor` como campos separados.
+      Adivinar el destino parseando "los 24 modelos de panadería" sería
+      pedirle a una expresión regular que decida a qué artefacto se le pasa
+      por encima.
+
+      Y fíjense en el `return None`: si el objetivo no identifica modelos
+      concretos, no se ejecuta. En caso de duda, no.
+
+  - id: s2-r5-comando
+    tipo: comando-anotado
+    titulo: Correrlo con permiso para actuar
+    comando: docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso
+    minutos: 2
+    segmentos:
+      - texto: "--rm"
+        explicacion: >-
+          Borra el contenedor al terminar. Sin esto queda uno parado por
+          cada corrida, y en una clase de veinte personas eso se nota.
+      - texto: "-e EJECUTAR_ACCIONES=1"
+        explicacion: >-
+          El interruptor. Sin él la política evalúa y no ejecuta. Está en la
+          línea de comandos y no en `.env` a propósito: encenderlo es una
+          decisión de esta corrida, no del entorno.
+      - texto: "--verboso"
+        explicacion: >-
+          Agrega al final el resumen de herramientas llamadas. Ojo: el
+          veredicto de la política sale con bandera o sin ella — el bloque
+          `ACCIÓN` se imprime siempre, y es donde está el motivo de por qué
+          NO se ejecutó algo.
+    notas: |
+      `make actuar` es exactamente esta línea. Se muestra entera porque es
+      el momento del taller en que conviene saber qué se está ejecutando, y
+      porque **la diferencia con `make agente` es una sola palabra**:
+      `-e EJECUTAR_ACCIONES=1`, entre `--rm` y el nombre del servicio.
+
+      Que vaya ahí y no al final no es cosmético. Todo lo que está a la
+      izquierda del nombre del servicio es de Docker; todo lo que está a la
+      derecha es del programa. `-e` es de Docker, así que va antes.
+
+  - id: s2-r5-deriva
+    tipo: demo
+    titulo: Sobre deriva, reentrena
+    minutos: 5
+    pasos:
+      - comando: make reparar && make romper ESCENARIO=sesgo_silencioso
+      - comando: make actuar ARGS="--verboso"
+    observar: >-
+      El diagnóstico dice `deriva`. La política deja pasar el
+      reentrenamiento de una categoría: **24 modelos**, uno por tienda, en
+      un par de segundos. Y queda registrado con su motivo, su duración y
+      qué modelos tocó.
+    respaldo: >-
+      Si no hay llave, `PROVEEDOR_LLM=mock` recorre el grafo pero no
+      produce una recomendación real. Para ver la política en acción sin
+      LLM, `evaluar()` se puede llamar a mano con una hipótesis inventada —
+      está separada de `ejecutar` justamente para eso.
+    notas: |
+      El número que importa es 24, y es estructural: una categoría son 24
+      tiendas. Los segundos dependen de la máquina — medido en dos
+      categorías dio 2.4s y 0.6s, así que no citar un cronómetro.
+
+  - id: s2-r5-anomalia
+    tipo: demo
+    titulo: Sobre anomalía, se frena
+    minutos: 5
+    pasos:
+      - comando: make reparar && make romper ESCENARIO=feed_caido
+      - comando: make actuar ARGS="--verboso"
+    observar: >-
+      El diagnóstico dice `anomalia`. La política **no ejecuta nada**, y
+      dice por qué: reentrenar acá contaminaría modelos sanos. Ese texto no
+      lo escribió el LLM — es la regla explicándose.
+    respaldo: >-
+      Si el agente diagnostica `deriva` en vez de `anomalia`, esa es la
+      conversación: significa que su percepción no distinguió una tienda
+      muda de una degradación. Sirve igual, y sirve más.
+    notas: |
+      Demostrarlo, no describirlo. Es el criterio de aceptación de este
+      batch y el momento en que la unidad entera se justifica.
+
+      Si sale bien, la frase es: el agente quería actuar y algo se lo
+      impidió. Ese algo son doce líneas de Python.
+
+  - id: s2-r5-comparacion
+    tipo: comparacion
+    titulo: Los dos resultados, lado a lado
+    entradilla: El mismo agente, el mismo permiso, dos mundos. Esto es lo que imprime cada uno.
+    minutos: 2
+    izquierda:
+      titulo: sesgo_silencioso → ejecuta
+      contenido: |
+        ```
+        ACCIÓN
+        ──────────────────────────────
+          ✓ reentrenar → categoria:bebidas
+              24 modelos en 2.4s
+        ```
+
+        `deriva`, alcance de categoría. Reentrena y lo anota en la
+        bitácora. Reversible: si estuvo mal, se entrena de nuevo.
+    derecha:
+      titulo: feed_caido → frena
+      contenido: |
+        ```
+        ACCIÓN
+        ──────────────────────────────
+          ✗ no se ejecutó: el diagnostico
+            es una anomalia de datos:
+            reentrenar aqui contaminaria
+            modelos sanos
+        ```
+
+        `anomalia`, una tienda muda. No ejecuta nada y deja escrito el
+        motivo. El modelo sano sigue sano.
+    notas: |
+      **Ese texto de la derecha no lo escribió el LLM.** Está en
+      `agente/accion.py`, literal, dentro de la regla que frena. Vale la
+      pena decirlo señalándolo: cuando un agente explica por qué no hizo
+      algo, uno asume que lo razonó — y acá lo que hay es una condición de
+      Python que se sabe explicar.
+
+      La diferencia entera está en un campo del diagnóstico —`tipo`— y en
+      una línea de código. Toda la unidad cabe en esa frase.
+
+      Sin `-e EJECUTAR_ACCIONES=1` la salida es una tercera:
+      `✗ no se ejecutó: modo solo-diagnostico`, y debajo un
+      `habría reentrenado: {'categoria': 'bebidas'}` por cada acción que
+      habría pasado la política. Es el modo en que conviene dejarlo cuando
+      la clase termine.
+
+  - id: s2-r5-quiebre
+    tipo: imagen
+    titulo: El mundo que esta política no frena
+    entradilla: quiebre_stock, el cuarto escenario. Acá el tablero sí grita.
+    archivo: img/ui-flota-quiebre.png
+    destacar: [66, 30, 32, 32]
+    pie: >-
+      MAPE 21.2% contra 13.8% del mundo sano, y carnes disparada por encima
+      del 100%. Treinta y dos modelos cruzan el umbral. Ningún tablero se
+      queda callado con esto.
+    minutos: 3
+    notas: |
+      **Es el reverso exacto del sesgo silencioso**, y por eso se deja para
+      el final. Aquel no sonaba y había que actuar; este suena como una
+      alarma de incendios y **no hay que reentrenar**.
+
+      Lo que pasó: hubo faltantes de stock en carnes. La venta observada
+      cayó porque no había producto, no porque la demanda bajara. El modelo
+      pronosticó la demanda real y quedó altísimo contra una venta que
+      estaba topada por el almacén.
+
+      Dejar que la sala lo mire diez segundos antes de explicarlo. Casi
+      todos van a decir «hay que reentrenar carnes».
+
+  - id: s2-r5-quiebre-politica
+    tipo: markdown
+    titulo: Por qué la política lo deja pasar
+    minutos: 2
+    contenido: |
+      La política que acabamos de escribir frena sobre `anomalia`. Y este
+      diagnóstico **no va a ser una anomalía**: las herramientas ven deriva
+      de error y deriva de sesgo en una categoría, exactamente la forma de
+      `campana_promocional`. El agente va a diagnosticar `deriva`, con
+      alcance de categoría y evidencia sólida.
+
+      Alcance de categoría, reversible, diagnóstico de deriva: **pasa las
+      dos reglas**. Y reentrenar es lo peor que se puede hacer, porque le
+      enseña al modelo la demanda deprimida por el faltante. Mañana
+      pronostica de menos, se repone de menos, y el faltante se repite.
+
+      **La espiral se retroalimenta, y cada vuelta parece más justificada
+      que la anterior.**
+    notas: |
+      El cierre honesto de la unidad, y hay que decirlo con todas las
+      letras: **la política que construyeron tiene un agujero, y lo acaban
+      de ver.**
+
+      No lo arreglamos hoy. Arreglarlo necesita una señal que la telemetría
+      no tiene —si hubo stock o no—, y esa es la conversación que vale:
+      **un agente no puede decidir mejor que los datos que le llegan.** La
+      regla que faltaría no es de razonamiento, es de instrumentación.
+
+      Si alguien pregunta qué haría falta: cruzar el pronóstico contra el
+      inventario, o marcar los días con quiebre para que no entren al
+      reentrenamiento. Las dos son cambios en la plataforma, no en el
+      agente.
+
+      Es también la respuesta a «¿entonces el agente sirve?». Sirve, y
+      tiene un borde. Saber dónde está el borde es lo que separa a alguien
+      que lo puso en producción de alguien que lo demostró.
+
+  - id: s2-r5-preguntas
+    tipo: pausa-preguntas
+    titulo: Pausa para preguntas
+    minutos: 3
+    disparadores:
+      - ¿Qué acción de su trabajo dejarían automatizar, y cuál nunca?
+      - ¿Cómo sabrían que una acción es reversible antes de ejecutarla?
+      - ¿Qué campo de los que escribe su agente usarían como freno? ¿Y por qué no?
+
+# ------------------------------------------------------------------ 12:10
+
+  - id: s2-r5-api-escribe
+    tipo: markdown
+    titulo: La única ruta que escribe
+    minutos: 2
+    contenido: |
+      De toda la API de la plataforma, `POST /v1/reentrenar` es la única
+      que **escribe**. Todo lo demás es telemetría de lectura.
+
+      Un agente que solo observa no puede romper nada. En el momento en que
+      puede actuar, el riesgo cambia de naturaleza — y por eso esa
+      superficie se mantiene lo más pequeña posible.
+    notas: |
+      Buen principio general para llevarse: contar cuántas rutas de tu API
+      escriben. Casi siempre son menos de las que uno cree, y esa lista es
+      exactamente la superficie que hay que proteger.
+
+  - id: s2-r5-bitacora
+    tipo: modelo-datos
+    titulo: Y queda registrado
+    entradilla: Lo que escribe la única ruta que escribe
+    minutos: 2
+    tablas:
+      - nombre: reentrenamientos.json
+        descripcion: Una entrada cada vez que el agente toca un modelo
+        columnas:
+          - nombre: momento
+            tipo: fecha y hora
+            nota: Cuándo empezó, al segundo
+          - nombre: duracion_s
+            tipo: número
+            nota: Cuánto tardó
+          - nombre: modelos
+            tipo: número
+            nota: Cuántos artefactos se reescribieron
+          - nombre: alcance
+            tipo: texto
+            nota: El filtro aplicado. categoria:bebidas
+          - nombre: motivo
+            tipo: texto
+            nota: Lo único que escribe el agente con sus palabras
+    notas: |
+      **La columna que importa es `motivo`.** Las otras cuatro las pone la
+      plataforma; esa la escribe el agente, y es lo que permite reconstruir
+      en enero por qué existe un artefacto de las 3:40 de la mañana de un
+      martes. Sin ella la bitácora dice *qué* pasó y no *por qué*, que es
+      justo la mitad que hace falta cuando alguien pregunta.
+
+      **No hay un `make` para esto**, y conviene decirlo en vez de
+      inventarlo: la bitácora se lee por la API, que es como la leería
+      cualquier cosa que no sea esta clase.
+
+          curl -s localhost:8000/v1/reentrenamientos | head
+
+      También sale en la interfaz de :8501. Sin bitácora, la primera
+      pregunta del lunes —"¿quién reentrenó esto?"— no tiene respuesta.
+
+  - id: s2-r5-ui-tesis
+    tipo: codigo
+    titulo: La interfaz, y la decisión que la define
+    entradilla: Su docstring dice para qué existe, y es una tesis
+    lenguaje: python
+    ruta: ui/app.py
+    resaltar: ["7-9"]
+    minutos: 4
+    contenido: |
+      """La interfaz del agente.
+
+      Dos pestañas y una idea. "La flota" muestra el problema: miles de filas donde
+      en algun lugar hay un modelo costando plata. "El agente" muestra como se
+      resuelve, y sobre todo COMO — paso a paso, con las herramientas que llamo, la
+      hipotesis que formulo, la critica que se hizo y la correccion si la hubo.
+
+      Un panel que solo mostrara el diagnostico final seria un tablero mas. Lo que
+      distingue a un agente es el razonamiento, asi que el razonamiento es lo que se
+      proyecta.
+      """
+    notas: |
+      **Las tres líneas resaltadas son el argumento de la interfaz entera**,
+      y valen por sí solas aunque nadie escriba una línea de Streamlit.
+
+      Un panel que solo muestre el diagnóstico final es un tablero más — y
+      los tableros ya los tienen, y ya vimos que no suenan. Lo que hace
+      distinto a un agente es que su razonamiento se puede leer: qué
+      herramientas llamó, qué hipótesis formuló, qué objeciones se puso y
+      si se corrigió.
+
+      Es la respuesta a la pregunta que siempre aparece: **«¿cómo sé que no
+      divaga?»**. Se lee. Un agente cuya ejecución no se puede inspeccionar
+      es un agente en el que hay que creer, y creer no escala a 192
+      modelos.
+
+      La interfaz **viene dada**: son 286 líneas y no se escriben hoy. Lo
+      que sí se hace es abrirla y leerla, que es lo que estamos haciendo.
+
+  - id: s2-r5-ui-reflexion
+    tipo: codigo
+    titulo: Cómo se dibuja el razonamiento
+    entradilla: Veinte líneas de Streamlit, y ninguna decide nada
+    lenguaje: python
+    ruta: ui/app.py · el bloque de la reflexión
+    resaltar: [2, 12]
+    minutos: 3
+    contenido: |
+      critica = final.get("critica", {})
+      corregido = critica.get("veredicto") == "insuficiente"
+
+      _tarjeta_diagnostico(final.get("hipotesis", {}), corregido)
+
+      st.subheader("Reflexion")
+      st.caption(
+          f"veredicto: **{critica.get('veredicto', '?')}** · "
+          f"vueltas: {final.get('vueltas', 0)}"
+      )
+      objeciones = critica.get("objeciones") or []
+      for o in objeciones:
+          st.markdown(f"- {o}")
+      if not objeciones:
+          st.caption("No se puso ninguna objecion a si mismo.")
+      if corregido:
+          st.success("El diagnostico de arriba ya incorpora estas objeciones.")
+    notas: |
+      Lo que hay que ver es lo que **no** hay: ninguna de estas líneas
+      decide nada. La interfaz solo lee el estado que el grafo dejó y lo
+      dibuja. `corregido` es una comparación de una cadena; el mensaje
+      verde es un `if`.
+
+      Toda la inteligencia está en el grafo, y eso es exactamente lo que
+      uno quiere: **una interfaz que razona es una interfaz que puede
+      contradecir al agente**, y entonces hay dos versiones de la verdad y
+      ninguna auditable.
+
+      La misma línea que ayer imprimimos en la consola —«reescrito tras la
+      reflexión»— es esta de acá. Un estado, dos presentaciones.
+
+  - id: s2-r5-ui-repo
+    tipo: enlace
+    titulo: El archivo entero
+    url: https://github.com/texai/taller-ia-uni-lab/blob/main/ui/app.py
+    descripcion: >-
+      286 líneas. Las cuatro pestañas, la tarjeta de diagnóstico, el
+      historial y la bitácora. Vale la pena leerlo entero después del
+      taller, con calma.
+    minutos: 1
+    notas: |
+      Abrirlo en vivo si hay red y bajar hasta `_tarjeta_diagnostico`, que
+      es la parte que nadie escribiría igual la primera vez: la severidad
+      como color, la evidencia como lista, y el aviso de corrección como
+      una franja verde en vez de una nota al pie.
+
+  - id: s2-r5-panel
+    tipo: demo
+    titulo: La interfaz, de punta a punta
+    minutos: 2
+    pasos:
+      - comando: docker compose up -d ui
+        esperado: "http://localhost:8501"
+    observar: >-
+      La corrida completa: qué herramientas llamó, el diagnóstico, la
+      crítica, la corrección si la hubo, las recomendaciones y el veredicto
+      de la política. Todo el razonamiento, abierto.
+    notas: |
+      Es la respuesta a "¿cómo sé que no divaga?": se lee. Un agente cuya
+      ejecución no se puede inspeccionar es un agente en el que hay que
+      creer, y creer no escala.

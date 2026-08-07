@@ -479,7 +479,27 @@ function cargarSesion(
   if (!brutas.length) problemas.push(`${archivo}: no tiene unidades`);
 
   const unidades = brutas
-    .map((u) => cargarUnidad(u, archivo, raiz, problemas, vistos))
+    .map((u, i) => {
+      // Una unidad puede estar escrita en su propio archivo. La sesión queda
+      // como lo que es —cabecera y orden— y cada unidad se edita sin abrir
+      // ochocientas líneas ajenas. Ver `CONVENTIONS.md` §1.
+      const desde = typeof u.archivo === "string" ? u.archivo : null;
+      if (!desde) return cargarUnidad(u, archivo, raiz, problemas, vistos);
+
+      const claves = Object.keys(u).filter((k) => k !== "archivo");
+      if (claves.length) {
+        problemas.push(
+          `${archivo} · unidad ${i + 1}: apunta a \`${desde}\` y además ` +
+            `declara \`${claves.join("`, `")}\`. Una unidad se escribe en un ` +
+            `sitio o en el otro, no repartida entre los dos.`,
+        );
+        return null;
+      }
+
+      const contenido = leerYaml(join(raiz, desde), raiz, problemas);
+      if (!contenido) return null;
+      return cargarUnidad(contenido, desde, raiz, problemas, vistos);
+    })
     .filter((u): u is Unidad => u !== null);
 
   return {

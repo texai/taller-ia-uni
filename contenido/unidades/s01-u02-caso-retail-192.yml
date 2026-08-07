@@ -1,0 +1,26 @@
+
+# ------------------------------------------------------------------ 15:05
+# El caso es una unidad propia y no un ítem hundido dentro del repaso: es el
+# marco de las ocho horas, y todo lo que sigue —los cinco retos— ocurre
+# dentro de él. Que tenga su sitio en el índice es la diferencia entre un
+# ejercicio y un caso.
+id: s1-caso
+tipo: caso
+titulo: El caso
+objetivos:
+  - Entender el negocio dentro del cual ocurren los cinco retos
+items:
+  - id: s1-el-caso
+    tipo: caso
+    archivo: casos/retail-192.yml
+    minutos: 5
+    notas: |
+      El marco de las ocho horas. Todo lo que viene —los cinco retos— pasa
+      dentro de esta empresa y sobre esta flota.
+
+      Leer las cifras en voz alta y dejarlas respirar. No dar todavía los
+      números del sesgo silencioso: eso es el reto 1, y adelantarlo le quita
+      el golpe. Acá basta con que quede la imagen del Excel de los lunes.
+
+      Este mismo caso vuelve a abrir el domingo, desde el mismo archivo,
+      para quien no vino.

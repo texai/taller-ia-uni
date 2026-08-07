@@ -1,0 +1,50 @@
+# ------------------------------------------------------------------ 09:00
+id: s2-apertura
+tipo: repaso
+titulo: Segunda sesión
+objetivos:
+  - Recuperar el hilo tras una noche
+requisitos:
+  - Nada. Se puede seguir sin haber estado el sábado.
+items:
+  - id: s2-asistencia
+    tipo: asistencia
+    titulo: Tomar asistencia
+    nota: Segunda sesión. Anotar también a quien no vino ayer.
+
+  - id: s2-portada
+    tipo: titulo
+    titulo: La arquitectura cognitiva
+    entradilla: Hoy construimos lo que le faltaba al bucle
+    minutos: 2
+    notas: |
+      Antes de empezar: `make arriba`. Nadie necesita haber dejado nada
+      levantado de ayer, y quien viene por primera vez arranca igual.
+
+  - id: s2-recap
+    tipo: diagrama
+    titulo: Lo que construimos ayer
+    entradilla: Cuatro horas, y la misma forma de dibujo que abrió el sábado
+    clase: componentes
+    minutos: 4
+    contenido: |
+      flowchart LR
+        H["3 herramientas<br/>de percepcion"] --> B
+        L["un LLM<br/>con temperatura 0"] --> B
+        R["20 lineas<br/>de bucle ReAct"] --> B
+        B[("el agente de ayer:<br/>diagnostica, y<br/>suena convincente")] --> Q{"y ahora,<br/>se puede confiar?"}
+        Q --> NO["hoy: 4 patologias,<br/>ninguna del modelo"]
+        Q -.->|las proximas 4 horas| CAP["reflexion, revision,<br/>memoria, accion"]
+    notas: |
+      **Es el mismo dibujo del sábado con otras cajas**, y decirlo en voz
+      alta ayuda: piezas que ya existen, algo construido con ellas, un
+      rombo con la pregunta incómoda, y una flecha punteada hacia lo que
+      viene. Quien estuvo ayer reconoce la forma; quien no, aprende la
+      gramática con la que se va a dibujar el resto del día.
+
+      El rombo es otra vez lo único que hay que señalar. El sábado la
+      pregunta era **quién los mira**; hoy es **si se puede confiar en el
+      que los mira**. Todo el domingo cuelga de ahí.
+
+      Para quien no vino: no hace falta haber estado. El bucle de ayer está
+      escrito en la rama `reto-3-solucion`, y hoy se parte del reto 4.

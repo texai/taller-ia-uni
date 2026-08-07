@@ -1,0 +1,588 @@
+
+# ------------------------------------------------------------------ 15:10
+id: s1-flota
+tipo: repaso
+titulo: La flota de 192 modelos
+objetivos:
+  - Entender qué es una flota de modelos desplegados y quién la vigila hoy
+  - "Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura"
+items:
+  - id: s1-que-es-un-modelo
+    tipo: markdown
+    titulo: Qué es "un modelo en producción"
+    minutos: 2
+    contenido: |
+      Acá un modelo **no es un chatbot**. Es un **artefacto entrenado**: un
+      archivo con los coeficientes que quedaron de ajustar una regresión
+      contra el histórico de una tienda y una categoría.
+
+      Cada uno de los 192 es una regresión Ridge sobre features de:
+
+      - **rezagos** de 7, 14 y 28 días
+      - **medias móviles** de 7 y 28 días
+      - **día de la semana**
+      - si ese día hubo **promoción**
+
+      Deliberadamente simple. El taller no trata de exprimir precisión;
+      trata de vigilar modelos que ya están corriendo.
+    notas: |
+      Si alguien pregunta por qué Ridge y no algo mejor: porque un modelo
+      más complejo no cambiaría nada de lo que vamos a hacer, y sí
+      alargaría el entrenamiento de los 192.
+
+  - id: s1-modelo-vs-contenedor
+    tipo: comparacion
+    titulo: Un modelo no es un contenedor
+    entradilla: La relación no es 1 a 1, y en el taller anterior lo parecía
+    minutos: 2
+    izquierda:
+      titulo: Lo que vieron desplegando
+      contenido: >-
+        Un modelo empaquetado en su imagen, expuesto como servicio de
+        inferencia, respondiendo peticiones HTTP. Una imagen, un modelo, un
+        endpoint.
+    derecha:
+      titulo: Lo que hay acá
+      contenido: >-
+        Un job batch que corre de madrugada, carga los 192 artefactos de
+        disco y escribe un CSV. Nadie necesita una respuesta en 50
+        milisegundos para decidir qué reponer mañana. Una imagen, 192
+        modelos, ningún endpoint.
+    notas: |
+      Este es el punto que más se resiste. Vale la pena decirlo dos veces:
+      el patrón de despliegue dominante en pronóstico de demanda es batch,
+      no servicio. Y desde el lado del monitoreo cambia todo — un servicio
+      se cae y alguien se entera; un job batch termina bien y entrega
+      basura.
+
+  - id: s1-arquitectura
+    tipo: diagrama
+    titulo: La solución completa, por componentes
+    clase: componentes
+    minutos: 3
+    contenido: |
+      flowchart LR
+        V[("ventas.csv<br/>el mundo")] --> E["entrenar<br/>192 Ridge"]
+        E --> M[("modelos/<br/>192 artefactos")]
+        E -.->|registro| ML[("MLflow")]
+        M --> J["job batch<br/>de madrugada"]
+        V --> J
+        J --> P[("predicciones.csv")]
+        P -->|cruce contra lo vendido| TM[("metricas.csv<br/>la telemetria")]
+        V --> TM
+        TM --> API["API :8000"]
+        API --> UI["interfaz :8501"]
+        API -.->|mañana| AG["el agente"]
+    notas: |
+      Es el mapa al que se vuelve toda la clase. Dejarlo bien anclado.
+
+      Dos cosas que señalar con el dedo: `ventas.csv` entra DOS veces —una
+      para entrenar y otra para calcular métricas, porque un modelo no se
+      degrada en abstracto sino contra la realidad— y el agente todavía no
+      existe. Lo construimos nosotros.
+
+  - id: s1-make
+    tipo: tabla
+    titulo: Todos los comandos del taller son atajos
+    entradilla: Y hoy los abrimos. Detrás de cada make hay un docker compose que se puede teclear entero.
+    minutos: 3
+    columnas: [Lo que tecleas, Lo que corre de verdad]
+    filas:
+      - ["`make arriba`", "`docker compose build` y luego `docker compose up -d plataforma ui`"]
+      - ["`make seed`", "`docker compose run --rm plataforma python -m plataforma seed`"]
+      - ["`make romper ESCENARIO=x`", "`escenario --nombre x`, después `pronosticar`, después `metricas`"]
+      - ["`make agente`", "`docker compose run --rm agente python -m agente run`"]
+      - ["`make actuar`", "lo mismo, más `-e EJECUTAR_ACCIONES=1`"]
+      - ["`make ui`", "`docker compose up -d ui` — **`up`, no `run`**"]
+      - ["`make reset`", "`docker compose down -v` — la `-v` borra los volúmenes"]
+    resaltar: [5]
+    notas: |
+      Empezar por qué es `make`: un ejecutor de recetas de 1976, anterior a
+      Docker y a casi todo lo demás. Lee el archivo `Makefile` del
+      directorio, busca la receta que le pediste y ejecuta sus líneas. Nada
+      más. `make ayuda` las lista todas, y `cat Makefile` las muestra.
+
+      La fila resaltada es la trampa del día: **`make ui` usa `up`, no
+      `run`**, y esa palabra decide si algo queda vivo o se ejecuta y
+      desaparece. Vuelve tres veces durante la clase.
+
+      Lo que quiero que se lleven no es la tabla: es que **ningún comando
+      del taller es magia**, y que el día que trabajen sin este Makefile
+      sepan escribir la columna de la derecha. El propio código de la
+      plataforma lo dice en su docstring — "en clase se usan los atajos del
+      Makefile, pero conviene que los alumnos vean que detrás no hay
+      magia".
+
+  - id: s1-levantar
+    tipo: comando-anotado
+    titulo: Levantar el entorno
+    entradilla: Esto es lo que hace make arriba, sin el atajo
+    comando: docker compose up -d plataforma ui
+    minutos: 3
+    segmentos:
+      - texto: docker compose
+        explicacion: >-
+          Lee `docker-compose.yml` y trabaja sobre los servicios declarados
+          ahí. Con guion —`docker-compose`— es la versión 1, un binario
+          aparte que ya no se instala; sin guion es el plugin actual. El
+          Makefile detecta cuál tienes, para no obligar a nadie a
+          reinstalar Docker el sábado por la mañana.
+        otrosValores: ["docker-compose"]
+      - texto: up
+        explicacion: >-
+          Levanta los servicios y los deja corriendo. Si falta la imagen,
+          la construye antes. `make arriba` además fuerza un `build`
+          previo, porque construye TRES imágenes y solo levanta dos: la del
+          agente no es un servicio, y sin ese `build` su construcción le
+          cae encima al alumno en plena clase.
+        otrosValores: ["down", "ps", "logs", "build", "run"]
+      - texto: "-d"
+        explicacion: >-
+          Detached. Devuelve la terminal en lugar de quedarse pegado a los
+          logs. Sin esto, cerrar la ventana se lleva los servicios por
+          delante. Para ver los logs después, `make logs`.
+      - texto: plataforma ui
+        explicacion: >-
+          Qué servicios levantar, con el nombre que tienen en el YAML. Sin
+          nombres levantaría todos los que no estén detrás de un `profile`
+          — `mlflow` y `ollama` lo están, por eso hay que pedirlos aparte.
+          Nombrar los dos deja claro que **`agente` no es un servicio**.
+    notas: |
+      Es el primer comando de Docker que muchos van a leer entero. Ir
+      despacio: cada paso del recorrido es un segmento.
+
+      Si alguien pregunta por qué el agente no es un servicio: porque no
+      escucha nada. Corre una vez al día, produce un diagnóstico y termina.
+      Eso es el ítem de `--rm`, dos pantallas más adelante.
+
+  - id: s1-seed
+    tipo: comando-anotado
+    titulo: Poblar el mundo
+    entradilla: Y esto es make seed
+    comando: docker compose run --rm plataforma python -m plataforma seed
+    minutos: 3
+    segmentos:
+      - texto: run
+        explicacion: >-
+          Arranca un contenedor **nuevo** del servicio, le pasa un comando,
+          y termina cuando el comando termina. Es lo contrario de `up`:
+          `up` deja algo vivo escuchando, `run` ejecuta una tarea y se va.
+          Por eso `make estado` nunca muestra nada de esto.
+        otrosValores: ["up", "exec"]
+      - texto: "--rm"
+        explicacion: >-
+          Borra el contenedor al terminar. Sin esto cada corrida deja uno
+          parado en disco, y a la décima `docker ps -a` es una lista de
+          cadáveres. Se puede borrar el contenedor sin perder nada porque
+          lo que se produce no vive en él: vive en el volumen `datos`.
+      - texto: plataforma python
+        explicacion: >-
+          La costura de la línea. A la izquierda de ese espacio, el
+          servicio tal como se llama en el YAML —de ahí salen la imagen,
+          los volúmenes y las variables de entorno, sin repetir nada acá—;
+          a la derecha, lo que se ejecuta **dentro** del contenedor. Todo
+          lo que sigue ya no es de Docker.
+        otrosValores: ["agente python", "ui python"]
+      - texto: -m plataforma seed
+        explicacion: >-
+          `-m` corre un paquete de Python como si fuera un programa,
+          buscando su `__main__.py`. `seed` es un subcomando de **ese**
+          programa: hay también `datos`, `entrenar`, `pronosticar`,
+          `metricas` y `escenario`, y cada uno tiene su atajo en el
+          Makefile. `seed` encadena los cuatro primeros.
+    notas: |
+      El segmento de `--rm` es el que más rinde. La pregunta natural —"si
+      borras el contenedor, ¿dónde quedan los 192 modelos?"— es la puerta
+      de entrada a los volúmenes, y vale la pena dejar que la hagan.
+
+      En Windows esta línea se teclea igual. El `.\taller.ps1` envuelve al
+      `make`, no al `docker compose`.
+
+  - id: s1-seed-salida
+    tipo: salida-anotada
+    titulo: Y esto es lo que imprime
+    entradilla: Cuatro etapas, y las cuatro flechas del diagrama de arquitectura
+    comando: docker compose run --rm plataforma python -m plataforma seed
+    salida: |
+      1/4 Generando historico de ventas...
+      2/4 Entrenando la flota (192 modelos)...
+        48/192 modelos entrenados...
+        96/192 modelos entrenados...
+        144/192 modelos entrenados...
+        192/192 modelos entrenados...
+      3/4 Corriendo el job batch de pronostico...
+        17472 predicciones de 192 modelos
+      4/4 Calculando metricas...
+
+      Listo. 192 modelos con 17,472 dias-modelo de telemetria.
+    minutos: 4
+    anotaciones:
+      - texto: "1/4 Generando historico"
+        explicacion: >-
+          Escribe `ventas.csv`. Es el mundo — cuatrocientos días de ventas
+          inventados con una semilla fija, para que todos tengan el mismo.
+          En producción esta etapa no existe: el mundo llega solo.
+      - texto: "2/4 Entrenando la flota (192 modelos)"
+        explicacion: >-
+          Deja 192 artefactos en disco, uno por tienda y categoría. Corta
+          91 días antes de hoy a propósito: lo que el modelo no llega a ver
+          es exactamente contra lo que se lo va a evaluar.
+      - texto: "3/4 Corriendo el job batch"
+        explicacion: >-
+          **Este es el job de madrugada del caso.** Carga los 192, proyecta
+          los días que quedaron fuera del entrenamiento y escribe
+          `predicciones.csv`. Cada corrida deja además una fila en su
+          bitácora: si corrió, cuánto tardó, si falló.
+      - texto: "4/4 Calculando metricas"
+        explicacion: >-
+          Cruza predicción contra realidad. Es la **única** etapa que
+          produce telemetría, y sin ella no hay absolutamente nada que
+          monitorear. Todo el taller vive de este cruce.
+      - texto: "17,472"
+        explicacion: >-
+          192 modelos × 91 días evaluados. Un dato por modelo y por día. Si
+          a alguien le sale otro número, casi seguro dejó el mundo roto de
+          una prueba anterior: `make reparar` y listo.
+    notas: |
+      Recorrer las cuatro etapas señalando el diagrama de arquitectura de
+      hace tres láminas: **son sus cuatro flechas, en el mismo orden**.
+
+      La anotación del `3/4` es la que engancha con el caso, y la frase que
+      rinde en la sesión 2 va acá: el agente también vigila el job. Un
+      modelo puede estar perfectamente sano y la tubería caída desde el
+      martes.
+
+      **Lo que tarda no es esto.** El `seed` medido corre en medio minuto;
+      los cinco minutos de la primera vez son de `make arriba` construyendo
+      las tres imágenes. Decirlo evita la pregunta de por qué la segunda
+      vez va tan rápido.
+
+      Quien hizo el trabajo previo ya tiene todo esto y solo necesita
+      `make arriba`.
+
+  - id: s1-flota-pausa
+    tipo: pausa-preguntas
+    titulo: Pausa · ¿a alguien no le levantó?
+    minutos: 2
+    disparadores:
+      - ¿Alguien vio un número distinto de 17,472?
+      - ¿Alguna imagen se quedó construyendo?
+      - ¿Quedó alguna duda de qué hace `run --rm` que no sea `up`?
+    notas: |
+      Dos minutos, no cinco. El sitio es este y no antes: acabamos de
+      teclear los dos comandos que todo el resto del taller da por hechos,
+      y si alguien se quedó atrás hay que saberlo **ahora**, no cuando
+      empiece el reto 1.
+
+      Los tres rescates vienen justo después. Si alguien levanta la mano
+      con uno de ellos, la respuesta es "es la siguiente lámina".
+
+  - id: s1-rescate-docker
+    tipo: error-comun
+    titulo: "Rescate · el motor no está corriendo"
+    minutos: 2
+    sintoma: >-
+      open //./pipe/dockerDesktopLinuxEngine: The system cannot find the
+      file specified
+    causa: >-
+      Docker Desktop está cerrado. El mensaje habla de un named pipe, que es
+      el canal entre el cliente de Docker y su motor — y por eso no se
+      parece en nada a "abre Docker".
+    arreglo: >-
+      Abrir Docker Desktop y esperar a que la ballena deje de moverse. Ojo
+      con la trampa: `docker compose version` responde bien con Docker
+      cerrado, porque contesta el cliente. Quien quiera comprobar de verdad
+      que el motor está vivo, `docker info`.
+
+  - id: s1-rescate-recarga
+    tipo: error-comun
+    titulo: "Rescate · el contenedor sirve el código con el que arrancó"
+    minutos: 2
+    sintoma: >-
+      Un 404 en una ruta que está en el archivo. O la interfaz reventando
+      por una columna que llega como texto. O un `git pull` que parece no
+      haber hecho nada.
+    causa: >-
+      Tres síntomas distintos, un solo error: el proceso dentro del
+      contenedor sigue ejecutando el código que había cuando arrancó, no el
+      que hay ahora en disco.
+    arreglo: >-
+      Reiniciar el servicio. En este laboratorio ya está resuelto con
+      `--reload` en uvicorn y con sondeo del sistema de archivos, que hace
+      falta en Windows porque los avisos de cambio no cruzan el montaje.
+    notas: |
+      Este apareció tres veces preparando el taller, con tres caras
+      distintas, y era el mismo error cada vez. Es típico de cualquier
+      laboratorio con volúmenes montados, así que vale por sí solo como
+      material: la pregunta a hacerse siempre es "¿el proceso vio este
+      archivo?".
+
+  - id: s1-rescate-disco
+    tipo: error-comun
+    titulo: "Rescate · disco lleno a mitad de la construcción"
+    minutos: 2
+    sintoma: La construcción de las imágenes falla por espacio.
+    causa: >-
+      Las imágenes de este laboratorio ocupan del orden de 6 GB, y la caché
+      de construcción otro tanto.
+    arreglo: "`docker builder prune -f`, y dejar 12 GB libres antes de empezar."
+
+  - id: s1-telemetria
+    tipo: modelo-datos
+    titulo: Qué emite la flota
+    entradilla: Una fila por modelo y por día. Esto es todo lo que el agente va a poder mirar.
+    minutos: 3
+    tablas:
+      - nombre: metricas
+        descripcion: >-
+          El resultado de cruzar lo que se pronosticó contra lo que
+          realmente se vendió.
+        columnas:
+          - { nombre: fecha, tipo: date }
+          - { nombre: modelo_id, tipo: text, nota: "dem-{categoria}-{tienda}" }
+          - { nombre: categoria, tipo: text }
+          - { nombre: tienda, tipo: text }
+          - { nombre: region, tipo: text, nota: LIMA, NORTE, SUR, CENTRO, ORIENTE }
+          - { nombre: n, tipo: int, nota: días que entraron en el cálculo }
+          - { nombre: mape, tipo: float, nota: cuánto se equivoca }
+          - { nombre: sesgo_pct, tipo: float, nota: hacia qué lado }
+          - { nombre: cobertura, tipo: float, nota: qué tanto acierta el intervalo }
+          - { nombre: latencia_p95_ms, tipo: int }
+          - { nombre: unidades_reales, tipo: float }
+          - { nombre: unidades_pronosticadas, tipo: float }
+          - { nombre: dias_en_promocion, tipo: int }
+          - { nombre: dias_con_quiebre, tipo: int }
+    notas: |
+      Señalar que `unidades_reales` y `unidades_pronosticadas` están además
+      de los porcentajes. No es redundancia: sin las unidades no se puede
+      agregar bien. Por qué, es el reto 2 — no adelantarlo.
+
+  - id: s1-metricas-definidas
+    tipo: markdown
+    titulo: "MAPE: cuánto se equivoca"
+    minutos: 2
+    contenido: |
+      El error porcentual absoluto medio. Para cada día se toma la
+      diferencia entre lo pronosticado y lo vendido, en valor absoluto, y se
+      divide entre lo vendido. El promedio de eso.
+
+      **Es una distancia, no una dirección.** Un modelo que se pasa por 10
+      unidades y otro que se queda corto por 10 tienen exactamente el mismo
+      MAPE.
+
+      Es la métrica que todo el mundo mira, y es la única de las tres que
+      casi siempre está en el tablero.
+    notas: |
+      Insistir en "valor absoluto". De ahí sale toda la unidad siguiente.
+
+  - id: s1-sesgo
+    tipo: comparacion
+    titulo: "Sesgo: hacia qué lado se equivoca"
+    entradilla: La misma resta, sin el valor absoluto
+    minutos: 4
+    izquierda:
+      titulo: MAPE
+      contenido: >-
+        Promedio de |pronóstico − real| ÷ real. Siempre positivo. Dice qué
+        tan lejos cae el modelo, y nada más.
+    derecha:
+      titulo: Sesgo
+      contenido: >-
+        Promedio de (pronóstico − real) ÷ real. Con signo. Positivo
+        significa que el modelo pronostica de más — y pronosticar de más
+        durante tres semanas es inventario que alguien compró y nadie
+        vendió.
+    notas: |
+      Acá va la frase que sostiene el taller: el MAPE puede quedarse quieto
+      mientras el sesgo se dispara. Ese es el modo de falla más caro y el
+      que ningún umbral sobre el MAPE detecta. No dar todavía los números
+      — son del reto 1.
+
+  - id: s1-pregunta-cobertura
+    tipo: pregunta
+    titulo: Antes de verlo
+    pregunta: >-
+      Un modelo publica intervalos de predicción al 90%. Midiendo los
+      últimos 14 días, la realidad cae dentro del intervalo el 97% de las
+      veces. ¿Qué está pasando?
+    visibilidad: publica
+    permiteOmitir: true
+    respuesta: El modelo se está cubriendo las espaldas
+    minutos: 3
+    opciones:
+      - El modelo está muy bien calibrado
+      - El modelo se está cubriendo las espaldas
+      - Faltan datos para decirlo
+      - El intervalo está mal calculado
+    notas: |
+      Es la métrica que casi todos leen mal, y por eso se pregunta **antes**
+      de explicarla. Dejar que se equivoquen: la primera opción es la que
+      gana casi siempre, y equivocarse acá es lo que hace que la
+      explicación se quede.
+    solucion:
+      explicacion: |
+        **97% de cobertura en un intervalo del 90% no es estar mejor: es
+        estar peor.** El modelo prometió acertar 9 de cada 10 veces y
+        acierta 9.7 — porque abrió el intervalo más de lo necesario.
+
+        Un intervalo que casi nunca falla es un intervalo tan ancho que no
+        sirve para decidir nada. "Entre 40 y 400 unidades" nunca se
+        equivoca, y nunca ayuda a reponer.
+
+        Lo que se busca es cobertura **cerca** del nominal, por arriba o por
+        abajo. Alejarse hacia arriba es tan síntoma como alejarse hacia
+        abajo, y es el que nadie mira porque suena a buena noticia.
+      descartes:
+        - opcion: El modelo está muy bien calibrado
+          razon: >-
+            Calibrado sería 90%. 97% es siete puntos de más, y en un tablero
+            pintado de verde eso pasa por excelencia.
+        - opcion: Faltan datos para decirlo
+          razon: >-
+            Catorce días de 192 modelos son 2,688 observaciones. La duda
+            razonable acá no es de tamaño de muestra.
+        - opcion: El intervalo está mal calculado
+          razon: >-
+            Puede estarlo, pero no hace falta suponerlo: un intervalo bien
+            calculado sobre un modelo inseguro da exactamente esto.
+
+  - id: s1-cobertura
+    tipo: markdown
+    titulo: "Cobertura: la que casi todos leen mal"
+    minutos: 2
+    contenido: |
+      Cada predicción viene con un intervalo. La cobertura es **qué
+      fracción de los días la venta real cayó dentro de ese intervalo**.
+
+      No es el porcentaje de días con predicción disponible. No es cuántos
+      modelos corrieron. Es cuántas veces el modelo dijo la verdad sobre su
+      propia incertidumbre.
+
+      Una cobertura que se desploma es un modelo que dejó de saber lo que
+      no sabe — y eso suele pasar antes de que el MAPE se mueva.
+    notas: |
+      Preguntar qué creen que mide antes de decirlo. La confusión con "días
+      con predicción disponible" es tan común que vale la pena que salga de
+      ellos.
+
+  - id: s1-demo-ui
+    tipo: demo
+    titulo: La flota, de un vistazo
+    minutos: 4
+    pasos:
+      - comando: docker compose up -d ui
+        esperado: "http://localhost:8501"
+      - comando: docker compose ps
+        esperado: plataforma y ui, corriendo. El agente no aparece.
+    observar: >-
+      192 filas. Ordenar por MAPE y ver que hay modelos malos que llevan
+      meses siendo malos sin que nadie los toque. Ordenar por sesgo y ver
+      que no es la misma lista. Esa diferencia es el taller entero.
+    respaldo: >-
+      Si la interfaz no levanta, la misma información sale por la API:
+      `curl -s localhost:8000/v1/metricas | head`. Y si tampoco, seguir con
+      el diagrama: nada de lo que viene depende de haber visto esta
+      pantalla.
+    notas: |
+      Cinco minutos, no diez. La tentación es empezar a analizar acá, y el
+      análisis es el reto 1.
+
+      **Esto es `make ui`, y es el `up` de la tabla del principio.** Vale
+      la pena hacer el segundo paso —`docker compose ps`, que es `make
+      estado`— para que se vea con los ojos: la interfaz y la plataforma
+      están ahí porque se levantaron con `up -d`; de los `run --rm` que
+      llevamos corridos no queda ni rastro. Uno deja algo vivo; el otro
+      ejecuta y desaparece.
+
+      Se apagan con `make abajo`, que es `docker compose down`. Sin la
+      `-v`: esa borraría los volúmenes, y con ellos los 192 modelos.
+
+  - id: s1-ui-captura
+    tipo: imagen
+    titulo: Lo que se ve, si todo levantó
+    entradilla: La misma pantalla, capturada. Sirve de respaldo y de referencia.
+    archivo: img/ui-flota-sana.png
+    pie: >-
+      192 modelos, 17,472 días-modelo, MAPE medio 13.8%, sesgo +0.8%,
+      cobertura 88.7%. Es el mundo sano, y es contra estos cuatro números
+      que se van a leer todos los demás.
+    minutos: 2
+    notas: |
+      **Es el respaldo de la demo anterior**, y por eso va justo después.
+      Si la interfaz no levantó en el aula, esta lámina es la clase; si
+      levantó, sirve para dejar los cuatro números fijos mientras se
+      explica el resto.
+
+      Los cuatro números de arriba son el punto de comparación de las ocho
+      horas. Vale la pena que la sala los anote: 13.8, +0.8, 88.7. Todo lo
+      que viene después es "cómo se movió esto".
+
+      El gráfico de abajo es plano y aburrido a propósito. Guardarlo en la
+      memoria: en el reto 5 vuelve, y no está plano.
+
+  - id: s1-flota-dada
+    tipo: criterios
+    titulo: Las reglas del laboratorio
+    minutos: 2
+    criterios:
+      - texto: Los 192 modelos vienen dados. No se tocan.
+        pista: Nadie va a entrenar nada mejor hoy. Ese no es el ejercicio.
+      - texto: La plataforma y su API vienen dadas. Tampoco se tocan.
+      - texto: Lo que construimos es lo que vigila. Nada más.
+    notas: |
+      Decirlo explícitamente ahorra media hora. Siempre hay alguien que
+      quiere mejorar el modelo, y es una conversación legítima que hay que
+      cortar acá.
+
+  - id: s1-pregunta-hoy
+    tipo: pregunta
+    titulo: ¿Cómo se enteran hoy?
+    pregunta: >-
+      En donde trabajas, si un modelo en producción empieza a fallar hoy,
+      ¿cómo se entera alguien?
+    visibilidad: publica
+    permiteOmitir: true
+    minutos: 3
+    opciones:
+      - Un tablero con umbrales
+      - Alguien revisa a mano
+      - Cuando se queja el negocio
+      - No nos enteramos
+    notas: |
+      Revelar recién cuando hayan respondido todos. "Cuando se queja el
+      negocio" suele ganar, y es la mejor entrada posible al reto 1: para
+      cuando el negocio se queja, el sobre-stock ya está comprado.
+    solucion:
+      explicacion: |
+        Acá no hay respuesta correcta: es un retrato de la sala. Lo que
+        importa es que casi siempre gana "cuando se queja el negocio", y esa
+        es la peor de las cuatro — porque para cuando el negocio se queja,
+        el sobre-stock ya está comprado y las semanas ya pasaron.
+      descartes:
+        - opcion: Un tablero con umbrales
+          razon: >-
+            Es lo que suena mejor y es lo que va a fallar hoy: un umbral
+            sobre el MAPE no ve el sesgo silencioso. Lo vamos a comprobar
+            en el reto 1.
+        - opcion: Alguien revisa a mano
+          razon: >-
+            Funciona hasta que hay 192 modelos. Es exactamente lo que
+            vamos a intentar en la próxima hora, para sentir dónde deja de
+            escalar.
+        - opcion: Cuando se queja el negocio
+          razon: >-
+            No es un mecanismo de detección: es la factura. Llega semanas
+            después del problema.
+        - opcion: No nos enteramos
+          razon: >-
+            La respuesta más honesta, y más común de lo que parece. Es el
+            punto de partida de este taller.
+
+  - id: s1-repaso-preguntas
+    tipo: pausa-preguntas
+    titulo: Pausa para preguntas
+    minutos: 2
+    disparadores:
+      - ¿Alguien tiene hoy más de diez modelos en producción?
+      - ¿Quién mira las métricas de esos modelos, y cada cuánto?
+      - ¿Alguna vez se enteraron tarde de que un modelo se había degradado?

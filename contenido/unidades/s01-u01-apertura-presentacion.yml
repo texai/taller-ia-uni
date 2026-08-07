@@ -1,0 +1,170 @@
+# ------------------------------------------------------------------ 15:00
+id: s1-apertura
+tipo: repaso
+titulo: Dónde encaja esto
+objetivos:
+  - Situar el taller dentro del programa y ver qué se junta acá
+requisitos:
+  - Haber hecho el trabajo previo y llegar con las 24 comprobaciones en verde
+items:
+  - id: s1-asistencia
+    tipo: asistencia
+    titulo: Tomar asistencia
+    nota: El taller se evalúa solo por asistencia. Tomarla ahora, no al final.
+
+  - id: s1-portada
+    tipo: titulo
+    titulo: Un agente que vigila 192 modelos
+    entradilla: Arquitectura cognitiva para monitoreo de modelos en producción
+    minutos: 2
+    notas: |
+      Preguntar quién hizo el trabajo previo. Si hay manos abajo, avisar que
+      el rescate va en paralelo durante los próximos quince minutos, sin
+      detener la clase.
+
+  - id: s1-que-es-esto
+    tipo: criterios
+    titulo: Ocho horas, y qué sale de ellas
+    entradilla: Lo que vamos a hacer, dicho antes de empezar a hacerlo
+    minutos: 3
+    criterios:
+      - texto: Cinco retos, todos sobre el mismo caso y el mismo laboratorio
+        pista: Nada de ejemplos de juguete que cambian entre lámina y lámina
+      - texto: Se escribe código en tres de los cinco. En los otros dos se lee y se mira
+        pista: El reto 3 es el único donde no se toca una tecla, y es de los que más rinden
+      - texto: Al final tienes un agente con arquitectura cognitiva vigilando 192 modelos
+        pista: Percibe, recuerda, razona, se cuestiona a sí mismo, y actúa
+      - texto: El taller se evalúa solo por asistencia
+        pista: No hay entregable ni examen. Lo que te llevas es el repositorio y lo que entendiste
+      - texto: Todo lo que veas hoy está en un repositorio público, y sigue estando el lunes
+        pista: Incluida la solución de cada reto, en su propia rama
+    notas: |
+      **Tres minutos, y decirlos completos.** Una sala que sabe cómo termina
+      el día escucha distinto: deja de preguntarse si esto va a servirle y
+      empieza a mirar el contenido.
+
+      Los dos criterios que más tranquilizan son el cuarto y el quinto. El
+      de la evaluación quita la ansiedad del examen, que en un taller de
+      ocho horas es la mitad de la atención perdida. El del repositorio
+      quita la ansiedad de copiar todo a mano — nadie necesita transcribir
+      una lámina.
+
+      El segundo criterio es el que hay que decir mirando a la sala: en el
+      reto 3 no se escribe nada y es el que arma la sesión 2 entera. Si
+      alguien llega con la expectativa de teclear cuatro horas seguidas,
+      mejor corregirla ahora.
+
+  - id: s1-docente
+    tipo: markdown
+    titulo: Quién les habla
+    entradilla: Ernesto Anaya Ruiz · Ingeniero de Plataforma
+    minutos: 2
+    contenido: |
+      **Ingeniero de Plataforma en iO / BCP**, como contratista de Globant.
+      Dieciséis años de experiencia profesional: **once en DevOps** y más de
+      **seis en proyectos de datos**.
+
+      Antes de esto, **Head of DevOps Architecture en BBVA Perú** durante
+      seis años y medio. Ahí el trabajo fue el que se parece a este taller:
+      llevar la integración continua a más de la mitad de las aplicaciones
+      del banco, automatizar despliegues condicionados a la calidad del
+      código, y **formar a más de trescientos ingenieros** en herramientas y
+      prácticas que no conocían.
+
+      **Más de 800 horas de docencia.** Certified Scrum Master. Ganador de
+      Wayra Perú 2013. Formación en la UNT y la UPN, y el resto de internet.
+
+      | | |
+      |---|---|
+      | GitHub | [github.com/texai](https://github.com/texai/) |
+      | LinkedIn | [linkedin.com/in/texai](https://www.linkedin.com/in/texai/) |
+      | Correo | ernestex@gmail.com |
+      | WhatsApp | 976 324 488 |
+
+      Programo desde los doce años y no he parado de aprender. Escríbanme
+      si algo de hoy les sirve, o si algo no les cuadra.
+    notas: |
+      **Dos minutos, y el punto no es el currículum.** Lo que la sala tiene
+      que sacar de acá es por qué este taller está armado como está: lo de
+      BBVA es exactamente este problema a otra escala — herramienta nueva,
+      gente que ya tiene trabajo, y una adopción que solo funciona si lo que
+      enseñas se puede usar el lunes.
+
+      Si hay que recortar el día, este ítem es de los primeros que se cae.
+      Pero el dato de las 800 horas de docencia sí conviene decirlo: es lo
+      que responde en silencio a «¿este va a saber explicarlo?».
+
+      El WhatsApp está a propósito. En un taller de ocho horas siempre queda
+      alguien con una pregunta que no hizo, y el correo institucional se
+      responde en tres días.
+
+  - id: s1-prework
+    tipo: archivo
+    titulo: El trabajo previo
+    entradilla: Está en el aula virtual desde hace una semana. Si no lo hiciste, todavía sirve.
+    archivo: archivos/taller-ia-uni-prework.pdf
+    descripcion: >-
+      Instalar Docker, clonar el laboratorio y dejar el entorno probado.
+      Cuarenta minutos, y terminan en un comando que dice si está todo en
+      verde.
+    minutos: 2
+    notas: |
+      **Preguntar a mano alzada quién lo hizo.** Es el único dato que
+      cambia cómo se dicta la primera hora: si hay muchas manos abajo, el
+      rescate va en paralelo mientras la clase sigue, y los tres ítems de
+      rescate de la unidad siguiente pasan de ser un por si acaso a ser
+      material.
+
+      Está en el aula virtual de la universidad, no acá. Se pone también
+      acá porque quien llega sin haberlo hecho necesita poder bajarlo en
+      ese momento, y buscar en otra plataforma con la clase empezada es
+      exactamente lo que no va a hacer.
+
+      Lo importante no es que lo lean ahora: es que sepan que lo que falla
+      en la próxima media hora está resuelto ahí dentro.
+
+  - id: s1-recap
+    tipo: diagrama
+    titulo: Lo que ya traen puesto
+    entradilla: Cuatro cosas del programa se juntan hoy, y dejan una pregunta abierta
+    clase: componentes
+    minutos: 3
+    contenido: |
+      flowchart LR
+        D["Docker<br/>empaquetar un modelo"] --> F
+        G["GitHub Actions<br/>desplegarlo solo"] --> F
+        K["Kubernetes<br/>operarlo"] --> F
+        ML["MLflow<br/>registrar sus versiones"] --> F
+        F[("la flota<br/>192 modelos<br/>en produccion")] --> Q{"y ahora,<br/>quien los mira?"}
+        Q --> HOY["hoy: un Excel los lunes,<br/>5 de las 24 tiendas"]
+        Q -.->|las proximas 8 horas| AG["un agente<br/>que los vigila"]
+    notas: |
+      **Es el repaso del programa, no del taller.** Cuatro módulos dejaron
+      cada uno una pieza, y hoy están todas puestas a la vez. Nombrar cada
+      caja y dejar que la sala reconozca lo suyo: casi todos hicieron el
+      taller de Docker, GitHub Actions y Kubernetes, donde el último bloque
+      fue "monitoreo básico y operación". **Esto empieza justo donde lo
+      básico deja de alcanzar.** Y el registro de modelos que van a ver hoy
+      es MLflow, el mismo del Módulo 2.
+
+      Lo que importa del dibujo es el rombo. Todo lo de la izquierda es
+      construir y desplegar; a la derecha no hay nada equivalente. La
+      flecha punteada es el taller entero.
+
+      No detenerse en las cajas: se miran y se pasan. La caja del Excel es
+      la que engancha con el caso, que viene enseguida.
+
+  - id: s1-donde-estamos
+    tipo: transicion
+    titulo: Dónde estamos
+    vimos: >-
+      Cómo se empaqueta un modelo, cómo se automatiza su despliegue, y qué
+      es monitorear en producción
+    viene: >-
+      Los 192 modelos que ya están desplegados, y el problema de que nadie
+      los mire
+    minutos: 2
+    notas: |
+      Después del diagrama esto es media frase y el mapa de la sesión, que
+      la aplicación dibuja sola: qué unidades quedan por delante y cuál
+      viene ahora.

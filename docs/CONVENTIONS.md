@@ -18,9 +18,39 @@ editar contenido sería más trabajo y peor herramienta que un editor de texto.
 
 **Excepción:** un contenido largo vive en su propio archivo y el YAML lo
 referencia por ruta. Markdown bajo `contenido/md/`, fuentes PlantUML bajo
-`contenido/puml/`, y lo que haga falta después. Meter tres párrafos —o un
-diagrama de nueve mensajes— dentro de una cadena YAML hace ilegibles ambas
-cosas.
+`contenido/puml/`, casos bajo `contenido/casos/`, y lo que haga falta después.
+Meter tres párrafos —o un diagrama de nueve mensajes— dentro de una cadena YAML
+hace ilegibles ambas cosas.
+
+**Y cada unidad vive en su propio archivo.** El de la sesión es la cabecera y
+el orden, nada más:
+
+    contenido/sesiones/sesion-1.yml       cabecera + la lista de unidades
+    contenido/unidades/s01-u04-reto1-a-mano.yml
+
+El nombre carga tres cosas: `sNN` la sesión, `uNN` el orden dentro de ella, y
+el resto una palabra que diga de qué trata. Así el listado alfabético **es** el
+orden del dictado, y `git log` sobre un archivo es la historia de una unidad y
+no de media sesión.
+
+La razón es de edición, no de estética: un archivo de novecientas líneas se
+edita con miedo. Se busca a ciegas, se pega en el sitio equivocado, y el diff
+de un cambio de tres palabras entra en un archivo que otro cambio también
+tocó. Partido, cada unidad se abre entera en una pantalla.
+
+Dos reglas que lo sostienen, las dos con test:
+
+- **Una unidad se escribe en un sitio o en el otro, no repartida.** Un
+  `- archivo:` que además declare `titulo` se rechaza; media unidad acá y media
+  allá es lo que se descubre cuando alguien edita el sitio equivocado y no pasa
+  nada.
+- **Los errores nombran el archivo de la unidad**, no el de la sesión. Un fallo
+  del reto 4 que dijera «sesion-2.yml» obligaría a buscarlo entre novecientas
+  líneas que ya no están ahí.
+
+Las **imágenes y los descargables** son la única excepción a la raíz: viven en
+`public/contenido/`, porque lo que se sirve por URL sale de `public/`. La ruta
+del YAML es la de la URL sin traducción.
 
 Lo que no cambia es la regla: **todo el material está versionado en el
 repositorio**. No hay tablas de contenido, no hay panel de administración, no
