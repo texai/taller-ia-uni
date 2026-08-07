@@ -9,6 +9,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { cargarCurso, ErrorDeContenido, recorrer } from "../src/lib/contenido";
+import { rutaDeLab } from "../src/lib/sitio";
+import { ubicarBloques } from "../src/lib/bloques";
 import { minutosDeSesion, reprochesDeRitmo } from "../src/lib/navegacion";
 import { minutosEntre } from "../src/lib/reloj";
 
@@ -112,6 +114,26 @@ try {
         }
       }
     }
+    // Y los números de línea de los fragmentos de código: si el laboratorio se
+    // movió, la lámina numera mal y nadie lo nota, porque un número puesto
+    // parece un número comprobado. `npm run numerar -- -w` los recalcula.
+    for (const sesion of curso.sesiones) {
+      for (const { item } of recorrer(sesion)) {
+        if (item.tipo !== "codigo" || !item.numeros || !item.contenido) continue;
+        const rel = item.ruta ? rutaDeLab(item.ruta) : null;
+        if (!rel || !existsSync(join(LAB, rel))) continue;
+        const archivo = readFileSync(join(LAB, rel), "utf8").split("\n");
+        const ahora = ubicarBloques(item.contenido, archivo);
+        if (ahora?.join(",") !== item.numeros.join(",")) {
+          rotas.push(
+            `${item.id}: los números de ${rel} ya no cuadran ` +
+              `(dice ${item.numeros.join(" · ")}, el archivo dice ` +
+              `${ahora?.join(" · ") ?? "que el fragmento no es literal"})`,
+          );
+        }
+      }
+    }
+
     if (rotas.length) {
       console.error(`\n${ROJO}Rutas al laboratorio que no llevan a ninguna parte:${FIN}`);
       for (const r of rotas) console.error(`  ${ROJO}·${FIN} ${r}`);

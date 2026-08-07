@@ -1022,8 +1022,10 @@ test("una ruta con coletilla no se enlaza: llevaría a un 404", () => {
     sitio.rutaDeLab("ui/app.py · el bloque de la reflexión"),
     "ui/app.py",
   );
-  assert.equal(sitio.rutaDeLab("Makefile"), null);
+  // Sin extensión y aun así archivo: la lista corta existe para esto.
+  assert.equal(sitio.rutaDeLab("Makefile"), "Makefile");
   assert.equal(sitio.rutaDeLab("el bloque de la reflexión"), null);
+  assert.equal(sitio.rutaDeLab("los seis nodos"), null);
 });
 
 test("el enlace al laboratorio ancla las líneas como las ancla GitHub", () => {

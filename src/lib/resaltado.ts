@@ -70,31 +70,72 @@ export function lineasResaltadas(resaltar?: (number | string)[]): Set<number> {
   return lineas;
 }
 
+/**
+ * Los números de línea del archivo real, uno por línea del fragmento.
+ *
+ * `["16-22", "44-46"]` produce `[16,17,…,22, 44,45,46]`. Si la cuenta no
+ * cuadra con el fragmento devuelve `null` y la lámina se dibuja sin numerar:
+ * numerar mal es peor que no numerar, porque nadie comprueba un número que
+ * parece estar ahí.
+ */
+export function numerosDeLinea(
+  numeros: string[] | undefined,
+  totalLineas: number,
+): (number | null)[] | null {
+  if (!numeros?.length) return null;
+  const salida: (number | null)[] = [];
+  for (const [i, rango] of numeros.entries()) {
+    const [desde, hasta] = rango.split("-").map((n) => Number(n.trim()));
+    if (!desde || Number.isNaN(desde)) return null;
+    // Entre dos bloques va un hueco: son líneas del archivo que no se muestran,
+    // y fingir que el segundo sigue al primero sería mentir sobre el archivo.
+    if (i > 0) salida.push(null);
+    for (let n = desde; n <= (hasta ?? desde); n++) salida.push(n);
+  }
+  return salida.filter((n) => n !== null).length === totalLineas ? salida : null;
+}
+
 async function resaltar(
   codigo: string,
   lenguaje: string,
   destacadas?: Set<number>,
+  numeros?: (number | null)[] | null,
 ): Promise<string> {
   try {
     return await codeToHtml(codigo.trimEnd(), {
       lang: lenguaje,
       themes: { light: "github-light", dark: "github-dark" },
       defaultColor: false,
-      transformers: destacadas?.size
-        ? [
-            {
-              // Shiki emite un `<span class="line">` por línea y las numera
-              // desde 1. Marcarla acá y pintarla con CSS sale más barato que
-              // rearmar el HTML, y así el resaltado por línea y el de sintaxis
-              // conviven sin pisarse.
-              line(nodo, numero) {
-                if (destacadas.has(numero)) {
-                  this.addClassToHast(nodo, "linea-resaltada");
-                }
+      transformers:
+        destacadas?.size || numeros
+          ? [
+              {
+                // Shiki emite un `<span class="line">` por línea y las numera
+                // desde 1. Marcarla acá y pintarla con CSS sale más barato que
+                // rearmar el HTML, y así el resaltado por línea, el número y el
+                // de sintaxis conviven sin pisarse.
+                line(nodo, numero) {
+                  if (destacadas?.has(numero)) {
+                    this.addClassToHast(nodo, "linea-resaltada");
+                  }
+                  if (!numeros) return;
+                  // Las líneas de Shiki no cuentan los huecos, así que hay que
+                  // saltarlos para emparejar el fragmento con el archivo.
+                  const sinHuecos = numeros.filter((n) => n !== null);
+                  const real = sinHuecos[numero - 1];
+                  if (real != null) {
+                    nodo.properties["data-linea"] = String(real);
+                    // El hueco se marca en la línea que lo sigue, que es donde
+                    // se dibuja el separador.
+                    const pos = numeros.indexOf(real);
+                    if (pos > 0 && numeros[pos - 1] === null) {
+                      this.addClassToHast(nodo, "tras-salto");
+                    }
+                  }
+                },
               },
-            },
-          ]
-        : undefined,
+            ]
+          : undefined,
     });
   } catch {
     // Un lenguaje que Shiki no conoce no puede tumbar la lámina.
@@ -123,7 +164,14 @@ async function resaltarItem(item: Item): Promise<Item> {
   if (item.tipo === "codigo") {
     const fuente = recortar(item.contenido ?? "", item.lineas);
     const destacadas = lineasResaltadas(item.resaltar);
-    return { ...item, html: await resaltar(fuente, item.lenguaje, destacadas) };
+    const numeros = numerosDeLinea(
+      item.numeros,
+      fuente.replace(/\n$/, "").split("\n").length,
+    );
+    return {
+      ...item,
+      html: await resaltar(fuente, item.lenguaje, destacadas, numeros),
+    };
   }
 
   if (item.tipo === "terminal") {

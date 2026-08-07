@@ -48,21 +48,22 @@ items:
     entradilla: Es corto a propósito, y es un archivo de verdad
     lenguaje: python
     ruta: agente/pelado.py
+    numeros: ["43-44", "47-52", "56-59"]
     minutos: 3
-    contenido: |
-      llm = obtener_llm().bind_tools(HERRAMIENTAS)
-      mensajes = [SystemMessage(content=CONTEXTO), HumanMessage(content=encargo)]
+    contenido: |2
+          llm = obtener_llm().bind_tools(HERRAMIENTAS)
+          mensajes = [SystemMessage(content=CONTEXTO), HumanMessage(content=encargo)]
 
-      for _ in range(MAX_VUELTAS):
-          respuesta = llm.invoke(mensajes)
-          mensajes.append(respuesta)
-          if not respuesta.tool_calls:
-              break
-          for llamada in respuesta.tool_calls:
-              resultado = POR_NOMBRE[llamada["name"]].invoke(llamada["args"])
-              mensajes.append(
-                  ToolMessage(str(resultado), tool_call_id=llamada["id"])
-              )
+          for _ in range(MAX_VUELTAS):
+              respuesta = llm.invoke(mensajes)
+              mensajes.append(respuesta)
+              if not respuesta.tool_calls:
+                  break
+              for llamada in respuesta.tool_calls:
+                  resultado = POR_NOMBRE[llamada["name"]].invoke(llamada["args"])
+                  mensajes.append(
+                      ToolMessage(str(resultado), tool_call_id=llamada["id"])
+                  )
     notas: |
       Esto es ReAct entero: pensar, actuar, observar, repetir. No hay más.
 

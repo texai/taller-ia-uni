@@ -193,6 +193,28 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `asistencia` | Recordatorio de tomar lista. Solo el docente | `nota` |
 | `pregunta` | El docente pregunta a los alumnos | `pregunta`, `opciones`, `respuesta`, `permiteOmitir`, `visibilidad` |
 
+### Los fragmentos de código llevan los números del archivo
+
+Un `codigo` con `ruta` se numera con las líneas **del laboratorio**, no con un
+1, 2, 3 del fragmento. Un fragmento numerado desde uno invita a buscar la línea
+4 de un archivo donde esa línea es otra cosa.
+
+Los números viven en `numeros: ["13-21", "32-33"]` —un rango por bloque
+contiguo— y **no se escriben a mano**: los calcula `npm run numerar` leyendo el
+archivo, y `validar-contenido` comprueba que sigan cuadrando. Entre dos bloques
+la lámina dibuja un separador punteado, porque decir «aquí falta un trozo» es
+parte de no mentir sobre el archivo.
+
+La consecuencia es la regla: **un fragmento numerado tiene que ser literal.**
+Nada de comentarios explicativos añadidos para la lámina — en cuanto se añade
+uno, el fragmento deja de encontrarse y se queda sin numerar. Las explicaciones
+van en `notas`, que es donde el docente las lee de todas formas. Costó
+reescribir catorce fragmentos que se habían ido adaptando poco a poco, y ese es
+exactamente el problema que la regla evita: nadie sabía cuáles eran fieles.
+
+Un `codigo` sin `ruta`, o cuyo contenido no es una cita —la forma de un objeto,
+un ejemplo inventado—, no lleva números y no debería llevar `ruta`.
+
 ### Por qué `diff` y no `comparacion`
 
 `comparacion` enfrenta dos **ideas** en prosa: lo que vio el MAPE contra lo que

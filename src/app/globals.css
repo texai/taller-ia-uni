@@ -88,6 +88,34 @@ body {
  * termina donde termina el texto, y una banda irregular proyectada se lee como
  * un fallo de la lamina y no como un enfasis.
  */
+/* --------------------------------------------------------------------------
+   Numeros de linea del archivo real
+
+   Los pone `resaltado.ts` como `data-linea`, y son los del archivo en el
+   laboratorio -- no un 1, 2, 3 del fragmento. Un fragmento numerado desde uno
+   invita a buscar la linea 4 de un archivo donde esa linea es otra cosa.
+
+   `.tras-salto` marca donde el fragmento se salta un trozo del archivo. Se
+   dibuja como un separador punteado, porque decir "aqui falta algo" es parte
+   de no mentir sobre el archivo.
+   -------------------------------------------------------------------------- */
+pre code .line[data-linea]::before {
+  content: attr(data-linea);
+  display: inline-block;
+  width: 3.5ch;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--tinta-suave);
+  opacity: 0.55;
+  user-select: none;
+}
+
+pre code .line.tras-salto {
+  border-top: 1px dashed var(--borde);
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+}
+
 .linea-resaltada {
   display: inline-block;
   width: calc(100% + 2.5rem);

@@ -45,5 +45,10 @@ export function enlaceALab(ruta: string, lineas?: string): string {
  */
 export function rutaDeLab(ruta: string): string | null {
   const limpia = ruta.split("·")[0]?.trim() ?? "";
-  return /^[\w./-]+\.\w+$/.test(limpia) ? limpia : null;
+  // Con extensión, o uno de los que no la tienen y sí son archivos. La lista
+  // corta es a propósito: sin ella, «el bloque de la reflexión» pasaría por
+  // ruta y el enlace llevaría a un 404.
+  const sinExtension = ["Makefile", "Dockerfile"];
+  const vale = /^[\w./-]+\.\w+$/.test(limpia) || sinExtension.includes(limpia);
+  return vale ? limpia : null;
 }

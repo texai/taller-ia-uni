@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Los fragmentos de código llevan los números del archivo
+- Un `codigo` con `ruta` se numera con las líneas **del laboratorio**. Entre
+  bloques no contiguos, un separador punteado: el fragmento se salta un trozo y
+  lo dice.
+- Los números **no se escriben a mano**. `npm run numerar` los calcula leyendo
+  el archivo y `validar-contenido` comprueba que sigan cuadrando — probado
+  rompiéndolo.
+- Eso obliga a que **el fragmento sea literal**, y ahí estaba el problema real:
+  de los 19 fragmentos con ruta, **solo 5 eran fieles al archivo**. Los otros
+  14 se habían ido adaptando —comentarios añadidos para la lámina, sangrías
+  aplastadas, líneas reescritas— y nadie sabía cuáles. Ahora los 19 son
+  literales y las explicaciones viven en `notas`.
+- El localizador elige la aparición que da el bloque más largo: un fragmento
+  que empieza por `@tool` se anclaba en el primer `@tool` del archivo, que es
+  otra herramienta, y numeraba mal sin avisar.
+
+
 ### `/profe/inicio` devolvía un error de servidor en producción
 - La causa no era el material: **eran cuatro imágenes que sí existen y sí se
   ven.** El cargador comprueba que cada `imagen` y cada `archivo` existan bajo

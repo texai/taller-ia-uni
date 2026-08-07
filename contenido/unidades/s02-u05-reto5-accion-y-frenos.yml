@@ -104,21 +104,25 @@ items:
     titulo: Las dos reglas que hacen el trabajo pesado
     lenguaje: python
     ruta: agente/accion.py
+    numeros: ["70-85"]
     minutos: 4
-    contenido: |
-      es_anomalia = hipotesis.get("tipo") == "anomalia"
+    contenido: |2
+          es_anomalia = hipotesis.get("tipo") == "anomalia"
 
-      for rec in recomendaciones:
-          if rec["accion"] not in ACCIONES_AUTOMATIZABLES:
-              continue                      # investigar y revisar_datos van a un humano
-          if es_anomalia:
-              continue                      # regla 1: naturaleza del problema
-          if rec.get("urgencia") == "monitorear":
-              continue                      # el propio agente dijo que no toquemos
-          objetivo = _filtro_de(rec)
-          if not objetivo:
-              continue                      # regla 2: radio de daño — la flota entera
-          ejecutables.append(...)
+          for rec in recomendaciones:
+              accion = (rec.get("accion") or "").strip()
+              if accion not in ACCIONES_AUTOMATIZABLES:
+                  veredicto.append(_sin_ejecutar(rec, "no es una accion automatizable"))
+                  continue
+              if es_anomalia:
+                  veredicto.append(
+                      _sin_ejecutar(
+                          rec,
+                          "el diagnostico es una anomalia de datos: reentrenar aqui "
+                          "contaminaria modelos sanos",
+                      )
+                  )
+                  continue
     notas: |
       Señalar que `evaluar` está separada de `ejecutar` a propósito: la
       política se puede leer, probar y discutir sin tocar la plataforma.
@@ -263,6 +267,7 @@ items:
     entradilla: El objetivo se declara en campos, no en prosa
     lenguaje: python
     ruta: agente/accion.py
+    numeros: ["124", "132-138"]
     minutos: 2
     contenido: |
       def _filtro_de(rec: dict) -> dict | None:
@@ -570,6 +575,7 @@ items:
     entradilla: Su docstring dice para qué existe, y es una tesis
     lenguaje: python
     ruta: ui/app.py
+    numeros: ["1-11"]
     resaltar: ["7-9"]
     minutos: 4
     contenido: |
@@ -608,26 +614,27 @@ items:
     entradilla: Veinte líneas de Streamlit, y ninguna decide nada
     lenguaje: python
     ruta: ui/app.py · el bloque de la reflexión
+    numeros: ["196-212"]
     resaltar: [2, 12]
     minutos: 3
-    contenido: |
-      critica = final.get("critica", {})
-      corregido = critica.get("veredicto") == "insuficiente"
+    contenido: |2
+              critica = final.get("critica", {})
+              corregido = critica.get("veredicto") == "insuficiente"
 
-      _tarjeta_diagnostico(final.get("hipotesis", {}), corregido)
+              _tarjeta_diagnostico(final.get("hipotesis", {}), corregido)
 
-      st.subheader("Reflexion")
-      st.caption(
-          f"veredicto: **{critica.get('veredicto', '?')}** · "
-          f"vueltas: {final.get('vueltas', 0)}"
-      )
-      objeciones = critica.get("objeciones") or []
-      for o in objeciones:
-          st.markdown(f"- {o}")
-      if not objeciones:
-          st.caption("No se puso ninguna objecion a si mismo.")
-      if corregido:
-          st.success("El diagnostico de arriba ya incorpora estas objeciones.")
+              st.subheader("Reflexion")
+              st.caption(
+                  f"veredicto: **{critica.get('veredicto', '?')}** · "
+                  f"vueltas: {final.get('vueltas', 0)}"
+              )
+              objeciones = critica.get("objeciones") or []
+              for o in objeciones:
+                  st.markdown(f"- {o}")
+              if not objeciones:
+                  st.caption("No se puso ninguna objecion a si mismo.")
+              if corregido:
+                  st.success("El diagnostico de arriba ya incorpora estas objeciones.")
     notas: |
       Lo que hay que ver es lo que **no** hay: ninguna de estas líneas
       decide nada. La interfaz solo lee el estado que el grafo dejó y lo

@@ -36,22 +36,21 @@ items:
     entradilla: Doce líneas que producen todo lo que el modelo sabe del mundo
     lenguaje: python
     ruta: plataforma/modelo.py
-    resaltar: ["8-11"]
+    numeros: ["13-21", "32-33"]
+    resaltar: ["10-11"]
     minutos: 3
-    contenido: |
+    contenido: |2
       LAGS = (7, 14, 28)
       VENTANAS = (7, 28)
 
       COLUMNAS = (
-          [f"lag_{d}" for d in LAGS]          # que se vendio hace 7, 14 y 28 dias
-          + [f"media_{v}" for v in VENTANAS]  # la media movil de 7 y de 28
-          + [f"dow_{d}" for d in range(1, 7)] # que dia de la semana es
-          + ["en_promocion", "t"]             # si hay promo, y cuanto tiempo paso
+          [f"lag_{d}" for d in LAGS]
+          + [f"media_{v}" for v in VENTANAS]
+          + [f"dow_{d}" for d in range(1, 7)]
+          + ["en_promocion", "t"]
       )
-
-      for v in VENTANAS:
-          # shift(1) para no filtrar el valor del propio dia que se predice.
-          df[f"media_{v}"] = df["unidades"].shift(1).rolling(v).mean()
+              # shift(1) para no filtrar el valor del propio dia que se predice.
+              df[f"media_{v}"] = df["unidades"].shift(1).rolling(v).mean()
     notas: |
       **El `shift(1)` resaltado es la línea más peligrosa del laboratorio**, y
       por eso está. Sin él, la media móvil de siete días incluiría el día que
@@ -173,19 +172,19 @@ items:
     entradilla: seed lo crea, romper lo degrada, reparar lo devuelve. Tal cual están en el Makefile.
     lenguaje: makefile
     ruta: Makefile
-    resaltar: ["8", "13"]
+    numeros: ["53-55", "87-95"]
+    resaltar: ["5", "10"]
     minutos: 4
-    contenido: |
-      seed:      ## Pipeline completo: datos, entrenamiento, pronostico y metricas
+    contenido: |2
+      seed:  ## Pipeline completo: datos, entrenamiento, pronostico y metricas
       	$(EN_PLATAFORMA) seed
-      	#  = datos -> entrenar -> pronosticar -> metricas
 
-      romper:    ## Degrada los datos, rompe el mundo
+      romper:  ## Degrada los datos, rompe el mundo. Uso: make romper ESCENARIO=sesgo_silencioso
       	$(EN_PLATAFORMA) escenario --nombre $(ESCENARIO)
       	$(MAKE) pronosticar
       	$(MAKE) metricas
 
-      reparar:   ## Regenera los datos limpios, vuelve al mundo sano
+      reparar:  ## Regenera los datos limpios, vuelve al mundo sano
       	$(EN_PLATAFORMA) datos
       	$(MAKE) pronosticar
       	$(MAKE) metricas
@@ -550,12 +549,14 @@ items:
     entradilla: Dos líneas del job, y lo que la cobertura mide de verdad
     lenguaje: python
     ruta: plataforma/pronosticar.py
+    numeros: ["83-84", "106-108"]
     minutos: 3
-    contenido: |
-      sigma = max(1.0, float(df["unidades"].tail(90).std() or 1.0)) * 0.6
-
-      "limite_inferior": round(float(max(0.0, p - 1.96 * sigma)), 2),
-      "limite_superior": round(float(p + 1.96 * sigma), 2),
+    contenido: |2
+              # Error historico del modelo, para construir el intervalo.
+              sigma = max(1.0, float(df["unidades"].tail(90).std() or 1.0)) * 0.6
+                          "prediccion": round(float(max(0.0, p)), 2),
+                          "limite_inferior": round(float(max(0.0, p - 1.96 * sigma)), 2),
+                          "limite_superior": round(float(p + 1.96 * sigma), 2),
     notas: |
       **El 1.96 es el número que hay que nombrar.** Es el ancho de una normal
       que deja el 95% en el medio — acá con la sigma reducida a 0.6 queda un
@@ -782,18 +783,19 @@ items:
     entradilla: Las últimas cuatro semanas, apartadas antes de entrenar
     lenguaje: python
     ruta: plataforma/entrenar.py
-    resaltar: ["2-5"]
+    numeros: ["109", "113-119"]
+    resaltar: ["3-6"]
     minutos: 3
-    contenido: |
-      df = construir_features(serie).dropna(subset=COLUMNAS)
+    contenido: |2
+              df = construir_features(serie).dropna(subset=COLUMNAS)
 
-      # Ultimas 4 semanas como validacion.
-      corte = len(df) - 28
-      X_tr, y_tr = df[COLUMNAS].iloc[:corte], df["unidades"].iloc[:corte]
-      X_va, y_va = df[COLUMNAS].iloc[corte:], df["unidades"].iloc[corte:]
+              # Ultimas 4 semanas como validacion.
+              corte = len(df) - 28
+              X_tr, y_tr = df[COLUMNAS].iloc[:corte], df["unidades"].iloc[:corte]
+              X_va, y_va = df[COLUMNAS].iloc[corte:], df["unidades"].iloc[corte:]
 
-      modelo = Ridge(alpha=alpha).fit(X_tr, y_tr)
-      mape_val = _mape(y_va, pd.Series(modelo.predict(X_va), index=y_va.index))
+              modelo = Ridge(alpha=alpha).fit(X_tr, y_tr)
+              mape_val = _mape(y_va, pd.Series(modelo.predict(X_va), index=y_va.index))
     notas: |
       **El corte es por tiempo y no al azar, y esa es la lámina.** En una serie
       temporal, repartir las filas aleatoriamente entrena con días posteriores

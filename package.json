@@ -13,7 +13,8 @@
     "test": "node --import tsx --test src/lib/*.test.ts",
     "humo": "node --import tsx scripts/humo.mjs",
     "qr": "node --import tsx scripts/generar-qr.mjs",
-    "qr:leer": "node --import tsx scripts/verificar-qr.mjs"
+    "qr:leer": "node --import tsx scripts/verificar-qr.mjs",
+    "numerar": "tsx scripts/numerar-codigo.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

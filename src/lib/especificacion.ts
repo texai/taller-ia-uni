@@ -44,7 +44,14 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
   codigo: {
     requeridos: ["lenguaje"],
     alMenosUno: [["contenido", "archivo"]],
-    opcionales: ["contenido", "archivo", "lineas", "resaltar", "ruta"],
+    opcionales: [
+      "contenido",
+      "archivo",
+      "lineas",
+      "resaltar",
+      "ruta",
+      "numeros",
+    ],
   },
 
   terminal: {

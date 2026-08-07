@@ -80,7 +80,13 @@ npm run lint
 npm run build     # incluye la validación del contenido
 npm run humo      # abre TODOS los ítems en un navegador de verdad
 npm run qr:leer   # lee el QR de la portada y comprueba a dónde lleva
+npm run numerar   # informe de los números de línea de cada fragmento
 ```
+
+Los fragmentos de código que citan un archivo del laboratorio llevan los
+números de línea **del archivo**. Se calculan con `npm run numerar -- -w`
+leyendo `../taller-ia-uni-lab`, y `npm run build` falla si dejan de cuadrar.
+Eso obliga a que el fragmento sea literal: las explicaciones van en `notas`.
 
 `humo` es la única que ve los fallos de hidratación —una lámina que se
 construye bien, responde 200 y sale en blanco al llegar al navegador— y por eso

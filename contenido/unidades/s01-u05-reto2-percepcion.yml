@@ -88,16 +88,15 @@ items:
     entradilla: Lo que hay que escribir
     lenguaje: python
     ruta: agente/herramientas.py
+    numeros: ["267-272"]
     minutos: 2
-    contenido: |
+    contenido: |2
       @tool
       def comparar_periodos(
-          dias_recientes: int = 14,
-          dias_base: int = 45,
-          dimension: str = "categoria",
+          dias_recientes: int = 14, dias_base: int = 45, dimension: str = "categoria"
       ) -> dict:
-          """Compara una ventana reciente contra una linea base anterior
-          y mide si la diferencia es real."""
+          """Compara una ventana reciente contra una linea base anterior y mide si
+          la diferencia es estadisticamente real.
     notas: |
       Señalar que la docstring NO es documentación: es lo que el LLM lee
       para decidir cuándo llamarla. Es prompt, y se escribe como prompt.
@@ -201,6 +200,7 @@ items:
     titulo: "Trampa 1 · Cómo se calcula el sesgo de un grupo"
     lenguaje: python
     ruta: agente/herramientas.py
+    numeros: ["89", "102-108"]
     minutos: 4
     resaltar: ["6-8"]
     contenido: |
@@ -326,20 +326,22 @@ items:
     entradilla: Por qué el sesgo silencioso vale 0.06 y no 0.18
     lenguaje: python
     ruta: plataforma/escenario.py
-    resaltar: ["9-11"]
+    numeros: ["33-41", "49-52"]
+    resaltar: ["10-12"]
     minutos: 3
-    contenido: |
+    contenido: |2
       # Cuanto cae la demanda al final de la ventana en `sesgo_silencioso`.
       #
-      # Calibrado, no elegido a ojo. Una caida pareja mueve el MAPE y el sesgo
-      # la misma cantidad de puntos; lo que los separa es de donde parten. Con
-      # este valor el MAPE de la flota va de 13.8 a 14.5 -- ruido -- y los
-      # modelos sobre el umbral de alerta se duplican, un movimiento por el que
-      # nadie levanta el telefono. El sesgo, en cambio, va de +0.7% a +4.7%.
+      # Calibrado, no elegido a ojo. Una caida pareja mueve el MAPE y el sesgo la
+      # misma cantidad de puntos; lo que los separa es de donde parten. Con este
+      # valor el MAPE de la flota va de 13.8 a 14.5 -- ruido -- y los modelos sobre
+      # el umbral de alerta se duplican, un movimiento por el que nadie levanta el
+      # telefono. El sesgo, en cambio, va de +0.7% a +4.7%: seis veces, y unas 36 mil
+      # unidades de sobre-stock.
       #
-      # A 0.18, que es donde estaba, 57 de 192 modelos cruzaban el umbral. Eso
-      # ya no es silencioso: cualquier tablero lo hubiera gritado, y el
-      # escenario dejaba de demostrar lo unico que existe para demostrar.
+      # A 0.18, que es donde estaba, 57 de 192 modelos cruzaban el umbral. Eso ya no
+      # es silencioso: cualquier tablero lo hubiera gritado, y el escenario dejaba de
+      # demostrar lo unico que existe para demostrar.
       CAIDA_SESGO_SILENCIOSO = 0.06
     notas: |
       **La lámina que cierra el argumento de la calibración**, y por el otro
@@ -503,6 +505,7 @@ items:
     entradilla: Cada uno por encima de lo que su dimensión se mueve sola
     lenguaje: python
     ruta: agente/herramientas.py
+    numeros: ["48-53"]
     minutos: 2
     contenido: |
       UMBRALES = {

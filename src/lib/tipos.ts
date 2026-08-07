@@ -72,6 +72,20 @@ export interface ItemCodigo extends ItemBase {
   resaltar?: (number | string)[];
   /** Ruta que se muestra como etiqueta. */
   ruta?: string;
+  /**
+   * Dónde vive este fragmento en el archivo real: `["16-22", "44-46"]`.
+   *
+   * Los rangos se corresponden con los bloques contiguos del `contenido`, en
+   * orden, y la suma de sus líneas tiene que dar exactamente las del
+   * fragmento. Con esto la lámina numera como numera el archivo, y entre dos
+   * bloques dibuja un salto en vez de fingir que son seguidos.
+   *
+   * No se escribe a mano: lo calcula `npm run numerar` leyendo el laboratorio,
+   * y `validar-contenido` comprueba que sigan cuadrando. La consecuencia es
+   * que **un fragmento numerado tiene que ser literal** — en cuanto alguien le
+   * añade un comentario que no está en el archivo, deja de cuadrar y falla.
+   */
+  numeros?: string[];
   /** El resaltado ya hecho. Lo rellena `resaltarSesion`, no el YAML. */
   html?: string;
 }

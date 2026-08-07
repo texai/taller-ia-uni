@@ -9,7 +9,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { lineasResaltadas, recortar } from "./resaltado";
+import { lineasResaltadas, numerosDeLinea, recortar } from "./resaltado";
 
 test("sin `resaltar` no hay ninguna línea marcada", () => {
   assert.equal(lineasResaltadas(undefined).size, 0);
@@ -54,4 +54,18 @@ test("recortar deja la primera línea mostrada como la número 1", () => {
 test("sin `lineas` se muestra todo", () => {
   const fuente = "uno\ndos";
   assert.equal(recortar(fuente, undefined), fuente);
+});
+
+test("los números de línea son los del archivo, con un hueco entre bloques", () => {
+  assert.deepEqual(numerosDeLinea(["16-18", "44-45"], 5), [16, 17, 18, null, 44, 45]);
+  assert.deepEqual(numerosDeLinea(["7"], 1), [7]);
+});
+
+test("si la cuenta no cuadra, no se numera", () => {
+  // Numerar mal es peor que no numerar: nadie comprueba un número que parece
+  // estar ahí. Pasa en cuanto alguien le agrega una línea al fragmento.
+  assert.equal(numerosDeLinea(["16-18"], 4), null);
+  assert.equal(numerosDeLinea(["16-18"], 2), null);
+  assert.equal(numerosDeLinea(undefined, 3), null);
+  assert.equal(numerosDeLinea([], 3), null);
 });
