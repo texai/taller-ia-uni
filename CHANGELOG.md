@@ -3,6 +3,49 @@
 Resumen de cambios por fecha, más reciente arriba. El detalle batch por batch
 vive en [`docs/DONE.md`](docs/DONE.md).
 
+## 2026-08-07
+
+### Segunda pantalla del docente (batch 11)
+- Nueva ruta `/profe/sesion/[sesion]/mando`, para el **segundo portátil**: el
+  que no se comparte por Zoom. Controles de avance y retroceso —también con las
+  flechas—, notas privadas del ítem, vista previa del siguiente, salto por
+  índice, y el panel de preguntas de los alumnos abierto, que es la mitad de la
+  razón de dictar con dos máquinas.
+- **Las dos pantallas del docente se escuchan entre sí.** La principal dejó de
+  solo publicar: ahora también sigue la pauta. Para que eso no se convierta en
+  un bucle, el canal usa `broadcast: { self: false }`, la pantalla principal no
+  reemite la pauta que acaba de recibir, y `publicar` devuelve lo que emitió
+  para que las dos comparen marcas de tiempo del mismo reloj.
+- El interruptor **Dictando / Ensayando** vive en los dos lados y gana el más
+  reciente, igual que la posición.
+- El mando **no se mueve a ciegas**: hasta que llega la primera pauta, avanzar
+  y retroceder están deshabilitados, con un botón aparte para empezar la sesión
+  desde el principio.
+
+### Preguntas lanzadas al vuelo
+- Nuevo tipo de mensaje `PreguntaViva` y evento `pregunta-viva`: el docente
+  puede preguntar algo que no está en el material. Viaja entero por el canal
+  —la pauta solo sabe señalar ítems que existen en el YAML— y se dibuja
+  **reutilizando el componente `Pregunta`**, así que hereda los mismos tres
+  estados y no abre un segundo camino por el que unos resultados puedan
+  filtrarse antes del revelado.
+
+### Reloj
+- `minutosEntre` y `comoDuracion` en `reloj.ts`; `minutosDeSesion` y
+  `minutosHasta` en `navegacion.ts`, los cuatro con tests. El mando muestra
+  cuánto queda de sesión, lo planificado contra lo transcurrido, y cuánto lleva
+  en pantalla el ítem actual — esto último a partir de la marca de tiempo de la
+  pauta, no de un cronómetro local, para que sea correcto aunque el mando se
+  abra a mitad de clase.
+- `minutosEntre` no da la vuelta al reloj: antes de la hora de inicio devuelve
+  negativo, porque un número negativo es información y "23 h 30 min" es un
+  error escondido.
+- `minutosDe` se movió a `navegacion.ts` como `minutosDeUnidad` y `contenido.ts`
+  la reexporta. Los minutos se declaran dos veces —presupuesto en la unidad,
+  estimación en cada ítem— y hacían falta dos módulos con la misma regla, no
+  dos reglas: el mando y el índice del docente tienen que anunciar el mismo
+  total para la misma sesión.
+
 ## 2026-08-06
 
 ### Documentación

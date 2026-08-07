@@ -627,3 +627,117 @@ además algo que nadie había notado: **quien entraba antes del primer
 movimiento del docente se quedaba sin pauta** y aterrizaba en el primer ítem.
 Con veinte alumnos abriendo la URL a la vez al empezar la clase, eso les habría
 pasado a todos.
+
+---
+
+## Batch 11 — Segunda pantalla del docente
+**2026-08-07**
+
+En clase, el docente comparte su pantalla por Zoom. Todo lo que necesita para
+sí mismo —notas, preguntas que llegan, el reloj— no puede estar ahí.
+
+**Alcance** (todo hecho)
+- [ ] Ruta de segunda pantalla, pensada para teléfono
+- [ ] Controles de avance y retroceso que mueven la clase
+- [ ] Notas privadas del ítem actual
+- [ ] Vista previa del ítem siguiente
+- [ ] Preguntas de alumnos, en vivo
+- [ ] Lanzar una pregunta al vuelo
+- [ ] Reloj: tiempo transcurrido, tiempo restante de la sesión, y si el ítem
+      actual se está pasando de sus minutos
+- [ ] Autenticada como el resto de lo del docente
+
+---
+
+### Cómo quedó, y en qué se desvió de lo planificado
+
+- **No es un teléfono: es el segundo portátil.** El docente dicta con dos
+  máquinas —una proyecta y se comparte por Zoom, la otra la mira solo él—, así
+  que la pantalla se diseñó para un teclado y un monitor: dos columnas en
+  pantalla ancha, y las flechas ← → moviendo la clase igual que en la
+  principal. Sigue plegándose a una columna, que es lo que la hace utilizable
+  desde el teléfono si hiciera falta, pero ese ya no es el caso de uso.
+  Consecuencia práctica: el panel de preguntas de los alumnos está **abierto**
+  acá, mientras que en la pantalla principal sigue cerrado por omisión. Ahí
+  está la mitad de la razón de tener dos máquinas — moderar sin que la clase
+  vea quién preguntó qué.
+
+- **Las dos pantallas se escuchan entre sí.** Hasta ahora la del docente solo
+  publicaba. Para que el mando mueva la clase, la principal tiene que seguir la
+  pauta como la sigue un alumno. Eso trajo tres consecuencias, y ninguna era
+  obvia:
+
+  1. **`broadcast: { self: false }`** en el canal. Sin eso, publicar y escuchar
+     en el mismo cliente es un bucle.
+  2. **La principal no reemite lo que le acaba de llegar.** Al moverse por una
+     pauta recibida volvía a publicar la misma posición con una marca de tiempo
+     más nueva — que es exactamente la que pisaría el movimiento siguiente si
+     el docente pulsa dos veces seguidas en el mando. Ahora compara `itemId`,
+     `paso` y `enVivo` con la pauta vigente antes de publicar.
+  3. **`publicar` devuelve la pauta que emitió.** El mando decide su posición
+     tomando la más reciente entre lo que él mandó y lo que llegó del canal, y
+     esa comparación solo es correcta si las dos marcas de tiempo salen del
+     mismo sitio.
+
+- **El interruptor de "Dictando / Ensayando" también está en los dos lados**, y
+  por lo mismo se resolvió igual: gana el más reciente. Antes era estado local
+  de la pantalla principal, y habría vuelto a imponer su valor cada vez que el
+  mando cambiara el suyo.
+
+- **El mando no se mueve a ciegas.** Al abrirlo todavía no sabe dónde va la
+  clase, y avanzar desde una posición supuesta arrastraría a todos al segundo
+  ítem. Los controles de avance y retroceso quedan deshabilitados hasta que
+  llega la primera pauta, con un botón aparte —"Empezar desde el principio"—
+  para el caso legítimo de ser el primero en abrir la sesión. Saltar por el
+  índice sí funciona desde el arranque: elegir un ítem de la lista es decir a
+  dónde ir, no moverse desde donde uno cree que está.
+
+- **La pregunta al vuelo viaja entera por el canal.** La pauta solo sabe
+  señalar ítems que existen en el YAML, así que una pregunta improvisada no
+  cabía ahí. Se agregó `PreguntaViva` y el evento `pregunta-viva`, y en las
+  pantallas se dibuja **reutilizando el mismo componente `Pregunta`** de un
+  ítem del material: así hereda gratis los tres estados —respondiendo,
+  revelado, en vivo— y no hay un segundo camino por el que unos resultados
+  puedan filtrarse antes de tiempo. Las respuestas y el revelado usan la
+  maquinaria existente sin cambios.
+  - Limitación aceptada: viaja solo por broadcast, no por presence. Quien
+    recargue la página con una pregunta lanzada en pantalla no la verá. Meterla
+    en presence obligaría a que la presencia del docente cargara dos cosas
+    distintas y a decidir cuál gana al cerrarse una; no vale ese precio para
+    algo que dura dos minutos.
+
+- **El reloj salió de aritmética probada, no de un `Date` en el componente.**
+  `minutosEntre` y `comoDuracion` en `reloj.ts`; `minutosDeSesion` y
+  `minutosHasta` en `navegacion.ts`. Los cuatro con tests. El reloj muestra
+  cuánto queda de sesión, lo planificado contra lo transcurrido —"holgura" en
+  verde, "atrasado" en ámbar— y cuánto lleva en pantalla el ítem actual.
+  - **Cuánto lleva el ítem sale de `pauta.momento`**, no de un cronómetro
+    local: es el instante en que la clase llegó ahí, publicado por la pantalla
+    que se movió. Funciona igual aunque el mando se abra a mitad de sesión.
+  - `minutosEntre` **no da la vuelta al reloj**. Antes de la hora de inicio
+    devuelve negativo, porque "−30 min" es información y "23 h 30 min" es un
+    error escondido.
+  - Una sesión sin `horaInicio` u `horaFin` legibles muestra "—" en vez de un
+    reloj inventado, igual que `horaDeRegreso`.
+
+- **Los minutos se declaraban dos veces y nadie lo había notado.** La unidad
+  lleva su presupuesto —el del reparto de las ocho horas— y cada ítem lleva su
+  estimación, y las dos cifras casi nunca cuadran porque los ítems se escriben
+  después. `minutosDe` en `contenido.ts` ya prefería el presupuesto de la
+  unidad; el reloj recién escrito sumaba ítems. Con eso, el mando y el índice
+  del docente habrían anunciado totales distintos para la misma sesión — y una
+  discrepancia de cinco minutos entre dos pantallas del mismo curso se lee como
+  un error en las dos.
+  - La función se movió a `navegacion.ts` como `minutosDeUnidad` (el mando la
+    necesita en el navegador, y `contenido.ts` importa `node:fs`) y
+    `contenido.ts` la reexporta con su nombre de siempre. Una sola regla.
+  - Dentro de la unidad en curso mandan los minutos de los ítems, acotados al
+    presupuesto; al llegar a su último ítem se devuelve el presupuesto exacto.
+    Así el reloj termina la sesión en el mismo número que el índice.
+
+**Verificación**
+- `npm test` (61 pasan), `npm run typecheck`, `npm run lint` y `npm run build`
+  limpios.
+- La verificación en vivo la hace el docente en producción: la política de red
+  de este contenedor bloquea la salida hacia Supabase, la misma limitación que
+  tuvieron los batches 8, 9 y 10.

@@ -359,3 +359,34 @@ Este curso tiene números medidos —36,567 unidades, 13.8% a 14.5% de MAPE, los
 umbrales por dimensión— y citas literales de corridas reales del agente. **No
 se inventan ni se redondean para que suenen mejor.** Si un batch necesita una
 cifra que no está en el material de origen, la pide; no la estima.
+
+## 14 · El docente dicta con dos pantallas, y solo una se proyecta
+
+La sesión se dicta desde dos máquinas. Una proyecta y se comparte por Zoom; la
+otra —el **mando**, en `/profe/sesion/[sesion]/mando`— la mira solo el docente.
+
+De ahí sale una regla que decide dónde va cada cosa nueva: **si algo no debe
+verlo la clase, va en el mando y solo en el mando.** Las preguntas que llegan
+en privado, el reloj que dice que la unidad se está pasando, el aviso de que
+toca el receso. La pantalla proyectada muestra el material y nada más — con la
+excepción deliberada del recuento de una pregunta, que se proyecta porque
+sirve para saber cuándo cortar y no dice hacia dónde va la respuesta (§12).
+
+Esto **no** reemplaza a §3. Las notas del docente se siguen filtrando en el
+servidor para la carga del alumno: la separación entre las dos pantallas es de
+ergonomía, no de seguridad, y las dos son cargas del docente.
+
+**Las dos pantallas son pares, no maestro y esclavo.** Cualquiera de las dos
+mueve la clase y la otra la sigue. Eso obliga a tres cosas, y las tres se
+descubren rompiéndolas:
+
+- El canal va con `broadcast: { self: false }`, o publicar y escuchar en el
+  mismo cliente es un bucle.
+- Una pantalla **no reemite la pauta que acaba de recibir**. Si lo hace, la
+  reemisión lleva una marca de tiempo más nueva que la del movimiento que la
+  causó — y pisa el movimiento siguiente si el docente pulsa dos veces
+  seguidas en la otra máquina.
+- Cualquier estado que se pueda cambiar desde las dos (la posición, el paso, el
+  interruptor de dictado) se resuelve **por marca de tiempo: gana el más
+  reciente**, y las marcas tienen que salir del mismo reloj. Por eso `publicar`
+  devuelve la pauta que emitió en vez de que cada pantalla se invente la suya.

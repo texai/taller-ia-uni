@@ -51,3 +51,31 @@ export function ahora(fecha: Date): string {
     fecha.getMinutes(),
   ).padStart(2, "0")}`;
 }
+
+/**
+ * Minutos de `desde` a `hasta`. `null` si alguna de las dos no es una hora.
+ *
+ * Nunca da la vuelta al reloj: una sesión que aparenta durar 1380 minutos es
+ * casi siempre una hora mal escrita, y devolver ese número lo esconde. Antes
+ * de medianoche sale negativo, que es lo que significa "todavía no empieza".
+ */
+export function minutosEntre(
+  desde: string | undefined,
+  hasta: string | undefined,
+): number | null {
+  if (!desde || !hasta) return null;
+  const a = aMinutos(desde);
+  const b = aMinutos(hasta);
+  if (a === null || b === null) return null;
+  return b - a;
+}
+
+/** Formatea minutos como `"3 h 20 min"`, `"20 min"` o `"−5 min"`. */
+export function comoDuracion(minutos: number): string {
+  const signo = minutos < 0 ? "−" : "";
+  const total = Math.abs(Math.round(minutos));
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  if (h === 0) return `${signo}${m} min`;
+  return `${signo}${h} h ${String(m).padStart(2, "0")} min`;
+}

@@ -6,7 +6,9 @@ import {
   aMinutos,
   ahora,
   comoCuentaRegresiva,
+  comoDuracion,
   horaDeRegreso,
+  minutosEntre,
 } from "./reloj";
 
 test("horaDeRegreso suma los minutos del receso", () => {
@@ -51,4 +53,29 @@ test("comoCuentaRegresiva rellena los segundos", () => {
 test("ahora formatea con dos dígitos", () => {
   assert.equal(ahora(new Date(2026, 7, 8, 9, 5)), "09:05");
   assert.equal(ahora(new Date(2026, 7, 8, 15, 0)), "15:00");
+});
+
+test("minutosEntre mide la distancia entre dos horas", () => {
+  assert.equal(minutosEntre("15:00", "19:00"), 240);
+  assert.equal(minutosEntre("15:00", "15:20"), 20);
+});
+
+test("minutosEntre es negativo antes de empezar", () => {
+  // Es lo que el mando muestra si se abre a las 14:30: la sesión no empezó, y
+  // decir "quedan 23 h 30 min" sería peor que decir "−30 min".
+  assert.equal(minutosEntre("15:00", "14:30"), -30);
+});
+
+test("minutosEntre devuelve null si falta una hora o no se entiende", () => {
+  assert.equal(minutosEntre(undefined, "19:00"), null);
+  assert.equal(minutosEntre("15:00", undefined), null);
+  assert.equal(minutosEntre("tarde", "19:00"), null);
+});
+
+test("comoDuracion separa horas de minutos y marca lo negativo", () => {
+  assert.equal(comoDuracion(200), "3 h 20 min");
+  assert.equal(comoDuracion(20), "20 min");
+  assert.equal(comoDuracion(60), "1 h 00 min");
+  assert.equal(comoDuracion(-5), "−5 min");
+  assert.equal(comoDuracion(0), "0 min");
 });

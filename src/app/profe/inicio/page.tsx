@@ -55,6 +55,17 @@ export default function InicioDocente() {
               >
                 Dictar
               </Link>
+              {/* El segundo portátil: el que no se comparte por Zoom. */}
+              <Link
+                href={`/profe/sesion/${sesion.id}/mando`}
+                className="rounded-lg border px-4 py-2 text-sm font-medium"
+                style={{
+                  borderColor: "var(--color-aviso)",
+                  color: "var(--color-aviso)",
+                }}
+              >
+                Mando
+              </Link>
               <Link
                 href={`/profe/sesion/${sesion.id}/revision`}
                 className="rounded-lg border px-4 py-2 text-sm"

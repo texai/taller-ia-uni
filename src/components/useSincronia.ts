@@ -12,12 +12,14 @@ import {
   EVENTO_REVELADO,
   EVENTO_PAUTA,
   EVENTO_PREGUNTA,
+  EVENTO_PREGUNTA_VIVA,
   esMasNueva,
   MAX_PREGUNTA,
   nombreCanal,
   type EstadoCanal,
   type Pauta,
   type PreguntaAlumno,
+  type PreguntaViva,
   type RespuestaAlumno,
   type Revelado,
 } from "@/lib/vivo";
@@ -46,6 +48,8 @@ export function useSincronia({
   const [preguntas, setPreguntas] = useState<PreguntaAlumno[]>([]);
   const [respuestas, setRespuestas] = useState<RespuestaAlumno[]>([]);
   const [revelado, setRevelado] = useState<Revelado | null>(null);
+  /** La pregunta lanzada al vuelo, si hay alguna abierta ahora mismo. */
+  const [preguntaViva, setPreguntaViva] = useState<PreguntaViva | null>(null);
   /** Cuántos alumnos hay conectados. Es el denominador de "respondieron
    *  todos", y sale de Presence: nunca hay que declarar el tamaño del grupo. */
   const [conectados, setConectados] = useState(0);
@@ -87,7 +91,13 @@ export function useSincronia({
     let vigente = true;
 
     const c = supabase.channel(nombreCanal(curso, sesion), {
-      config: { presence: { key: esDocente ? "docente" : crypto.randomUUID() } },
+      config: {
+        presence: { key: esDocente ? "docente" : crypto.randomUUID() },
+        // `self: false` es lo que permite que una pantalla del docente siga a
+        // la otra sin oírse a sí misma. Con el eco activado, publicar y
+        // escuchar en el mismo cliente sería un bucle.
+        broadcast: { self: false },
+      },
     });
 
     const aceptar = (nueva: Pauta) => {
@@ -110,7 +120,13 @@ export function useSincronia({
     c.on("presence", { event: "sync" }, () => {
       if (!vigente) return;
       const estados = c.presenceState<{ pauta?: Pauta }>();
-      const delDocente = estados["docente"]?.[0]?.pauta;
+      // El docente puede tener DOS pantallas abiertas —el proyector y el
+      // teléfono— y las dos anuncian presencia bajo la misma clave. Gana la
+      // pauta más reciente, no la primera de la lista.
+      const delDocente = (estados["docente"] ?? [])
+        .map((e) => e.pauta)
+        .filter((p): p is Pauta => Boolean(p))
+        .sort((a, b) => b.momento - a.momento)[0];
       if (delDocente) aceptar(delDocente);
       // Todos menos el docente. Si alguien se desconecta a mitad, el
       // denominador baja con él: no tiene sentido esperar por una pantalla que
@@ -125,6 +141,15 @@ export function useSincronia({
     c.on("broadcast", { event: EVENTO_REVELADO }, ({ payload }) => {
       if (!vigente) return;
       setRevelado(payload as Revelado);
+    });
+
+    // Una pregunta lanzada al vuelo viaja entera, porque no está en el
+    // material. Va por el canal público —la ven todos— y se dibuja encima de
+    // lo que hubiera en pantalla.
+    c.on("broadcast", { event: EVENTO_PREGUNTA_VIVA }, ({ payload }) => {
+      if (!vigente) return;
+      const viva = payload as PreguntaViva;
+      setPreguntaViva(viva.cerrada ? null : viva);
     });
 
     c.subscribe((situacion) => {
@@ -203,11 +228,17 @@ export function useSincronia({
    *
    * Se emite por broadcast —rápido, para quien ya está mirando— y además se
    * deja en presence, que es lo que recibirá quien se conecte después.
+   *
+   * Devuelve la pauta emitida, con su marca de tiempo. El mando la necesita:
+   * su posición es la más reciente entre lo que él mismo mandó y lo que llegó
+   * del proyector, y para compararlas las dos tienen que llevar el mismo
+   * reloj. Si el mando se inventara la suya, dos marcas distintas para el
+   * mismo movimiento decidirían mal esa comparación.
    */
   const publicar = useCallback(
-    (itemId: string, paso: number, enVivo: boolean) => {
+    (itemId: string, paso: number, enVivo: boolean): Pauta | null => {
       const c = canal.current;
-      if (!c || !esDocente) return;
+      if (!c || !esDocente) return null;
 
       const nueva: Pauta = { itemId, paso, enVivo, momento: Date.now() };
       ultima.current = nueva;
@@ -216,11 +247,12 @@ export function useSincronia({
       // algunos casos lo cierra. Se guarda y se emite al suscribirse.
       if (!suscrito.current) {
         pendiente.current = nueva;
-        return;
+        return nueva;
       }
       pendiente.current = null;
       void c.send({ type: "broadcast", event: EVENTO_PAUTA, payload: nueva });
       void c.track({ pauta: nueva });
+      return nueva;
     },
     [esDocente],
   );
@@ -301,6 +333,49 @@ export function useSincronia({
     [respuestas],
   );
 
+  /**
+   * El docente lanza una pregunta que no estaba en el material.
+   *
+   * Se emite por el canal público y se guarda también acá: el mando tiene que
+   * poder ver el recuento de lo que acaba de lanzar, y el canal no le devuelve
+   * sus propios mensajes.
+   */
+  const lanzar = useCallback(
+    (pregunta: string, opciones: string[]): PreguntaViva | null => {
+      const c = canal.current;
+      const limpia = pregunta.trim();
+      if (!c || !esDocente || !limpia) return null;
+
+      const viva: PreguntaViva = {
+        id: `viva-${crypto.randomUUID()}`,
+        pregunta: limpia,
+        opciones: opciones.length ? opciones : undefined,
+        momento: Date.now(),
+      };
+      setPreguntaViva(viva);
+      setRevelado(null);
+      void c.send({
+        type: "broadcast",
+        event: EVENTO_PREGUNTA_VIVA,
+        payload: viva,
+      });
+      return viva;
+    },
+    [esDocente],
+  );
+
+  /** Retira la pregunta lanzada de todas las pantallas. */
+  const cerrarViva = useCallback(() => {
+    const c = canal.current;
+    if (!c || !esDocente || !preguntaViva) return;
+    setPreguntaViva(null);
+    void c.send({
+      type: "broadcast",
+      event: EVENTO_PREGUNTA_VIVA,
+      payload: { ...preguntaViva, cerrada: true } satisfies PreguntaViva,
+    });
+  }, [esDocente, preguntaViva]);
+
   return {
     pauta,
     estado,
@@ -314,5 +389,8 @@ export function useSincronia({
     revelado,
     conectados,
     cuantosRespondieron,
+    preguntaViva,
+    lanzar,
+    cerrarViva,
   };
 }

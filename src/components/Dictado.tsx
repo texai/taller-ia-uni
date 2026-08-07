@@ -10,7 +10,7 @@ import {
 } from "react";
 import Link from "next/link";
 
-import type { Sesion } from "@/lib/tipos";
+import type { ItemPregunta, Sesion } from "@/lib/tipos";
 import { FAMILIA } from "@/lib/tipos";
 import {
   acotar,
@@ -25,6 +25,7 @@ import {
   type Posicion,
 } from "@/lib/navegacion";
 import { RenderizarItem } from "@/components/items";
+import { Pregunta } from "@/components/items/pregunta";
 import { useSincronia } from "@/components/useSincronia";
 import { PanelPreguntas, Preguntar } from "@/components/Preguntar";
 import { comparar } from "@/lib/navegacion";
@@ -72,7 +73,18 @@ export function Dictado({
   modoDocente?: boolean;
 }) {
   const [indiceAbierto, setIndiceAbierto] = useState(false);
-  const [enVivo, setEnVivo] = useState(true);
+  /**
+   * Si se está dictando o ensayando, decidido desde acá.
+   *
+   * Guarda su marca de tiempo porque el interruptor está en dos sitios: acá y
+   * en el mando. Gana el más reciente de los dos, igual que con la posición.
+   * Sin la marca, esta pantalla volvería a imponer su valor cada vez que el
+   * mando cambiara el suyo, y el interruptor parpadearía entre los dos.
+   */
+  const [vivoLocal, setVivoLocal] = useState<{
+    valor: boolean;
+    momento: number;
+  } | null>(null);
   const principal = useRef<HTMLDivElement>(null);
 
   const {
@@ -87,11 +99,17 @@ export function Dictado({
     revelado,
     conectados,
     cuantosRespondieron,
+    preguntaViva,
   } = useSincronia({
     curso,
     sesion: sesion.id,
     esDocente: modoDocente,
   });
+
+  const enVivo =
+    vivoLocal && (!pauta || vivoLocal.momento > pauta.momento)
+      ? vivoLocal.valor
+      : (pauta?.enVivo ?? true);
 
   const busqueda = useSyncExternalStore(
     suscribirseALaUrl,
@@ -121,6 +139,8 @@ export function Dictado({
   // valor y no a través de un ref: un ref leído en el render puede quedar
   // desfasado si React interrumpe una renderización.
   const tope = useMemo(() => {
+    // El docente no tiene tope: su pantalla principal sigue a la segunda, pero
+    // no se le impide moverse.
     if (modoDocente || !pauta?.enVivo) return null;
     const encontrada = buscarPorId(sesion, pauta.itemId);
     return encontrada
@@ -192,8 +212,31 @@ export function Dictado({
   // El docente publica cada movimiento.
   useEffect(() => {
     if (!modoDocente || !item) return;
+    // Salvo el que acaba de llegar del mando. Sin esto, mover desde el otro
+    // portátil rebota: llega la pauta, esta pantalla se mueve, y al moverse
+    // vuelve a publicar la MISMA posición con una marca de tiempo más nueva
+    // —que es exactamente la que pisaría el movimiento siguiente hecho desde
+    // el mando si el docente pulsa dos veces seguidas.
+    if (
+      pauta &&
+      pauta.itemId === item.id &&
+      pauta.paso === pos.paso &&
+      pauta.enVivo === enVivo
+    ) {
+      return;
+    }
     publicar(item.id, pos.paso, enVivo);
-  }, [modoDocente, item, pos.paso, enVivo, publicar]);
+  }, [modoDocente, item, pos.paso, enVivo, publicar, pauta]);
+
+  // Y también sigue al otro portátil, el del mando. El canal no devuelve al
+  // emisor sus propios mensajes, así que lo que llega acá viene de allá.
+  useEffect(() => {
+    if (!modoDocente || !pauta) return;
+    const destino = buscarPorId(sesion, pauta.itemId);
+    if (!destino) return;
+    const conPaso = acotar(sesion, { ...destino, paso: pauta.paso });
+    if (comparar(pos, conPaso) !== 0) irA(conPaso);
+  }, [modoDocente, pauta, sesion, pos, irA]);
 
   // El alumno sigue la pauta, salvo que se haya ido a mirar hacia atrás: en
   // ese caso se queda donde está y aparece el botón para volver. Arrastrarlo
@@ -207,6 +250,29 @@ export function Dictado({
   const indice = indiceDeItem(sesion, pos);
   const total = totalItems(sesion);
   const pasos = item ? pasosDe(item) : 1;
+
+  /**
+   * Una pregunta lanzada al vuelo se disfraza de ítem `pregunta`.
+   *
+   * No es un atajo: es exactamente la misma cosa, salvo que el texto llegó por
+   * el canal en vez de por el YAML. Reutilizar el componente le da gratis los
+   * tres estados —respondiendo, revelado, en vivo— y garantiza que una
+   * pregunta improvisada no filtre resultados antes de tiempo por haberse
+   * dibujado con otro código.
+   */
+  const improvisada = useMemo<ItemPregunta | null>(
+    () =>
+      preguntaViva
+        ? {
+            id: preguntaViva.id,
+            tipo: "pregunta",
+            pregunta: preguntaViva.pregunta,
+            opciones: preguntaViva.opciones,
+            visibilidad: "publica",
+          }
+        : null,
+    [preguntaViva],
+  );
 
   return (
     <div className="flex h-dvh overflow-hidden">
@@ -369,7 +435,9 @@ export function Dictado({
           {modoDocente && (
             <button
               type="button"
-              onClick={() => setEnVivo((v) => !v)}
+              onClick={() =>
+                setVivoLocal({ valor: !enVivo, momento: Date.now() })
+              }
               className="shrink-0 rounded-md border px-3 py-1 text-xs"
               style={{
                 borderColor: enVivo ? "var(--color-acento)" : "var(--borde)",
@@ -509,6 +577,29 @@ export function Dictado({
           </p>
         </footer>
       </div>
+
+      {/* Una pregunta lanzada al vuelo tapa la lámina, en las dos pantallas.
+          Tiene que tapar: si conviviera con el contenido, media clase seguiría
+          leyendo lo de atrás. Se cierra desde el mando. */}
+      {improvisada && (
+        <div
+          className="fixed inset-0 z-40 flex flex-col overflow-y-auto"
+          style={{ background: "var(--lienzo)" }}
+        >
+          <div className="flex flex-1 flex-col justify-center py-12">
+            <Pregunta
+              key={improvisada.id}
+              item={improvisada}
+              modoDocente={modoDocente}
+              revelado={revelado}
+              conectados={conectados}
+              respondieron={cuantosRespondieron(improvisada.id)}
+              onResponder={(v) => responder(improvisada.id, v)}
+              onRevelar={() => revelar(improvisada.id)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* El alumno puede preguntar desde cualquier ítem. Sin sincronía no hay
           a quién preguntarle, así que el botón no aparece. */}

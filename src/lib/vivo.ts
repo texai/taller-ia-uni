@@ -130,6 +130,35 @@ export interface Revelado {
   momento: number;
 }
 
+/**
+ * Una pregunta que el docente lanza al vuelo, sin que esté en el material.
+ *
+ * Existe porque la mitad de las preguntas buenas de una clase se le ocurren a
+ * uno mientras dicta. Como no está en el YAML, no puede llegar por la pauta —
+ * la pauta solo sabe señalar ítems que ya existen— así que viaja entera por el
+ * canal y se dibuja encima de lo que haya en pantalla.
+ *
+ * Se identifica con un `id` propio para que las respuestas y el revelado usen
+ * exactamente la misma maquinaria que una `pregunta` del material.
+ *
+ * Va solo por broadcast y no por presence: quien recargue la página mientras
+ * hay una pregunta lanzada no la verá. Es una pérdida aceptable —una pregunta
+ * al vuelo dura un par de minutos y el docente la tiene delante— y el precio
+ * de lo contrario sería que la presencia del docente cargara con dos cosas
+ * distintas y hubiera que decidir cuál gana al cerrarse una.
+ */
+export interface PreguntaViva {
+  id: string;
+  pregunta: string;
+  /** Con opciones es una encuesta; sin ellas, respuesta abierta. */
+  opciones?: string[];
+  momento: number;
+  /** Retirarla de las pantallas sin tener que recargar nada. */
+  cerrada?: boolean;
+}
+
+export const EVENTO_PREGUNTA_VIVA = "pregunta-viva";
+
 export const EVENTO_RESPUESTA = "respuesta-alumno";
 export const EVENTO_REVELADO = "revelado";
 

@@ -13,6 +13,7 @@
 
 import type { Item, Sesion, Unidad } from "./tipos";
 
+
 export interface Posicion {
   unidad: number;
   item: number;
@@ -125,6 +126,62 @@ export function indiceDeItem(sesion: Sesion, pos: Posicion): number {
 /** Total de ítems de la sesión. */
 export function totalItems(sesion: Sesion): number {
   return sesion.unidades.reduce((t, u) => t + u.items.length, 0);
+}
+
+/**
+ * Minutos planificados de una unidad.
+ *
+ * Los minutos se declaran **dos veces y a propósito**: la unidad lleva el
+ * presupuesto que sale del reparto de las ocho horas, y cada ítem lleva la
+ * estimación de lo que le toca dentro. Cuando las dos cifras no cuadran —y no
+ * cuadran casi nunca, porque los ítems se escriben después— manda la de la
+ * unidad: es la que se negoció contra el sílabo.
+ *
+ * Vive acá y no en `contenido.ts` porque el mando la necesita en el navegador,
+ * y `contenido.ts` importa `node:fs`.
+ */
+export function minutosDeUnidad(unidad: Unidad): number {
+  if (typeof unidad.minutos === "number") return unidad.minutos;
+  return unidad.items.reduce((t, i) => t + (i.minutos ?? 0), 0);
+}
+
+/** Minutos planificados de una sesión entera. */
+export function minutosDeSesion(sesion: Sesion): number {
+  return sesion.unidades.reduce((t, u) => t + minutosDeUnidad(u), 0);
+}
+
+/**
+ * Minutos planificados hasta el final del ítem donde se está.
+ *
+ * Es la mitad interesante del reloj: comparado con el tiempo realmente
+ * transcurrido dice si la clase va adelantada o atrasada, que es lo único que
+ * un docente hace con un reloj mientras dicta.
+ *
+ * Las unidades ya cerradas cuentan su presupuesto completo. Dentro de la
+ * unidad en curso se suman los minutos de sus ítems, acotados a ese
+ * presupuesto — y al llegar a su último ítem se devuelve el presupuesto
+ * exacto. Sin ese ajuste, el reloj acabaría la sesión anunciando un total
+ * distinto del que muestra el índice del docente, y una discrepancia de cinco
+ * minutos entre dos pantallas del mismo curso se lee como un error en las dos.
+ */
+export function minutosHasta(sesion: Sesion, pos: Posicion): number {
+  let n = 0;
+  for (let u = 0; u < pos.unidad && u < sesion.unidades.length; u++) {
+    const unidad = sesion.unidades[u];
+    if (unidad) n += minutosDeUnidad(unidad);
+  }
+
+  const actual = sesion.unidades[pos.unidad];
+  if (!actual) return n;
+
+  const presupuesto = minutosDeUnidad(actual);
+  if (pos.item >= actual.items.length - 1) return n + presupuesto;
+
+  let dentro = 0;
+  for (let i = 0; i <= pos.item && i < actual.items.length; i++) {
+    dentro += actual.items[i]?.minutos ?? 0;
+  }
+  return n + Math.min(dentro, presupuesto);
 }
 
 /** Dónde está un ítem, por su identificador. `null` si no está. */

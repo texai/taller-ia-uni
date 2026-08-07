@@ -435,10 +435,14 @@ export function recorrer(
   return salida;
 }
 
-/** Minutos declarados de una unidad: los suyos, o la suma de sus ítems. */
-export function minutosDe(unidad: Unidad): number {
-  if (typeof unidad.minutos === "number") return unidad.minutos;
-  return unidad.items.reduce((t, i) => t + (i.minutos ?? 0), 0);
-}
+/**
+ * Minutos declarados de una unidad: los suyos, o la suma de sus ítems.
+ *
+ * La definición vive en `navegacion.ts` porque el reloj del mando la necesita
+ * en el navegador y este módulo importa `node:fs`. Se reexporta con el nombre
+ * de siempre para no tocar a quien ya la llama desde el servidor — y, sobre
+ * todo, para que no haya dos reglas distintas sobre los mismos minutos.
+ */
+export { minutosDeUnidad as minutosDe } from "./navegacion";
 
 export { FAMILIA, SOLO_DOCENTE, TIPOS };

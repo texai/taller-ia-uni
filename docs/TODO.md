@@ -69,10 +69,11 @@ unidad y no necesita leer el resto del curso.
 
 ## Batch 8 — Sincronía en vivo: el docente marca el ritmo
 
-**Implementado, sin verificar en vivo.** El código está escrito, compila y pasa
-lint; lo que falta es probar el canal contra Supabase, y eso **no se pudo hacer
-desde el contenedor de desarrollo**: su política de red deniega las conexiones
-salientes a Supabase.
+**Verificado en producción el 6 de agosto**, en lo esencial: el docente entra,
+activa el dictado y el alumno lo sigue solo; con el dictado apagado el alumno
+queda libre. Quedan por comprobar los casos de borde de la lista de abajo — la
+red del contenedor de desarrollo deniega las conexiones salientes a Supabase,
+así que solo se pueden probar desplegados.
 
 ### Qué falta comprobar, y cómo
 
@@ -186,19 +187,32 @@ tiene sentido esperar por una pantalla que se fue.
 
 ## Batch 11 — Segunda pantalla del docente
 
-En clase, el docente comparte su pantalla por Zoom. Todo lo que necesita para
-sí mismo —notas, preguntas que llegan, el reloj— no puede estar ahí.
+**Implementado, sin verificar en vivo** (red del contenedor). Lo que quedó
+escrito está en [`DONE.md`](DONE.md); acá solo queda lo que hay que probar con
+las dos máquinas delante.
 
-**Alcance**
-- [ ] Ruta de segunda pantalla, pensada para teléfono
-- [ ] Controles de avance y retroceso que mueven la clase
-- [ ] Notas privadas del ítem actual
-- [ ] Vista previa del ítem siguiente
-- [ ] Preguntas de alumnos, en vivo
-- [ ] Lanzar una pregunta al vuelo
-- [ ] Reloj: tiempo transcurrido, tiempo restante de la sesión, y si el ítem
-      actual se está pasando de sus minutos
-- [ ] Autenticada como el resto de lo del docente
+### Qué falta comprobar
+
+Con el portátil que proyecta en `/profe/sesion/sesion-1` y el otro en
+`/profe/sesion/sesion-1/mando`:
+
+1. Avanzar desde el mando: **las dos pantallas y los alumnos** se mueven.
+2. Avanzar desde la pantalla principal: el mando se pone al día.
+3. Pulsar dos veces seguidas y rápido en el mando: debe avanzar dos, no
+   quedarse en uno. Es el caso que motivó dejar de reemitir la pauta recibida.
+4. Abrir el mando con la clase ya empezada: debe aterrizar donde va, con los
+   controles habilitados.
+5. Abrir el mando **antes** que la pantalla principal: los controles salen
+   deshabilitados y aparece "Empezar desde el principio".
+6. "Dictando / Ensayando" desde el mando: el interruptor de la pantalla
+   principal cambia con él, y no vuelve atrás solo.
+7. Un alumno pregunta: aparece en el mando, con panel abierto, y **no** se
+   despliega solo en la pantalla proyectada.
+8. Lanzar una pregunta al vuelo, con opciones y sin opciones: tapa la lámina en
+   todas las pantallas, el recuento sube sin mostrar respuestas, "Mostrar
+   resultados" las revela, y "Quitar" la retira de todas.
+9. El reloj: comprobar contra la hora real que "queda de sesión" y el desvío
+   dicen lo que deben, y que "en este ítem" arranca de cero al moverse.
 
 ---
 
@@ -206,11 +220,22 @@ sí mismo —notas, preguntas que llegan, el reloj— no puede estar ahí.
 
 Cuatro horas se van rápido, y el receso se olvida.
 
+El batch 11 ya dejó el reloj del mando: cuánto queda de sesión, lo planificado
+contra lo transcurrido, y cuánto lleva en pantalla el ítem actual. Lo que falta
+son los avisos — el reloj informa, pero no interrumpe, y lo que se olvida es
+justo lo que nadie mira.
+
 **Alcance**
-- [ ] Reloj de sesión comparando lo planificado con lo real
 - [ ] Aviso cuando toca el receso según la hora, no solo según la posición
-- [ ] Aviso cuando una unidad se está pasando de sus minutos
-- [ ] Todo esto solo en la segunda pantalla; el proyector no lo muestra
+- [ ] Aviso cuando una **unidad** se está pasando de sus minutos, no solo el
+      ítem
+- [ ] Aviso cuando el desvío acumulado pasa de un umbral, con qué recortar:
+      las unidades que quedan, ordenadas por lo que cuestan
+- [ ] Todo esto solo en el mando; el proyector no lo muestra
+
+**Tests esperados**
+- [ ] El desvío se calcula igual con la sesión empezada tarde
+- [ ] Un receso ya pasado no vuelve a avisar
 
 ---
 

@@ -7,6 +7,9 @@ import {
   buscarPorId,
   comparar,
   indiceDeItem,
+  minutosDeSesion,
+  minutosDeUnidad,
+  minutosHasta,
   pasosDe,
   retroceder,
   totalItems,
@@ -152,4 +155,91 @@ test("comparar ordena por unidad, ítem y paso", () => {
     comparar({ unidad: 0, item: 0, paso: 1 }, { unidad: 0, item: 0, paso: 2 }) <
       0,
   );
+});
+
+// -------------------------------------------------------------- el reloj
+
+const CON_MINUTOS: Sesion = {
+  id: "s2",
+  numero: 2,
+  titulo: "Con minutos",
+  unidades: [
+    {
+      id: "u1",
+      tipo: "repaso",
+      titulo: "Uno",
+      // La unidad declara su presupuesto y los ítems no lo cuadran: es el caso
+      // normal, porque los minutos de la unidad salen del reparto de las ocho
+      // horas y los del ítem se escriben después.
+      minutos: 20,
+      items: [
+        item("a", { minutos: 10 }),
+        item("b", { minutos: 5 }),
+        item("b2", { minutos: 3 }),
+      ],
+    },
+    {
+      id: "u2",
+      tipo: "reto",
+      titulo: "Dos",
+      // Sin presupuesto propio: manda la suma de sus ítems. El último no
+      // declara minutos, que es el caso normal de un título.
+      items: [item("c", { minutos: 20 }), item("d")],
+    },
+  ],
+};
+
+test("minutosDeUnidad prefiere el presupuesto declarado", () => {
+  assert.equal(minutosDeUnidad(CON_MINUTOS.unidades[0]!), 20);
+});
+
+test("minutosDeUnidad suma los ítems si la unidad no declara nada", () => {
+  assert.equal(minutosDeUnidad(CON_MINUTOS.unidades[1]!), 20);
+});
+
+test("minutosDeSesion suma el presupuesto de cada unidad", () => {
+  assert.equal(minutosDeSesion(CON_MINUTOS), 40);
+});
+
+test("una sesión sin minutos declarados suma cero, no falla", () => {
+  assert.equal(minutosDeSesion(SESION), 0);
+});
+
+test("minutosHasta incluye el ítem actual", () => {
+  assert.equal(minutosHasta(CON_MINUTOS, { unidad: 0, item: 0, paso: 0 }), 10);
+  assert.equal(minutosHasta(CON_MINUTOS, { unidad: 0, item: 1, paso: 0 }), 15);
+});
+
+test("el último ítem de una unidad vale su presupuesto exacto", () => {
+  // 10 + 5 + 3 son 18, pero la unidad se presupuestó en 20. Manda el
+  // presupuesto: si no, el reloj del mando terminaría la sesión anunciando un
+  // total distinto del que muestra el índice del docente.
+  assert.equal(minutosHasta(CON_MINUTOS, { unidad: 0, item: 2, paso: 0 }), 20);
+});
+
+test("minutosHasta arrastra las unidades anteriores completas", () => {
+  assert.equal(minutosHasta(CON_MINUTOS, { unidad: 1, item: 0, paso: 0 }), 40);
+});
+
+test("los ítems de la unidad en curso no pueden pasarse de su presupuesto", () => {
+  const apretada: Sesion = {
+    id: "s3",
+    numero: 3,
+    titulo: "Apretada",
+    unidades: [
+      {
+        id: "u1",
+        tipo: "reto",
+        titulo: "Uno",
+        minutos: 10,
+        items: [item("a", { minutos: 30 }), item("b", { minutos: 1 })],
+      },
+    ],
+  };
+  assert.equal(minutosHasta(apretada, { unidad: 0, item: 0, paso: 0 }), 10);
+});
+
+test("minutosHasta al final coincide con el total", () => {
+  const ultima = { unidad: 1, item: 1, paso: 0 };
+  assert.equal(minutosHasta(CON_MINUTOS, ultima), minutosDeSesion(CON_MINUTOS));
 });
