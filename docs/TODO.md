@@ -216,26 +216,20 @@ Con el portátil que proyecta en `/profe/sesion/sesion-1` y el otro en
 
 ---
 
-## Batch 12 — Reloj de sesión y avisos de tiempo
+## Batch 12 — Avisos de tiempo
 
-Cuatro horas se van rápido, y el receso se olvida.
+**Implementado y probado contra el contenido real**, pero los umbrales solo se
+validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
-El batch 11 ya dejó el reloj del mando: cuánto queda de sesión, lo planificado
-contra lo transcurrido, y cuánto lleva en pantalla el ítem actual. Lo que falta
-son los avisos — el reloj informa, pero no interrumpe, y lo que se olvida es
-justo lo que nadie mira.
+### Qué falta comprobar
 
-**Alcance**
-- [ ] Aviso cuando toca el receso según la hora, no solo según la posición
-- [ ] Aviso cuando una **unidad** se está pasando de sus minutos, no solo el
-      ítem
-- [ ] Aviso cuando el desvío acumulado pasa de un umbral, con qué recortar:
-      las unidades que quedan, ordenadas por lo que cuestan
-- [ ] Todo esto solo en el mando; el proyector no lo muestra
-
-**Tests esperados**
-- [ ] El desvío se calcula igual con la sesión empezada tarde
-- [ ] Un receso ya pasado no vuelve a avisar
+1. Pulsar "Empezamos ahora" al arrancar la clase: el desvío se mide desde ahí,
+   y recargar el mando no lo pierde.
+2. Que el aviso de receso aparezca cuando toca y no antes. El del sábado cae a
+   las 16:40.
+3. Que los umbrales —10 min avisa, 20 urge— no resulten ni ansiosos ni tardíos.
+   Es lo único de este batch que no se puede decidir sin dictar.
+4. Que ninguno de estos avisos se vea nunca en la pantalla proyectada.
 
 ---
 

@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import Link from "next/link";
 
 import type { Sesion } from "@/lib/tipos";
@@ -21,6 +27,7 @@ import {
   type Posicion,
 } from "@/lib/navegacion";
 import { ahora, comoDuracion, minutosEntre } from "@/lib/reloj";
+import { avisosDeTiempo, type Aviso } from "@/lib/avisos";
 import { esMasNueva, type Pauta } from "@/lib/vivo";
 import { useSincronia } from "@/components/useSincronia";
 
@@ -35,6 +42,74 @@ import { useSincronia } from "@/components/useSincronia";
  * Mueve la clase publicando la pauta, igual que la pantalla principal. Las dos
  * se escuchan entre sí, así que da lo mismo desde cuál se avance.
  */
+/** La hora de ahora, y el instante en milisegundos. `null` hasta el primer tic. */
+type Tic = { hora: string; ms: number } | null;
+
+/**
+ * El reloj de pared, uno solo para toda la pantalla.
+ *
+ * Empieza en `null` y no en la hora del servidor: esa hora no significa nada
+ * acá, y pintarla para corregirla al hidratar es una discrepancia de
+ * hidratación. Un solo estado, y lo escribe únicamente el intervalo.
+ */
+function useTic(): Tic {
+  const [tic, setTic] = useState<Tic>(null);
+  useEffect(() => {
+    const marcar = () => setTic({ hora: ahora(new Date()), ms: Date.now() });
+    const primero = setTimeout(marcar, 0);
+    const repetido = setInterval(marcar, 1000);
+    return () => {
+      clearTimeout(primero);
+      clearInterval(repetido);
+    };
+  }, []);
+  return tic;
+}
+
+const CLAVE_ARRANQUE = "taller:arranque:";
+const EVENTO_ARRANQUE = "taller:arranque";
+
+/**
+ * La hora en que la clase realmente empezó.
+ *
+ * Casi ninguna sesión arranca a la hora del sílabo, y medir contra una hora
+ * que no ocurrió vuelve ruido todo lo demás: el mando diría "12 min de atraso"
+ * durante cuatro horas por algo que pasó mientras la gente se conectaba.
+ *
+ * Se guarda en `localStorage` —recargar el mando no debe perderla— y se lee
+ * con `useSyncExternalStore`, que es lo que `localStorage` es: una fuente
+ * mutable externa a React. La alternativa, un efecto que copia el valor a un
+ * estado, encadena renders y además se lo pierde si el docente tiene el mando
+ * abierto dos veces; escuchando `storage` las dos pestañas coinciden.
+ */
+function useArranque(sesionId: string) {
+  const clave = CLAVE_ARRANQUE + sesionId;
+
+  const suscribirse = useCallback((alCambiar: () => void) => {
+    window.addEventListener("storage", alCambiar);
+    window.addEventListener(EVENTO_ARRANQUE, alCambiar);
+    return () => {
+      window.removeEventListener("storage", alCambiar);
+      window.removeEventListener(EVENTO_ARRANQUE, alCambiar);
+    };
+  }, []);
+
+  const arranque = useSyncExternalStore(
+    suscribirse,
+    () => window.localStorage.getItem(clave),
+    // En el servidor no hay `localStorage`: se dibuja como si no estuviera
+    // marcada, y al hidratar aparece.
+    () => null,
+  );
+
+  const marcar = useCallback(() => {
+    window.localStorage.setItem(clave, ahora(new Date()));
+    window.dispatchEvent(new Event(EVENTO_ARRANQUE));
+  }, [clave]);
+
+  return { arranque, marcar };
+}
+
 export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
   const {
     pauta,
@@ -75,6 +150,19 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
   const total = totalItems(sesion);
   const pasos = item ? pasosDe(item) : 1;
   const siguiente = itemEn(sesion, avanzar(sesion, pos));
+
+  const tic = useTic();
+  const { arranque, marcar } = useArranque(sesion.id);
+  // La hora cero: la que el docente marcó, o la programada si no marcó ninguna.
+  const inicio = arranque ?? sesion.horaInicio;
+
+  const avisos = useMemo(
+    () =>
+      tic
+        ? avisosDeTiempo({ sesion, pos, horaActual: tic.hora, inicio })
+        : [],
+    [sesion, pos, tic, inicio],
+  );
 
   const emitir = useCallback(
     (destino: Posicion, vivo: boolean) => {
@@ -135,7 +223,18 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
           puede={Boolean(actual)}
         />
 
-        <Reloj sesion={sesion} pos={pos} desde={actual?.momento ?? null} item={item} />
+        <Reloj
+          sesion={sesion}
+          pos={pos}
+          desde={actual?.momento ?? null}
+          item={item}
+          tic={tic}
+          inicio={inicio}
+          arrancada={Boolean(arranque)}
+          onArrancar={marcar}
+        />
+
+        <Avisos avisos={avisos} />
 
         {/* ------------------------------------------------ dónde va la clase */}
         <section
@@ -358,31 +457,26 @@ function Reloj({
   pos,
   desde,
   item,
+  tic,
+  inicio,
+  arrancada,
+  onArrancar,
 }: {
   sesion: Sesion;
   pos: Posicion;
   desde: number | null;
   item: { minutos?: number } | null;
+  tic: Tic;
+  /** La hora cero contra la que se mide todo. */
+  inicio?: string;
+  /** Si esa hora cero la marcó el docente o es la programada. */
+  arrancada: boolean;
+  onArrancar: () => void;
 }) {
-  // Un solo estado, escrito solo por el intervalo. Empieza vacío porque la
-  // hora del servidor no significa nada acá y pintarla sería una discrepancia
-  // de hidratación.
-  const [tic, setTic] = useState<{ hora: string; ms: number } | null>(null);
-
-  useEffect(() => {
-    const marcar = () => setTic({ hora: ahora(new Date()), ms: Date.now() });
-    const primero = setTimeout(marcar, 0);
-    const repetido = setInterval(marcar, 1000);
-    return () => {
-      clearTimeout(primero);
-      clearInterval(repetido);
-    };
-  }, []);
-
   const planificado = minutosHasta(sesion, pos);
   const totalPlan = minutosDeSesion(sesion);
 
-  const transcurrido = tic ? minutosEntre(sesion.horaInicio, tic.hora) : null;
+  const transcurrido = tic ? minutosEntre(inicio, tic.hora) : null;
   const restante = tic ? minutosEntre(tic.hora, sesion.horaFin) : null;
   // Positivo: la clase va por delante del plan. Negativo: se está pasando.
   const desvio =
@@ -426,6 +520,29 @@ function Reloj({
         }
         color={pasado ? "var(--color-aviso)" : undefined}
       />
+
+      {/* La hora cero.
+          Casi ninguna clase empieza a la hora programada, y medir contra una
+          hora que no ocurrió convierte el reloj en ruido antes del primer
+          receso: diría "12 min de atraso" toda la tarde por algo que pasó al
+          principio y que ya nadie puede recuperar. */}
+      <div className="ml-auto self-center">
+        {arrancada ? (
+          <p className="text-[11px]" style={{ color: "var(--tinta-suave)" }}>
+            Empezó {inicio}
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={onArrancar}
+            className="rounded-md border px-3 py-1 text-xs"
+            style={{ borderColor: "var(--borde)", color: "var(--tinta-suave)" }}
+            title="Mide el tiempo desde ahora en vez de desde la hora programada"
+          >
+            Empezamos ahora
+          </button>
+        )}
+      </div>
     </section>
   );
 }
@@ -673,6 +790,67 @@ function Salto({
           </li>
         ))}
       </ol>
+    </section>
+  );
+}
+
+/**
+ * Los avisos de tiempo.
+ *
+ * Van arriba del todo y solo aparecen cuando hay algo que decir. Un panel que
+ * siempre está ahí, aunque diga "todo en orden", deja de leerse a los veinte
+ * minutos — y entonces tampoco se lee el día que dice otra cosa.
+ *
+ * Esto no se proyecta nunca (`CONVENTIONS.md` §14). Que la clase vea que su
+ * docente va quince minutos tarde no la ayuda; que el docente lo vea, sí.
+ */
+function Avisos({ avisos }: { avisos: Aviso[] }) {
+  if (!avisos.length) return null;
+
+  return (
+    <section className="mt-4 space-y-3">
+      {avisos.map((a) => {
+        const color =
+          a.urgencia === "urgente" ? "var(--color-acento)" : "var(--color-aviso)";
+        return (
+          <div
+            key={a.id}
+            className="rounded-xl border-l-4 py-3 pl-4 pr-4"
+            style={{ borderColor: color, background: "var(--lienzo-alto)" }}
+          >
+            <p className="font-medium" style={{ color }}>
+              {a.titulo}
+            </p>
+            {a.detalle && (
+              <p className="mt-0.5 text-sm" style={{ color: "var(--tinta-suave)" }}>
+                {a.detalle}
+              </p>
+            )}
+
+            {a.recortes?.length ? (
+              <ul className="mt-2 space-y-1 text-sm">
+                {a.recortes.map((r) => (
+                  <li key={r.id} className="flex items-baseline gap-2">
+                    <span
+                      className="text-[11px] uppercase tracking-wider"
+                      style={{ color: "var(--tinta-suave)" }}
+                    >
+                      {r.tipo}
+                    </span>
+                    <span className="truncate">{r.titulo}</span>
+                    <span
+                      className="ml-auto shrink-0 tabular-nums"
+                      style={{ color: "var(--tinta-suave)" }}
+                    >
+                      {r.minutos} min
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        );
+      })}
     </section>
   );
 }

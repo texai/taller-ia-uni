@@ -747,3 +747,77 @@ sí mismo —notas, preguntas que llegan, el reloj— no puede estar ahí.
 - La verificación en vivo la hace el docente en producción: la política de red
   de este contenedor bloquea la salida hacia Supabase, la misma limitación que
   tuvieron los batches 8, 9 y 10.
+
+---
+
+## Batch 12 — Reloj de sesión y avisos de tiempo
+**2026-08-07**
+
+Cuatro horas se van rápido, y el receso se olvida. El batch 11 dejó el reloj;
+este deja los avisos — el reloj informa, pero no interrumpe, y lo que se olvida
+es justo lo que nadie mira.
+
+**Alcance** (todo hecho)
+- [ ] Aviso cuando toca el receso según la hora, no solo según la posición
+- [ ] Aviso cuando una **unidad** se está pasando de sus minutos
+- [ ] Aviso cuando el desvío acumulado pasa de un umbral, con qué recortar
+- [ ] Todo esto solo en el mando; el proyector no lo muestra
+
+---
+
+### Cómo quedó, y en qué se desvió de lo planificado
+
+- **Toda la lógica en `src/lib/avisos.ts`, pura y probada.** `avisosDeTiempo`
+  recibe la sesión, la posición y la hora, y devuelve una lista ordenada de lo
+  más urgente a lo menos. Vive fuera de los componentes por lo mismo que
+  `reloj.ts`: es de lo poco que puede estar mal sin que se note. **Un aviso que
+  salta cuando no toca se aprende a ignorar en diez minutos**, y a partir de ahí
+  tampoco sirve el que sí toca. 14 tests.
+
+- **Tres avisos, y ninguno duplica al otro:**
+  - *Receso*, por la **hora** y no por la posición. La posición ya se ve en el
+    índice; lo que no se ve es que son las 16:52 y el receso era a las 16:40,
+    porque justamente se está explicando algo. Solo el primero que quede por
+    delante — avisar de los dos recesos del día a la vez no ayuda a nadie.
+  - *Unidad*, cuando pasó la hora a la que debía cerrar. Dice cuál y cuánto.
+  - *Desvío acumulado*, a partir de 10 minutos (urgente a los 20), **con qué
+    recortar**: las unidades que quedan por dictar, ordenadas de la más cara a
+    la más barata. Un aviso que dice "vas tarde" sin decir qué soltar es un
+    aviso que solo agrega ansiedad.
+
+- **Apareció una pieza que no estaba en el alcance: la hora cero.** El primer
+  esbozo medía contra `horaInicio`, la del sílabo. Probado contra el contenido
+  real, la conclusión fue inmediata: casi ninguna clase empieza a la hora
+  programada, y medir contra una hora que no ocurrió convierte el reloj en
+  ruido — diría "12 min de atraso" durante cuatro horas por algo que pasó
+  mientras la gente se conectaba, y que ya nadie puede recuperar. El mando
+  tiene ahora un botón **"Empezamos ahora"**, y a partir de ahí todo se mide
+  desde ahí.
+  - Se guarda en `localStorage` (recargar el mando no debe perderla) y se lee
+    con `useSyncExternalStore`, que es lo que `localStorage` es: una fuente
+    mutable externa a React. De paso, escuchando `storage`, dos pestañas del
+    mando coinciden.
+  - `avisosDeTiempo` recibe `inicio` como parámetro y no sabe de dónde salió.
+    El test que lo fija es que la misma clase corrida diez minutos produce
+    exactamente los mismos avisos.
+
+- **El tic del reloj se subió a `Mando`.** Antes vivía dentro del componente
+  `Reloj`; ahora el reloj y los avisos leen el mismo segundo, porque dos
+  intervalos independientes acaban mostrando horas distintas en la misma
+  pantalla.
+
+- **El panel de avisos no existe cuando no hay nada que decir.** Un panel
+  permanente que dice "todo en orden" deja de leerse a los veinte minutos, y
+  entonces tampoco se lee el día que dice otra cosa.
+
+**Comprobado contra el contenido real del curso**
+El receso del sábado cae a las 16:40. Con la clase detenida en el primer ítem a
+las 16:55, el mando dice: *«El receso tocaba a las 16:40 — van 15 min de más
+antes de pararlo»*, *«"Dónde encaja esto, y la flota de 192 modelos" se pasó 55
+min»* y *«100 min de atraso acumulado»* con las tres unidades restantes
+ordenadas por lo que cuestan.
+
+**Verificación**
+- `npm test` (74 pasan), `npm run typecheck`, `npm run lint` y `npm run build`
+  limpios.
+- Falta verlo en clase, que es donde se sabe si los umbrales están bien puestos.

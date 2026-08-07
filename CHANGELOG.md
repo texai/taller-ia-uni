@@ -41,6 +41,20 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Avisos de tiempo en el mando (batch 12)
+- Nuevo `src/lib/avisos.ts`, puro y con 14 tests: `avisosDeTiempo` devuelve lo
+  que hay que decir ahora mismo, de lo más urgente a lo menos. Tres avisos —
+  el receso pendiente **por la hora** y no por la posición, la unidad que se
+  pasó de la suya, y el desvío acumulado **con qué recortar**: las unidades que
+  quedan, ordenadas de la más cara a la más barata.
+- **"Empezamos ahora"**: el mando permite fijar la hora real de arranque y medir
+  desde ahí. Casi ninguna clase empieza a la hora del sílabo, y medir contra una
+  hora que no ocurrió vuelve ruido todo lo demás. Se guarda en `localStorage` y
+  se lee con `useSyncExternalStore`.
+- El tic del reloj subió a `Mando`: el reloj y los avisos leen el mismo segundo.
+- El panel de avisos no existe cuando no hay nada que decir. Uno permanente que
+  dice "todo en orden" deja de leerse, y entonces tampoco se lee el que importa.
+
 ### El tiempo se cuenta de abajo hacia arriba (`CONVENTIONS.md` §15)
 - **Los minutos los declara solo el ítem.** La unidad vale la suma de sus
   ítems, la sesión la de sus unidades. Ningún total se escribe a mano.
