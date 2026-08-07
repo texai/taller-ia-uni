@@ -5,6 +5,28 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El caso, como contenedor propio (batch 24)
+- Nuevo tipo **`caso`**, y no solo de ítem: también de **unidad**. Los cinco
+  retos ocurren dentro de una misma cadena de retail, y ese marco era hasta hoy
+  un `markdown` de tres minutos perdido entre veinte.
+- **El caso no es un atributo del curso.** Hay cursos sin ninguno y cursos con
+  varios; un campo `Curso.caso` obliga a que haya exactamente uno. Es
+  contenido, igual que un reto o un repaso, y por eso vive en la jerarquía de
+  unidades e ítems.
+- El texto vive **una sola vez**, en `contenido/casos/retail-192.yml`, y las dos
+  sesiones lo referencian con `archivo:`. El domingo existe para que quien no
+  vino el sábado oiga lo mismo, no un resumen.
+- Se dibuja como una tarjeta con borde de acento: las **cifras** en grande
+  arriba —192 modelos, 14 días, 1 job— y los cuatro bloques del relato en dos
+  columnas. Las cifras son obligatorias en validación: un caso sin números es
+  una anécdota.
+- Las dos aperturas quedaron partidas en tres unidades cortas —apertura, caso,
+  repaso— en vez de una larga que mezclaba asistencia, marco y telemetría. Los
+  minutos no se movieron: se cuentan de abajo hacia arriba, así que reagrupar
+  ítems no puede alterar ningún total. Las dos sesiones siguen en 240.
+- Se cayó `s1-el-numero`: era un ítem entero para decir que son 192 modelos, y
+  la tarjeta del caso ya lo dice en grande.
+
 ### Segunda pantalla del docente (batch 11)
 - Nueva ruta `/profe/sesion/[sesion]/mando`, para el **segundo portátil**: el
   que no se comparte por Zoom. Controles de avance y retroceso —también con las

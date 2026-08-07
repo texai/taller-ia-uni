@@ -138,6 +138,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `transicion` | Qué vimos, qué viene ahora, y dónde estamos | `vimos`, `viene` (el mapa se deriva) |
 | `diagrama-secuencia` | Secuencia PlantUML, recorrible mensaje a mensaje | `fuente`, `mensajes[].explicacion` |
 | `comando-anotado` | Un comando largo, explicado parte por parte | `comando`, `segmentos[]` |
+| `caso` | El marco de negocio dentro del cual ocurre todo lo demás | `empresa`, `cifras[]`, `bloques[]`, `archivo` |
 
 ### Familia `dictado`
 
@@ -152,7 +153,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 
 `id`, `tipo`, `titulo`, `entradilla`, `notas` (privadas), `minutos`.
 
-### Cuatro tipos que merecen justificación
+### Los tipos que merecen justificación
 
 - **`comparacion`** — la mitad de lo que enseña este taller es un contraste:
   MAPE contra sesgo, el diagnóstico antes y después de la reflexión, lo que el
@@ -178,6 +179,30 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
   sola. Declararlo sería pedirle al docente que mantenga a mano una
   información que el programa ya tiene, y que quedaría desactualizada la
   primera vez que se reordene una unidad.
+- **`caso`** — ver abajo.
+
+### El caso es contenido, no un atributo del curso
+
+`caso` es el único nombre que aparece en las dos listas de tipos: es un
+`TipoItem` y también un `TipoUnidad` (`repaso | reto | cierre | caso`).
+
+La alternativa era un campo `caso` en `Curso`, y no sirve: hay cursos sin
+ningún caso —que tendrían que declararlo vacío— y cursos con varios —que no
+tendrían dónde poner el segundo. Un campo en la jerarquía obliga a que haya
+exactamente uno. El caso es contenido, igual que un reto o un repaso, y por eso
+ocupa un renglón del índice en vez de una propiedad de la cabecera.
+
+Dos reglas que sostiene el cargador:
+
+- **Las `cifras` son obligatorias.** Un caso sin números es una anécdota. Lo
+  que sostiene ocho horas de taller es que sean 192 modelos, no "muchos".
+- **Un caso que se cuenta dos veces se escribe una.** El texto va en
+  `contenido/casos/*.yml` y los ítems lo referencian con `archivo:`. Las dos
+  sesiones de este taller abren con el mismo caso —el domingo existe para que
+  quien no vino oiga *lo mismo*, no un resumen—, y escrito dos veces serían dos
+  casos que se separan en cuanto alguien corrige uno. Las `notas` privadas
+  siguen siendo de cada ítem: el mismo caso se lee en cinco minutos el sábado y
+  en tres, cronometrados, el domingo.
 
 ## 9 · Los identificadores son estables
 

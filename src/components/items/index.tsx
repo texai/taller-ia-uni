@@ -17,6 +17,7 @@ import { Codigo, ComandoAnotado, Demo, Terminal } from "./codigo";
 import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos";
 import { Archivo, Diagrama, Enlace, Imagen } from "./medios";
 import { DiagramaSecuencia } from "./secuencia";
+import { Caso } from "./caso";
 import { Asistencia, PausaPreguntas, Receso } from "./dictado";
 import { Pregunta } from "./pregunta";
 
@@ -107,6 +108,8 @@ export function RenderizarItem({
       return <ErrorComun item={item} />;
     case "demo":
       return <Demo item={item} />;
+    case "caso":
+      return <Caso item={item} />;
     case "transicion":
       return <Transicion item={item} sesion={sesion} unidadActual={unidadActual} />;
 

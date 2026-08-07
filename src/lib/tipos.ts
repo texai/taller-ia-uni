@@ -217,6 +217,41 @@ export interface ItemTransicion extends ItemBase {
 }
 
 /**
+ * El caso de negocio dentro del que ocurre todo el curso.
+ *
+ * Los cinco retos no son cinco ejercicios sueltos: son cinco momentos del mismo
+ * problema, en la misma empresa, sobre la misma flota de modelos. Ese marco
+ * merece un contenedor propio y no una lámina de texto más — hasta ahora era un
+ * `markdown` de tres minutos, uno entre veintiuno, y se volvía a contar en la
+ * sesión 2 como otro markdown suelto.
+ *
+ * Puede escribirse en el ítem o vivir en su propio archivo bajo `contenido/`.
+ * Lo segundo es lo que permite que las dos sesiones muestren el mismo caso sin
+ * copiarlo — y un curso puede tener varios casos, o ninguno.
+ */
+export interface ItemCaso extends ItemBase, Partial<Caso> {
+  tipo: "caso";
+  /**
+   * O en su propio archivo: `casos/retail-192.yml`.
+   *
+   * Es lo que permite que dos sesiones muestren EL MISMO caso sin copiarlo.
+   * Un caso escrito dos veces son dos casos que se separan en cuanto alguien
+   * corrige uno.
+   */
+  archivo?: string;
+}
+
+export interface Caso {
+  titulo: string;
+  /** Quién es la empresa y a qué se dedica. Una o dos frases. */
+  empresa: string;
+  /** Los números que definen la escala. Son lo que la clase recuerda. */
+  cifras: { valor: string; unidad: string; nota?: string }[];
+  /** Cómo funciona hoy, dónde está el problema, quién lo vigila. */
+  bloques: { titulo: string; contenido: string }[];
+}
+
+/**
  * Diagrama de secuencia en PlantUML, recorrible mensaje a mensaje.
  *
  * Un diagrama proyectado entero es una maraña que nadie sigue. Ver
@@ -353,6 +388,7 @@ export type Item =
   | ItemErrorComun
   | ItemDemo
   | ItemTransicion
+  | ItemCaso
   | ItemDiagramaSecuencia
   | ItemComandoAnotado
   | ItemReceso
@@ -381,6 +417,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   demo: "contenido",
   transicion: "contenido",
   "diagrama-secuencia": "contenido",
+  caso: "contenido",
   "comando-anotado": "contenido",
   receso: "dictado",
   "pausa-preguntas": "dictado",
@@ -397,7 +434,15 @@ export const SOLO_DOCENTE: readonly TipoItem[] = ["asistencia"] as const;
 // La jerarquía
 // --------------------------------------------------------------------------
 
-export type TipoUnidad = "repaso" | "reto" | "cierre";
+/**
+ * Qué clase de unidad es.
+ *
+ * `caso` está acá y no como un atributo del curso porque un caso ES contenido:
+ * hay cursos sin ninguno y cursos con varios, igual que con los retos. Un
+ * `caso` en el curso lo volvería obligatorio y único, que es justo lo que no
+ * es.
+ */
+export type TipoUnidad = "repaso" | "reto" | "cierre" | "caso";
 
 export interface Unidad {
   id: string;

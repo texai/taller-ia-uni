@@ -1679,3 +1679,82 @@ parecería que la pregunta ofrecía una opción más de las que se ofrecieron.
   `Revelado` en el canal, y la red de este contenedor no llega a Supabase. Los
   tests cubren que la solución viaja en el revelado y solo ahí; lo que falta es
   verla en pantalla.
+
+---
+
+## Batch 24 — El caso, como contenedor propio
+
+Los cinco retos ocurren dentro de un mismo caso: una cadena de retail, 192
+modelos, un job de madrugada, una forma de fallar que no suena. Ese marco era
+un `markdown` de tres minutos, uno más entre veinte, y se volvía a contar el
+domingo como otro markdown suelto.
+
+### El caso no es un atributo del curso
+
+La primera versión de este batch puso `caso` en `Curso`, y estaba mal. Hay
+cursos sin ningún caso —que tendrían que declararlo vacío— y cursos con varios
+—que no tendrían dónde poner el segundo. Un campo en la jerarquía obliga a que
+haya exactamente uno.
+
+El caso es **contenido**, igual que un reto o un repaso. Y como el contenido de
+este producto se organiza en unidades e ítems, eso se traduce en dos cosas:
+
+    TipoUnidad  "repaso" | "reto" | "cierre" | "caso"
+    TipoItem    …, "caso"
+
+Una unidad puede *ser* el caso, y dentro de ella un ítem lo dibuja. Que tenga
+su renglón en el índice —`CASO · 5 MIN`— es la diferencia entre un ejercicio y
+un caso.
+
+### Una sola definición, dos sesiones
+
+El texto vive en `contenido/casos/retail-192.yml` y las dos sesiones lo
+referencian con `archivo:`. Escrito dos veces serían dos casos que se separan
+en cuanto alguien corrige uno — y el del domingo existe justamente para que
+quien no vino el sábado oiga **lo mismo**, no un resumen.
+
+`resolverArchivo` lo carga como YAML y lo mezcla sobre el ítem, así que las
+notas privadas del docente siguen siendo de cada sesión: el sábado el caso se
+lee en cinco minutos y con calma; el domingo en tres, cronometrados.
+
+La validación exige `titulo`, `empresa`, `cifras` y `bloques`. Las `cifras` son
+obligatorias a propósito: **un caso sin números es una anécdota**, y lo que
+sostiene las ocho horas es que sean 192 modelos y no "muchos".
+
+### Cómo quedó la apertura de las dos sesiones
+
+Sacar el caso de dentro del repaso partió las dos unidades de apertura, que
+eran largas y mezclaban cosas distintas:
+
+| | Antes | Después |
+|---|---|---|
+| S1 | `s1-repaso` (60 min) | `s1-apertura` (5) · `s1-caso` (5) · `s1-flota` (50) |
+| S2 | `s2-repaso` (35 min) | `s2-apertura` (2) · `s2-caso` (3) · `s2-repaso` (30) |
+
+Los minutos no se movieron: se cuentan de abajo hacia arriba (§15), así que
+reagrupar ítems no puede alterar ningún total. Las dos sesiones siguen en 240.
+
+En la sesión 2 el caso va **antes** del repaso y no después. Quien no vino el
+sábado necesita el marco para que "dónde quedamos" quiera decir algo.
+
+### Se cayó un ítem
+
+`s1-el-numero` desapareció. Era un ítem entero para decir que son 192 modelos,
+y la tarjeta del caso ya lo dice en grande con su nota `24 tiendas × 8
+categorías`. Sus dos minutos se quedaron en la unidad.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 130 ítems, 240 + 240 min.
+- `npm test` (117 pasan), lint y build limpios.
+- `npm run humo`: 149 pantallas, 0 con error.
+- La tarjeta del caso, vista en el navegador: las tres cifras arriba, los
+  cuatro bloques en dos columnas, y `CASO · 5 MIN` como unidad propia del
+  índice.
+
+### De paso, un fallo del andamiaje de pruebas
+
+`conContenido` creaba a mano las carpetas `sesiones/` y `md/`, así que el
+primer archivo bajo `casos/` falló con un `ENOENT` que no tenía nada que ver
+con lo que se estaba probando. Ahora cada archivo se lleva su carpeta. Era una
+lista que había que acordarse de ampliar, y el olvido no se nota hasta que
+alguien pierde diez minutos.

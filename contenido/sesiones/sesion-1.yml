@@ -19,13 +19,11 @@ horaFin: "19:00"
 
 unidades:
   # ------------------------------------------------------------------ 15:00
-  - id: s1-repaso
+  - id: s1-apertura
     tipo: repaso
-    titulo: Dónde encaja esto, y la flota de 192 modelos
+    titulo: Dónde encaja esto
     objetivos:
       - Situar el taller dentro del programa y ver qué se junta acá
-      - Entender qué es una flota de modelos desplegados y quién la vigila hoy
-      - "Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura"
     requisitos:
       - Haber hecho el trabajo previo y llegar con las 24 comprobaciones en verde
     items:
@@ -60,45 +58,40 @@ unidades:
           donde lo básico deja de alcanzar. Y el registro de modelos que van a
           ver acá es MLflow, el mismo del Módulo 2.
 
+  # ------------------------------------------------------------------ 15:05
+  # El caso es una unidad propia y no un ítem hundido dentro del repaso: es el
+  # marco de las ocho horas, y todo lo que sigue —los cinco retos— ocurre
+  # dentro de él. Que tenga su sitio en el índice es la diferencia entre un
+  # ejercicio y un caso.
+  - id: s1-caso
+    tipo: caso
+    titulo: El caso
+    objetivos:
+      - Entender el negocio dentro del cual ocurren los cinco retos
+    items:
       - id: s1-el-caso
-        tipo: markdown
-        titulo: El caso
-        minutos: 3
-        contenido: |
-          Una cadena de retail con **24 tiendas** y **8 categorías** pronostica
-          su demanda todas las noches. Un modelo por tienda y categoría.
-
-          Cada madrugada un job carga los artefactos, proyecta los próximos
-          **14 días**, y con eso se decide qué reponer.
-
-          Los modelos funcionan. Hasta que dejan de funcionar.
-
-          Entra una campaña promocional más agresiva que cualquiera del
-          entrenamiento y una categoría entera empieza a fallar en las 24
-          tiendas a la vez. O peor: la demanda cae despacio en toda la cadena,
-          el modelo sigue pronosticando como antes, y se acumula sobre-stock
-          durante semanas sin que ninguna alarma suene.
-
-          Hoy alguien abre un Excel los lunes y revisa las categorías más
-          grandes. El resto no lo mira nadie.
+        tipo: caso
+        archivo: casos/retail-192.yml
+        minutos: 5
         notas: |
-          No dar todavía los números del sesgo silencioso. Eso es el reto 1, y
-          adelantarlo le quita el golpe. Acá basta con que quede la imagen del
-          Excel de los lunes.
+          El marco de las ocho horas. Todo lo que viene —los cinco retos— pasa
+          dentro de esta empresa y sobre esta flota.
 
-      - id: s1-el-numero
-        tipo: metrica
-        titulo: El número del que sale todo
-        valor: "192"
-        unidad: modelos en producción
-        contexto: 24 tiendas × 8 categorías. Ese número es el caso entero.
-        tono: neutro
-        minutos: 2
-        notas: |
-          Preguntar en voz alta cuántos modelos tiene en producción quien
-          trabaja hoy con modelos. La respuesta casi siempre es "uno" o "no
-          sé", y las dos sirven.
+          Leer las cifras en voz alta y dejarlas respirar. No dar todavía los
+          números del sesgo silencioso: eso es el reto 1, y adelantarlo le quita
+          el golpe. Acá basta con que quede la imagen del Excel de los lunes.
 
+          Este mismo caso vuelve a abrir el domingo, desde el mismo archivo,
+          para quien no vino.
+
+  # ------------------------------------------------------------------ 15:10
+  - id: s1-flota
+    tipo: repaso
+    titulo: La flota de 192 modelos
+    objetivos:
+      - Entender qué es una flota de modelos desplegados y quién la vigila hoy
+      - "Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura"
+    items:
       - id: s1-que-es-un-modelo
         tipo: markdown
         titulo: Qué es "un modelo en producción"

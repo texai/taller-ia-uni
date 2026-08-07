@@ -17,13 +17,11 @@ horaFin: "13:00"
 
 unidades:
   # ------------------------------------------------------------------ 09:00
-  - id: s2-repaso
+  - id: s2-apertura
     tipo: repaso
-    titulo: Qué le faltaba al bucle de ayer
+    titulo: Segunda sesión
     objetivos:
       - Recuperar el hilo tras una noche
-      - Emparejar cada patología de ayer con la capa que la resuelve
-      - Ver el grafo completo una vez, antes de construirlo
     requisitos:
       - Nada. Se puede seguir sin haber estado el sábado.
     items:
@@ -41,33 +39,35 @@ unidades:
           Antes de empezar: `make arriba`. Nadie necesita haber dejado nada
           levantado de ayer, y quien viene por primera vez arranca igual.
 
-      - id: s2-para-quien-no-vino
-        tipo: markdown
-        titulo: El caso, en un minuto
-        entradilla: Para quien no estuvo ayer — y de repaso para quien sí
+  # ------------------------------------------------------------------ 09:02
+  # El mismo caso del sábado, leído del mismo archivo. Va antes del repaso y no
+  # después: quien no vino necesita el marco para que "dónde quedamos" quiera
+  # decir algo.
+  - id: s2-caso
+    tipo: caso
+    titulo: El caso
+    objetivos:
+      - Recuperar el marco, o conocerlo por primera vez
+    items:
+      - id: s2-el-caso
+        tipo: caso
+        archivo: casos/retail-192.yml
         minutos: 3
-        contenido: |
-          Una cadena de retail con 24 tiendas y 8 categorías pronostica su
-          demanda cada noche: **192 modelos en producción**. Un job de
-          madrugada los carga y proyecta 14 días.
-
-          Cuando el mundo cambia, los modelos siguen igual. Y hay una forma de
-          fallar que no dispara ninguna alarma: la demanda cae despacio en toda
-          la cadena, el error medio casi no se mueve, pero el modelo empieza a
-          pronosticar **de más** — y eso son decenas de miles de unidades en
-          almacén que nadie compró para tener paradas.
-
-          Ayer construimos las herramientas que sí lo detectan, y encima un
-          agente que las usa bien. **Funciona.** Llama las herramientas
-          correctas, encuentra cosas, y suena convincente.
-
-          El problema es que dos corridas del mismo mundo dan dos diagnósticos
-          distintos.
         notas: |
-          Tres minutos, cronometrados. La tentación es recontar el sábado
-          entero; quien no vino no necesita la historia, necesita el caso y el
-          problema. Todo lo demás lo va a recuperar sobre la marcha.
+          El mismo caso del sábado, sin una palabra distinta: es lo que hace
+          que quien no vino pueda seguir. Tres minutos cronometrados — quien no
+          estuvo no necesita el relato del sábado, necesita el caso.
 
+          Lo que se construyó ayer va en la unidad siguiente, que ya lo dice.
+
+  # ------------------------------------------------------------------ 09:05
+  - id: s2-repaso
+    tipo: repaso
+    titulo: Qué le faltaba al bucle de ayer
+    objetivos:
+      - Emparejar cada patología de ayer con la capa que la resuelve
+      - Ver el grafo completo una vez, antes de construirlo
+    items:
       - id: s2-donde-quedamos
         tipo: transicion
         titulo: Dónde quedamos

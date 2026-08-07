@@ -27,24 +27,37 @@ Referencias:
 | 8 | Sincronía en vivo: el docente marca el ritmo | ✅ Completado |
 | 9 | Preguntas del alumno hacia el docente | ✅ Completado |
 | 10 | Preguntas del docente hacia los alumnos | ✅ Completado |
-| 11 | Segunda pantalla del docente | ⬜ Pendiente |
-| 12 | Reloj de sesión y avisos de tiempo | ⬜ Pendiente |
-| 13 | Diagramas de secuencia PlantUML, recorribles | ⬜ Pendiente |
-| 14 | Comandos anotados parte por parte | ⬜ Pendiente |
+| 11 | Segunda pantalla del docente | ✅ Completado |
+| 12 | Reloj de sesión y avisos de tiempo | ✅ Completado |
+| 13 | Diagramas de secuencia PlantUML, recorribles | ✅ Completado |
+| 14 | Comandos anotados parte por parte | ✅ Completado |
 | | **Contenido — una unidad por iteración** | |
-| 15 | S1·U1 `repaso` — Dónde encaja esto, y la flota | ⬜ Pendiente |
-| 16 | S1·U2 `reto` — Encontrar el problema a mano | ⬜ Pendiente |
-| 17 | S1·U3 `reto` — La herramienta de percepción | ⬜ Pendiente |
-| 18 | S1·U4 `reto` — El primer agente, sin arquitectura | ⬜ Pendiente |
-| 19 | S2·U1 `repaso` — Qué le faltaba al bucle de ayer | ⬜ Pendiente |
-| 20 | S2·U2 `reto` — La arquitectura cognitiva | ⬜ Pendiente |
-| 21 | S2·U3 `reto` — De la recomendación a la acción | ⬜ Pendiente |
-| 22 | S2·U4 `cierre` — Los errores, y dónde estaban | ⬜ Pendiente |
+| 15 | S1·U1 `repaso` — Dónde encaja esto, y la flota | ✅ Completado |
+| 16 | S1·U2 `reto` — Encontrar el problema a mano | ✅ Completado |
+| 17 | S1·U3 `reto` — La herramienta de percepción | ✅ Completado |
+| 18 | S1·U4 `reto` — El primer agente, sin arquitectura | ✅ Completado |
+| 19 | S2·U1 `repaso` — Qué le faltaba al bucle de ayer | ✅ Completado |
+| 20 | S2·U2 `reto` — La arquitectura cognitiva | ✅ Completado |
+| 21 | S2·U3 `reto` — De la recomendación a la acción | ✅ Completado |
+| 22 | S2·U4 `cierre` — Los errores, y dónde estaban | ✅ Completado |
+| | **Segunda ronda — la auditoría del 7 de agosto** | |
+| 23 | La solución dentro del ítem de pregunta | ✅ Completado |
+| 24 | El caso, como contenedor propio | ✅ Completado |
+| 25 | Los comandos, desenvueltos · sesión 1 | ⬜ Pendiente |
+| 26 | Los comandos, desenvueltos · sesión 2 | ⬜ Pendiente |
+| 27 | El recap de apertura, con diagramas | ⬜ Pendiente |
+| 28 | Diagrama de pasos al abrir cada reto | ⬜ Pendiente |
+| 29 | El ritmo: preguntas y pausas repartidas | ⬜ Pendiente |
+| 30 | La salida anotada | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
 **Ruta mínima para dictar el sábado:** batches 1 a 8. Del 9 al 14 mejoran el
 dictado pero la clase se puede dar sin ellos.
+
+Los bloques de los batches 8 a 12 siguen más abajo aunque figuren completados:
+lo que queda en ellos son las listas de **qué falta comprobar en vivo**, que no
+se pueden cerrar desde este contenedor porque su red no llega a Supabase.
 
 Los batches 13 y 14 dependen de los `pasos` internos que introduce el batch 6
 (ver [`CONVENTIONS.md`](CONVENTIONS.md) §10).
@@ -251,17 +264,27 @@ El inventario completo, con la hora de reloj a la que cae cada ítem, está en
 
 | # | Requisito | Estado | La evidencia |
 |---|---|---|---|
-| 23 | La solución dentro del ítem de pregunta | Falta | `pregunta` dice cuál es la correcta y no tiene dónde decir por qué |
-| 24 | El caso como contenedor propio | Falta | Es un `markdown` de 3 min, recontado en S2 como otro markdown |
-| 25–27 | Los comandos, desenvueltos | Falta | 22 de 26 comandos son `make X` sin abrir; 1 sola salida mostrada, sin anotar |
-| 28 | Recap con diagramas al abrir sesión | Falta | Las dos sesiones abren con prosa; el diagrama de componentes de S1 va después del caso |
-| 29 | Diagrama de pasos al abrir cada reto | Falta | Retos 1, 2, 3 y 5 sin ningún diagrama |
-| 30 | Preguntas y pausas repartidas | A medias | 9 en 8 horas; `s2-reto-4` son 105 minutos con cero |
+| 23 | La solución dentro del ítem de pregunta | Hecho | `pregunta` dice cuál es la correcta y no tiene dónde decir por qué |
+| 24 | El caso como contenedor propio | Hecho | Es un `markdown` de 3 min, recontado en S2 como otro markdown |
+| 25–26 | Los comandos, desenvueltos | Falta | 22 de 26 comandos son `make X` sin abrir; 1 sola salida mostrada, sin anotar |
+| 27 | Recap con diagramas al abrir sesión | Falta | Las dos sesiones abren con prosa; el diagrama de componentes de S1 va después del caso |
+| 28 | Diagrama de pasos al abrir cada reto | Falta | Retos 1, 2, 3 y 5 sin ningún diagrama |
+| 29 | Preguntas y pausas repartidas | A medias | 9 en 8 horas; `s2-reto-4` son 105 minutos con cero |
+| 30 | La salida anotada | Falta | `terminal.salida` se dibuja en bloque, sin señalar nada |
 
 **Orden sugerido por costo y por urgencia.** La clase de la sesión 1 es el
-sábado 8; la de la sesión 2, el domingo 9. Los batches 23 y 30 son los que más
-cambian la clase por lo que cuestan. El bloque 25–27 es un rediseño real de
+sábado 8; la de la sesión 2, el domingo 9. Los batches 23 y 29 son los que más
+cambian la clase por lo que cuestan. El bloque 25–26 es un rediseño real de
 cómo se enseñan los comandos y no cabe antes del sábado.
+
+**El contenido va antes que la maquinaria.** El hueco que el docente señaló es
+de contenido —nadie entiende qué hace `make seed`— y **se cierra entero con
+dos `comando-anotado` seguidos**, un tipo que ya existe desde el batch 14: el
+comando que se teclea y el que eso ejecuta de verdad. Por eso los batches 25 y
+26 escriben ese contenido primero, y el tipo especializado para **anotar una
+salida** queda al final, en el batch 30, como una mejora sobre material que ya
+estará dictándose. Al revés —maquinaria primero— el riesgo es construir un tipo
+para un contenido que todavía no existe.
 
 ---
 
@@ -273,19 +296,25 @@ es un `markdown` de tres minutos, uno más entre veintiuno, y se vuelve a contar
 en la sesión 2 como otro markdown suelto.
 
 **Alcance**
-- [ ] Tipo `caso` en el catálogo (`CONVENTIONS.md` §8): la empresa, la escala,
+- [x] Tipo `caso` en el catálogo (`CONVENTIONS.md` §8): la empresa, la escala,
       el problema de negocio, y la arquitectura de modelos que ya existe
-- [ ] Se dibuja como un contenedor, no como una lámina de texto: la clase tiene
+- [x] Se dibuja como un contenedor, no como una lámina de texto: la clase tiene
       que reconocerlo como "el marco de todo lo que viene"
-- [ ] Una sola definición del caso, referenciada desde las dos sesiones
-- [ ] Reemplaza `s1-el-caso` y la parte de caso de `s2-para-quien-no-vino`
-- [ ] Va **antes** de cualquier reto, después del recap del batch 28
+- [x] Una sola definición del caso, referenciada desde las dos sesiones
+- [x] Reemplaza `s1-el-caso` y la parte de caso de `s2-para-quien-no-vino`
+- [x] Va **antes** de cualquier reto, después del recap del batch 27
 
-**Decisión a tomar al implementar**
-Si el caso vive en su propio archivo bajo `contenido/` y las dos sesiones lo
-referencian, o si se declara una vez en `curso.yml`. Lo segundo dice mejor lo
-que es —el caso es del curso, no de una sesión— pero obliga a que el cargador
-lo resuelva hacia abajo.
+**Decisión tomada**
+Ninguna de las dos opciones que estaban planteadas. El caso **no es un atributo
+del curso**: hay cursos sin ningún caso y cursos con varios, y un campo
+`Curso.caso` obliga a los primeros a declararlo vacío y no tiene dónde poner el
+segundo de los segundos. El caso es **contenido**, igual que un reto o un
+repaso — y por tanto es un `tipo` de unidad y un `tipo` de ítem, no una
+propiedad de la jerarquía.
+
+El texto vive en `contenido/casos/retail-192.yml` y las dos sesiones lo
+referencian con `archivo:`. Escrito dos veces serían dos casos que se separan
+en cuanto alguien corrige uno.
 
 **Fuera de alcance**
 - Cambiar el contenido del caso. El texto de `s1-el-caso` está escrito y
@@ -293,7 +322,7 @@ lo resuelva hacia abajo.
 
 ---
 
-## Batch 25 — Los comandos, desenvueltos · la maquinaria
+## Batch 25 — Los comandos, desenvueltos · sesión 1
 
 **Es el hueco más grande del curso y el que más lejos está del objetivo del
 docente**: que el alumno entienda cada parámetro y sepa leer cada salida, en
@@ -309,74 +338,39 @@ Hoy, de 26 comandos, 22 son `make X` sin abrir. Lo que `make` esconde:
     make ui       → docker compose up -d ui        (¡distinto de run --rm!)
     make reset    → docker compose down -v         (borra los volúmenes)
 
-Y hay un ítem en todo el curso que muestra una salida, sin anotar.
-
-### La decisión ya está tomada
-
-**No hace falta un tipo nuevo para las capas.** Para explicar lo que `make`
-envuelve bastan **dos `comando-anotado` seguidos**: el que se teclea y el que
-eso ejecuta de verdad. Cada uno con sus segmentos, y el recorrido por pasos que
-ya funciona desde el batch 14. Un tipo que represente "capas" sería maquinaria
-nueva para algo que la composición de ítems ya resuelve.
-
-Lo que sí falta es **poder anotar una salida**, que hoy no existe en ningún
-tipo: `terminal` tiene un campo `salida` que se dibuja en bloque, sin señalar
-nada.
-
-**Alcance**
-- [ ] Una salida se puede anotar por segmentos, igual que un comando: señalar
-      un trozo de lo que imprime y explicar qué significa
-- [ ] Se apoya en los `pasos` del batch 6 y reutiliza la maquinaria de
-      `anotaciones.ts`, que ya sabe ubicar y trocear por texto
-- [ ] Un segmento de salida que no aparece en la salida falla en validación,
-      igual que uno de comando
-- [ ] Funciona para la salida de `make seed`, de una corrida verbosa del
-      agente, y de un `docker compose ps`
-
-**Decisión a tomar al implementar**
-Si `comando-anotado` crece con una salida anotable, o si la salida anotada es
-su propio tipo. A favor de lo primero: un comando y su salida se explican
-juntos y se recorrerían en una sola secuencia de pasos. A favor de lo segundo:
-hay salidas que valen por sí solas —la de `make seed`— y forzarlas a colgar de
-un comando las obliga a repetirlo.
-
-**Tests esperados**
-- [ ] Una anotación que no aparece en la salida falla nombrándola
-- [ ] Una anotación ambigua —aparece dos veces— falla como ambigua
-- [ ] El número de pasos incluye los segmentos de la salida
-
-**Fuera de alcance**
-- Un tipo para las capas de un comando. Se resuelve con dos ítems seguidos.
-- El contenido. Esto deja el tipo listo; escribirlo es 26 y 27.
-
----
-
-## Batch 26 — Los comandos, desenvueltos · contenido de la sesión 1
-
-**Depende del batch 25.**
-
-Cada comando envuelto se explica con **dos `comando-anotado` seguidos**: el que
-se teclea y el que eso ejecuta de verdad. No hace falta nada más.
+**No hace falta ningún tipo nuevo.** Para explicar lo que `make` envuelve bastan
+**dos `comando-anotado` seguidos**: el que se teclea y el que eso ejecuta de
+verdad. Cada uno con sus segmentos, y el recorrido por pasos que ya funciona
+desde el batch 14. Un tipo que represente "capas" sería maquinaria nueva para
+algo que la composición de ítems ya resuelve.
 
 **Alcance**
 - [ ] `make arriba` y `make seed`, abiertos hasta el fondo, incluido qué
       construye y por qué tarda
-- [ ] La salida de `make seed` anotada: qué son 17,472 días-modelo y de dónde
-      salen los 192
+- [ ] La salida de `make seed` mostrada y leída: qué son 17,472 días-modelo y
+      de dónde salen los 192
 - [ ] `make romper` y `make reparar`, con las tres etapas que encadenan
 - [ ] `make ui` contra `make agente`: por qué uno es `up -d` y el otro
       `run --rm`, y qué significa eso para el estado
 - [ ] `make verificar`, y cómo se lee su salida
-- [ ] La llamada a la API que ya está anotada gana su salida anotada
+- [ ] Cada parámetro que aparece —`--rm`, `-v`, `-e`, `-d`— explicado la primera
+      vez que se ve, y no dos veces
+
+**Cómo se muestran las salidas, por ahora**
+Con `terminal`, que ya tiene campo `salida`, y con la lectura en el ítem de al
+lado. Anotar la salida por segmentos es el batch 30, y llega después: el
+contenido no puede esperar a la maquinaria, y una salida bien leída en voz alta
+enseña casi lo mismo que una anotada.
 
 **Fuera de alcance**
-- La sesión 2. Es el batch 27.
+- La sesión 2. Es el batch 26.
+- Anotar salidas por segmentos. Es el batch 30.
 
 ---
 
-## Batch 27 — Los comandos, desenvueltos · contenido de la sesión 2
+## Batch 26 — Los comandos, desenvueltos · sesión 2
 
-**Depende del batch 25.**
+Mismo criterio que el batch 25, sobre los comandos del domingo.
 
 **Alcance**
 - [ ] `make agente ARGS="--verboso"` abierto, y cómo se lee una corrida verbosa:
@@ -384,17 +378,17 @@ se teclea y el que eso ejecuta de verdad. No hace falta nada más.
       cuál es el paso por la política
 - [ ] `make actuar` contra `make agente`: dónde entra `-e EJECUTAR_ACCIONES=1`
       y qué cambia en la salida
-- [ ] La salida de un reentrenamiento, anotada: qué modelos tocó, cuánto tardó,
+- [ ] La salida de un reentrenamiento, leída: qué modelos tocó, cuánto tardó,
       qué quedó en la bitácora
 - [ ] `make memoria`, que hoy no aparece en el curso y es la única forma de ver
       lo que el agente recuerda
 
 **Fuera de alcance**
-- La sesión 1. Es el batch 26.
+- La sesión 1. Es el batch 25.
 
 ---
 
-## Batch 28 — El recap de apertura, con diagramas
+## Batch 27 — El recap de apertura, con diagramas
 
 Las dos sesiones abren con un ítem `transicion`, que es prosa: dos frases de
 «lo que vimos» y «lo que viene». El docente quiere abrir con **diagramas
@@ -408,8 +402,13 @@ detalle.
 - [ ] En la sesión 1, el recap es del programa: qué módulos trae la clase
       encima y dónde encaja este taller
 - [ ] En la sesión 2, el recap es de lo construido el sábado
-- [ ] El diagrama de componentes que hoy es el ítem 8 de la sesión 1 se
-      reconsidera: puede que su sitio sea el recap
+- [ ] El diagrama de componentes que hoy abre `s1-flota` se reconsidera: puede
+      que su sitio sea el recap
+
+**Dónde entra, ahora que el caso es una unidad.** El batch 24 dejó las dos
+sesiones abriendo con `s1-apertura` / `s2-apertura`, unidades cortas de
+asistencia y portada, seguidas de la unidad `caso`. El recap va dentro de esas
+unidades de apertura, que existen justamente para eso.
 
 **Excepción a la §13, deliberada.** Este batch toca dos unidades. La §13 protege
 contra la degradación de contexto al escribir **prosa**; un par de diagramas que
@@ -417,11 +416,11 @@ tienen que compartir lenguaje visual es el caso contrario — partirlos en dos
 conversaciones produce dos dibujos distintos.
 
 **Fuera de alcance**
-- Los diagramas de pasos de cada reto. Es el batch 29.
+- Los diagramas de pasos de cada reto. Es el batch 28.
 
 ---
 
-## Batch 29 — Diagrama de pasos al abrir cada reto
+## Batch 28 — Diagrama de pasos al abrir cada reto
 
 Cuatro de los cinco retos empiezan sin ningún mapa de lo que se va a hacer. El
 único diagrama de un reto es el de secuencia del agente corriendo, que explica
@@ -435,7 +434,7 @@ el resultado y no el recorrido.
 - [ ] Se ubica después del `titulo` del reto y antes de cualquier comando
 
 **Excepción a la §13, deliberada.** Toca los cinco retos, por lo mismo que el
-batch 28: cinco diagramas dibujados en cinco conversaciones son cinco dibujos
+batch 27: cinco diagramas dibujados en cinco conversaciones son cinco dibujos
 distintos.
 
 **Fuera de alcance**
@@ -443,15 +442,15 @@ distintos.
 
 ---
 
-## Batch 30 — El ritmo: preguntas y pausas repartidas
+## Batch 29 — El ritmo: preguntas y pausas repartidas
 
 Hay nueve momentos de interacción en ocho horas, uno cada 53 minutos, y el
 agujero está donde más duele: **`s2-reto-4` son 105 minutos y 25 ítems con cero
 preguntas y cero pausas.**
 
 **Alcance**
-- [ ] Repartir preguntas y pausas por las ocho unidades, con un criterio escrito
-      y no a ojo
+- [ ] Repartir preguntas y pausas por las unidades, con un criterio escrito y no
+      a ojo
 - [ ] Ninguna unidad de más de 40 minutos sin al menos dos momentos
 - [ ] Cada pregunta nueva llega con su solución (batch 23)
 - [ ] Las preguntas se ponen donde hay algo que **decidir o predecir**, no como
@@ -468,6 +467,46 @@ unidad por unidad es exactamente lo que produjo el desbalance actual.
 
 **Fuera de alcance**
 - Cambiar las preguntas que ya existen, salvo para darles su solución.
+
+---
+
+## Batch 30 — La salida anotada
+
+**Va al final a propósito.** Es el único tipo nuevo que pedía el bloque de los
+comandos, y llega cuando los batches 25 y 26 ya escribieron el contenido: así
+se diseña contra salidas reales que están en el material, y no contra las que
+uno imagina que hará falta anotar.
+
+Hoy `terminal` tiene un campo `salida` que se dibuja en bloque, sin señalar
+nada. Un comando sí se puede anotar por segmentos desde el batch 14; su salida,
+que es la mitad de lo que hay que enseñar a leer, no.
+
+**Alcance**
+- [ ] Una salida se puede anotar por segmentos, igual que un comando: señalar
+      un trozo de lo que imprime y explicar qué significa
+- [ ] Se apoya en los `pasos` del batch 6 y reutiliza la maquinaria de
+      `anotaciones.ts`, que ya sabe ubicar y trocear por texto
+- [ ] Un segmento de salida que no aparece en la salida falla en validación,
+      igual que uno de comando
+- [ ] Las salidas que los batches 25 y 26 dejaron en `terminal` se migran: la de
+      `make seed`, la de una corrida verbosa del agente, la de `make verificar`
+
+**Decisión a tomar al implementar**
+Si `comando-anotado` crece con una salida anotable, o si la salida anotada es
+su propio tipo. A favor de lo primero: un comando y su salida se explican
+juntos y se recorrerían en una sola secuencia de pasos. A favor de lo segundo:
+hay salidas que valen por sí solas —la de `make seed`— y forzarlas a colgar de
+un comando las obliga a repetirlo. **El material de los batches 25 y 26 decide
+esto**: si al escribirlo casi todas las salidas quedaron pegadas a su comando,
+gana lo primero.
+
+**Tests esperados**
+- [ ] Una anotación que no aparece en la salida falla nombrándola
+- [ ] Una anotación ambigua —aparece dos veces— falla como ambigua
+- [ ] El número de pasos incluye los segmentos de la salida
+
+**Fuera de alcance**
+- Un tipo para las capas de un comando. Se resuelve con dos ítems seguidos.
 
 ---
 

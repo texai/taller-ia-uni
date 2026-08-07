@@ -1,0 +1,48 @@
+# El caso del taller.
+#
+# Vive en su propio archivo y no dentro de una sesión porque las dos lo
+# muestran: el sábado como marco de las ocho horas, el domingo como recap para
+# quien no vino. Escrito dos veces serían dos casos que se separan en cuanto
+# alguien corrige uno.
+#
+# Un curso puede no tener ningún caso, o tener varios. Por eso es contenido y
+# no un atributo del curso.
+
+titulo: Una cadena de retail que pronostica su demanda todas las noches
+empresa: >-
+  24 tiendas repartidas en cinco regiones del Perú, 8 categorías de producto.
+  Un modelo de pronóstico por tienda y categoría.
+
+cifras:
+  - valor: "192"
+    unidad: modelos en producción
+    nota: 24 tiendas × 8 categorías
+  - valor: "14"
+    unidad: días de horizonte
+    nota: lo que proyecta cada corrida
+  - valor: "1"
+    unidad: job cada madrugada
+    nota: carga los 192 y escribe el pronóstico
+
+bloques:
+  - titulo: Cómo funciona hoy
+    contenido: >-
+      Cada madrugada un job batch carga los 192 artefactos, proyecta los
+      próximos 14 días y escribe las predicciones. Con eso se decide qué
+      reponer en cada tienda. Los modelos funcionan.
+  - titulo: Hasta que dejan de funcionar
+    contenido: >-
+      Entra una campaña promocional más agresiva que cualquiera del
+      entrenamiento y una categoría entera falla en las 24 tiendas a la vez. O
+      peor: la demanda cae despacio en toda la cadena, el modelo sigue
+      pronosticando como antes, y se acumula sobre-stock durante semanas.
+  - titulo: Lo que no suena
+    contenido: >-
+      El segundo caso no dispara ninguna alarma. El error medio se mueve menos
+      que entre dos semanas cualesquiera, y sin embargo son decenas de miles de
+      unidades de más en almacén. Una señal apenas tiembla; la otra se
+      multiplica.
+  - titulo: Quién lo vigila
+    contenido: >-
+      Alguien abre un Excel los lunes y revisa las cinco tiendas más grandes.
+      Los otros 152 modelos no los mira nadie.

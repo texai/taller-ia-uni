@@ -173,6 +173,21 @@ function resolverArchivo(
   }
 
   const texto = readFileSync(completa, "utf8");
+  if (item.tipo === "caso") {
+    // Un caso no es texto: es estructura. Se lee como YAML y se funde en el
+    // ítem, para que dos sesiones puedan apuntar al mismo archivo.
+    try {
+      const datos = cargarYaml(texto);
+      if (!datos || typeof datos !== "object" || Array.isArray(datos)) {
+        problemas.push(`${donde}: \`contenido/${ruta}\` no es un objeto YAML`);
+        return;
+      }
+      Object.assign(item, datos);
+    } catch (e) {
+      problemas.push(`${donde}: \`contenido/${ruta}\` — ${(e as Error).message}`);
+    }
+    return;
+  }
   if (item.tipo === "diagrama-secuencia") {
     (item as { fuente?: string }).fuente = texto;
   } else {
@@ -251,6 +266,21 @@ function validacionesExtra(item: Item, donde: string, problemas: string[]) {
     }
   }
 
+  if (item.tipo === "caso") {
+    for (const campo of ["titulo", "empresa"] as const) {
+      if (!item[campo]) problemas.push(`${donde}: al caso le falta \`${campo}\``);
+    }
+    if (!item.cifras?.length) {
+      problemas.push(
+        `${donde}: el caso no tiene \`cifras\`. La escala es lo que la clase ` +
+          `recuerda; un caso sin números es una anécdota.`,
+      );
+    }
+    if (!item.bloques?.length) {
+      problemas.push(`${donde}: el caso no tiene \`bloques\``);
+    }
+  }
+
   if (item.tipo === "pregunta" && item.solucion?.descartes?.length) {
     // Un descarte que nombra una opción inexistente se dibuja igual, y en
     // clase parece que la pregunta tenía una opción más. Se ancla por texto,
@@ -302,9 +332,9 @@ function cargarUnidad(
     return null;
   }
   const tipo = bruto.tipo;
-  if (tipo !== "repaso" && tipo !== "reto" && tipo !== "cierre") {
+  if (tipo !== "repaso" && tipo !== "reto" && tipo !== "cierre" && tipo !== "caso") {
     problemas.push(
-      `${archivo} · unidad \`${id}\`: \`tipo\` debe ser repaso, reto o cierre`,
+      `${archivo} · unidad \`${id}\`: \`tipo\` debe ser repaso, reto, caso o cierre`,
     );
     return null;
   }

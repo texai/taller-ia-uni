@@ -13,7 +13,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import * as mod from "./contenido";
 import { ESPECIFICACION } from "./especificacion";
@@ -32,9 +32,14 @@ function conContenido<T>(
   const raiz = join(base, "contenido");
   try {
     mkdirSync(join(raiz, "sesiones"), { recursive: true });
-    mkdirSync(join(raiz, "md"), { recursive: true });
     for (const [ruta, texto] of Object.entries(archivos)) {
-      writeFileSync(join(raiz, ruta), texto, "utf8");
+      const destino = join(raiz, ruta);
+      // Cada archivo se lleva su carpeta. Enumerarlas acá a mano era una lista
+      // que había que acordarse de ampliar, y el olvido no se nota hasta que
+      // una prueba nueva falla por un ENOENT que no tiene nada que ver con lo
+      // que estaba probando.
+      mkdirSync(dirname(destino), { recursive: true });
+      writeFileSync(destino, texto, "utf8");
     }
     return fn(raiz);
   } finally {
@@ -47,14 +52,14 @@ id: prueba
 titulo: Curso de prueba
 `;
 
-function sesionCon(items: string, extra = ""): string {
+function sesionCon(items: string, extra = "", tipo = "repaso"): string {
   return `
 id: sesion-1
 numero: 1
 titulo: Sesión de prueba
 unidades:
   - id: u1
-    tipo: repaso
+    tipo: ${tipo}
     titulo: Unidad
 ${extra}    items:
 ${items}
@@ -582,6 +587,64 @@ test("un descarte que nombra una opción inexistente falla", () => {
     (raiz) => {
       const { cargarCurso } = mod;
       assert.throws(() => cargarCurso(raiz), /descarta `C`, que no es una de las opciones/);
+    },
+  );
+});
+
+test("dos ítems `caso` que apuntan al mismo archivo muestran el mismo caso", () => {
+  // Es la razón de que el caso pueda vivir en un archivo: dos sesiones, un
+  // solo texto. Copiarlo son dos casos que se separan al corregir uno.
+  const items = `
+      - id: c1
+        tipo: caso
+        archivo: casos/uno.yml
+      - id: c2
+        tipo: caso
+        archivo: casos/uno.yml
+`;
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(items),
+      "casos/uno.yml": [
+        "titulo: Una cadena",
+        "empresa: 24 tiendas",
+        "cifras:",
+        '  - valor: "192"',
+        "    unidad: modelos",
+        "bloques:",
+        "  - titulo: Hoy",
+        "    contenido: Funciona",
+      ].join("\n"),
+    },
+    (raiz) => {
+      const suyos = mod.cargarCurso(raiz).sesiones[0]!.unidades[0]!.items;
+      for (const i of suyos) {
+        const c = i as { titulo?: string; cifras?: { valor: string }[] };
+        assert.equal(c.titulo, "Una cadena");
+        assert.equal(c.cifras?.[0]?.valor, "192");
+      }
+    },
+  );
+});
+
+test("una unidad puede ser de tipo `caso`", () => {
+  const items = `
+      - id: c1
+        tipo: caso
+        titulo: Una cadena
+        empresa: 24 tiendas
+        cifras:
+          - valor: "192"
+            unidad: modelos
+        bloques:
+          - titulo: Hoy
+            contenido: Funciona
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items, "", "caso") },
+    (raiz) => {
+      assert.equal(mod.cargarCurso(raiz).sesiones[0]!.unidades[0]!.tipo, "caso");
     },
   );
 });
