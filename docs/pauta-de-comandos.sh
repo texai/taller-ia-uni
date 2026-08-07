@@ -7,12 +7,12 @@
 #  ESTO NO SE EJECUTA ENTERO.
 #
 #  Es una pauta, no un script: se lee de arriba abajo y se copia un bloque a la
-#  vez. Correrlo de una sentada levantaría y rompería el mundo cinco veces
+#  vez. Ejecutarlo de una sentada levantaría y rompería el mundo cinco veces
 #  seguidas y no probaría nada — la mitad del valor está en mirar la salida
 #  entre comando y comando.
 #
 #  Sirve para dos cosas:
-#    · ENSAYAR, antes del sábado, que los 33 comandos del curso funcionan.
+#    · ENSAYAR, antes del sábado, que los 36 comandos del curso funcionan.
 #    · DICTAR, con la escaleta al lado, sabiendo qué viene y qué tiene que salir.
 #
 #  ---------------------------------------------------------------------------
@@ -175,13 +175,18 @@ docker compose run --rm plataforma sh -c "awk -F, '\$8+0==1' /datos/ventas.csv |
 
 # sonda · antes
 docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/modelos/registro.json | head -1"
-#   → "version": 1
+#   → "version": 1  en un mundo recién sembrado
 
 docker compose run --rm plataforma python -m plataforma entrenar
 
 # sonda · despues
 docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/modelos/registro.json | head -1"
-#   → "version": 2   ← lo único que cambió. La fecha sigue en 2026-05-08
+#   → "version": 2   ← lo único que cambió. `entrenado_hasta` sigue en 2026-05-08
+#
+#   OJO en el segundo ensayo: la versión NO se reinicia. Sobrevive a `entrenar`
+#   y a `reparar` —solo la borra `make reset`— así que el ensayo de mañana va a
+#   dar 3 → 4, y el del sábado quizá 5 → 6. La evidencia es **que sube en uno**,
+#   no la cifra. Medido: tras cuatro `entrenar` el registro decía 4.
 
 
 # ── S1·U3 · MLflow ───────────────────────────────────────────────────────────
@@ -290,8 +295,8 @@ make consola
 #
 # Y la segunda pregunta, la peor tienda dentro de bebidas:
 
-b = u[u.categoria == "bebidas"]
-b.groupby("tienda")["mape"].mean().round(1).sort_values().tail()
+#   b = u[u.categoria == "bebidas"]
+#   b.groupby("tienda")["mape"].mean().round(1).sort_values().tail()
 #   → chorrillos 55.3 · san-miguel 51.8 · jesus-maria 46.8 · magdalena 45.7
 #   → 18 de las 24 tiendas de bebidas cruzan el 20%
 #
@@ -435,7 +440,11 @@ make romper ESCENARIO=feed_caido                   # ⏱ ~40 s
 docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'
 #   → 17305 · faltan 168 filas: 8 categorías × 21 días de arequipa
 make senales
-#   → 13.7 / +0.8 · LA FLOTA SE VE SANA. Ese es el punto del escenario
+#   → 13.7 / +0.8 · en MAPE y sesgo LA FLOTA SE VE SANA. Ese es el punto
+#   → pero mira el denominador: «7 de 184 modelos», no de 192. Los ocho que
+#     faltan son arequipa entera, y es lo único de la sonda que lo delata.
+#     Vale la pena señalarlo con el dedo: la degradación no siempre se ve en
+#     la métrica, a veces se ve en cuántas filas quedaron para calcularla.
 
 make agente ARGS="--verboso"
 #   → tipo: anomalia · alcance: tienda:arequipa · y NO recomienda reentrenar

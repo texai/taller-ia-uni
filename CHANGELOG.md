@@ -5,6 +5,33 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La pauta, ensayada de verdad
+- Se ejecutó contra un mundo real —sembrado, roto y reparado— en vez de leerse.
+  **Las once evidencias numéricas que declara son correctas**, hasta la última
+  cifra: sano 13.8 / +0.8 / 8 de 192 / 6,532 unidades; `campana_promocional`
+  16.0 / −10.6; `sesgo_silencioso` 14.5 / +4.7 / 16 de 192 / 36,981;
+  `feed_caido` 17,473 → 17,305 filas, «faltan 168». Y `make reparar` devuelve
+  los cuatro números **exactos**, que es lo que lo hace servir de sonda.
+- Cuatro cosas que no cuadraban:
+  - **`feed_caido` delata más de lo que la pauta decía.** La sonda no solo da
+    13.7 / +0.8: da «7 de **184** modelos», no de 192. Los ocho que faltan son
+    arequipa entera. Decir «la flota se ve sana» con un 184 proyectado es
+    perder el mejor momento del escenario, así que ahora lo señala.
+  - **La versión del registro no se reinicia.** La pauta prometía `"version":
+    1 → 2`, y eso solo vale en un mundo recién sembrado: sobrevive a `entrenar`
+    y a `reparar` —solo la borra `make reset`—, así que el segundo ensayo da
+    3 → 4. La evidencia es **que sube en uno**, no la cifra.
+  - El encabezado decía «los 33 comandos» cuando ya son 36.
+  - Y «correrlo de una sentada», que se había quedado fuera del barrido del
+    verbo porque ese solo tocó `contenido/`.
+- **La pauta no parseaba como shell.** Las dos líneas de pandas del bloque
+  nuevo son Python, y sueltas entre comandos son un error de sintaxis. Van
+  comentadas —que es lo que son: se teclean dentro del intérprete— y
+  `validar-pauta` ahora corre `bash -n` sobre el archivo. Comprobado
+  descomentándolas.
+- La cadena de estado del mundo se revisó bloque a bloque: no tiene saltos.
+
+
 ### El reto 1 ya dice dónde corre pandas
 - «Sin agente, sin LLM. Tú, la API y pandas» — y el material **nunca decía
   dónde**. El paso de la demo era un marcador de posición (`python -c "…" o un

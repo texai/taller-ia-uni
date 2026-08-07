@@ -10,15 +10,17 @@
  * ninguna, porque se confía en ella — así que esto falla si el contenido gana
  * un comando y la pauta no.
  *
- * Dos comprobaciones:
+ * Tres comprobaciones:
  *
  *  1. **Cobertura.** Todo comando que el curso dicta está en la pauta.
  *  2. **Sondas.** Todo comando que modifica el mundo tiene la misma sonda
  *     antes y después. Un comando que corre sin error y no deja ver qué
  *     cambió no está probado: `make seed` puede terminar en verde y haber
  *     escrito en el sitio equivocado.
+ *  3. **Sintaxis.** El archivo tiene que parsear como script de shell.
  */
 
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -122,6 +124,30 @@ function main(): void {
   }
   const pauta = readFileSync(PAUTA, "utf8");
   const enPauta = pauta.toLowerCase();
+
+  // Que el archivo parsee como shell.
+  //
+  // Lleva shebang y el docente lo abre en su terminal, así que tiene que ser
+  // un script válido aunque no se ejecute entero. El guardia de arriba corta
+  // la ejecución completa, pero un error de sintaxis no lo detiene todo: se
+  // descubre cuando el editor lo colorea mal, o cuando alguien lo pasa por
+  // `source`.
+  //
+  // Pasó de verdad. Al documentar `make consola` entraron dos líneas de
+  // **Python** —`b = u[...]`, con corchetes y paréntesis— sueltas entre los
+  // comandos. Para el shell eso es un error de sintaxis. Van comentadas, que
+  // además es lo que son: se teclean dentro del intérprete, no en la terminal.
+  try {
+    execFileSync("bash", ["-n", PAUTA], { stdio: "pipe" });
+  } catch (e) {
+    const salida = (e as { stderr?: Buffer }).stderr?.toString() ?? String(e);
+    console.error(`\n${ROJO}La pauta no parsea como script de shell:${FIN}`);
+    console.error(salida.trim().split("\n").map((l) => `  ${l}`).join("\n"));
+    console.error(
+      `${GRIS}  Una línea que se teclea dentro de un intérprete va comentada.${FIN}`,
+    );
+    process.exit(1);
+  }
 
   const faltan = comandos.filter(({ comando }) => {
     const n = nucleo(comando);
