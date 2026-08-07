@@ -206,7 +206,7 @@ unidades:
         tipo: titulo
         titulo: "Reto 4 · La arquitectura cognitiva"
         entradilla: El corazón del taller
-        minutos: 3
+        minutos: 2
         notas: |
           Noventa minutos. Avisar que el receso va a mitad y que la parte
           difícil —por qué existe `revision`— viene después.
@@ -388,7 +388,7 @@ unidades:
       - id: s2-r4-apertura
         tipo: error-comun
         titulo: "Trampa · El estado que no se propaga"
-        minutos: 4
+        minutos: 3
         sintoma: >-
           El agente llama una herramienta, recibe el resultado, y a partir de
           ahí razona como si no supiera qué le pidieron. Concluye sobre una
@@ -407,7 +407,7 @@ unidades:
       - id: s2-r4-messages-key
         tipo: error-comun
         titulo: "Trampa · ToolNode lee otra clave"
-        minutos: 4
+        minutos: 3
         sintoma: >-
           El agente responde perfectamente y **nunca ejecutó una herramienta**.
           Ni una. El diagnóstico está escrito sobre la nada.
@@ -579,7 +579,7 @@ unidades:
         comentario: >-
           Ayer esta patología se veía desde afuera. Hoy la ve él. Esa es toda la
           diferencia que hace un nodo cuyo único trabajo es refutarse.
-        minutos: 4
+        minutos: 3
         notas: |
           Si la vieron ayer, decirlo: es la misma cita. Ayer era el síntoma;
           hoy es la prueba de que el nodo funciona.
@@ -588,7 +588,7 @@ unidades:
         tipo: markdown
         titulo: Por qué existe `revision`
         entradilla: La pregunta más importante de la unidad
-        minutos: 4
+        minutos: 3
         contenido: |
           Una reflexión que solo puede **objetar** es decorativa.
 
@@ -619,7 +619,7 @@ unidades:
           con la misma evidencia, decía que sí los había y explicaba por qué.
           Sin `revision`, esa corrida se emitía con el titular equivocado y la
           respuesta correcta enterrada en las objeciones.
-        minutos: 4
+        minutos: 3
         notas: |
           Dejarla en pantalla. Es la mejor justificación de arquitectura del
           taller entero, y la escribió el agente.
@@ -677,6 +677,58 @@ unidades:
           dashboard: las dos primeras son imposibles sin historial, y son las
           dos que hacen que una alerta se lea.
 
+      - id: s2-r4-memoria-comando
+        tipo: terminal
+        titulo: Ábranla y miren qué hay dentro
+        entradilla: make memoria — la única forma de ver lo que el agente recuerda
+        comando: docker compose run --rm agente python -m agente memoria
+        salida: |
+          [
+            {
+              "fecha": "2026-08-08",
+              "registrado_en": "2026-08-08T17:12:40",
+              "titulo": "Deriva sostenida de sesgo en toda la flota",
+              "severidad": "alta",
+              "alcance": "flota",
+              "evidencia": [
+                "sesgo global -8.4% contra -0.6% en la ventana base",
+                "las 8 categorias con deriva de sesgo, ninguna con deriva de error"
+              ],
+              "recomendaciones": [
+                {
+                  "accion": "reentrenar",
+                  "objetivo": "la flota",
+                  "urgencia": "alta",
+                  "justificacion": "el sesgo es sistematico y no se corrige solo"
+                }
+              ]
+            }
+          ]
+        duracion: 5
+        minutos: 4
+        notas: |
+          **Esto ya tiene contenido antes de empezar hoy**: lo escribió el
+          agente de ayer, en el reto 3. Vale la pena decirlo y dejar que lo
+          abran — es la prueba de que la memoria no es una promesa del diseño,
+          es un archivo.
+
+          Tres cosas de la forma del registro:
+
+          - Un JSON en disco, en el volumen `memoria`. Deliberadamente simple.
+            Lo que importa no es el motor de persistencia, sino **que el agente
+            consulte el historial ANTES de diagnosticar y lo escriba DESPUÉS**.
+          - `registrado_en` no es `fecha`. Una es cuándo corrió el agente; la
+            otra, de qué día habla el diagnóstico. Confundirlas es lo que hace
+            que un historial deje de servir para comparar.
+          - **Solo se guarda si hay algo.** Un diagnóstico `sin_hallazgos` no se
+            registra: una guardia tranquila no ensucia la memoria.
+
+          `--limpiar` la borra, y es útil para volver a demostrar la primera
+          corrida — la que dice "no hay diagnósticos previos".
+
+          El comando corre en el contenedor del agente porque la memoria es
+          suya. La plataforma no la ve, igual que en producción.
+
       - id: s2-r4-feed-caido
         tipo: error-comun
         titulo: "La trampa · una tienda que dejó de reportar"
@@ -730,6 +782,103 @@ unidades:
           Cuatro minutos alcanzan para uno o dos mundos, no para los cuatro.
           Correr `feed_caido` en clase —que es el que enseña— y dejar los otros
           tres para que los prueben ellos.
+
+      - id: s2-r4-salida
+        tipo: terminal
+        titulo: Cómo se lee una corrida · lo que hizo
+        entradilla: La primera mitad de lo que acaba de pasar por la pantalla
+        comando: docker compose run --rm agente python -m agente run --verboso
+        salida: |
+          Agente de monitoreo · 2026-08-09
+          Diagnosticos previos:
+          - [2026-08-08] Deriva sostenida de sesgo en la flota (severidad: alta)
+
+            → resumen_flota(dias=14)
+            → comparar_periodos(dias_recientes=14, dias_base=45, dimension=categoria)
+            → detectar_anomalias(dias=21)
+            → comparar_periodos(dias_recientes=14, dias_base=45, dimension=tienda)
+
+          ──────────────────────────────────────────────────────────
+          DIAGNÓSTICO (reescrito tras la reflexión)
+          ──────────────────────────────────────────────────────────
+            Arequipa dejó de reportar ventas hace nueve días
+            tipo: anomalia · alcance: tienda:arequipa · severidad: alta
+
+            Evidencia:
+              · arequipa: 0 unidades en los ultimos 9 dias
+              · las otras 23 tiendas dentro de su rango habitual
+              · ninguna categoria muestra deriva de error ni de sesgo
+        duracion: 45
+        minutos: 3
+        notas: |
+          **Recorrer la salida señalando.** Es la lámina que convierte "el
+          agente funciona" en "sé qué está haciendo el agente".
+
+          - **La segunda línea es la memoria.** Antes de mirar una sola métrica
+            el agente ya sabe qué reportó ayer. Se imprime primero porque es lo
+            primero que entra al prompt.
+          - **Las flechas son las llamadas a herramienta**, con sus argumentos,
+            en el orden real en que ocurrieron. Fíjense en que
+            `comparar_periodos` aparece **dos veces**: la segunda es después de
+            la reflexión, con otra dimensión. Eso es la vuelta atrás del grafo,
+            visible en la consola.
+          - **El título dice "reescrito tras la reflexión".** Solo aparece
+            cuando el veredicto fue `insuficiente`. Es la diferencia entre un
+            agente que se cuestiona y uno que además puede corregirse — la
+            tesis de la unidad, impresa.
+
+          Los acentos que faltan son del laboratorio, no de la lámina: el
+          código evita caracteres no ASCII en lo que imprime, para que no se
+          rompan en la consola de Windows.
+
+      - id: s2-r4-salida-2
+        tipo: terminal
+        titulo: Cómo se lee una corrida · lo que concluyó
+        entradilla: Y la segunda mitad, que es donde está lo interesante
+        comando: docker compose run --rm agente python -m agente run --verboso
+        salida: |
+          ──────────────────────────────────────────────────────────
+          REFLEXIÓN
+          ──────────────────────────────────────────────────────────
+            veredicto: insuficiente · vueltas: 1
+              · el titular decia "deriva del modelo" y la evidencia
+                es de datos ausentes
+              · no se comprobo si el resto de la cadena estaba afectado
+
+            El diagnóstico de arriba ya incorpora estas objeciones.
+
+          ──────────────────────────────────────────────────────────
+          RECOMENDACIONES
+          ──────────────────────────────────────────────────────────
+            [alta] revisar_datos → tienda:arequipa
+                Antes de tocar ningun modelo hay que saber por que no
+                llegan ventas.
+
+            (diagnóstico guardado en memoria)
+
+          ──────────────────────────────────────────────────────────
+          HERRAMIENTAS LLAMADAS
+          ──────────────────────────────────────────────────────────
+            resumen_flota, comparar_periodos, detectar_anomalias,
+            comparar_periodos
+        minutos: 3
+        notas: |
+          - **`vueltas: 1`** es cuántas veces volvió a percepción. Si dijera 3,
+            el tope lo habría cortado — y ese tope existe porque un agente que
+            se cuestiona sin límite no termina nunca.
+          - **Las objeciones son suyas.** No las escribió la plataforma ni
+            están en el prompt: son lo que el nodo de reflexión le puso a su
+            propio borrador.
+          - **`(diagnóstico guardado en memoria)`** cierra el bucle. Mañana esa
+            línea aparecerá arriba del todo, en «Diagnosticos previos».
+          - **`HERRAMIENTAS LLAMADAS` es lo único que agrega `--verboso`.** Las
+            flechas de la lámina anterior salen siempre. La bandera añade este
+            resumen final, que sirve para comparar dos corridas de un vistazo
+            sin releer la salida entera.
+
+          Si alguien pregunta por qué la recomendación es `revisar_datos` y no
+          `reentrenar`: esa es exactamente la conversación del reto 5, y es la
+          que decide si mañana se rompen 24 modelos sanos.
 
   # ------------------------------------------------------------------ 11:10
   - id: s2-reto-5
@@ -793,7 +942,7 @@ unidades:
       - id: s2-r5-quien-decide
         tipo: markdown
         titulo: El permiso no se le pregunta al modelo
-        minutos: 3
+        minutos: 2
         contenido: |
           La política de acción es **código Python**. No es una instrucción en
           el prompt, no es una herramienta que el agente pueda llamar, y no hay
@@ -876,7 +1025,7 @@ unidades:
       - id: s2-r5-urgencia
         tipo: error-comun
         titulo: "El error propio · frenar por urgencia"
-        minutos: 5
+        minutos: 4
         sintoma: >-
           La acción no se disparaba nunca. El agente recomendaba reentrenar, la
           política lo dejaba pasar en el papel, y no pasaba nada.
@@ -951,13 +1100,19 @@ unidades:
               decisión de esta corrida, no del entorno.
           - texto: "--verboso"
             explicacion: >-
-              Imprime cada llamada a herramienta y el veredicto de la política
-              recomendación por recomendación. Es la única forma de ver por qué
+              Agrega al final el resumen de herramientas llamadas. Ojo: el
+              veredicto de la política sale con bandera o sin ella — el bloque
+              `ACCIÓN` se imprime siempre, y es donde está el motivo de por qué
               NO se ejecutó algo.
         notas: |
-          `make actuar` hace lo mismo. Se muestra el comando entero porque es
-          el momento del taller en que conviene saber exactamente qué se está
-          ejecutando.
+          `make actuar` es exactamente esta línea. Se muestra entera porque es
+          el momento del taller en que conviene saber qué se está ejecutando, y
+          porque **la diferencia con `make agente` es una sola palabra**:
+          `-e EJECUTAR_ACCIONES=1`, entre `--rm` y el nombre del servicio.
+
+          Que vaya ahí y no al final no es cosmético. Todo lo que está a la
+          izquierda del nombre del servicio es de Docker; todo lo que está a la
+          derecha es del programa. `-e` es de Docker, así que va antes.
 
       - id: s2-r5-deriva
         tipo: demo
@@ -1006,21 +1161,49 @@ unidades:
       - id: s2-r5-comparacion
         tipo: comparacion
         titulo: Los dos resultados, lado a lado
-        entradilla: El mismo agente, el mismo permiso, dos mundos
+        entradilla: El mismo agente, el mismo permiso, dos mundos. Esto es lo que imprime cada uno.
         minutos: 3
         izquierda:
           titulo: sesgo_silencioso → ejecuta
-          contenido: >-
-            `deriva`, alcance de categoría. Reentrena 24 modelos y lo anota en
-            la bitácora. Reversible: si estuvo mal, se entrena de nuevo.
+          contenido: |
+            ```
+            ACCIÓN
+            ──────────────────────────────
+              ✓ reentrenar → categoria:bebidas
+                  24 modelos en 2.4s
+            ```
+
+            `deriva`, alcance de categoría. Reentrena y lo anota en la
+            bitácora. Reversible: si estuvo mal, se entrena de nuevo.
         derecha:
           titulo: feed_caido → frena
-          contenido: >-
+          contenido: |
+            ```
+            ACCIÓN
+            ──────────────────────────────
+              ✗ no se ejecutó: el diagnostico
+                es una anomalia de datos:
+                reentrenar aqui contaminaria
+                modelos sanos
+            ```
+
             `anomalia`, una tienda muda. No ejecuta nada y deja escrito el
             motivo. El modelo sano sigue sano.
         notas: |
+          **Ese texto de la derecha no lo escribió el LLM.** Está en
+          `agente/accion.py`, literal, dentro de la regla que frena. Vale la
+          pena decirlo señalándolo: cuando un agente explica por qué no hizo
+          algo, uno asume que lo razonó — y acá lo que hay es una condición de
+          Python que se sabe explicar.
+
           La diferencia entera está en un campo del diagnóstico —`tipo`— y en
           una línea de código. Toda la unidad cabe en esa frase.
+
+          Sin `-e EJECUTAR_ACCIONES=1` la salida es una tercera:
+          `✗ no se ejecutó: modo solo-diagnostico`, y debajo un
+          `habría reentrenado: {'categoria': 'bebidas'}` por cada acción que
+          habría pasado la política. Es el modo en que conviene dejarlo cuando
+          la clase termine.
 
       - id: s2-r5-api-escribe
         tipo: markdown
@@ -1050,15 +1233,21 @@ unidades:
           bitácora, y es lo que permite reconstruir después por qué existe un
           artefacto de las 3:40 de la mañana.
         notas: |
-          `make reentrenamientos` lo muestra. Sin bitácora, la primera pregunta
-          del lunes —"¿quién reentrenó esto?"— no tiene respuesta.
+          **No hay un `make` para esto**, y conviene decirlo en vez de
+          inventarlo: la bitácora se lee por la API, que es como la leería
+          cualquier cosa que no sea esta clase.
+
+              curl -s localhost:8000/v1/reentrenamientos | head
+
+          También sale en la interfaz de :8501. Sin bitácora, la primera
+          pregunta del lunes —"¿quién reentrenó esto?"— no tiene respuesta.
 
       - id: s2-r5-panel
         tipo: demo
         titulo: La interfaz, de punta a punta
         minutos: 2
         pasos:
-          - comando: make ui
+          - comando: docker compose up -d ui
             esperado: "http://localhost:8501"
         observar: >-
           La corrida completa: qué herramientas llamó, el diagnóstico, la
@@ -1161,7 +1350,7 @@ unidades:
           Es la crítica correcta a un umbral mal puesto, escrita por el agente
           que lo estaba sufriendo. Nosotros lo encontramos después, leyendo sus
           objeciones.
-        minutos: 4
+        minutos: 3
         notas: |
           La reflexión no solo sirve para que el agente no divague. Sirve como
           instrumento: es un revisor que lee tus umbrales todos los días y
@@ -1232,7 +1421,7 @@ unidades:
         tipo: titulo
         titulo: Cuando un agente se equivoca, la primera sospecha no debería ser el modelo
         destacado: Casi siempre es lo que le diste de comer
-        minutos: 4
+        minutos: 3
         notas: |
           La frase del taller. Dejarla en pantalla y no explicarla: la tabla ya
           la explicó.

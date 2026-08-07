@@ -5,6 +5,25 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Los comandos, desenvueltos · sesión 2 (batch 26)
+- **La anatomía de una corrida verbosa, en dos láminas** con la salida real del
+  agente: lo que hizo —memoria, llamadas a herramienta, diagnóstico— y lo que
+  concluyó —reflexión, recomendaciones, cierre del bucle. Partida en dos porque
+  cuarenta líneas no entran proyectadas, y unas líneas fuera de cuadro en la
+  lámina que enseña a leer una salida sería una broma.
+- **`make memoria` entra al curso**, con el JSON real. El gancho es que el
+  archivo ya tiene contenido antes de empezar el domingo: lo escribió el agente
+  del sábado. La memoria deja de ser una promesa del diseño.
+- **`make actuar` contra `make agente` es una palabra**, `-e
+  EJECUTAR_ACCIONES=1`, y dónde va importa: a la izquierda del nombre del
+  servicio está Docker, a la derecha el programa.
+- `s2-r5-comparacion` dejó de describir los dos resultados y ahora los muestra
+  — los dos bloques `ACCIÓN` reales, lado a lado. Con la advertencia de que el
+  texto del que frena no lo escribió el LLM: está literal en `accion.py`.
+- Dos errores del material corregidos: **`--verboso` no imprime las llamadas a
+  herramienta** —salen siempre— y **`make reentrenamientos` no existe**; la
+  bitácora se lee por la API o en la interfaz.
+
 ### Los comandos, desenvueltos · sesión 1 (batch 25)
 - De 26 comandos del curso, 22 eran `make X` sin abrir. La sesión 1 abre ahora
   con una **tabla de los siete atajos y lo que cada uno ejecuta de verdad**, y

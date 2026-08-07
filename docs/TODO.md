@@ -44,7 +44,7 @@ Referencias:
 | 23 | La solución dentro del ítem de pregunta | ✅ Completado |
 | 24 | El caso, como contenedor propio | ✅ Completado |
 | 25 | Los comandos, desenvueltos · sesión 1 | ✅ Completado |
-| 26 | Los comandos, desenvueltos · sesión 2 | ⬜ Pendiente |
+| 26 | Los comandos, desenvueltos · sesión 2 | ✅ Completado |
 | 27 | El recap de apertura, con diagramas | ⬜ Pendiente |
 | 28 | Diagrama de pasos al abrir cada reto | ⬜ Pendiente |
 | 29 | El ritmo: preguntas y pausas repartidas | ⬜ Pendiente |
@@ -373,14 +373,14 @@ enseña casi lo mismo que una anotada.
 Mismo criterio que el batch 25, sobre los comandos del domingo.
 
 **Alcance**
-- [ ] `make agente ARGS="--verboso"` abierto, y cómo se lee una corrida verbosa:
+- [x] `make agente ARGS="--verboso"` abierto, y cómo se lee una corrida verbosa:
       qué línea es una llamada a herramienta, cuál es un veredicto de reflexión,
       cuál es el paso por la política
-- [ ] `make actuar` contra `make agente`: dónde entra `-e EJECUTAR_ACCIONES=1`
+- [x] `make actuar` contra `make agente`: dónde entra `-e EJECUTAR_ACCIONES=1`
       y qué cambia en la salida
-- [ ] La salida de un reentrenamiento, leída: qué modelos tocó, cuánto tardó,
+- [x] La salida de un reentrenamiento, leída: qué modelos tocó, cuánto tardó,
       qué quedó en la bitácora
-- [ ] `make memoria`, que hoy no aparece en el curso y es la única forma de ver
+- [x] `make memoria`, que hoy no aparece en el curso y es la única forma de ver
       lo que el agente recuerda
 
 **Fuera de alcance**

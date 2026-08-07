@@ -1869,3 +1869,87 @@ revés: renombrando un ítem sin reconstruir, la comprobación falla nombrándol
 - `npm test` (125 pasan), typecheck, lint y build limpios.
 - `npm run humo`: 170 pantallas, 0 con error, contra una construcción fresca.
 - Las cinco láminas nuevas, vistas en el navegador paso a paso.
+
+---
+
+## Batch 26 — Los comandos, desenvueltos · sesión 2
+
+Mismo criterio que el batch 25, sobre el domingo. Con una diferencia de fondo:
+la sesión 1 tenía que abrir los comandos, y esta tiene que enseñar a **leer lo
+que imprimen**. El domingo el agente ya corre; lo que hace falta es que la sala
+sepa mirar su salida.
+
+### La anatomía de una corrida, en dos láminas
+
+`s2-r4-salida` y `s2-r4-salida-2`, tres minutos cada una, con la salida real de
+`agente run --verboso` sobre `feed_caido`.
+
+Se partió en dos por una razón física: la salida completa son cuarenta líneas y
+no entran en una pantalla proyectada. Media docena de líneas fuera de cuadro en
+la lámina que explica **cómo se lee** una salida sería una broma. La primera
+lámina es lo que el agente hizo —memoria, llamadas a herramienta, diagnóstico—
+y la segunda lo que concluyó —reflexión, recomendaciones, cierre del bucle.
+
+Lo que se señala, en orden:
+
+- **La segunda línea es la memoria.** Antes de mirar una métrica, el agente ya
+  sabe qué reportó ayer.
+- **`comparar_periodos` aparece dos veces.** La segunda es después de la
+  reflexión, con otra dimensión: es la vuelta atrás del grafo, visible en la
+  consola en vez de dibujada en un diagrama.
+- **«reescrito tras la reflexión»** solo se imprime cuando el veredicto fue
+  `insuficiente`. La tesis de la unidad, impresa por el propio programa.
+- **`(diagnóstico guardado en memoria)`** cierra el bucle que la primera línea
+  abrió.
+
+### `make memoria`, que no aparecía en el curso
+
+Es la única forma de ver lo que el agente recuerda, y el material no la
+mencionaba. Ahora `s2-r4-memoria-comando` muestra el JSON real, y el gancho es
+que **el archivo ya tiene contenido antes de empezar el domingo**: lo escribió
+el agente del sábado, en el reto 3. La memoria deja de ser una promesa del
+diseño y pasa a ser un archivo que se abre.
+
+Tres cosas de la forma del registro que valen la clase: que es un JSON en un
+volumen a propósito —lo que importa no es el motor de persistencia sino que se
+consulte ANTES y se escriba DESPUÉS—, que `registrado_en` y `fecha` no son lo
+mismo, y que un `sin_hallazgos` no se guarda.
+
+### `make actuar` contra `make agente`, en una palabra
+
+La diferencia es `-e EJECUTAR_ACCIONES=1`, y **dónde va importa**: entre `--rm`
+y el nombre del servicio. Todo lo que está a la izquierda del servicio es de
+Docker; todo lo de la derecha, del programa. `-e` es de Docker.
+
+`s2-r5-comparacion` dejó de describir los dos resultados y ahora **los muestra**:
+los dos bloques `ACCIÓN` reales, lado a lado. El de la derecha lleva su propia
+nota, porque es fácil leerlo mal:
+
+> Ese texto no lo escribió el LLM. Está en `agente/accion.py`, literal, dentro
+> de la regla que frena.
+
+Cuando un agente explica por qué no hizo algo, uno asume que lo razonó. Acá lo
+que hay es una condición de Python que se sabe explicar.
+
+### Dos errores del material
+
+- **`--verboso` no imprime las llamadas a herramienta ni el veredicto de la
+  política.** Las flechas y el bloque `ACCIÓN` salen siempre; la bandera añade
+  el resumen final de herramientas llamadas. El batch 25 lo corrigió en la
+  sesión 1 y la misma frase estaba repetida acá.
+- **`make reentrenamientos` no existe.** No hay tal receta en el Makefile. La
+  bitácora se lee por la API —`curl -s localhost:8000/v1/reentrenamientos`— que
+  es como la leería cualquier cosa que no sea esta clase, o en la interfaz.
+
+### Los minutos
+
+Nueve minutos nuevos, nueve recortados, y las dos sesiones siguen en 240. El
+grueso salió del reto 4, que sigue siendo la unidad más gorda del curso con 109
+minutos — repartir su ritmo es el batch 29, no este.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 137 ítems, 240 + 240 min.
+- `npm test` (125 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 173 pantallas, 0 con error.
+- Las cuatro láminas nuevas vistas a 1440×900, que es lo que se proyecta: las
+  dos de la salida entran enteras sin desplazar.
