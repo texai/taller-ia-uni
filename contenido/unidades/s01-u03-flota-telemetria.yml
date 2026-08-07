@@ -30,6 +30,45 @@ items:
       más complejo no cambiaría nada de lo que vamos a hacer, y sí
       alargaría el entrenamiento de los 192.
 
+  - id: s1-features
+    tipo: codigo
+    titulo: Y estas son las features, de verdad
+    entradilla: Doce líneas que producen todo lo que el modelo sabe del mundo
+    lenguaje: python
+    ruta: plataforma/modelo.py
+    resaltar: ["8-11"]
+    minutos: 3
+    contenido: |
+      LAGS = (7, 14, 28)
+      VENTANAS = (7, 28)
+
+      COLUMNAS = (
+          [f"lag_{d}" for d in LAGS]          # que se vendio hace 7, 14 y 28 dias
+          + [f"media_{v}" for v in VENTANAS]  # la media movil de 7 y de 28
+          + [f"dow_{d}" for d in range(1, 7)] # que dia de la semana es
+          + ["en_promocion", "t"]             # si hay promo, y cuanto tiempo paso
+      )
+
+      for v in VENTANAS:
+          # shift(1) para no filtrar el valor del propio dia que se predice.
+          df[f"media_{v}"] = df["unidades"].shift(1).rolling(v).mean()
+    notas: |
+      **El `shift(1)` resaltado es la línea más peligrosa del laboratorio**, y
+      por eso está. Sin él, la media móvil de siete días incluiría el día que
+      se está prediciendo: el modelo entrenaría viendo la respuesta y daría un
+      error de validación espectacular que se derrumba en producción. Se llama
+      fuga de datos, y es la primera cosa que hay que buscar en las features de
+      cualquiera.
+
+      La otra frase que vale: este archivo lo usan **el entrenamiento y el
+      pronóstico**, y vive en un solo sitio a propósito. Si los dos calcularan
+      las features distinto aparece *training/serving skew*, que es de los
+      fallos más comunes y más difíciles de diagnosticar en producción —
+      el modelo funciona en el cuaderno y falla servido, sin que nada avise.
+
+      Doce features y una regresión. Nadie va a ganar un concurso con esto, y
+      no hace falta: el taller trata de vigilar modelos, no de exprimirlos.
+
   - id: s1-modelo-vs-contenedor
     tipo: comparacion
     titulo: Un modelo no es un contenedor
@@ -127,6 +166,98 @@ items:
       plataforma lo dice en su docstring — "en clase se usan los atajos del
       Makefile, pero conviene que los alumnos vean que detrás no hay
       magia".
+
+  - id: s1-cadena
+    tipo: codigo
+    titulo: Las tres recetas que mueven el mundo
+    entradilla: seed lo crea, romper lo degrada, reparar lo devuelve. Tal cual están en el Makefile.
+    lenguaje: makefile
+    ruta: Makefile
+    resaltar: ["8", "13"]
+    minutos: 4
+    contenido: |
+      seed:      ## Pipeline completo: datos, entrenamiento, pronostico y metricas
+      	$(EN_PLATAFORMA) seed
+      	#  = datos -> entrenar -> pronosticar -> metricas
+
+      romper:    ## Degrada los datos, rompe el mundo
+      	$(EN_PLATAFORMA) escenario --nombre $(ESCENARIO)
+      	$(MAKE) pronosticar
+      	$(MAKE) metricas
+
+      reparar:   ## Regenera los datos limpios, vuelve al mundo sano
+      	$(EN_PLATAFORMA) datos
+      	$(MAKE) pronosticar
+      	$(MAKE) metricas
+    notas: |
+      **`romper` y `reparar` son la misma receta con la primera línea
+      cambiada**, y las dos líneas resaltadas son toda la diferencia: donde una
+      pone `escenario --nombre x`, la otra pone `datos`, que regenera el
+      histórico limpio desde la semilla. Las otras dos son idénticas.
+
+      Y lo que importa es **lo que no está en ninguna de las dos**: no hay
+      `entrenar`. El mundo cambia, se vuelve a correr el job con los modelos
+      viejos, y se mide. Los 192 artefactos son los mismos toda la tarde — que
+      es literalmente lo que pasa en producción, donde reentrenar es semanal o
+      mensual y el mundo cambia cuando le da la gana.
+
+      `$(EN_PLATAFORMA)` es la variable de arriba del archivo:
+      `docker compose run --rm plataforma python -m plataforma`. Se define una
+      vez y la usan las seis recetas de la plataforma.
+
+      Si alguien pregunta por qué `seed` es una sola línea y las otras tres:
+      porque `seed` encadena los cuatro pasos dentro de Python. `cat Makefile`
+      lo enseña entero, y `make ayuda` las lista todas.
+
+  - id: s1-pregunta-reentrenar
+    tipo: pregunta
+    titulo: Una de las tres
+    pregunta: >-
+      De esas tres recetas —`seed`, `romper` y `reparar`—, ¿cuáles vuelven a
+      entrenar los 192 modelos?
+    visibilidad: publica
+    permiteOmitir: true
+    respuesta: Solo seed, y solo la primera vez
+    minutos: 3
+    opciones:
+      - Las tres
+      - "`romper` y `reparar`, porque cambian los datos"
+      - Solo seed, y solo la primera vez
+      - Ninguna
+    notas: |
+      Treinta segundos de lectura de la lámina anterior y el resto de
+      discusión. Casi todo el mundo dice que `reparar` reentrena — suena a que
+      arregla los modelos, y no toca ninguno.
+
+      Es la pregunta que hace que la tarde entera tenga sentido: si los
+      modelos no cambian nunca, todo lo que se mueve es el mundo.
+    solucion:
+      explicacion: |
+        **Solo `seed`, y solo la primera vez.** Las otras dos regeneran el
+        histórico, vuelven a correr el job con los modelos que ya estaban, y
+        miden. Ni una línea de `entrenar`.
+
+        Eso no es una simplificación del laboratorio: es lo que pasa en
+        producción. El reentrenamiento es semanal o mensual y el mundo cambia
+        cuando le da la gana, así que **casi todo el tiempo el modelo que está
+        sirviendo se entrenó contra un mundo que ya no existe**.
+
+        Guárdenlo, porque explica el resto del día: cada vez que algo se
+        degrade esta tarde, los 192 artefactos van a ser exactamente los
+        mismos de ahora.
+      descartes:
+        - opcion: Las tres
+          razon: >-
+            Sería lo cómodo y costaría minutos cada vez. Entrenar 192 modelos
+            es el único paso lento de todo el laboratorio.
+        - opcion: "`romper` y `reparar`, porque cambian los datos"
+          razon: >-
+            Cambian los datos y **por eso mismo** no reentrenan: el punto es
+            ver qué le pasa a un modelo viejo cuando el mundo se mueve.
+        - opcion: Ninguna
+          razon: >-
+            Alguien tuvo que entrenarlos: es el segundo paso de `seed`. Lo que
+            no vuelve a ocurrir es el reentrenamiento.
 
   - id: s1-levantar
     tipo: comando-anotado
@@ -413,6 +544,37 @@ items:
       que ningún umbral sobre el MAPE detecta. No dar todavía los números
       — son del reto 1.
 
+  - id: s1-intervalo
+    tipo: codigo
+    titulo: De dónde sale el intervalo
+    entradilla: Dos líneas del job, y lo que la cobertura mide de verdad
+    lenguaje: python
+    ruta: plataforma/pronosticar.py
+    minutos: 3
+    contenido: |
+      sigma = max(1.0, float(df["unidades"].tail(90).std() or 1.0)) * 0.6
+
+      "limite_inferior": round(float(max(0.0, p - 1.96 * sigma)), 2),
+      "limite_superior": round(float(p + 1.96 * sigma), 2),
+    notas: |
+      **El 1.96 es el número que hay que nombrar.** Es el ancho de una normal
+      que deja el 95% en el medio — acá con la sigma reducida a 0.6 queda un
+      intervalo que en la práctica cubre alrededor del 90%. La promesa del
+      modelo, entonces, es: *«la venta va a caer aquí dentro nueve de cada diez
+      días»*.
+
+      Y ahí está lo que la cobertura mide: **cuántas veces esa promesa se
+      cumplió**. No cuántos días hubo predicción, no cuántos modelos corrieron.
+      Cuántas veces el modelo dijo la verdad sobre su propia incertidumbre.
+
+      La sigma sale de la desviación de los últimos 90 días, así que un
+      producto que vende parejo tiene un intervalo estrecho y uno que salta lo
+      tiene ancho. Es correcto y es lo que hace que la cobertura signifique
+      algo: no premia al que se cubre.
+
+      Con esto en pantalla, la pregunta que viene se contesta sola — y por eso
+      se hace **antes** de mirar esta lámina si la sala va rápida.
+
   - id: s1-pregunta-cobertura
     tipo: pregunta
     titulo: Antes de verlo
@@ -613,6 +775,41 @@ items:
       `mape_validacion_medio` sale del registro de los modelos, no de la
       telemetría: es lo que cada uno midió contra su propio conjunto de
       validación al entrenarse.
+
+  - id: s1-validacion
+    tipo: codigo
+    titulo: Y de dónde salía ese 10.4%
+    entradilla: Las últimas cuatro semanas, apartadas antes de entrenar
+    lenguaje: python
+    ruta: plataforma/entrenar.py
+    resaltar: ["2-5"]
+    minutos: 3
+    contenido: |
+      df = construir_features(serie).dropna(subset=COLUMNAS)
+
+      # Ultimas 4 semanas como validacion.
+      corte = len(df) - 28
+      X_tr, y_tr = df[COLUMNAS].iloc[:corte], df["unidades"].iloc[:corte]
+      X_va, y_va = df[COLUMNAS].iloc[corte:], df["unidades"].iloc[corte:]
+
+      modelo = Ridge(alpha=alpha).fit(X_tr, y_tr)
+      mape_val = _mape(y_va, pd.Series(modelo.predict(X_va), index=y_va.index))
+    notas: |
+      **El corte es por tiempo y no al azar, y esa es la lámina.** En una serie
+      temporal, repartir las filas aleatoriamente entrena con días posteriores
+      a los que evalúa: el modelo ya vio el futuro y el error de validación
+      sale precioso. Acá se aparta el último trozo, que es lo único que se
+      parece a producción.
+
+      Con eso, el 10.4% de hace un rato es un número honesto: el modelo se
+      equivocaba así **en días que no había visto**. Y aun así hoy va por
+      13.8%. La diferencia no es un error de nadie — son tres meses de mundo.
+
+      `Ridge` en vez de una regresión pelada es la otra media frase: penaliza
+      los coeficientes grandes, y con doce features correlacionadas entre sí
+      —tres rezagos y dos medias móviles miden casi lo mismo— una regresión sin
+      penalización reparte pesos enormes que se cancelan y se vuelve
+      inestable. `alpha=1.0` y a otra cosa.
 
   - id: s1-flota-dada
     tipo: criterios

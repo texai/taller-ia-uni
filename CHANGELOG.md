@@ -5,6 +5,33 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El hilo narrativo, cosido (batches 38 a 42)
+- **El reto 1 ya enseña lo que pedía hacer**: ocho líneas de pandas escritas, y
+  tres salidas reales medidas contra los tres estados del mundo. La que rescata
+  el reto es la del sesgo silencioso, con el mundo sano entre paréntesis: **las
+  ocho categorías movieron el sesgo hacia arriba** mientras el MAPE se quedaba
+  quieto. Ocho de ocho en la misma dirección — el ruido no tiene dirección.
+- **El caso deja de ser prosa**: de qué está hecho en disco, y su estado
+  inicial medido. El par 13.8 / +0.8 tiene por fin una lámina donde señalarlo.
+- **La cadena de comandos, en pantalla**: `romper` y `reparar` son la misma
+  receta con la primera línea cambiada, y **ninguna reentrena**. Con la
+  pregunta que hace aterrizar la consecuencia: si los modelos no cambian nunca,
+  todo lo que se mueve es el mundo.
+- Dos snippets que ilustran la intención: el `feed_caido` que **borra filas** en
+  vez de escribir ceros, y el comentario que confiesa que el sesgo silencioso
+  estaba calibrado a 0.18 y gritaba.
+- **`ruta:` enlaza** al archivo y a la línea; las rutas con coletilla no, porque
+  llevarían a un 404. Y entra el tipo **`diff`**, estrenado con
+  `messages_key="mensajes"`: veintiséis caracteres contra una hora perdida.
+- **Los conceptos que se usaban sin nombre**: las features reales con el
+  `shift(1)` que evita la fuga de datos, el `p ± 1.96σ` del que sale la
+  cobertura, y el corte de validación por tiempo que hace honesta la
+  comparación 10.4 contra 13.8.
+- Queda una cosa abierta y no se disimuló: las tres ejecuciones divergentes del
+  reto 3 necesitan una llave de LLM. Con el proveedor simulado saldrían
+  idénticas, e inventarlas sería escribir un razonamiento que nadie produjo.
+
+
 ### La ventana de lectura, y el taller que es de verdad (batch 37)
 - **El bucle ReAct pelado no existía.** `make agente` levanta el grafo
   completo, así que el sábado la sala habría visto la arquitectura del domingo

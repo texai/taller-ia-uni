@@ -26,6 +26,7 @@ import { DiagramaSecuencia } from "./secuencia";
 import { Caso } from "./caso";
 import { Glosario } from "./glosario";
 import { Asistencia, PausaPreguntas, Receso } from "./dictado";
+import { Diff } from "./diff";
 import { Lectura } from "./lectura";
 import { Pregunta } from "./pregunta";
 
@@ -106,6 +107,8 @@ export function RenderizarItem({
       return <Enlace item={item} />;
     case "archivo":
       return <Archivo item={item} />;
+    case "diff":
+      return <Diff item={item} />;
     case "comparacion":
       return <Comparacion item={item} />;
     case "metrica":

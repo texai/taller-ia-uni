@@ -18,6 +18,7 @@ import { dirname, join } from "node:path";
 import * as mod from "./contenido";
 import { ESPECIFICACION } from "./especificacion";
 import { pasosDe } from "./navegacion";
+import * as sitio from "./sitio";
 import { FAMILIA, TIPOS } from "./tipos";
 import type { Item, Unidad } from "./tipos";
 
@@ -1011,4 +1012,22 @@ test("el alumno no ve los minutos, salvo en una ventana de lectura", () => {
       assert.equal((suyos[1] as { minutos?: number }).minutos, 8);
     },
   );
+});
+
+test("una ruta con coletilla no se enlaza: llevaría a un 404", () => {
+  // Varios ítems escriben `ui/app.py · el bloque de la reflexión` porque el
+  // fragmento no es el archivo entero.
+  assert.equal(sitio.rutaDeLab("agente/accion.py"), "agente/accion.py");
+  assert.equal(
+    sitio.rutaDeLab("ui/app.py · el bloque de la reflexión"),
+    "ui/app.py",
+  );
+  assert.equal(sitio.rutaDeLab("Makefile"), null);
+  assert.equal(sitio.rutaDeLab("el bloque de la reflexión"), null);
+});
+
+test("el enlace al laboratorio ancla las líneas como las ancla GitHub", () => {
+  assert.match(sitio.enlaceALab("agente/grafo.py"), /blob\/main\/agente\/grafo\.py$/);
+  assert.match(sitio.enlaceALab("agente/grafo.py", "381-404"), /#L381-L404$/);
+  assert.match(sitio.enlaceALab("agente/grafo.py", "381"), /#L381$/);
 });

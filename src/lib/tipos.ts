@@ -364,6 +364,29 @@ export interface ItemSalidaAnotada extends ItemBase {
   }[];
 }
 
+/**
+ * Un cambio, enseñado como cambio.
+ *
+ * Hay arreglos que no se entienden como bloque de código y sí como diferencia:
+ * la trampa del reto 4 es **un parámetro que no estaba**, y proyectada dentro
+ * de su archivo obliga a que alguien diga cuál es la línea nueva. En
+ * antes/después lo dice el dibujo.
+ *
+ * Es distinto de `comparacion`, que enfrenta dos ideas en prosa. Acá los dos
+ * lados son el mismo código en dos momentos, y lo que importa es exactamente
+ * lo que se movió entre uno y otro.
+ */
+export interface ItemDiff extends ItemBase {
+  tipo: "diff";
+  /** El archivo del laboratorio donde vive, si vive en uno. */
+  ruta?: string;
+  lenguaje?: string;
+  antes: string;
+  despues: string;
+  /** Qué cambió, en una frase. Va debajo del dibujo. */
+  explicacion?: string;
+}
+
 // --------------------------------------------------------------------------
 // Familia: dictado
 // --------------------------------------------------------------------------
@@ -495,6 +518,7 @@ export type Item =
   | ItemComandoAnotado
   | ItemSalidaAnotada
   | ItemGlosario
+  | ItemDiff
   | ItemLectura
   | ItemReceso
   | ItemPausaPreguntas
@@ -526,6 +550,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   "comando-anotado": "contenido",
   "salida-anotada": "contenido",
   glosario: "contenido",
+  diff: "contenido",
   lectura: "dictado",
   receso: "dictado",
   "pausa-preguntas": "dictado",

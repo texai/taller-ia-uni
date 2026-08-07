@@ -96,6 +96,11 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
     opcionales: ["archivos", "comandos", "observar"],
   },
 
+  diff: {
+    requeridos: ["antes", "despues"],
+    opcionales: ["ruta", "lenguaje", "explicacion"],
+  },
+
   transicion: { requeridos: ["vimos", "viene"] },
 
   "diagrama-secuencia": {

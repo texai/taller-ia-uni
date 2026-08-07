@@ -7,6 +7,7 @@ objetivos:
   - Entender que la calidad de un agente se decide antes del LLM
   - Escribir una herramienta que agregue y no vuelque filas
   - Calibrar umbrales contra la flota sana, no contra la intuición
+  - "Conceptos: deriva, línea base, significancia contra relevancia, y el test KS"
 requisitos:
   - Haber visto que el sesgo silencioso no se detecta a ojo
   - Entorno levantado, con el mundo sano
@@ -318,6 +319,42 @@ items:
     notas: |
       Medido: +20.8% en el mundo del 7 de agosto, +19.6% en la medición
       original. Es la cifra que justifica el umbral de 25% para categoría.
+
+  - id: s1-r2-calibrado
+    tipo: codigo
+    titulo: Y el escenario también está calibrado
+    entradilla: Por qué el sesgo silencioso vale 0.06 y no 0.18
+    lenguaje: python
+    ruta: plataforma/escenario.py
+    resaltar: ["9-11"]
+    minutos: 3
+    contenido: |
+      # Cuanto cae la demanda al final de la ventana en `sesgo_silencioso`.
+      #
+      # Calibrado, no elegido a ojo. Una caida pareja mueve el MAPE y el sesgo
+      # la misma cantidad de puntos; lo que los separa es de donde parten. Con
+      # este valor el MAPE de la flota va de 13.8 a 14.5 -- ruido -- y los
+      # modelos sobre el umbral de alerta se duplican, un movimiento por el que
+      # nadie levanta el telefono. El sesgo, en cambio, va de +0.7% a +4.7%.
+      #
+      # A 0.18, que es donde estaba, 57 de 192 modelos cruzaban el umbral. Eso
+      # ya no es silencioso: cualquier tablero lo hubiera gritado, y el
+      # escenario dejaba de demostrar lo unico que existe para demostrar.
+      CAIDA_SESGO_SILENCIOSO = 0.06
+    notas: |
+      **La lámina que cierra el argumento de la calibración**, y por el otro
+      lado: no solo los umbrales de la herramienta se miden contra la flota
+      sana — el escenario que la pone a prueba también.
+
+      Las tres líneas resaltadas son la confesión de un error del laboratorio.
+      El valor estaba en 0.18 y con eso 57 de 192 modelos cruzaban el umbral:
+      cualquier tablero lo habría gritado, y el escenario dejaba de demostrar
+      lo único que existe para demostrar. Se bajó a 0.06 midiendo, no
+      opinando.
+
+      Es una buena respuesta para quien pregunte si el laboratorio está
+      «trucado» para que salga la lección: sí, y está escrito en el código, con
+      el número que se probó y el que se descartó.
 
   - id: s1-r2-umbrales
     tipo: tabla

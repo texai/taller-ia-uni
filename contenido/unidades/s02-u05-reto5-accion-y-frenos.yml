@@ -6,6 +6,7 @@ objetivos:
   - Ver qué cambia cuando equivocarse deja de costar una alerta
   - Escribir un freno en código, y entender por qué no va en el prompt
   - Distinguir una acción reversible de una que no lo es
+  - "Conceptos: radio de daño, reversibilidad, y superficie de escritura de una API"
 requisitos:
   - Un grafo que diagnostique y recomiende
   - Haber visto la trampa del feed caído

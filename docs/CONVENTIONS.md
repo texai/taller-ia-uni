@@ -181,6 +181,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `salida-anotada` | Una salida de terminal, explicada trozo a trozo | `salida`, `anotaciones[]`, `comando` |
 | `glosario` | Una selección del glosario, como lámina | `terminos[]` \| `grupo` |
 | `caso` | El marco de negocio dentro del cual ocurre todo lo demás | `empresa`, `cifras[]`, `bloques[]`, `archivo` |
+| `diff` | Un cambio, enseñado como cambio: antes y después | `antes`, `despues`, `ruta`, `lenguaje`, `explicacion` |
 
 ### Familia `dictado`
 
@@ -191,6 +192,22 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `pausa-preguntas` | Pausa deliberada para preguntas | `disparadores[]` |
 | `asistencia` | Recordatorio de tomar lista. Solo el docente | `nota` |
 | `pregunta` | El docente pregunta a los alumnos | `pregunta`, `opciones`, `respuesta`, `permiteOmitir`, `visibilidad` |
+
+### Por qué `diff` y no `comparacion`
+
+`comparacion` enfrenta dos **ideas** en prosa: lo que vio el MAPE contra lo que
+vio el sesgo. En un `diff` los dos lados son el **mismo código en dos
+momentos**, y lo que importa es exactamente lo que se movió entre uno y otro.
+
+Se dibuja en una sola columna, no en dos paneles enfrentados: dos paneles
+obligan a la vista a saltar buscando la línea equivalente, y proyectado eso no
+funciona. Y va sin resaltado de sintaxis, porque acá el color significa «esto
+cambió» — dos sistemas de color en el mismo bloque compiten y la única
+distinción que importa se pierde.
+
+La diferencia se calcula por subsecuencia común (`src/lib/diff.ts`) y no
+comparando posición a posición: con lo segundo, insertar una línea marca como
+cambiadas todas las de abajo, y un diff con todo en rojo no se lee.
 
 ### Por qué `lectura` es de la familia `dictado`
 

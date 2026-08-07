@@ -2712,3 +2712,123 @@ la cadencia— y el validador lo avisa en cada ejecución.
 - `python -m agente pelado --verboso` corrido contra el laboratorio: llama
   `resumen_flota` y termina.
 - Dos ventanas vistas en el navegador, con el reloj contando.
+
+---
+
+## Batches 38 a 42 — El hilo narrativo, cosido
+**2026-08-07**
+
+Los cinco batches que salieron de la revisión completa del contenido. Van
+juntos acá porque se implementaron seguidos y varios se tocan: el mismo archivo
+del reto 1 recibe las salidas del 38 y el código del 40.
+
+---
+
+### Batch 38 · Las salidas que faltan
+
+**El reto 1 pedía pandas y nunca lo mostraba.** Sus dos ejercicios centrales
+tenían por pasos dos comentarios. Ahora hay ocho líneas de pandas escritas
+—`s1-r1-groupby`— y **tres salidas reales**, medidas corriendo el laboratorio
+en sus tres estados:
+
+| Estado | MAPE flota | Sesgo | Qué se ve |
+|---|---|---|---|
+| sano | 13.8 | +0.8 | la referencia |
+| campana_promocional | 16.0 | −10.6 | bebidas a 30.8, sola |
+| sesgo_silencioso | 14.5 | +4.7 | nada se despega |
+
+La tercera es la que rescata el reto. Puesta al lado del mundo sano entre
+paréntesis, **las ocho categorías movieron el sesgo hacia arriba** —panadería
+6.7→10.9, lácteos 2.4→6.5, congelados −0.7→2.8— mientras el MAPE se quedaba
+donde estaba. Ocho de ocho en la misma dirección: el ruido no tiene dirección.
+Y en la campaña, 18 de las 24 tiendas de bebidas sobre el 20%, que es lo que
+contesta «no es una tienda, es la categoría».
+
+También entra la respuesta del `curl`, que se pedía teclear sin enseñar qué
+devuelve. Su mejor anotación es la que menos se espera: **con `n: 1` el MAPE y
+el sesgo son el mismo número salvo el signo.** Toda la diferencia entre las dos
+señales nace al agregar, no al medir.
+
+**Lo que no se hizo, y no se disimuló.** Las tres ejecuciones divergentes del
+reto 3 necesitan una llave de LLM. Con el proveedor simulado saldrían idénticas
+—lo contrario de lo que hay que demostrar— e inventarlas sería escribir un
+razonamiento que ningún agente produjo. Queda en `TODO.md` como lo único
+abierto de estos cinco batches.
+
+### Batch 39 · El caso, anclado
+
+El caso eran cuatro bloques de prosa y tres cifras redondas. Ahora dice de qué
+está hecho en disco —`ventas.csv` 76,800 filas, `modelos/` 192 artefactos y
+856 KB, `metricas.csv` 17,472 filas— y trae `s1-caso-estado` con el estado
+inicial **medido**: entrenados hasta el 8 de mayo, validación 10.4%,
+producción 13.8%, sesgo +0.8%, cobertura 88.7%.
+
+El par 13.8 / +0.8 es el ancla del taller y ahora tiene una lámina donde
+señalarlo. Antes vivía en una nota del docente.
+
+### Batch 40 · La cadena de comandos
+
+`s1-cadena` pone las tres recetas juntas y resalta la única línea en que
+difieren: **`romper` y `reparar` son la misma receta con la primera línea
+cambiada**, y ninguna reentrena. Eso estaba dicho en una nota privada y nunca
+en pantalla.
+
+Detrás va `s1-pregunta-reentrenar`, que además de partir un tramo de 26 minutos
+que el validador reprochó, hace aterrizar la consecuencia: si los modelos no
+cambian nunca, **todo lo que se mueve es el mundo**. Casi todo el mundo contesta
+que `reparar` reentrena.
+
+Y dos snippets que ilustran la intención sin saturar: el `feed_caido` de
+`escenario.py`, cuyas tres líneas de comentario —*«no reporta ceros: no reporta
+nada»*— sostienen la distinción anomalía/deriva del domingo; y el comentario
+calibrado de `CAIDA_SESGO_SILENCIOSO`, que confiesa que el valor estaba en 0.18
+y con eso 57 de 192 modelos cruzaban el umbral. Es la respuesta a quien
+pregunte si el laboratorio está trucado: sí, y está escrito en el código con el
+número que se descartó.
+
+### Batch 41 · El repositorio, a un clic
+
+`ruta:` deja de ser texto muerto y enlaza al archivo, a la línea exacta cuando
+el ítem la declara. `rutaDeLab` devuelve `null` para las rutas con coletilla
+—`ui/app.py · el bloque de la reflexión`— y esas se dibujan como antes:
+enlazarlas llevaría a un 404, que es peor que no enlazar.
+
+Y entra el tipo **`diff`**, con su propia función y sus pruebas. La diferencia
+se calcula por subsecuencia común y no posición a posición, porque con lo
+segundo insertar una línea marca como cambiadas todas las de abajo y un diff
+con todo en rojo no se lee desde la última fila.
+
+Se estrena con `messages_key="mensajes"`, que es el mejor caso posible:
+**veintiséis caracteres** contra un síntoma de una hora perdida. Proyectado
+como bloque, alguien tiene que decir cuál es la línea nueva; como cambio, lo
+dice el dibujo.
+
+### Batch 42 · Los conceptos
+
+Cuatro láminas donde el concepto ya estaba en uso sin nombre.
+
+`s1-features` trae las features reales y resalta el `shift(1)` — la línea más
+peligrosa del laboratorio: sin ella la media móvil incluiría el día que se
+predice, y eso es fuga de datos. De paso, por qué el archivo lo comparten
+entrenamiento y pronóstico: *training/serving skew*.
+
+`s1-intervalo` enseña de dónde sale el `p ± 1.96σ`, que la cobertura llevaba
+tres láminas explicándose sin mostrarlo. `s1-validacion` enseña el corte por
+tiempo —últimas cuatro semanas— y por qué repartir al azar una serie temporal
+entrena viendo el futuro; con eso, el 10.4% contra el 13.8% es una comparación
+honesta. Y ahí va también por qué `Ridge` y no una regresión pelada: doce
+features correlacionadas entre sí.
+
+Cada reto declara ahora en sus objetivos qué concepto introduce.
+
+---
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 191 ítems, sin errores, con las rutas al
+  laboratorio comprobadas.
+- Las tres salidas del reto 1 y las cifras del caso, **medidas** corriendo
+  `datos`, `escenario`, `pronosticar` y `metricas` sobre el laboratorio.
+- 159 pruebas (6 nuevas de `diff`, 2 de enlaces), lint y build limpios.
+- El `diff` y las salidas nuevas vistas en el navegador.
+- 312 + 265 minutos sobre 240 + 240. Deliberado: el docente controla la
+  cadencia y prefiere pasarse a quedarse corto.

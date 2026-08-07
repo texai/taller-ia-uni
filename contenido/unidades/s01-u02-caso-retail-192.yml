@@ -24,3 +24,63 @@ items:
 
       Este mismo caso vuelve a abrir el domingo, desde el mismo archivo,
       para quien no vino.
+
+  - id: s1-caso-estado
+    tipo: salida-anotada
+    titulo: Y así está la flota hoy
+    entradilla: El estado inicial del caso, medido. Todo lo que viene se compara contra estos números.
+    comando: make seed  ·  y después → resumen_flota(dias=14)
+    minutos: 4
+    salida: |
+      # lo que deja make seed, en disco
+      ventas.csv         76,800 filas      el mundo, dos años de historia
+      modelos/              192 artefactos  856 KB en total
+      predicciones.csv   17,472 filas      lo que escribió el job
+      metricas.csv       17,472 filas      lo único que el agente puede mirar
+
+      # y lo que dicen esas metricas
+      {
+        "modelos_evaluados": 192,
+        "entrenados_hasta": "2026-05-08",
+        "mape_validacion_medio": 10.4,
+        "mape_medio": 13.782,
+        "sesgo_pct": 0.801,
+        "cobertura_media": 0.887,
+        "modelos_con_mape_sobre_25": 8
+      }
+    anotaciones:
+      - texto: "metricas.csv       17,472 filas"
+        explicacion: >-
+          192 modelos por 91 días. **Es todo lo que hay para saber si algo va
+          mal**, y es exactamente por lo que nadie lo mira: no hay forma de
+          leer diecisiete mil filas un lunes por la mañana.
+      - texto: '"entrenados_hasta": "2026-05-08"'
+        explicacion: >-
+          Tres meses sin reentrenar, y no es un descuido del laboratorio: es lo
+          normal. El reentrenamiento es semanal o mensual, y el mundo cambia
+          cuando le da la gana.
+      - texto: '"mape_medio": 13.782'
+        explicacion: >-
+          **Este es el número contra el que se lee todo el taller.** 13.8% de
+          error medio con la flota sana. Cuando dentro de una hora se mueva a
+          14.5 y parezca que no pasó nada, es contra este 13.8 que hay que
+          compararlo.
+      - texto: '"sesgo_pct": 0.801'
+        explicacion: >-
+          Y este es el que casi nadie mira: ocho décimas hacia arriba, que es
+          prácticamente cero. Una flota sana no tiene sesgo. Por eso cuando
+          aparece, apareció de verdad.
+    notas: |
+      **Es el ancla del caso, y va acá para poder señalarla el resto del día.**
+      Hasta ahora el caso era una historia; estos son sus archivos y sus
+      números.
+
+      Los cuatro archivos merecen medio minuto: que quede claro que el
+      laboratorio no es una simulación de mentira, son 76,800 filas de
+      historia y 192 artefactos de verdad en disco.
+
+      El par 13.8 / +0.8 hay que pedir que lo anoten. Vuelve seis veces.
+
+      Si a alguien le salen otros números: el mundo se genera contra la fecha
+      del día. El MAPE y el sesgo coinciden al primer decimal; el conteo de
+      modelos sobre umbral se mueve.

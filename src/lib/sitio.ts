@@ -34,3 +34,16 @@ export function enlaceALab(ruta: string, lineas?: string): string {
   const [desde, hasta] = lineas.split("-");
   return hasta ? `${base}#L${desde}-L${hasta}` : `${base}#L${desde}`;
 }
+
+/**
+ * La parte de un `ruta:` que es de verdad un archivo del laboratorio.
+ *
+ * Varios ítems escriben la ruta con una coletilla —`ui/app.py · el bloque de
+ * la reflexión`— porque el fragmento no es el archivo entero. Enlazar eso
+ * llevaría a un 404. Devuelve `null` cuando no reconoce un archivo, y quien
+ * llama dibuja texto plano.
+ */
+export function rutaDeLab(ruta: string): string | null {
+  const limpia = ruta.split("·")[0]?.trim() ?? "";
+  return /^[\w./-]+\.\w+$/.test(limpia) ? limpia : null;
+}

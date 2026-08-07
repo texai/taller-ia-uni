@@ -7,6 +7,7 @@ objetivos:
   - Construir un grafo donde cada nodo hace un trabajo y solo uno
   - Entender por qué una reflexión que no puede corregir es decorativa
   - Darle memoria, para que no repita la alerta de ayer
+  - "Conceptos: grafo de estado, y anomalía de datos contra deriva de modelo"
 requisitos:
   - Herramientas de percepción funcionando
   - Haber visto divagar al ReAct pelado
@@ -269,6 +270,38 @@ items:
       — y vale la pena decirlo, porque la conclusión no es "escriban en
       inglés" sino que un nombre distinto al que espera una librería es una
       trampa que no avisa.
+
+  - id: s2-r4-messages-key-diff
+    tipo: diff
+    titulo: Y el arreglo entero, en una línea
+    entradilla: Lo que separa un agente que ejecuta herramientas de uno que no
+    ruta: agente/grafo.py
+    lenguaje: python
+    minutos: 3
+    antes: |
+      g.add_node("percepcion", percepcion)
+      g.add_node("herramientas", ToolNode(HERRAMIENTAS))
+      g.add_node("diagnostico", diagnostico)
+    despues: |
+      g.add_node("percepcion", percepcion)
+      g.add_node("herramientas", ToolNode(HERRAMIENTAS, messages_key="mensajes"))
+      g.add_node("diagnostico", diagnostico)
+    explicacion: >-
+      Veintiséis caracteres. Sin ellos el grafo se construye, corre, no lanza
+      ninguna excepción y **nunca ejecuta una herramienta**: `ToolNode` busca
+      una clave `messages`, no la encuentra, y pasa de largo.
+    notas: |
+      **Se muestra como cambio y no como bloque porque el bloque no enseña
+      nada.** Proyectado entero, alguien tiene que decir en voz alta cuál es la
+      línea nueva y qué le cambió; así lo dice el dibujo, y lo que queda en la
+      cabeza es el tamaño del arreglo comparado con el tamaño del síntoma.
+
+      La pregunta que vale la pena hacer acá: **¿cuánto habrían tardado en
+      encontrarlo?** Sin excepción, sin aviso, y con un diagnóstico que se lee
+      convincente porque el modelo escribe igual de bien sobre nada.
+
+      Es también el mejor ejemplo de la tesis del domingo: no fue el modelo, fue
+      el cableado.
 
   - id: s2-r4-aristas
     tipo: codigo

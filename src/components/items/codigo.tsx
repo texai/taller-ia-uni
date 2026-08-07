@@ -8,6 +8,7 @@ import type {
 } from "@/lib/tipos";
 import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
 import { comoTextoPlano, recortar } from "@/lib/resaltado";
+import { enlaceALab, rutaDeLab } from "@/lib/sitio";
 import { Caja, Etiqueta, Marco } from "./marco";
 import { Prosa } from "./texto";
 
@@ -33,15 +34,37 @@ export function Codigo({ item }: { item: ItemCodigo }) {
       >
         {item.ruta && (
           <div
-            className="border-b px-5 py-2.5 font-mono text-sm"
+            className="flex flex-wrap items-baseline gap-x-2 border-b px-5 py-2.5 font-mono text-sm"
             style={{
               borderColor: "var(--borde)",
               background: "var(--lienzo-alto)",
               color: "var(--tinta-suave)",
             }}
           >
-            {item.ruta}
-            {item.lineas && <span className="ml-2">· líneas {item.lineas}</span>}
+            {/*
+              La ruta era texto muerto: el alumno leía `agente/accion.py` y no
+              tenía cómo llegar. Ahora enlaza al archivo en el laboratorio, y a
+              las líneas exactas cuando el ítem las declara.
+
+              `rutaDeLab` devuelve null para las rutas que no son un archivo
+              —hay ítems que escriben cosas como `ui/app.py · el bloque de la
+              reflexión`—, y entonces se dibuja como antes. Enlazar eso llevaría
+              a un 404, que es peor que no enlazar.
+            */}
+            {rutaDeLab(item.ruta) ? (
+              <a
+                href={enlaceALab(rutaDeLab(item.ruta)!, item.lineas)}
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-4"
+                style={{ color: "var(--color-acento)" }}
+              >
+                {item.ruta}
+              </a>
+            ) : (
+              <span>{item.ruta}</span>
+            )}
+            {item.lineas && <span>· líneas {item.lineas}</span>}
           </div>
         )}
         <div

@@ -7,6 +7,7 @@ objetivos:
   - Sentir que revisar 192 modelos a mano no escala
   - Descubrir que la métrica que estaban mirando no era la que hablaba de plata
   - Salir con la pregunta de cuánto tardarían haciendo esto cada mañana
+  - "Conceptos: agregación por dimensión, y por qué el sesgo no se promedia"
 requisitos:
   - Entorno levantado y con datos
   - Saber qué son el MAPE, el sesgo y la cobertura
@@ -92,6 +93,70 @@ items:
     notas: |
       Es la primera vez que ven la API. Vale la pena abrir `/docs` en vivo
       y dejar que exploren treinta segundos.
+
+  - id: s1-r1-api-salida
+    tipo: salida-anotada
+    titulo: Y esto es lo que devuelve
+    entradilla: Una fila por modelo y por día. 912 de ellas para esta consulta.
+    comando: curl -s "…/v1/metricas?categoria=bebidas&desde=2026-07-01" | head
+    minutos: 3
+    salida: |
+      [
+        {
+          "fecha": "2026-07-01",
+          "modelo_id": "dem-bebidas-arequipa",
+          "categoria": "bebidas", "tienda": "arequipa", "region": "SUR",
+          "n": 1,
+          "mape": 3.629,
+          "sesgo_pct": 3.629,
+          "cobertura": 1.0,
+          "unidades_reales": 478.64,
+          "unidades_pronosticadas": 496.01,
+          "dias_en_promocion": 0, "dias_con_quiebre": 0
+        },
+        {
+          "fecha": "2026-07-01",
+          "modelo_id": "dem-bebidas-ate",
+          "mape": 22.724,
+          "sesgo_pct": -22.724,
+          "unidades_reales": 380.74,
+          "unidades_pronosticadas": 294.22,
+          ...
+        }
+      ]
+    anotaciones:
+      - texto: '"mape": 3.629'
+        explicacion: >-
+          Un día, un modelo. La primera fila es de arequipa y ese día se
+          equivocó un 3.6%. **Con `n: 1` el MAPE y el sesgo son el mismo
+          número salvo el signo** — la diferencia solo aparece al agregar
+          varios días o varios modelos, que es todo el reto 2.
+      - texto: '"sesgo_pct": -22.724'
+        explicacion: >-
+          La segunda fila es la misma métrica con el signo puesto: ate
+          pronosticó **de menos**, 294 contra 381 reales. Fíjense en que
+          arequipa erró hacia arriba y ate hacia abajo el mismo día: sumadas,
+          se cancelan. Eso es lo que hace silencioso a un sesgo de flota.
+      - texto: '"unidades_reales": 478.64'
+        explicacion: >-
+          Las unidades vienen **además** de los porcentajes, y no es
+          redundancia. Sin ellas no se puede agregar bien: un porcentaje ya es
+          un cociente, y promediar cocientes le da el mismo peso a una tienda
+          grande que a una chica. Guardarlo — es la trampa 1 del reto 2.
+      - texto: '"dias_con_quiebre": 0'
+        explicacion: >-
+          La columna que nadie mira hoy y que en el reto 5 lo explica todo:
+          cuántos días hubo faltante de stock. La telemetría la trae y el
+          agente nunca la usa; esa es la conversación con la que cierra el
+          domingo.
+    notas: |
+      **912 filas para una categoría y cinco semanas.** Sin filtros son 17,472,
+      y ese número es el argumento del taller entero: no es que nadie quiera
+      mirar la telemetría, es que no se puede a ojo.
+
+      La primera anotación es la que más rinde y la que menos se espera: con
+      una sola fila el MAPE y el sesgo coinciden. Toda la diferencia entre las
+      dos señales nace al sumar, no al medir.
 
   - id: s1-r1-romper
     tipo: comando-anotado
@@ -185,13 +250,79 @@ items:
       El segundo comando deja el mundo roto y es el que abre el ejercicio: si
       alguien lo corre tarde, va a mirar una flota sana y no encontrar nada.
 
+  - id: s1-r1-groupby
+    tipo: codigo
+    titulo: Ocho líneas de pandas
+    entradilla: El agregado que responde las tres preguntas
+    lenguaje: python
+    minutos: 3
+    resaltar: ["7-10"]
+    contenido: |
+      import pandas as pd
+
+      m = pd.read_csv("datos/metricas.csv", parse_dates=["fecha"])
+      u = m[m["fecha"] >= m["fecha"].max() - pd.Timedelta(days=13)]
+
+      u.groupby("categoria").apply(lambda g: pd.Series({
+          "mape": g["mape"].mean().round(1),
+          "sesgo_pct": round(
+              (g["unidades_pronosticadas"].sum() - g["unidades_reales"].sum())
+              / g["unidades_reales"].sum() * 100, 1),
+      })).sort_values("mape", ascending=False)
+    notas: |
+      **Las líneas resaltadas son el reto 2 entero, adelantado.** El MAPE se
+      promedia porque es una distancia por día; el sesgo **no**, y por eso es
+      una resta de totales y no un `.mean()`. Escribirlo bien acá cuesta lo
+      mismo que escribirlo mal, y mañana la diferencia se paga.
+
+      No hace falta que lo copien: está para leerlo. Quien prefiera la interfaz
+      de :8501 ordena por MAPE con un clic y llega al mismo sitio.
+
+      Si alguien pregunta por `days=13`: catorce días contando el último. Es el
+      error de dedo más común de esta lámina.
+
+  - id: s1-r1-feed-caido
+    tipo: codigo
+    titulo: Cómo se rompe un mundo, por dentro
+    entradilla: feed_caido, y las tres líneas de comentario que lo explican todo
+    lenguaje: python
+    ruta: plataforma/escenario.py
+    resaltar: ["1-3"]
+    minutos: 3
+    contenido: |
+      # Un feed caido no reporta ceros: no reporta nada. Las filas desaparecen,
+      # igual que en produccion. Es la diferencia entre "vendimos cero" y "no
+      # sabemos cuanto vendimos", y el agente tiene que notarla.
+      if nombre == "feed_caido":
+          muda = corte + timedelta(days=7)
+          quedan = [
+              f
+              for f in filas
+              if not (f["tienda"] == tienda and date.fromisoformat(f["fecha"]) >= muda)
+          ]
+          _escribir(quedan)
+    notas: |
+      **Este no es el escenario de hoy** —hoy son la campaña y el silencioso—
+      pero se muestra acá porque es el que mejor enseña qué significa «romper el
+      mundo»: no se toca ni un modelo ni una predicción, **se reescribe el
+      histórico de ventas** y se vuelve a medir.
+
+      Las tres líneas de comentario son la lámina. Una tienda muda no escribe
+      ceros: deja de escribir. Y esa diferencia —«vendimos cero» contra «no
+      sabemos cuánto vendimos»— es la que separa una anomalía de datos de una
+      degradación del modelo, que es la decisión más cara del domingo.
+
+      Los otros tres escenarios están en el mismo archivo y son igual de
+      cortos. Vale la pena decir que **el laboratorio entero cabe en archivos
+      que se leen de una sentada**: no hay magia, hay un `if` por escenario.
+
   - id: s1-r1-a-mano
     tipo: demo
     titulo: Encontrarlo con pandas
     minutos: 4
     pasos:
-      - comando: "# agrupar por categoría, últimos 14 días, y ordenar por MAPE"
-      - comando: "# para la peor: agrupar por tienda y contar cuántas están mal"
+      - comando: python -c "…" o un cuaderno, con el código de arriba
+      - comando: "# y para la peor: groupby('tienda') sobre esa categoría"
     observar: >-
       Bebidas se despega del resto y no hay ninguna duda de cuál es. Está
       mal en las 24 tiendas a la vez, así que no es una tienda: es la
@@ -200,13 +331,65 @@ items:
       venir.
     respaldo: >-
       Si alguien se traba con pandas, la interfaz de :8501 ordena por MAPE
-      con un clic. El objetivo es la lectura, no el groupby.
+      con un clic. El objetivo es la lectura, no el groupby. Y la salida real
+      está en la lámina siguiente.
     notas: |
       Medido acá: el MAPE de la flota sube de 13.8% a 16.0%, el de bebidas
       pasa de 12.9% a 30.8% —más del doble de la flota— y 18 de las 24
       tiendas de bebidas cruzan el 20%. Estos números se mueven algo según
       el día en que cada uno generó su mundo; el que no se mueve es que
       bebidas se despega sola.
+
+  - id: s1-r1-salida-visible
+    tipo: salida-anotada
+    titulo: Y esto es lo que sale
+    entradilla: campana_promocional, últimos 14 días, por categoría
+    comando: → el groupby de hace dos láminas
+    minutos: 3
+    salida: |
+      # por categoria, ultimos 14 dias
+                        mape  sesgo_pct
+      categoria
+      bebidas           30.8      -32.4
+      panaderia         15.1        6.7
+      lacteos           14.9        2.4
+      limpieza          14.8       -4.9
+      cuidado-personal  13.9        1.2
+      abarrotes         13.6        1.2
+      congelados        13.0       -0.7
+      carnes            12.1        2.5
+
+      flota   mape 16.0  sesgo -10.6
+
+      # y por tienda, dentro de bebidas:
+      chorrillos 55.3 · san-miguel 51.8 · jesus-maria 46.8 · magdalena 45.7
+      → 18 de las 24 tiendas por encima del 20%
+    anotaciones:
+      - texto: "bebidas           30.8      -32.4"
+        explicacion: >-
+          **Se despega sola.** 30.8% contra 15.1% de la segunda: no hay que
+          decidir nada, salta a la vista. Esto es lo que un tablero con
+          umbrales sí detecta, y por eso el reto no termina acá.
+      - texto: "→ 18 de las 24 tiendas por encima del 20%"
+        explicacion: >-
+          La segunda pregunta, contestada: está mal en 18 de 24 tiendas, así
+          que **no es una tienda, es la categoría**. Si fuera una tienda, la
+          vería una sola fila.
+      - texto: "sesgo -10.6"
+        explicacion: >-
+          Y el signo importa: el sesgo de la flota se fue hacia **abajo**. El
+          modelo pronosticó de menos porque la promoción disparó la venta real
+          y él no la vio venir. Guardarlo para dentro de veinte minutos: en el
+          escenario siguiente el sesgo se va hacia el otro lado, y un umbral
+          por arriba no habría cazado este.
+    notas: |
+      **Cinco minutos, y esa es la sensación que hay que dejar**: esto fue
+      fácil. La comodidad de esta lámina es lo que hace que la siguiente
+      duela.
+
+      Las cifras están medidas contra un mundo generado el 7 de agosto. Se
+      mueven un poco según el día; lo que no se mueve es que bebidas se
+      despega sola.
 
   - id: s1-r1-visible
     tipo: metrica
@@ -300,10 +483,10 @@ items:
   - id: s1-r1-a-mano-2
     tipo: demo
     titulo: Búscalo otra vez
-    entradilla: Las mismas tres preguntas. Diez minutos.
+    entradilla: El mismo código, sin cambiar una línea. Diez minutos.
     minutos: 4
     pasos:
-      - comando: "# el mismo groupby por categoría"
+      - comando: "# el mismo groupby de hace un rato, tal cual"
       - comando: "# y por región, y por tienda"
     observar: >-
       Nada se despega. Ninguna categoría destaca, ninguna región destaca,
@@ -317,6 +500,56 @@ items:
       NO dar la pista del sesgo todavía. La tabla siguiente es el momento
       del golpe, y si sale antes se desarma. Si alguien lo encuentra solo
       —pasa— pedirle que se lo guarde treinta segundos.
+
+  - id: s1-r1-salida-silencioso
+    tipo: salida-anotada
+    titulo: Y esto es lo que sale ahora
+    entradilla: sesgo_silencioso. El mismo código, el mismo formato, otra historia.
+    comando: → el mismo groupby, sin cambiar una línea
+    minutos: 4
+    salida: |
+      # el mismo groupby, y entre parentesis el mundo sano
+                        mape  sesgo_pct     (antes)
+      categoria
+      panaderia         17.2       10.9      ( 6.7)
+      lacteos           16.8        6.5      ( 2.4)
+      abarrotes         15.1        5.3      ( 1.2)
+      cuidado-personal  14.2        4.9      ( 1.2)
+      limpieza          13.5       -1.4      (-4.9)
+      carnes            13.3        6.4      ( 2.5)
+      congelados        13.3        2.8      (-0.7)
+      bebidas           12.3        0.7      (-3.0)
+
+      flota   mape 14.5  sesgo 4.7      (13.8 y 0.8)
+    anotaciones:
+      - texto: "panaderia         17.2       10.9      ( 6.7)"
+        explicacion: >-
+          **Ninguna se despega.** La peor está en 17.2 y la mejor en 12.3: es
+          el mismo abanico de siempre. Ordenado por MAPE, que es como se buscó
+          hace veinte minutos, acá no hay nada que encontrar.
+      - texto: "flota   mape 14.5  sesgo 4.7      (13.8 y 0.8)"
+        explicacion: >-
+          Siete décimas de MAPE. Menos de lo que se mueve entre dos semanas
+          cualesquiera, y por eso ningún umbral suena. La columna de al lado
+          se multiplicó por seis.
+      - texto: "( 2.4)"
+        explicacion: >-
+          Acá está el hallazgo, y hay que mirarlo en columna: **las ocho
+          categorías movieron el sesgo hacia arriba**. Lácteos de 2.4 a 6.5,
+          congelados de −0.7 a 2.8, bebidas de −3.0 a 0.7. Ocho de ocho, todas
+          en la misma dirección. Eso no es ruido — el ruido no tiene dirección.
+    notas: |
+      **Es la lámina que rescata los diez minutos anteriores.** Acaban de
+      buscar sin encontrar nada, y esto les dice que no era culpa suya: con la
+      columna que estaban mirando, no había nada que ver.
+
+      La tercera anotación es el golpe y conviene darle tiempo. Que la sala
+      lea la columna del paréntesis de arriba abajo antes de decir nada: ocho
+      filas, ocho hacia el mismo lado. Un solo grupo moviéndose es ruido; los
+      ocho a la vez es una flota entera que empezó a errar hacia un lado.
+
+      La columna «antes» es del mundo sano de hace media hora, medida, no
+      recordada.
 
   - id: s1-r1-tablero
     tipo: imagen

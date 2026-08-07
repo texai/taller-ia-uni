@@ -7,6 +7,7 @@ objetivos:
   - Ver funcionar un ReAct pelado, y verlo divagar
   - Nombrar las cuatro patologías de un bucle sin arquitectura
   - Llegar al domingo con una pregunta abierta, no con una respuesta
+  - "Conceptos: ReAct, y determinismo del muestreo contra determinismo del sistema"
 requisitos:
   - Tener herramientas de percepción que no alarmen sobre lo normal
   - Una llave de LLM en `.env`, o `PROVEEDOR_LLM=mock`

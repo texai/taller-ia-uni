@@ -58,11 +58,11 @@ Referencias:
 | 36 | Las tres herramientas que faltaban | ✅ Completado |
 | | **Cuarta ronda — el hilo narrativo** | |
 | 37 | La ventana de lectura, y el taller que es de verdad | ✅ Completado |
-| 38 | Las salidas que faltan · retos 1 y 3 | ⬜ Pendiente |
-| 39 | El caso, anclado a algo ejecutable | ⬜ Pendiente |
-| 40 | La cadena de comandos, visible | ⬜ Pendiente |
-| 41 | El repositorio, a un clic | ⬜ Pendiente |
-| 42 | Los conceptos que se usan sin nombrarse | ⬜ Pendiente |
+| 38 | Las salidas que faltan · retos 1 y 3 | 🔵 Reto 1 hecho; el 3 espera una llave |
+| 39 | El caso, anclado a algo ejecutable | ✅ Completado |
+| 40 | La cadena de comandos, visible | ✅ Completado |
+| 41 | El repositorio, a un clic | ✅ Completado |
+| 42 | Los conceptos que se usan sin nombrarse | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
@@ -592,6 +592,14 @@ sábado son citas que —lo dicen sus propias notas— salen del agente del domi
 
 **Requisitos externos**
 - Una llave de LLM para producir las tres ejecuciones reales del reto 3.
+
+**Lo que quedó pendiente, y por qué.** Todo el reto 1 está hecho y medido. Las
+tres ejecuciones del reto 3 **no**: hacen falta tres diagnósticos reales y
+divergentes, y con `PROVEEDOR_LLM=mock` el proveedor simulado no razona — las
+tres saldrían idénticas, que es exactamente lo contrario de lo que la lámina
+tiene que demostrar. Inventarlas sería escribir un razonamiento de agente que
+nadie produjo, y es la única cosa que este material no hace. Se destraba con
+una llave y quince minutos.
 
 ---
 
