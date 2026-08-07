@@ -15,7 +15,7 @@ pueden consultar lo ya visto, y no pueden adelantarse.
 
 La diferencia con un mazo de diapositivas es que acá el material es datos. Cada
 ítem tiene un tipo —un comando de terminal, un diagrama, una cita literal de
-una corrida del agente, un receso, una pregunta a la clase— y la aplicación
+una ejecución del agente, un receso, una pregunta a la clase— y la aplicación
 sabe cómo mostrarlo y cómo comportarse con él.
 
 ## Cómo está organizado

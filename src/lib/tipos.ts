@@ -163,7 +163,7 @@ export interface ItemTabla extends ItemBase {
 }
 
 /**
- * Cita textual de una corrida real del agente.
+ * Cita textual de una ejecución real del agente.
  *
  * Este taller tiene material que no se puede inventar. Merece un tipo propio
  * porque hay que dejar claro que es literal, no una paráfrasis nuestra.
@@ -348,7 +348,7 @@ export interface ItemGlosario extends ItemBase {
  *
  * Es un tipo aparte y no un campo más de `comando-anotado` por dos razones que
  * el material de los batches 25 y 26 dejó claras. Una salida larga y su
- * comando **no caben en la misma lámina** —la corrida verbosa del agente son
+ * comando **no caben en la misma lámina** —la ejecución verbosa del agente son
  * cuarenta líneas, y hubo que partirla en dos— y hay salidas que valen solas,
  * como la de `make memoria`. El `comando` va acá como contexto, en pequeño, y
  * puede faltar.

@@ -171,7 +171,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `comparacion` | Dos lados, uno al lado del otro | `izquierda`, `derecha` |
 | `metrica` | Un número grande y lo que significa | `valor`, `unidad`, `contexto`, `tono` |
 | `tabla` | Datos, sin más | `columnas`, `filas`, `resaltar` |
-| `cita-agente` | Cita textual de una corrida real | `cita`, `procedencia`, `comentario` |
+| `cita-agente` | Cita textual de una ejecución real | `cita`, `procedencia`, `comentario` |
 | `criterios` | Criterios de aceptación de un reto | `criterios[]` |
 | `error-comun` | Un error que va a ocurrir, con su arreglo | `sintoma`, `causa`, `arreglo` |
 | `demo` | Momento de demostración en vivo | `pasos[]`, `observar`, `respaldo` |
@@ -229,7 +229,7 @@ validación, y se descubre proyectada delante de la clase.
   qué hace `docker compose run --rm` es media clase; la otra media es saber
   leer lo que imprime, y `terminal` la dibuja en bloque, sin señalar nada. Es
   un tipo aparte y no un campo de `comando-anotado` porque una salida larga y
-  su comando **no caben en la misma lámina** —la corrida verbosa del agente son
+  su comando **no caben en la misma lámina** —la ejecución verbosa del agente son
   cuarenta líneas, y hubo que partirla en dos— y porque hay salidas que valen
   solas, como la de `make memoria`.
 - **`diagrama-secuencia`** y **`comando-anotado`** — ver §10. Un diagrama
@@ -548,7 +548,7 @@ su propio texto**. Si no puede justificarlo, está mal partido.
 ### Sobre las cifras
 
 Este curso tiene números medidos —36,567 unidades, 13.8% a 14.5% de MAPE, los
-umbrales por dimensión— y citas literales de corridas reales del agente. **No
+umbrales por dimensión— y citas literales de ejecuciones reales del agente. **No
 se inventan ni se redondean para que suenen mejor.** Si un batch necesita una
 cifra que no está en el material de origen, la pide; no la estima.
 

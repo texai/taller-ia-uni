@@ -657,12 +657,12 @@ items:
     minutos: 4
     salida: |
       {
-        "corridas": [
-          { "fecha_corrida": "2026-08-08", "estado": "ok",
+        "ejecuciones": [
+          { "fecha_ejecucion": "2026-08-08", "estado": "ok",
             "modelos": "192", "predicciones": "17472", "duracion_s": "5.02" },
-          { "fecha_corrida": "2026-08-08", "estado": "ok",
+          { "fecha_ejecucion": "2026-08-08", "estado": "ok",
             "modelos": "192", "predicciones": "17304", "duracion_s": "5.28" },
-          { "fecha_corrida": "2026-08-09", "estado": "ok",
+          { "fecha_ejecucion": "2026-08-09", "estado": "ok",
             "modelos": "192", "predicciones": "17472", "duracion_s": "5.39" }
         ],
         "total_registradas": 66

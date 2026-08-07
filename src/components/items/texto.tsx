@@ -218,7 +218,7 @@ export function Transicion({
 }
 
 /**
- * Cita textual de una corrida del agente.
+ * Cita textual de una ejecución del agente.
  *
  * Se marca como literal a propósito: este taller tiene material que no se
  * puede inventar, y hay que dejar claro que no es una paráfrasis nuestra.
