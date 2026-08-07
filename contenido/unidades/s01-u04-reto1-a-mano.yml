@@ -151,6 +151,40 @@ items:
       `docker compose run --rm plataforma python -m plataforma`. Se define
       una vez y se reutiliza en las seis recetas de la plataforma.
 
+  - id: s1-r1-lectura
+    tipo: lectura
+    titulo: La telemetría, en sus manos
+    entradilla: La API primero, porque de ahí sale todo lo que van a mirar
+    minutos: 10
+    archivos:
+      - ruta: plataforma/api.py
+        lineas: "93-124"
+        porque: >-
+          El endpoint de métricas y sus seis filtros. Es la única puerta por la
+          que se ve la flota, y la misma que va a usar el agente mañana.
+      - ruta: plataforma/metricas.py
+        porque: >-
+          De dónde sale cada columna. Vale la pena mirar cómo se calcula
+          `sesgo_pct`: es la resta de la lámina de hace media hora, en código.
+    comandos:
+      - 'curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head'
+      - make romper ESCENARIO=campana_promocional
+    observar: >-
+      Que el JSON trae `unidades_reales` y `unidades_pronosticadas` además de
+      los porcentajes. Guardarlo: en el reto 2 esa aparente redundancia es la
+      diferencia entre agregar bien y agregar mal.
+    notas: |
+      **Diez minutos con la API abierta antes de tocar pandas.** Quien entiende
+      los filtros hace el ejercicio en cinco minutos; quien no, pelea con el
+      groupby por razones que no son del reto.
+
+      También está `http://localhost:8000/docs`, que es la misma API con la
+      interfaz de Swagger. Para explorar es más cómoda; para entender qué hay
+      detrás, el archivo.
+
+      El segundo comando deja el mundo roto y es el que abre el ejercicio: si
+      alguien lo corre tarde, va a mirar una flota sana y no encontrar nada.
+
   - id: s1-r1-a-mano
     tipo: demo
     titulo: Encontrarlo con pandas

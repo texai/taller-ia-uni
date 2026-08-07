@@ -44,28 +44,73 @@ items:
   - id: s1-r3-bucle
     tipo: codigo
     titulo: El bucle entero
-    entradilla: Es corto a propósito
+    entradilla: Es corto a propósito, y es un archivo de verdad
     lenguaje: python
+    ruta: agente/pelado.py
     minutos: 3
     contenido: |
       llm = obtener_llm().bind_tools(HERRAMIENTAS)
+      mensajes = [SystemMessage(content=CONTEXTO), HumanMessage(content=encargo)]
 
-      mensajes = [SystemMessage(INSTRUCCIONES), HumanMessage(encargo)]
-      while True:
+      for _ in range(MAX_VUELTAS):
           respuesta = llm.invoke(mensajes)
           mensajes.append(respuesta)
           if not respuesta.tool_calls:
               break
           for llamada in respuesta.tool_calls:
-              resultado = HERRAMIENTAS[llamada["name"]].invoke(llamada["args"])
-              mensajes.append(ToolMessage(resultado, tool_call_id=llamada["id"]))
+              resultado = POR_NOMBRE[llamada["name"]].invoke(llamada["args"])
+              mensajes.append(
+                  ToolMessage(str(resultado), tool_call_id=llamada["id"])
+              )
     notas: |
       Esto es ReAct entero: pensar, actuar, observar, repetir. No hay más.
 
       `bind_tools` es lo único no obvio: le pasa al modelo el esquema de
       cada herramienta —nombre, argumentos y docstring— para que pueda
-      pedirlas. La docstring que escribieron en el reto 2 es lo que el
-      modelo lee acá.
+      pedirlas. La docstring que leyeron hace un rato es lo que el modelo ve
+      acá.
+
+      **El `for` en vez de un `while True` merece una frase.** No es que el
+      bucle sepa cuándo parar: para solo cuando el modelo deja de pedir
+      herramientas. El tope existe porque sin él un modelo empeñado gasta la
+      llave de la clase en una tarde. Que haga falta un número arbitrario es,
+      en sí mismo, la primera pista de lo que le falta.
+
+  - id: s1-r3-lectura
+    tipo: lectura
+    titulo: El bucle, en su archivo
+    entradilla: Veinte líneas, y lo que importa es lo que no tienen
+    minutos: 8
+    archivos:
+      - ruta: agente/pelado.py
+        porque: >-
+          El bucle entero de la lámina anterior, con su docstring. Leerla
+          completa: dice para qué existe este archivo y por qué no se usa el
+          grafo hoy.
+      - ruta: agente/herramientas.py
+        lineas: "1-40"
+        porque: >-
+          Las siete herramientas y sus docstrings. Esas docstrings **son el
+          prompt**: es lo único que el modelo sabe sobre qué puede pedir.
+    comandos:
+      - make romper ESCENARIO=sesgo_silencioso
+      - make pelado ARGS="--verboso"
+    observar: >-
+      En el archivo, lo que **no** hay: ni un paso que critique el
+      diagnóstico, ni uno que lo reescriba, ni nada que sobreviva a la
+      ejecución. Y en la salida, cuántas herramientas llamó y en qué orden —
+      hace falta para comparar contra las dos ejecuciones siguientes.
+    notas: |
+      **Ocho minutos, y es la única ventana del sábado sobre el agente.**
+      Alcanza para leer un archivo de ochenta líneas y correrlo una vez.
+
+      La pregunta que rinde mientras se pasea por los puestos: «¿en qué línea
+      de este archivo decidirías que ya tiene suficiente evidencia?». No hay
+      ninguna, y esa es la respuesta.
+
+      Si la sala va lenta, alargar con el botón. Lo que no conviene es
+      saltarse la primera ejecución: las tres de la lámina siguiente se
+      comparan contra esta.
 
   - id: s1-r3-que-hace-bien
     tipo: markdown
@@ -92,15 +137,15 @@ items:
   - id: s1-r3-correr
     tipo: comando-anotado
     titulo: Correrlo
-    entradilla: make agente ARGS="--verboso", abierto. Y acá el atajo esconde algo que importa.
-    comando: docker compose run --rm agente python -m agente run --verboso
+    entradilla: make pelado ARGS="--verboso", abierto. Y acá el atajo esconde algo que importa.
+    comando: docker compose run --rm agente python -m agente pelado --verboso
     minutos: 3
     segmentos:
       - texto: compose run
         explicacion: >-
-          El `run` de Docker. Arranca un contenedor, ejecuta y termina. Fíjate
-          en la línea entera: la palabra `run` aparece **dos veces**, y no
-          son la misma cosa.
+          El `run` de Docker. Arranca un contenedor, ejecuta y termina. Es lo
+          único de esta línea que Docker entiende, junto con lo que viene
+          hasta el nombre del servicio.
       - texto: "--rm"
         explicacion: >-
           El agente **no es un servicio**: se ejecuta, produce un
@@ -108,13 +153,14 @@ items:
           monitoreo — una vez al día, no escuchando en un puerto. Y sin
           embargo su memoria sobrevive a las ejecuciones, porque vive en el
           volumen `memoria` y no en el contenedor. Eso es el reto 4.
-      - texto: -m agente run
+      - texto: -m agente pelado
         explicacion: >-
-          El segundo `run`, que es un subcomando **del agente** y no de
-          Docker. Todo lo que va después de `python` lo interpreta el
-          programa de dentro; Docker no sabe qué significa. El otro
-          subcomando es `memoria`.
-        otrosValores: ["-m agente memoria"]
+          Acá está la frontera: **Docker dijo `run`, el agente dice
+          `pelado`**, y el nombre del servicio los separa. Todo lo que va
+          después de `python` lo interpreta el programa de dentro; Docker no
+          sabe qué significa. Los otros subcomandos son `run` —el grafo
+          completo, que es mañana— y `memoria`.
+        otrosValores: ["-m agente run", "-m agente memoria"]
       - texto: "--verboso"
         explicacion: >-
           Añade al final un resumen con las herramientas que llamó, en
@@ -124,15 +170,16 @@ items:
           el agente cree que es.
         otrosValores: ["--fecha 2026-08-08"]
     notas: |
-      El segmento del `run` duplicado es de los que más ordena la cabeza:
-      hasta acá todo lo que venía después del nombre del servicio era "lo
-      que se ejecuta dentro", y esta es la primera línea donde eso se ve
-      con claridad porque la misma palabra está a los dos lados.
+      **`pelado` y no `run`, y esto no es un detalle.** `python -m agente run`
+      levanta el grafo entero de mañana: la sala vería al agente criticarse y
+      corregirse, que es la revelación del domingo, y ninguna de las cuatro
+      patologías de esta unidad aparecería — porque la arquitectura ya las
+      corrige. Hoy se corre el bucle, y el bucle vive en `agente/pelado.py`.
 
       Si alguien no tiene llave, `PROVEEDOR_LLM=mock` recorre el bucle
       igual. No razona, pero nadie se queda mirando la pantalla.
 
-      `make actuar` es esta misma línea con `-e EJECUTAR_ACCIONES=1`
+      `make actuar` es la misma forma de línea con `-e EJECUTAR_ACCIONES=1`
       delante del nombre del servicio. Se ve mañana; mencionarlo acá basta.
 
   - id: s1-r3-prediccion
@@ -195,18 +242,19 @@ items:
     minutos: 8
     pasos:
       - comando: make romper ESCENARIO=sesgo_silencioso
-      - comando: make agente ARGS="--verboso"
-      - comando: make agente ARGS="--verboso"
-      - comando: make agente ARGS="--verboso"
+      - comando: make pelado ARGS="--verboso"
+      - comando: make pelado ARGS="--verboso"
+      - comando: make pelado ARGS="--verboso"
     observar: >-
       Comparar las tres salidas lado a lado. Qué herramientas llamó cada
       una y en qué orden, qué categorías nombró, y sobre todo qué severidad
       le puso. No van a coincidir — y el mundo era exactamente el mismo las
       tres veces.
     respaldo: >-
-      Si las llaves se agotan, basta con dos ejecuciones. Y si nadie tiene
-      llave, ir a las salidas guardadas del ítem siguiente: lo que hay que
-      ver es la divergencia, no correrlo uno mismo.
+      Si las llaves se agotan, basta con dos ejecuciones. Con
+      `PROVEEDOR_LLM=mock` el bucle se recorre pero no razona, así que no
+      sirve para esto: lo que hay que ver es la divergencia entre dos
+      razonamientos, y el simulado no razona.
     notas: |
       Con temperatura 0. Vale la pena decirlo en voz alta, porque la
       reacción natural es "bajale la temperatura" — ya está en cero. Lo que

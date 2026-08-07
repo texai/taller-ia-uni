@@ -800,11 +800,21 @@ test("los minutos de un ítem no llegan a la carga del alumno", () => {
   );
 });
 
-test("el curso real no filtra minutos hacia el alumno", () => {
-  const publico = JSON.stringify(mod.cursoParaAlumno(mod.cargarCurso()));
-  assert.doesNotMatch(publico, /"minutos"/);
+test("el curso real no filtra minutos hacia el alumno, salvo las lecturas", () => {
+  const publico = mod.cursoParaAlumno(mod.cargarCurso());
+  const items = publico.sesiones.flatMap((s) =>
+    s.unidades.flatMap((u) => u.items),
+  );
+  const conMinutos = items.filter(
+    (i) => (i as { minutos?: number }).minutos !== undefined,
+  );
+  // La única excepción de §3, y hay que verla explícita: en una ventana de
+  // lectura los minutos son la instrucción a la clase, no el plan del docente.
+  assert.ok(conMinutos.length > 0, "las lecturas conservan sus minutos");
+  assert.deepEqual([...new Set(conMinutos.map((i) => i.tipo))], ["lectura"]);
+
   // Y las horas de la sesión sí viajan: son el total que el alumno puede ver.
-  assert.match(publico, /"horaInicio"/);
+  assert.match(JSON.stringify(publico), /"horaInicio"/);
 });
 
 // --------------------------------------------------------------------------
@@ -913,4 +923,92 @@ test("el curso real vive en archivos por unidad, y el orden es el del nombre", (
   }
   assert.equal(curso.sesiones[0]?.unidades[0]?.id, "s1-apertura");
   assert.equal(curso.sesiones[1]?.unidades[5]?.id, "s2-cierre");
+});
+
+// --------------------------------------------------------------------------
+// Ventanas de lectura
+// --------------------------------------------------------------------------
+
+test("una lectura sin archivos ni comandos no es una lámina, y falla", () => {
+  // Sin nada que abrir ni que correr, lo único que queda en pantalla es un
+  // título con un reloj — que es exactamente el «trabajen un rato» que este
+  // tipo existe para no volver a decir.
+  const items = `
+      - id: vacia
+        tipo: lectura
+        titulo: Lean
+        minutos: 8
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      assert.throws(() => mod.cargarCurso(raiz), /archivos.*comandos|comandos.*archivos/);
+    },
+  );
+});
+
+test("una lectura sin minutos falla: el tiempo propuesto es el punto", () => {
+  const items = `
+      - id: sin-tiempo
+        tipo: lectura
+        titulo: Lean
+        comandos: ["make agente"]
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      assert.throws(() => mod.cargarCurso(raiz), /minutos/);
+    },
+  );
+});
+
+test("una lectura solo con comandos vale, y solo con archivos también", () => {
+  const items = `
+      - id: solo-comandos
+        tipo: lectura
+        titulo: Corran
+        minutos: 5
+        comandos: ["make pelado"]
+      - id: solo-archivos
+        tipo: lectura
+        titulo: Lean
+        minutos: 5
+        archivos:
+          - ruta: agente/grafo.py
+            porque: Los siete nodos y sus aristas
+            lineas: "381-400"
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const items = mod.cargarCurso(raiz).sesiones[0]?.unidades[0]?.items ?? [];
+      assert.equal(items.length, 2);
+      assert.equal(items[0]?.tipo, "lectura");
+    },
+  );
+});
+
+test("el alumno no ve los minutos, salvo en una ventana de lectura", () => {
+  // Los minutos son del docente (§3), y en una `lectura` son la instrucción:
+  // sin ellos la clase ve un reloj en blanco justo donde el reloj es el punto.
+  const items = `
+      - id: una-lamina
+        tipo: titulo
+        titulo: Portada
+        minutos: 4
+      - id: una-ventana
+        tipo: lectura
+        titulo: Lean
+        minutos: 8
+        comandos: ["make pelado"]
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const curso = mod.cursoParaAlumno(mod.cargarCurso(raiz));
+      const suyos = curso.sesiones[0]?.unidades[0]?.items ?? [];
+      assert.equal((suyos[0] as { minutos?: number }).minutos, undefined);
+      assert.equal((suyos[1] as { minutos?: number }).minutos, 8);
+    },
+  );
 });

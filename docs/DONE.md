@@ -2616,3 +2616,99 @@ estaba justificado.
 - `npm run humo`: 245 pantallas, 0 con error.
 - Las tres láminas vistas en el navegador. La primera se acortó porque el botón
   del glosario le tapaba la última línea.
+
+---
+
+## Batch 37 — La ventana de lectura, y el taller que es de verdad
+**2026-08-07**
+
+El contenido decía «escribe la herramienta» y «manos al teclado», y el
+laboratorio traía `comparar_periodos` y el grafo ya escritos en `main`: el
+alumno abría el archivo y encontraba la respuesta. Además el material prometía
+seis veces unas ramas `reto-N-solucion` que no existen — una de ellas abriendo
+el domingo a las 09:00.
+
+**Alcance** (todo hecho)
+- [x] Tipo `lectura` con archivos, comandos, qué observar y reloj ajustable
+- [x] Cinco ventanas, una por reto
+- [x] Ninguna promesa de rama sobrevive, ni en el contenido ni en el laboratorio
+- [x] El bucle ReAct pelado existe como archivo y como comando
+
+---
+
+### Cómo quedó, y en qué se desvió de lo planificado
+
+**El hallazgo que cambió el batch: el ReAct pelado no existía.** Buscando dónde
+mandar a leer el reto 3 apareció que `agente/__main__.py` tenía un solo
+subcomando, `run`, y que lo primero que hace es `construir()` — el grafo
+completo. Las veinte líneas que la lámina proyecta como «el bucle entero» no
+estaban en ningún archivo del repositorio.
+
+Consecuencia el sábado a las 18:00: `make agente` no corría un ReAct pelado,
+corría **la arquitectura del domingo**. Las cuatro patologías no se podían
+demostrar porque la arquitectura ya las corrige; las tres ejecuciones no
+divergían; y las dos citas cuyas notas dicen «ese nodo es lo primero que
+construimos mañana» describían algo que la sala acababa de ver funcionando. El
+domingo entero perdía su revelación.
+
+Se resolvió en el laboratorio: `agente/pelado.py`, ochenta líneas, con
+`python -m agente pelado` y `make pelado`. Su docstring dice por qué existe,
+que es material de clase: *cuando la clase pregunta qué le falta, la respuesta
+está en lo que este archivo NO tiene.*
+
+**El tipo `lectura` es de la familia `dictado`, y eso no es un detalle.**
+Muestra código y manda correr comandos, así que la tentación era ponerlo en
+`contenido`. No lo es por lo mismo que un receso no lo es: **no informa,
+interrumpe**. De ahí salen sus tres decisiones — cuenta como momento y corta el
+tramo en `ritmoDe`, es un solo paso porque la lista tiene que estar entera a la
+vista, y el reloj se mueve sin salir del ítem.
+
+**Los minutos de una `lectura` son la única excepción de §3.** Al probarlo en
+pantalla el reloj salió `NaN:NaN`: `minutos` es campo privado del docente y se
+filtra en el servidor. Pero en esta lámina el número **es la instrucción** —
+«tienen ocho minutos»— y no el plan privado de nadie. `itemParaAlumno` lo
+conserva solo para este tipo, y el test que decía «ningún minuto viaja» pasó a
+decir la regla completa: los únicos ítems con minutos en la carga pública son
+las lecturas.
+
+Eso trajo un segundo fallo, más sutil: la barra lateral sumaba los minutos de
+los ítems y al alumno le mostraba **«reto · 12 min» sobre una unidad de 103**,
+porque la suma pública ahora es parcial. Un total parcial es peor que ninguno,
+así que el total de unidad se muestra solo en modo docente, que es donde está
+completo.
+
+**El guardia de rutas se probó rompiéndolo, y menos mal.** `validar-contenido`
+comprueba que cada archivo de una `lectura` exista en el laboratorio y que sus
+líneas no se salgan del final — solo si el laboratorio está al lado, porque en
+Vercel no está. La primera versión no detectaba nada: `recorrer` devuelve
+envoltorios `{unidad, item, posicion}` y no ítems, así que `item.tipo` era
+siempre `undefined` y la comprobación no corría nunca. Se vio poniendo
+`381-9999` a propósito. De las once rutas citadas, dos rangos estaban mal — los
+dos de `plataforma/api.py`, que se escribieron de memoria.
+
+**Las cinco ventanas, y qué manda leer cada una**
+
+| Reto | Archivos | Minutos |
+|---|---|---|
+| 1 | `plataforma/api.py` 93-124 · `plataforma/metricas.py` | 10 |
+| 2 | `agente/herramientas.py` 268-374 y 219-259 | 10 |
+| 3 | `agente/pelado.py` · `herramientas.py` 1-40 | 8 |
+| 4 | `agente/grafo.py` 1-27, 381-404 y 254-266 | 12 |
+| 5 | `agente/accion.py` · `plataforma/api.py` 179-215 | 10 |
+
+Cada una lleva una pregunta para pasear por los puestos, y ninguna se contesta
+en la lámina: la del reto 3 es «¿en qué línea decidirías que ya tiene suficiente
+evidencia?», y no hay ninguna.
+
+**Los minutos.** 273 + 262 sobre 240 + 240. Es la decisión que el docente tomó
+al aprobar el batch —prefiere pasarse de contenido a quedarse corto, y controla
+la cadencia— y el validador lo avisa en cada ejecución.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 178 ítems, sin errores; las once rutas al
+  laboratorio comprobadas contra el repositorio de al lado.
+- `npm test` (151 pasan), lint y build limpios.
+- `npm run humo`: 249 pantallas, 0 con error.
+- `python -m agente pelado --verboso` corrido contra el laboratorio: llama
+  `resumen_flota` y termina.
+- Dos ventanas vistas en el navegador, con el reloj contando.

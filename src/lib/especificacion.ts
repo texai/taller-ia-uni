@@ -86,6 +86,16 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   demo: { requeridos: ["pasos"], opcionales: ["observar", "respaldo"] },
 
+  // `minutos` es común, pero acá es obligatorio: una ventana de trabajo sin
+  // tiempo propuesto es un «trabajen un rato», que es lo que esta lámina
+  // existe para no volver a decir. Y sin archivos ni comandos no hay ventana:
+  // sería un título con un reloj.
+  lectura: {
+    requeridos: ["minutos"],
+    alMenosUno: [["archivos", "comandos"]],
+    opcionales: ["archivos", "comandos", "observar"],
+  },
+
   transicion: { requeridos: ["vimos", "viene"] },
 
   "diagrama-secuencia": {

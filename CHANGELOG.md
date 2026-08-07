@@ -5,6 +5,25 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La ventana de lectura, y el taller que es de verdad (batch 37)
+- **El bucle ReAct pelado no existía.** `make agente` levanta el grafo
+  completo, así que el sábado la sala habría visto la arquitectura del domingo
+  y ninguna de las cuatro patologías del reto 3. Ahora vive en
+  `agente/pelado.py`, con `make pelado`.
+- **Tipo `lectura`**: qué archivos abrir —con su enlace y sus líneas—, qué
+  comandos correr, en qué fijarse, y un reloj que se alarga, se pausa y se
+  reinicia sin salir de la lámina. Cinco ventanas, una por reto.
+- Ninguna promesa de `reto-N-solucion` sobrevive: esas ramas no existen y el
+  material las prometía seis veces, una abriendo el domingo a las 09:00.
+- Los minutos de una `lectura` son la única excepción de §3: acá el número es
+  la instrucción a la clase, no el plan del docente. Y por eso el total de
+  unidad pasó a verse solo en modo docente — la suma pública quedó parcial, y
+  un total parcial miente.
+- `validar-contenido` comprueba que cada archivo citado exista y que sus líneas
+  no se salgan del final. Se probó rompiéndolo: la primera versión no detectaba
+  nada, y dos de los once rangos estaban mal.
+
+
 ### La portada, y cómo entran los alumnos
 - Fuera el título **«Cursos»**: hay uno solo, y encabezar la página con el
   plural de algo que no se repite es una etiqueta que no informa.

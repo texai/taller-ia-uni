@@ -26,6 +26,7 @@ import { DiagramaSecuencia } from "./secuencia";
 import { Caso } from "./caso";
 import { Glosario } from "./glosario";
 import { Asistencia, PausaPreguntas, Receso } from "./dictado";
+import { Lectura } from "./lectura";
 import { Pregunta } from "./pregunta";
 
 export interface PropsItem {
@@ -125,6 +126,8 @@ export function RenderizarItem({
       return <Transicion item={item} sesion={sesion} unidadActual={unidadActual} />;
 
     // Familia `dictado`: interrumpen, no informan.
+    case "lectura":
+      return <Lectura item={item} />;
     case "receso":
       return <Receso item={item} />;
     case "pausa-preguntas":

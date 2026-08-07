@@ -299,6 +299,47 @@ items:
       siempre vuelve a `percepcion`: ese es el mini-bucle ReAct de ayer,
       ahora encerrado dentro de un solo nodo del grafo grande.
 
+  - id: s2-r4-lectura
+    tipo: lectura
+    titulo: El grafo, en su archivo
+    entradilla: Los siete nodos y las dos flechas que vuelven
+    minutos: 12
+    archivos:
+      - ruta: agente/grafo.py
+        lineas: "1-27"
+        porque: >-
+          La docstring: el dibujo del grafo en texto y el trabajo de cada nodo,
+          en una frase cada uno. Es el mapa de las dos horas que vienen.
+      - ruta: agente/grafo.py
+        lineas: "381-404"
+        porque: >-
+          `construir`: los nodos y las aristas, veinte líneas. Buscar las dos
+          condicionales — son las dos flechas que vuelven hacia atrás.
+      - ruta: agente/grafo.py
+        lineas: "254-266"
+        porque: >-
+          `_tras_reflexion`, que decide entre volver a percepción, ir a
+          revisión o seguir. Tres salidas, y ahí está toda la arquitectura.
+    comandos:
+      - make reparar
+      - make agente ARGS="--verboso"
+    observar: >-
+      Que ningún nodo hace dos cosas. Y en `_tras_reflexion`, que la decisión
+      no la toma el LLM: la toman un `if` y un contador de vueltas sobre un
+      campo que el LLM escribió. Esa distinción es el reto entero.
+    notas: |
+      **Doce minutos, y es la ventana más larga del taller.** El grafo es lo
+      único que hay que entender del domingo, y leerlo entero cuesta menos que
+      escucharlo explicado.
+
+      Ir por los puestos con una pregunta: «¿cuántas veces puede volver a
+      percepción, y quién lo decide?». La respuesta —`MAX_VUELTAS`, arriba del
+      archivo— es la lámina de dentro de un rato.
+
+      Si alguien termina antes, que mire `percepcion` y busque el `return` que
+      devuelve la apertura al estado. Es la trampa de dos láminas más adelante,
+      y encontrarla solo vale más que verla explicada.
+
   - id: s2-r4-tras-reflexion
     tipo: codigo
     titulo: Las tres salidas de la reflexión
@@ -785,9 +826,10 @@ items:
       `insuficiente`, seguir la vuelta: qué pidió mirar y si al volver
       cambió algo. Es la parte del grafo que no se ve en el diagrama.
     respaldo: >-
-      La implementación de referencia está en la rama `reto-4-solucion`.
       Con `PROVEEDOR_LLM=mock` el grafo se recorre entero sin llave, lo que
-      sirve para comprobar el cableado aunque no razone.
+      sirve para comprobar el cableado aunque no razone. Y si nada arranca,
+      las dos láminas siguientes traen la salida real de una ejecución
+      completa, anotada.
     notas: |
       Cuatro minutos alcanzan para uno o dos mundos, no para los cuatro.
       Correr `feed_caido` en clase —que es el que enseña— y dejar los otros

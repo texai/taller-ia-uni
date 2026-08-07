@@ -263,13 +263,13 @@ items:
       detectan, un agente que divaga, y una arquitectura que lo convierte
       en algo que se puede creer y que además actúa
     viene: >-
-      Lo suyo: el laboratorio queda, con sus cinco ramas de solución y sus
-      cuatro escenarios para seguir rompiendo
+      Lo suyo: el laboratorio queda entero —la plataforma, el agente y el
+      verificador— con sus cuatro escenarios para seguir rompiendo
     minutos: 3
     notas: |
       Es el último ítem de contenido. Recordar que el repositorio queda
-      público y que las ramas `reto-1-solucion` a `reto-5-solucion` están
-      ahí para comparar contra lo que cada uno escribió.
+      público, con los cinco retos, el verificador y los cuatro escenarios,
+      y que `make romper ESCENARIO=x` sigue funcionando el lunes.
 
   - id: s2-c-repo
     tipo: enlace
@@ -277,8 +277,8 @@ items:
     url: https://github.com/texai/taller-ia-uni-lab
     descripcion: >-
       Todo lo de estas ocho horas: la plataforma, el agente, los cinco
-      retos con sus ramas de solución, los cuatro escenarios, y la bitácora
-      de lo que se rompió construyéndolo.
+      retos, el verificador, los cuatro escenarios, y la bitácora de lo que
+      se rompió construyéndolo.
     minutos: 2
 
   - id: s2-c-preguntas

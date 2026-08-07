@@ -5,6 +5,9 @@
  * mucho menos descubrirse proyectado delante de veinte personas.
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { cargarCurso, ErrorDeContenido, recorrer } from "../src/lib/contenido";
 import { minutosDeSesion, reprochesDeRitmo } from "../src/lib/navegacion";
 import { minutosEntre } from "../src/lib/reloj";
@@ -77,6 +80,47 @@ try {
   if (ritmos.length) {
     console.log(`\n${AMARILLO}Unidades que no respiran:${FIN}`);
     for (const r of ritmos) console.log(`  ${AMARILLO}·${FIN} ${r}`);
+  }
+
+  // Las rutas al laboratorio.
+  //
+  // Es un error y no un aviso: una ventana de lectura que manda abrir un
+  // archivo que no existe, o unas líneas que se salen del final, se descubre
+  // con veinte personas buscándolo. Pero solo se comprueba si el laboratorio
+  // está al lado — en Vercel no está, y esto tiene que poder construir igual.
+  const LAB = join(process.cwd(), "..", "taller-ia-uni-lab");
+  if (existsSync(LAB)) {
+    const rotas: string[] = [];
+    for (const sesion of curso.sesiones) {
+      // `recorrer` devuelve envoltorios `{unidad, item, posicion}`, no ítems.
+      for (const { item } of recorrer(sesion)) {
+        if (item.tipo !== "lectura") continue;
+        for (const a of item.archivos ?? []) {
+          const ruta = join(LAB, a.ruta);
+          if (!existsSync(ruta)) {
+            rotas.push(`${item.id}: no existe ${a.ruta}`);
+            continue;
+          }
+          if (!a.lineas) continue;
+          const total = readFileSync(ruta, "utf8").split("\n").length;
+          const hasta = Number(a.lineas.split("-").pop());
+          if (hasta > total) {
+            rotas.push(
+              `${item.id}: ${a.ruta} ${a.lineas}, y el archivo tiene ${total} líneas`,
+            );
+          }
+        }
+      }
+    }
+    if (rotas.length) {
+      console.error(`\n${ROJO}Rutas al laboratorio que no llevan a ninguna parte:${FIN}`);
+      for (const r of rotas) console.error(`  ${ROJO}·${FIN} ${r}`);
+      process.exit(1);
+    }
+  } else {
+    console.log(
+      `\n${GRIS}Sin taller-ia-uni-lab al lado: no se comprobaron las rutas de las lecturas.${FIN}`,
+    );
   }
 } catch (e) {
   if (e instanceof ErrorDeContenido) {

@@ -281,6 +281,38 @@ items:
       Y fíjense en el `return None`: si el objetivo no identifica modelos
       concretos, no se ejecuta. En caso de duda, no.
 
+  - id: s2-r5-lectura
+    tipo: lectura
+    titulo: La política, en su archivo
+    entradilla: Doce líneas que deciden qué puede tocar un agente
+    minutos: 10
+    archivos:
+      - ruta: agente/accion.py
+        porque: >-
+          El archivo entero, y es corto. `evaluar` decide y `ejecutar` hace:
+          están separadas para que la política se pueda leer, probar y discutir
+          sin tocar la plataforma.
+      - ruta: plataforma/api.py
+        lineas: "179-215"
+        porque: >-
+          `POST /v1/reentrenar`, la única ruta de toda la API que escribe. Es
+          la superficie entera que hay que proteger.
+    comandos:
+      - make reparar && make romper ESCENARIO=feed_caido
+      - make actuar ARGS="--verboso"
+    observar: >-
+      En el código, el `return None` de `_filtro_de`: en caso de duda, no se
+      ejecuta. Y en la salida, que el texto del freno **está en el archivo**,
+      literal — no lo escribió el modelo.
+    notas: |
+      **Diez minutos, y el escenario es `feed_caido` a propósito**: es el que
+      frena. Ver un agente que quiere actuar y no puede vale más que verlo
+      actuar.
+
+      La pregunta para los puestos: «¿qué campo de este diagnóstico lo escribió
+      el LLM, y cuál de esos usarías como freno?». La respuesta correcta es
+      ninguno, y está dos láminas más adelante.
+
   - id: s2-r5-comando
     tipo: comando-anotado
     titulo: Correrlo con permiso para actuar

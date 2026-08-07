@@ -186,10 +186,29 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 
 | Tipo | Para qué | Campos propios |
 |---|---|---|
+| `lectura` | Ventana para leer código y ejecutar, con reloj ajustable | `minutos`, `archivos[]`, `comandos[]`, `observar` |
 | `receso` | Descanso, con reloj | `minutos` |
 | `pausa-preguntas` | Pausa deliberada para preguntas | `disparadores[]` |
 | `asistencia` | Recordatorio de tomar lista. Solo el docente | `nota` |
 | `pregunta` | El docente pregunta a los alumnos | `pregunta`, `opciones`, `respuesta`, `permiteOmitir`, `visibilidad` |
+
+### Por qué `lectura` es de la familia `dictado`
+
+Muestra código y manda correr comandos, así que la tentación es ponerla en
+`contenido`. No lo es por lo mismo que un receso no lo es: **no informa,
+interrumpe**. Durante esos minutos el docente no habla y la sala trabaja, y la
+lámina existe para decir en qué y por cuánto tiempo.
+
+De ahí salen sus tres decisiones. Cuenta como momento de interacción y corta el
+tramo en `ritmoDe` —trabajar sí es participar—; es un solo paso, porque la
+lista tiene que estar entera a la vista y no descubrirse de a poco; y su reloj
+se puede mover sin salir del ítem. Esto último no es un adorno: una cuenta
+regresiva que no se puede alargar es una que el docente apaga la primera vez
+que la sala va lenta, y a partir de ahí no sirve el resto del día.
+
+El reloj es **local a cada pantalla** y arranca cuando cada uno llega al ítem,
+igual que el del receso. Sincronizarlo entre todas sería un mensaje más por el
+canal de la pauta, y no está decidido que haga falta.
 
 ### Comunes a todos
 

@@ -368,6 +368,46 @@ export interface ItemSalidaAnotada extends ItemBase {
 // Familia: dictado
 // --------------------------------------------------------------------------
 
+/** Un archivo del laboratorio que hay que abrir, y por qué. */
+export interface ArchivoDeLectura {
+  /** Relativa a la raíz del laboratorio: `agente/herramientas.py`. */
+  ruta: string;
+  /** Una línea. Qué se va a encontrar y para qué sirve mirarlo. */
+  porque: string;
+  /** Dónde mirar dentro del archivo: `268-330`. Opcional. */
+  lineas?: string;
+}
+
+/**
+ * Una ventana para leer código y ejecutar, con el reloj a la vista.
+ *
+ * Nace de un hecho que el material se negaba a admitir: el laboratorio trae
+ * todo escrito, y en cuatro horas con veinte personas no hay tiempo de depurar
+ * el código de nadie. Lo que sí hay tiempo de hacer es abrir un archivo
+ * concreto, entender qué hace y correr un comando — pero solo si a alguien se
+ * le dice **cuál** archivo y **cuál** comando, y se le da el rato.
+ *
+ * Por eso no es una `demo`: una demo la conduce el docente desde adelante.
+ * Acá cada uno trabaja en su máquina y lo que la lámina aporta es la lista y
+ * el tiempo.
+ *
+ * El tiempo es propuesto, no impuesto: se puede alargar, acortar, pausar y
+ * reiniciar sin salir del ítem. Una cuenta regresiva que no se puede mover es
+ * una cuenta regresiva que el docente apaga la primera vez que la sala va
+ * lenta, y entonces deja de servir el resto del día.
+ */
+export interface ItemLectura extends ItemBase {
+  tipo: "lectura";
+  /** El tiempo propuesto. Lo que arranca en el reloj. */
+  minutos: number;
+  /** Qué abrir. Cada uno se enlaza al repositorio. */
+  archivos?: ArchivoDeLectura[];
+  /** Qué ejecutar, en orden. */
+  comandos?: string[];
+  /** En qué fijarse. Lo que convierte leer en entender. */
+  observar?: string;
+}
+
 /** Receso. La interfaz avisa según la hora y cuenta el tiempo. */
 export interface ItemReceso extends ItemBase {
   tipo: "receso";
@@ -455,6 +495,7 @@ export type Item =
   | ItemComandoAnotado
   | ItemSalidaAnotada
   | ItemGlosario
+  | ItemLectura
   | ItemReceso
   | ItemPausaPreguntas
   | ItemAsistencia
@@ -485,6 +526,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   "comando-anotado": "contenido",
   "salida-anotada": "contenido",
   glosario: "contenido",
+  lectura: "dictado",
   receso: "dictado",
   "pausa-preguntas": "dictado",
   asistencia: "dictado",

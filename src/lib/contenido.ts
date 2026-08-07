@@ -662,6 +662,13 @@ export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
 export function itemParaAlumno(item: Item): Item {
   const copia: Record<string, unknown> = { ...item };
   for (const campo of CAMPOS_PRIVADOS) delete copia[campo];
+
+  // Una excepción, y una sola: en una ventana de lectura los minutos NO son el
+  // plan privado del docente, son la instrucción — «tienen ocho minutos». Es
+  // el único tipo donde el número está dirigido a la clase, y quitárselo deja
+  // un reloj en blanco justo en la lámina que existe para poner un reloj.
+  if (item.tipo === "lectura") copia.minutos = item.minutos;
+
   return copia as unknown as Item;
 }
 

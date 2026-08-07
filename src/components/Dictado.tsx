@@ -334,12 +334,17 @@ export function Dictado({
                 }}
               >
                 {/*
-                  Los minutos son del docente. Al alumno se le filtran en el
-                  servidor, así que acá llegan en cero y la línea se queda con
-                  el tipo de unidad y nada más.
+                  Los minutos son del docente, y desde que las ventanas de
+                  lectura conservan los suyos —son la instrucción a la clase, no
+                  el plan— la suma que llega al alumno es PARCIAL. Un total
+                  parcial es peor que ninguno: «reto · 12 min» sobre una unidad
+                  de cien es un número que miente. Se muestra solo en modo
+                  docente, que es donde está completo.
                 */}
                 {u.tipo}
-                {minutosDeUnidad(u) > 0 ? ` · ${minutosDeUnidad(u)} min` : ""}
+                {modoDocente && minutosDeUnidad(u) > 0
+                  ? ` · ${minutosDeUnidad(u)} min`
+                  : ""}
               </p>
               <p className="px-3 pb-1 text-sm font-medium">{u.titulo}</p>
 

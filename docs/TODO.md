@@ -57,7 +57,7 @@ Referencias:
 | 35 | El vocabulario, y un SQL idempotente | ✅ Completado |
 | 36 | Las tres herramientas que faltaban | ✅ Completado |
 | | **Cuarta ronda — el hilo narrativo** | |
-| 37 | La ventana de lectura, y el taller que es de verdad | ⬜ Pendiente |
+| 37 | La ventana de lectura, y el taller que es de verdad | ✅ Completado |
 | 38 | Las salidas que faltan · retos 1 y 3 | ⬜ Pendiente |
 | 39 | El caso, anclado a algo ejecutable | ⬜ Pendiente |
 | 40 | La cadena de comandos, visible | ⬜ Pendiente |

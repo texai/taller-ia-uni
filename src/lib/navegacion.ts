@@ -213,7 +213,15 @@ export const TRAMO_MAXIMO = 25;
 export const UNIDAD_LARGA = 40;
 
 /** Ítems que cortan un tramo: algo pasa, y no lo hace el docente hablando. */
-const CORTAN: readonly TipoItem[] = ["pregunta", "pausa-preguntas", "receso"];
+const CORTAN: readonly TipoItem[] = [
+  "pregunta",
+  "pausa-preguntas",
+  "receso",
+  // Una ventana de lectura corta el tramo por definición: durante esos minutos
+  // la sala trabaja y el docente no habla. Es el corte más largo que existe
+  // fuera del receso.
+  "lectura",
+];
 
 export interface Ritmo {
   /** Preguntas y pausas. El receso no cuenta: descansar no es participar. */
@@ -236,7 +244,7 @@ export function ritmoDe(unidad: Unidad): Ritmo {
 
   for (const item of unidad.items) {
     if (CORTAN.includes(item.tipo)) {
-      if (item.tipo !== "receso") momentos++;
+      if (item.tipo !== "receso") momentos++;   // trabajar sí es participar
       mayor = Math.max(mayor, tramo);
       tramo = 0;
       continue;

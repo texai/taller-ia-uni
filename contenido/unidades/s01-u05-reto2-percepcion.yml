@@ -525,27 +525,42 @@ items:
       preguntar si está bien.
 
   - id: s1-r2-taller
-    tipo: demo
-    titulo: Escribirla
-    entradilla: Manos al teclado
-    minutos: 8
-    pasos:
-      - comando: "# abrir agente/herramientas.py y escribir comparar_periodos"
-      - comando: make reparar
-        esperado: "el mundo sano, para calibrar contra él"
+    tipo: lectura
+    titulo: La herramienta, por dentro
+    entradilla: Las tres trampas, en el código que las evita
+    minutos: 10
+    archivos:
+      - ruta: agente/herramientas.py
+        lineas: "268-374"
+        porque: >-
+          `comparar_periodos` entera. Buscar las tres trampas: dónde se calcula
+          el sesgo como cociente de totales y no como media, dónde empieza la
+          línea base, y dónde se piden las dos condiciones a la vez.
+      - ruta: agente/herramientas.py
+        lineas: "219-259"
+        porque: >-
+          `agregado_por`, la de hace un momento. Es la más corta de las siete y
+          la que mejor se lee para entender qué forma tiene una herramienta de
+          percepción.
+    comandos:
+      - make reparar
+      - make verificar ARGS="--reto 2"
     observar: >-
-      Ir pasando por los puestos. Los dos tropiezos que aparecen son
-      siempre los mismos: un `mean` sobre la columna de sesgo, y umbrales
-      puestos a ojo antes de haber mirado la flota sana.
-    respaldo: >-
-      La implementación de referencia está en `agente/herramientas.py` de
-      la rama `reto-2-solucion`. Quien se trabe, que haga `git stash` y
-      siga desde ahí — perder la clase peleando con un groupby no es el
-      ejercicio.
+      Que las ocho comprobaciones pasen sobre el mundo sano. Y en el código, el
+      `sum(...) / sum(...)` de una sola línea: es la trampa 1, y es la
+      diferencia entre una herramienta que sirve y una que alarma sola.
     notas: |
-      Nueve minutos es corto y es a propósito. La mayoría no va a terminar,
-      y no importa: lo que tiene que quedar es POR QUÉ se calibra contra la
-      flota sana, no el código.
+      **Diez minutos, y nadie escribe nada.** El laboratorio trae la
+      implementación y el objetivo no es teclearla: es que la sala vea que las
+      tres trampas de las últimas seis láminas son tres líneas concretas y
+      señalables.
+
+      Ir pasando por los puestos. La pregunta que rinde es «¿dónde está acá la
+      trampa 1?» — quien la encuentra la explica en voz alta y da la clase.
+
+      El reloj se puede mover con los botones de la lámina. Si la sala va
+      lenta, alargarlo; lo que no conviene es cortarlo antes de que corra el
+      verificador, porque el verde es la mitad del punto.
 
   - id: s1-r2-verificar
     tipo: comando-anotado
