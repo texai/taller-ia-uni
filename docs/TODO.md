@@ -105,7 +105,7 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
-| Qué se recorta si el reloj aprieta | Batches 44–48 | La sesión 1 va en **320 min sobre 240** y la 2 en 268; la quinta ronda suma unos 45 más. La decisión tomada es dictar de más antes que quedarse corto, pero no hay forma de marcar un ítem como prescindible: el catálogo no tiene esa marca y el índice no la dibuja. Si hiciera falta, sería un campo `opcional` en `ItemBase` y un punto gris en el índice — **no está planificado**, se anota por si el ensayo del sábado dice otra cosa |
+| ~~Qué se recorta si el reloj aprieta~~ | ~~Batches 44–48~~ | ✅ **Resuelto: no se recorta nada.** La sesión 1 va en 320 min sobre 240 y la 2 en 268, y la quinta ronda suma unos 45 más. Decisión del docente: prefiere dictar una o dos horas de más antes que quedarse sin material, y omitir o acelerar secciones **en vivo**, según cómo vaya la sala. Por eso tampoco entra un campo `opcional` en el catálogo: la decisión de saltarse algo depende del día y no se puede escribir de antemano |
 
 ---
 
@@ -1024,16 +1024,83 @@ Lo que hace falta **no es un script que se ejecute de un enter**: es una pauta.
 Un archivo de shell que se lee de arriba abajo y del que se copia un bloque a
 la vez.
 
+### La regla que define este batch: ningún comando sin evidencia
+
+Es un ensayo general, no un inventario. Un comando que corre sin error y no
+deja ver qué cambió **no está probado**: `make seed` puede terminar en verde y
+haber escrito cuatro archivos en el sitio equivocado. Así que cada comando del
+curso va **envuelto en sondas**, y el bloque es el que enseña algo, no la línea:
+
+    # ── s1-seed · S1·U3 · ~15:35 ──────────────────────────────
+    # estado de partida: mundo vacío, plataforma en pie
+
+    # sonda · antes
+    docker compose run --rm plataforma sh -c 'ls /datos; ls /datos/modelos | wc -l'
+    #   → el volumen está vacío · 0
+
+    make seed                                            # ⏱ ~30 s
+
+    # sonda · después — la misma línea, literal
+    docker compose run --rm plataforma sh -c 'ls /datos; ls /datos/modelos | wc -l'
+    #   → ventas.csv modelos predicciones.csv metricas.csv ejecuciones_job.csv · 192
+
+    # deja el mundo: sano
+
+Tres clases de línea, y se distinguen a la vista: **sonda antes**, **comando
+del curso**, **sonda después**. Un comando que ya se evidencia solo —un `curl`
+que imprime su respuesta, `make estado`, `make memoria`— no lleva sondas: lleva
+la salida esperada, que es lo mismo dicho de otra forma.
+
+**La sonda de después es la misma sonda de antes, literal.** No una parecida:
+la misma línea, repetida. Es lo que convierte dos salidas en una diferencia
+legible de un vistazo — si la de antes lista archivos y la de después cuenta
+filas, hay dos hechos y ninguna comparación, y el docente tiene que reconstruir
+mentalmente qué cambió.
+
+Y la evidencia **no es que aparezcan archivos**. La mayoría de los comandos de
+este taller no crean nada: reescriben un CSV que ya estaba, mueven un número,
+suben una versión, dejan una marca de tiempo nueva. Ahí es donde la sonda tiene
+que estar bien elegida, porque `ls` no distingue un `metricas.csv` sano de uno
+degradado — son el mismo nombre y casi el mismo tamaño. La sonda tiene que
+apuntar a **lo que el comando de verdad movió**:
+
+| Lo que hace el comando significativo | Lo que la sonda tiene que enseñar |
+|---|---|
+| Crea archivos (`seed` la primera vez) | El directorio antes y después, y el conteo de artefactos |
+| **Reescribe un archivo** (`romper`, `reparar`) | **El número que hay dentro**: el MAPE y el sesgo de la flota, por la API. Nunca el `ls` |
+| **Mueve un número** (`escenario`) | La misma consulta agregada, antes y después, sobre la misma ventana |
+| **Reescribe artefactos** (`entrenar`, `actuar`) | La marca de tiempo y la `version` del registro, no el conteo — siguen siendo 192 |
+| **Añade una entrada** (`agente`, `actuar`) | El historial completo antes y después: `make memoria`, `/v1/reentrenamientos` |
+| **Quita filas** (`feed_caido`) | `wc -l` de `metricas.csv`: 17,472 → 17,304, que son exactamente las 168 de una tienda |
+| Cambia qué corre (`arriba`, `ui`, `abajo`) | `docker compose ps`, la misma línea las dos veces |
+
+El caso que mejor explica la regla es `make romper ESCENARIO=sesgo_silencioso`:
+no crea ni borra nada, y `ls` da idéntico antes y después. Lo único que cambió
+es que el sesgo de la flota pasó de +0.8% a +4.7% — y esa es, además, **la
+lección central del taller**. Si la sonda no la enseña, el ensayo no probó lo
+que importa.
+
 **Alcance**
 - [ ] `docs/pauta-de-comandos.sh` — zsh/bash, ejecutable pero **con un guardián
       al principio que aborta si alguien lo corre entero**. Correrlo de una vez
       levantaría y rompería el mundo cuatro veces seguidas y no probaría nada:
       la mitad del valor está en mirar la salida entre comando y comando.
+- [ ] **Cobertura completa, del primero al último.** No se omite ningún comando
+      del curso, ni siquiera los obvios. Es una prueba de fuego: lo que no se
+      ensaya es lo que falla en clase.
+- [ ] **Cada comando, envuelto en sondas** según la regla de arriba, y cada
+      sonda con su `#   →` de lo que tiene que salir. Las sondas son
+      **inofensivas y de solo lectura**: `ls`, `wc -l`, `docker compose ps`,
+      `curl` a la API, `head`. Ninguna sonda cambia el mundo.
 - [ ] **Estructura por escaleta, no por tema.** Un bloque por unidad, en el
-      orden del dictado, con el `id` del ítem del que sale cada comando, la
-      hora aproximada, y debajo de cada uno un `# evidencia:` con lo que tiene
-      que salir — el número, la línea, el conteo de filas. Así el archivo sirve
-      para dos cosas: probar hoy, y como chuleta el sábado.
+      orden del dictado, con el `id` del ítem del que sale cada comando y la
+      hora aproximada. Así el archivo sirve para dos cosas: ensayar hoy, y como
+      chuleta el sábado.
+- [ ] **El estado del mundo, explícito en cada bloque.** Es el riesgo real de
+      un ensayo largo: dos `make romper` sin `make reparar` en medio se apilan
+      y las lecturas dejan de significar nada, y `make verificar` **deja el
+      mundo en `feed_caido`**. Cada bloque abre diciendo de qué estado parte y
+      cierra dejándolo como el siguiente lo espera.
 - [ ] Los bloques de preparación separados de los de dictado: lo que se corre
       **antes** de la clase (`make arriba`, `make seed`, `make verificar`) no
       es lo que se teclea delante de la sala.
@@ -1041,10 +1108,46 @@ la vez.
       como archivo aparte.
 - [ ] Marcar los que **gastan llave de LLM** y los que **tardan** —`seed`,
       `entrenar`, `make actuar`— para poder saltarlos en una pasada rápida.
-- [ ] `npm run validar-pauta`: **todo comando que aparezca en el contenido
-      tiene que estar en la pauta.** Sin esta comprobación el archivo se
-      desincroniza en el primer batch de contenido que entre después, y una
-      pauta incompleta es peor que ninguna porque se confía en ella.
+- [ ] `npm run validar-pauta`, con dos comprobaciones:
+      **(a)** todo comando que aparezca en el contenido está en la pauta —sin
+      esto el archivo se desincroniza en el primer batch que entre después, y
+      una pauta incompleta es peor que ninguna porque se confía en ella—; y
+      **(b)** todo comando que modifica el mundo tiene al menos una sonda
+      antes y otra después.
+
+### Catálogo de sondas, por familia de comando
+
+Se documenta acá para que la conversación que lo implemente no tenga que
+inventarlo, y para que la elección de sonda sea una decisión discutible y no
+una ocurrencia.
+
+| Comando del curso | Sonda antes | Sonda después · qué demuestra |
+|---|---|---|
+| `make arriba` | `docker compose ps` | `docker compose ps` — dos servicios en pie, el agente no |
+| `make seed` | `ls -la /datos` | `ls -la /datos` y `ls /datos/modelos \| wc -l` → 192 |
+| `make ui` | `curl -s -o /dev/null -w '%{http_code}' :8501` | el mismo, ahora 200 · y `docker compose ps` |
+| `make estado` | — | se evidencia solo |
+| `make romper ESCENARIO=x` | `curl -s :8000/v1/resumen` → MAPE 13.8 | el mismo → el MAPE del escenario. **Es la evidencia central del taller** |
+| `make reparar` | `curl -s :8000/v1/resumen` degradado | el mismo → vuelve a 13.8 · y `wc -l metricas.csv` → 17,472 |
+| `make entrenar` | `ls -l --time-style=full /datos/modelos \| head` | el mismo → las marcas de tiempo cambiaron, y la `version` del registro subió |
+| `make mlflow` | `curl -s -o /dev/null -w '%{http_code}' :5000` | el mismo → 200 · y el número de runs |
+| `make plano` / `make agente` | `make memoria` → lo que había | `make memoria` → una entrada más. **Es la prueba de que el agente escribió** |
+| `make actuar` | `curl -s :8000/v1/reentrenamientos` | el mismo → una entrada nueva · y los `.joblib` con marca de tiempo nueva |
+| `make verificar` | — | se evidencia solo, **pero deja el mundo roto**: cerrar con `make reparar` y su sonda |
+| `make abajo` | `docker compose ps` | `docker compose ps` vacío · `ls /datos` intacto — que es el punto |
+| `make reset` | `ls /datos` | `ls /datos` vacío. Va al final del ensayo y en ningún otro sitio |
+| `curl` de la API | — | se evidencian solos |
+| el `groupby` de pandas | — | se evidencia solo |
+| `docker builder prune -f` | `docker system df` | `docker system df` — el espacio recuperado |
+
+**Dónde vive, y por qué acá y no en el laboratorio**
+
+Los comandos se ejecutan en el laboratorio, así que la tentación es ponerlo
+ahí. Va en este repositorio por una sola razón: **es material derivado del
+contenido**, y solo acá se puede comprobar que no se ha quedado corto. Un
+archivo en el otro repositorio no tiene forma de saber que el batch 46 añadió
+`make entrenar`. La primera línea de la pauta dice desde qué directorio se
+corre.
 
 **Dónde vive, y por qué acá y no en el laboratorio**
 
@@ -1057,11 +1160,14 @@ corre.
 
 **Tests esperados**
 - [ ] `validar-pauta` falla si se añade un comando a una unidad y no a la pauta
+- [ ] `validar-pauta` falla si un comando que modifica el mundo no tiene la
+      misma sonda antes y después
 - [ ] La pauta corrida entera aborta con un mensaje que explica por qué
 
 **Fuera de alcance**
 - Automatizar la comprobación de las evidencias. La pauta dice qué tiene que
-  salir; quien mira es el docente.
+  salir; quien mira es el docente. Lo que sí se comprueba es que **la sonda
+  esté**, no que su salida sea la correcta.
 - Los comandos que solo salen en notas privadas y no se dictan.
 
 **Requisitos externos**
