@@ -71,6 +71,7 @@ Referencias:
 | 47 | Ninguna palabra se usa antes de abrirse | ✅ Completado |
 | 48 | Cada reto cierra su círculo | ✅ Completado |
 | 49 | La pauta de comandos del docente | ✅ Completado |
+| 50 | El laboratorio, entero y de una vez | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 

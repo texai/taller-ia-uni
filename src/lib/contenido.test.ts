@@ -11,7 +11,13 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import {
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  rmSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
@@ -933,12 +939,32 @@ items:
 });
 
 test("el curso real vive en archivos por unidad, y el orden es el del nombre", () => {
+  // La versión anterior fijaba «6 unidades por sesión» a mano, y se rompió el
+  // día que entró una séptima. El número no es la invariante: lo son el
+  // reparto en archivos y que el listado alfabético SEA el orden del dictado
+  // (§1). Eso último es lo que hace que insertar una unidad en medio cueste un
+  // renombrado y no una revisión de todo el archivo de sesión.
   const curso = mod.cargarCurso();
+  const dir = join(process.cwd(), "contenido", "sesiones");
+
   for (const sesion of curso.sesiones) {
-    assert.equal(sesion.unidades.length, 6, `${sesion.id} tiene 6 unidades`);
+    const yml = readFileSync(join(dir, `sesion-${sesion.numero}.yml`), "utf8");
+    const rutas = [...yml.matchAll(/^\s*-\s*archivo:\s*(\S+)/gm)].map((m) => m[1]!);
+
+    assert.equal(
+      rutas.length,
+      sesion.unidades.length,
+      `${sesion.id}: una unidad, un archivo`,
+    );
+    assert.deepEqual(
+      rutas,
+      [...rutas].sort(),
+      `${sesion.id}: las unidades no están en orden alfabético`,
+    );
   }
+
   assert.equal(curso.sesiones[0]?.unidades[0]?.id, "s1-apertura");
-  assert.equal(curso.sesiones[1]?.unidades[5]?.id, "s2-cierre");
+  assert.equal(curso.sesiones[1]?.unidades.at(-1)?.id, "s2-cierre");
 });
 
 // --------------------------------------------------------------------------

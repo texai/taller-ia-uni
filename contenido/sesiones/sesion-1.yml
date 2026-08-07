@@ -20,6 +20,7 @@ unidades:
   - archivo: unidades/s01-u01-apertura-presentacion.yml
   - archivo: unidades/s01-u02-caso-retail-192.yml
   - archivo: unidades/s01-u03-flota-telemetria.yml
-  - archivo: unidades/s01-u04-reto1-a-mano.yml
-  - archivo: unidades/s01-u05-reto2-percepcion.yml
-  - archivo: unidades/s01-u06-reto3-react-plano.yml
+  - archivo: unidades/s01-u04-el-laboratorio.yml
+  - archivo: unidades/s01-u05-reto1-a-mano.yml
+  - archivo: unidades/s01-u06-reto2-percepcion.yml
+  - archivo: unidades/s01-u07-reto3-react-plano.yml

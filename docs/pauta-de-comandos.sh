@@ -12,7 +12,7 @@
 #  entre comando y comando.
 #
 #  Sirve para dos cosas:
-#    · ENSAYAR, antes del sábado, que los treinta comandos del curso funcionan.
+#    · ENSAYAR, antes del sábado, que los 33 comandos del curso funcionan.
 #    · DICTAR, con la escaleta al lado, sabiendo qué viene y qué tiene que salir.
 #
 #  ---------------------------------------------------------------------------
@@ -213,14 +213,27 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8501
 #   → 200
 
 
-# ── S1·U4 · ¿estoy en condiciones de empezar? ────────────────────────────────
+# ── S1·U4 · el laboratorio, entero ───────────────────────────────────────────
+# id: s1-lab-arbol · s1-lab-ayuda · s1-lab-lectura · se evidencian solos
+
+ls
+#   → cuatro carpetas: plataforma/ agente/ ui/ retos/ · más Makefile y compose
+
+make ayuda
+#   → los 22 atajos, con su descripción. Sale del propio Makefile
+
+make senales
+#   → la sonda, presentada acá por primera vez: 13.8 / +0.8 / 8 de 192
+
+
+# ── S1·U5 · ¿estoy en condiciones de empezar? ────────────────────────────────
 # id: s1-r1-listo · estado de partida: mundo SANO
 
 make verificar ARGS="--reto 1"
 #   → ✓ 192 modelos en produccion · ✓ hay telemetria suficiente
 
 
-# ── S1·U4 · la telemetría por la API ─────────────────────────────────────────
+# ── S1·U5 · la telemetría por la API ─────────────────────────────────────────
 # id: s1-r1-api · s1-r1-lectura · se evidencian solos
 
 curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
@@ -229,7 +242,7 @@ curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head
 #   → una fila por modelo y día, con unidades además de porcentajes
 
 
-# ── S1·U4 · romper el mundo · campaña promocional ────────────────────────────
+# ── S1·U5 · romper el mundo · campaña promocional ────────────────────────────
 # id: s1-r1-romper · s1-r1-lectura
 # estado de partida: mundo SANO
 
@@ -249,7 +262,7 @@ make senales
 # deja el mundo: campana_promocional
 
 
-# ── S1·U4 · repararlo y romperlo otra vez · el silencioso ────────────────────
+# ── S1·U5 · repararlo y romperlo otra vez · el silencioso ────────────────────
 # id: s1-r1-silencioso · ES EL COMANDO MÁS IMPORTANTE DEL TALLER
 # estado de partida: campana_promocional
 
@@ -271,7 +284,7 @@ make senales
 # deja el mundo: sesgo_silencioso
 
 
-# ── S1·U5 · el reto 2, comprobado ────────────────────────────────────────────
+# ── S1·U6 · el reto 2, comprobado ────────────────────────────────────────────
 # id: s1-r2-taller · s1-r2-verificar
 # estado de partida: sesgo_silencioso
 
@@ -296,7 +309,7 @@ make reparar && make senales
 # deja el mundo: SANO
 
 
-# ── S1·U6 · ¿responde mi llave? ──────────────────────────────────────────────
+# ── S1·U7 · ¿responde mi llave? ──────────────────────────────────────────────
 # id: s1-r3-llave · 🔑
 
 make verificar ARGS="--reto 3"
@@ -304,7 +317,7 @@ make verificar ARGS="--reto 3"
 #   → sin llave: "· proveedor mock: no se comprueba el razonamiento"
 
 
-# ── S1·U6 · el bucle plano, tres veces ───────────────────────────────────────
+# ── S1·U7 · el bucle plano, tres veces ───────────────────────────────────────
 # id: s1-r3-lectura · s1-r3-correr · 🔑 tres ejecuciones · ⏱ ~1 min cada una
 # estado de partida: mundo SANO
 

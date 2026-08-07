@@ -5,6 +5,33 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El laboratorio, entero y de una vez
+- **Unidad nueva en la sesión 1**, entre la flota y el reto 1. Hasta ahora el
+  repositorio se enseñaba en trozos y nunca completo: al empezar el reto 1 la
+  sala había visto fragmentos de siete archivos sin saber cómo está organizado
+  el sitio del que salen, y la primera vez que abría uno por su cuenta era con
+  el reloj corriendo.
+- Va ahí y no junto al caso a propósito: **un mapa antes de haber pisado nada
+  es una lista de carpetas que nadie retiene**. Después de los trozos y antes
+  de la primera exploración, cierra y abre a la vez.
+- **El árbol**: cuatro carpetas, 3,339 líneas. Con un número que sorprende —
+  `agente/` pesa más que `plataforma/`: vigilar cuesta más que producir.
+- **El mapa carpeta ↔ componente** es el diagrama de arquitectura otra vez, con
+  nombres de archivo. Lo que enseña es la única flecha que cruza de una carpeta
+  a otra: `api.py → herramientas.py`. El agente no lee el disco de la
+  plataforma — y eso explica dos cosas que el curso afirmaba sin justificar.
+- **La tabla reto → archivo**, los cinco antes de empezar el primero. Es por lo
+  que existe la unidad: convierte cada referencia posterior en «ah, ese».
+- `make ayuda`, y tres archivos que nadie había nombrado: los dos README y
+  **`retos/incidencias.md`**, la bitácora que el cierre del domingo cita.
+- Los tres retos de la sesión 1 se renumeran a `u05`, `u06` y `u07`. Los `id`
+  no cambian; lo que se renumera es el nombre del archivo.
+- Un test que fijaba «6 unidades por sesión» a mano ahora comprueba lo que su
+  título dice: una unidad por archivo, y el orden alfabético como orden del
+  dictado.
+- Y dos retoques de la apertura: «se ejecuta» en vez de «se corre», y los años
+  de experiencia con cifras.
+
 ### La pauta de comandos del docente
 - **`docs/pauta-de-comandos.sh`**: los 31 comandos del curso en 25 bloques, en
   orden de escaleta, para ensayar el taller entero antes de dictarlo. **No se

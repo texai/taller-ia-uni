@@ -29,7 +29,7 @@ items:
     criterios:
       - texto: Cinco retos, todos sobre el mismo caso y el mismo laboratorio
         pista: Nada de ejemplos de juguete que cambian entre lámina y lámina
-      - texto: El laboratorio viene completo. Se lee, se corre, y se rompe a propósito
+      - texto: El laboratorio viene completo. Se lee, se ejecuta, y se rompe a propósito
         pista: En cuatro horas no hay tiempo de depurar código; sí de entender qué hace cada pieza y por qué
       - texto: En cada reto hay un rato para abrir archivos concretos y correr comandos
         pista: Con la lista en pantalla y el reloj a la vista. Nadie tiene que adivinar qué mirar
@@ -68,11 +68,11 @@ items:
     minutos: 2
     contenido: |
       **Ingeniero de Plataforma en iO / BCP**, como contratista de Globant.
-      Dieciséis años de experiencia profesional: **once en DevOps** y más de
-      **seis en proyectos de datos**.
+      **16 años** de experiencia profesional: **11 en DevOps** y más de
+      **6 en proyectos de datos**.
 
       Antes de esto, **Head of DevOps Architecture en BBVA Perú** durante
-      seis años y medio. 
+      **6 años y medio**.
       Llevar la integración continua a más de la mitad de las aplicaciones
       del banco, automatizar despliegues condicionados a la calidad del
       código, y **formar a más de trescientos ingenieros** en herramientas y

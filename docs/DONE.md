@@ -3302,3 +3302,76 @@ antes de que nadie lo proyectara; `npm run numerar -- -w` los recalculó.
 - El guardián, probado ejecutando la pauta entera.
 - `npm run humo`: **326 pantallas abiertas, 0 con error**.
 - 167 pruebas, lint, typecheck y build limpios.
+
+---
+
+## Batch 50 — El laboratorio, entero y de una vez
+**2026-08-07**
+
+El curso enseñaba el repositorio **en trozos y nunca completo**. Al empezar el
+reto 1 la sala había visto fragmentos de siete archivos sin que nadie dijera
+cómo está organizado el sitio del que salen — y el punto de entrada de cada
+reto es un comando, no un archivo. La primera vez que alguien abría el
+repositorio por su cuenta era la ventana de lectura del reto 1, con el reloj
+corriendo, buscando `plataforma/api.py` en una estructura desconocida.
+
+**Alcance** (todo hecho)
+- [x] Unidad `s01-u04-el-laboratorio.yml`, y los tres retos renumerados
+- [x] El árbol anotado: cuatro carpetas, 3,339 líneas
+- [x] El mapa carpeta ↔ componente
+- [x] La tabla reto → archivo
+- [x] `make ayuda` con su salida real
+- [x] `README.md`, `retos/README.md` y `retos/incidencias.md`, nombrados
+- [x] Una `lectura` de 8 min y una `pregunta`
+
+### Dónde va, y por qué no al principio
+
+La tentación era ponerla junto al caso. Un mapa antes de haber pisado nada es
+una lista de carpetas que nadie retiene, así que va **entre la flota y el reto
+1**: después de los trozos, justo antes de la primera vez que alguien abre un
+archivo solo. Hace las dos cosas a la vez — cierra («esto que llevas una hora
+viendo en fragmentos es un repositorio») y abre («de acá en adelante cada reto
+te manda a un archivo, y este es el mapa»).
+
+Eso obligó a renumerar: los retos de la sesión 1 bajan a `u05`, `u06` y `u07`.
+Los `id` no cambian (§9); lo que se renumera es el nombre del archivo, que es
+lo que fija el orden del dictado (§1).
+
+### Las dos láminas que justifican la unidad
+
+**El mapa carpeta ↔ componente** es el diagrama de `s1-arquitectura` otra vez,
+con los nombres de archivo encima. Lo que enseña es **la única flecha que cruza
+de una carpeta a otra**: `api.py → herramientas.py`. El agente no lee el disco
+de la plataforma, no la importa y no sabe dónde está `metricas.csv`. Esa
+separación explica dos cosas que el curso afirmaba sin justificar —por qué el
+verificador corre en el contenedor del agente, y por qué el agente no es un
+servicio— y siembra el cierre del domingo: lo que la API no exponga, el agente
+no lo puede mirar.
+
+**La tabla reto → archivo** es por lo que existe el batch: los cinco retos con
+el archivo que abre cada uno, antes de empezar el primero. Convierte cada
+referencia posterior en «ah, ese» en vez de en una búsqueda.
+
+### Y un número que sorprende
+
+`plataforma/` son 1,177 líneas y `agente/` son 1,591. **Vigilar cuesta más que
+producir**, y la comparación está anotada en el árbol.
+
+### Un test que fijaba una cifra a mano
+
+`el curso real vive en archivos por unidad` afirmaba «6 unidades por sesión» y
+se rompió con la séptima. El número no era la invariante: se reescribió para
+comprobar lo que su título dice — una unidad por archivo, y que **el listado
+alfabético sea el orden del dictado**, leyendo el propio `sesion-N.yml`. Ahora
+insertar una unidad en medio cuesta un renombrado y ninguna prueba.
+
+---
+
+**Verificación**
+- `validar-contenido` limpio, con los `id` intactos tras el renumerado y sin
+  reproches de ritmo.
+- `validar-pauta`: **33 comandos en 26 bloques** — cazó `make ayuda`, que la
+  unidad nueva estrena, antes de que se me pasara.
+- 167 pruebas, lint, typecheck y build limpios.
+- `npm run humo`: **342 pantallas abiertas, 0 con error**.
+- 234 ítems · 429 + 275 min · 13 unidades.

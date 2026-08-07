@@ -1,0 +1,335 @@
+# El recorrido del repositorio va acá y no al principio, y esa es la decisión
+# de la unidad.
+#
+# Un mapa antes de haber pisado nada es una lista de carpetas que nadie
+# retiene. A esta altura la sala lleva una hora viendo fragmentos de siete
+# archivos sin saber cómo está organizado el sitio del que salen, y dentro de
+# diez minutos va a abrir uno por su cuenta con el reloj corriendo.
+#
+# Así que cierra y abre a la vez: «esto que llevas una hora viendo en trozos es
+# un repositorio, y así está hecho», y «de acá en adelante cada reto te manda a
+# un archivo, y este es el mapa».
+id: s1-laboratorio
+tipo: repaso
+titulo: El laboratorio, entero
+objetivos:
+  - Saber dónde está cada cosa antes de que un reto pida abrirla
+  - Reconocer el diagrama de arquitectura en la estructura de carpetas
+requisitos:
+  - Haber clonado el repositorio
+items:
+  - id: s1-lab-titulo
+    tipo: titulo
+    titulo: El laboratorio, entero
+    entradilla: Llevas una hora viendo trozos. Este es el sitio del que salen.
+    minutos: 2
+    notas: |
+      **Diez minutos, y no es relleno.** Hasta ahora se han proyectado
+      fragmentos de siete archivos —`config.py`, `modelo.py`, `entrenar.py`,
+      `pronosticar.py`, el `Makefile`, `docker-compose.yml`— sin decir nunca
+      cómo está organizado el repositorio.
+
+      Y dentro de un rato empieza el reto 1, cuyo primer paso es abrir
+      `plataforma/api.py`. Buscar un archivo en una estructura que no se ha
+      visto nunca, con el reloj corriendo, es lo que esta unidad existe para
+      evitar.
+
+  - id: s1-lab-arbol
+    tipo: salida-anotada
+    titulo: Cuatro carpetas
+    entradilla: Y ninguna sorpresa. Cada una es una caja del diagrama de hace un rato.
+    comando: ls
+    minutos: 4
+    salida: |
+      Makefile              los atajos. `make ayuda` los lista
+      docker-compose.yml    los servicios: plataforma, ui, agente, mlflow, ollama
+      .env.example          la plantilla del `.env`, con la llave de LLM
+
+      plataforma/           1,177 lineas · los 192 modelos y su telemetria
+      agente/               1,591 lineas · lo que vigila. El domingo entero
+      ui/                     286 lineas · una sola pantalla, en Streamlit
+      retos/                  285 lineas · el verificador y las incidencias
+
+      README.md             el caso, y como arrancar
+      taller-ia-uni-prework.md
+      taller.ps1            los mismos atajos, para Windows
+    anotaciones:
+      - texto: "plataforma/           1,177 lineas"
+        explicacion: >-
+          **Viene dada y no se toca.** Es la cadena de retail: genera el mundo,
+          entrena los 192, corre el job y calcula la telemetría. Diez archivos,
+          y hoy ya se han visto trozos de cinco.
+      - texto: "agente/               1,591 lineas"
+        explicacion: >-
+          **Es lo que construimos**, y fíjense en el número: el que vigila pesa
+          más que lo vigilado. No es un accidente — mirar bien 192 modelos
+          cuesta más código que hacerlos funcionar.
+      - texto: "retos/                  285 lineas"
+        explicacion: >-
+          El verificador que van a correr cinco veces, y un archivo que nadie
+          ha nombrado: `incidencias.md`, la bitácora de todo lo que se rompió
+          construyendo esto. Es la unidad con la que cierra el domingo.
+      - texto: ".env.example"
+        explicacion: >-
+          Se copia a `.env` y se le pone la llave. Es el único archivo del
+          repositorio que cada uno tiene que editar, y el único que **no** se
+          sube a git.
+    notas: |
+      Recorrer las cuatro carpetas en voz alta y sin abrir ninguna. El objetivo
+      no es explicar qué hace cada archivo: es que cuando dentro de diez
+      minutos la lámina diga «abre `agente/herramientas.py`», la sala ya sepa
+      hacia dónde mirar.
+
+      **La comparación de las dos primeras líneas es la que rinde**, y conviene
+      dejarla caer: 1,177 contra 1,591. Vigilar cuesta más que producir, y eso
+      sorprende a todo el mundo — hasta que uno recuerda que la plataforma solo
+      tiene que funcionar, y el agente tiene que darse cuenta de cuándo no.
+
+      Si alguien pregunta por los `Dockerfile` y los `requirements.txt`: hay
+      uno por servicio, dentro de su carpeta. No se abren hoy.
+
+  - id: s1-lab-mapa
+    tipo: diagrama
+    titulo: Y es el mismo dibujo de hace una hora
+    entradilla: El diagrama de arquitectura, con nombres de carpeta encima
+    clase: componentes
+    minutos: 4
+    contenido: |
+      flowchart LR
+        subgraph P["plataforma/"]
+          D["datos.py<br/>el mundo"] --> E["entrenar.py<br/>192 Ridge"]
+          E --> J["pronosticar.py<br/>el job"]
+          J --> M["metricas.py<br/>la telemetria"]
+          M --> API["api.py<br/>:8000"]
+        end
+        subgraph A["agente/"]
+          H["herramientas.py<br/>los ojos"] --> G["grafo.py<br/>el domingo"]
+          G --> AC["accion.py<br/>el freno"]
+        end
+        subgraph U["ui/"]
+          APP["app.py<br/>:8501"]
+        end
+        API --> H
+        API --> APP
+        R["retos/verificar.py"] -.->|comprueba| P
+        R -.->|comprueba| A
+    notas: |
+      **Es el diagrama de `s1-arquitectura` otra vez**, y decirlo así es la
+      mitad del valor de esta lámina: el mismo dibujo, con los nombres de los
+      archivos encima. Las cajas no cambiaron; ahora tienen dirección.
+
+      Lo que hay que señalar con el dedo es **la única flecha que cruza de una
+      carpeta a otra**: `api.py → herramientas.py`. El agente no lee el disco
+      de la plataforma, no importa nada de ella, y no sabe dónde está
+      `metricas.csv`. Habla por HTTP, igual que en producción.
+
+      Esa separación explica dos cosas que ya se dijeron sin justificar: por
+      qué el verificador corre en el contenedor del agente —para someterse a la
+      misma ceguera— y por qué el agente no es un servicio.
+
+      Y las tres cajas de `agente/` son el orden del taller: `herramientas` es
+      el reto 2, `grafo` es el 4, `accion` es el 5.
+
+  - id: s1-lab-retos
+    tipo: tabla
+    titulo: Y a dónde te manda cada reto
+    entradilla: Los cinco, con el archivo que abre cada uno. Antes de empezar el primero.
+    minutos: 4
+    columnas: [Reto, Qué se mira, Archivo]
+    filas:
+      - ["1 · a mano", "El endpoint de la telemetría y cómo se calcula", "`plataforma/api.py` · `metricas.py`"]
+      - ["2 · percepción", "La herramienta que compara dos ventanas", "`agente/herramientas.py`"]
+      - ["3 · el bucle plano", "Veinte líneas de ReAct, y lo que no tienen", "`agente/plano.py`"]
+      - ["4 · la arquitectura", "Los siete nodos y las dos flechas que vuelven", "`agente/grafo.py`"]
+      - ["5 · la acción", "La política que decide qué se ejecuta", "`agente/accion.py`"]
+    resaltar: [2]
+    notas: |
+      **Esta es la lámina por la que existe la unidad.** Los cinco retos entran
+      por un comando, y el archivo aparece cuando ya empezó la ventana de
+      lectura. Verlos los cinco juntos, antes del primero, convierte cada
+      referencia posterior en «ah, ese» en vez de en una búsqueda.
+
+      La fila resaltada es la única que se toca dos veces: `herramientas.py` se
+      lee el sábado en el reto 2 y el domingo vuelve entero, cuando el grafo lo
+      llama. Es el archivo más largo del repositorio, 514 líneas, y las siete
+      herramientas están una detrás de otra.
+
+      **Cuatro de los cinco están en `agente/`**, y vale la pena decirlo: la
+      plataforma se lee una vez y ya; lo que se construye —lo que se lee de
+      verdad— es lo que vigila.
+
+  - id: s1-lab-ayuda
+    tipo: salida-anotada
+    titulo: La puerta de entrada
+    entradilla: make ayuda. Es lo primero que se teclea en un repositorio ajeno.
+    comando: make ayuda
+    minutos: 4
+    salida: |
+      Taller 02 de caso aplicado de IA en industria
+
+        arriba         Levanta la plataforma y la interfaz
+        seed           Pipeline completo: datos, entrenamiento, pronostico y metricas
+        entrenar       Entrena los 192 modelos
+        agente         Una ejecucion del agente. ARGS="--verboso --fecha 2026-08-08"
+        plano          El bucle ReAct del reto 3: un LLM con herramientas y nada mas
+        senales        Como esta la flota, en cuatro numeros. Correr antes y despues de romper
+        actuar         Ejecucion CON permiso para reentrenar de verdad. Ojo con lo que pides
+        verificar      Comprueba que todo funciona. ARGS="--con-llm" para la version completa
+        romper         Degrada los datos, rompe el mundo. Uso: make romper ESCENARIO=sesgo_silencioso
+        reparar        Regenera los datos limpios, vuelve al mundo sano
+        reset          Boton de panico: borra todo y reconstruye desde cero
+    anotaciones:
+      - texto: "actuar         Ejecucion CON permiso para reentrenar de verdad"
+        explicacion: >-
+          **Léanla dos veces.** Es el único atajo del repositorio cuya ayuda
+          trae una advertencia, y no es una broma: con eso el agente reentrena
+          modelos de verdad. Es el reto 5, mañana.
+      - texto: "senales        Como esta la flota, en cuatro numeros"
+        explicacion: >-
+          La sonda del taller, y la que más van a usar: **antes y después de
+          cada `romper`**. Casi ningún comando de acá crea archivos —reescriben
+          un CSV y mueven un número dentro—, así que un `ls` no prueba nada y
+          esto sí.
+      - texto: "reset          Boton de panico"
+        explicacion: >-
+          Borra los volúmenes, y con ellos los 192 modelos. Después hay que
+          volver a correr `seed`, que son unos minutos. `abajo` apaga sin
+          borrar, que es lo que uno quiere casi siempre.
+    notas: |
+      **La lista sale del propio `Makefile`**: cada receta lleva su comentario
+      `##` al lado y `ayuda` los recorta con un `grep` y un `awk`. Es un truco
+      de cuatro líneas que vale la pena robar — un repositorio que se explica
+      solo al teclear `make` es un repositorio en el que se entra sin
+      preguntarle a nadie.
+
+      La lámina está recortada: son 22 atajos y acá salen once. Los otros son
+      los pasos sueltos del `seed` y los servicios opcionales.
+
+      Y decir lo que hay que teclear en cualquier repositorio ajeno, en este
+      orden: `README.md`, `make ayuda`, y el archivo que el README diga.
+
+  - id: s1-lab-lectura
+    tipo: lectura
+    titulo: Diez minutos para dar la vuelta
+    entradilla: Sin buscar nada concreto. Es la única vez del taller que se mira por mirar.
+    minutos: 8
+    archivos:
+      - ruta: README.md
+        porque: >-
+          El caso, cómo arrancar y los cuatro escenarios. Es el mismo relato de
+          hace media hora, escrito para leerse el lunes.
+      - ruta: retos/README.md
+        porque: >-
+          Los cinco retos con su tiempo y su criterio de aceptación. Lo que
+          vamos a hacer las próximas seis horas, en dos páginas.
+      - ruta: retos/incidencias.md
+        porque: >-
+          La bitácora: nueve errores de diseño y trece incidencias del entorno,
+          todos reales. Es el material del cierre del domingo, y se puede leer
+          desde ya.
+    comandos:
+      - make ayuda
+      - make senales
+    observar: >-
+      Que **no hay nada escondido**: 3,339 líneas de Python en cuatro carpetas,
+      y todas se abren. Si algo del taller parece magia en las próximas horas,
+      el archivo está a un clic.
+    notas: |
+      **8 min**, y es la única ventana del taller sin un objetivo concreto.
+      Todas las demás mandan abrir un archivo y buscar algo; esta manda pasear.
+
+      Ir por los puestos con una pregunta que no tiene respuesta correcta:
+      «¿qué archivo abrirías primero si esto fuera de tu equipo?». Casi siempre
+      sale `README.md` o el `Makefile`, y las dos son buenas — lo interesante
+      es que nadie dice `grafo.py`, que es lo que más nos interesa a nosotros.
+
+      `retos/incidencias.md` es el que sorprende. Vale la pena señalarlo: está
+      escrito para el cierre, pero quien lo lea ahora va a reconocer tres o
+      cuatro de sus entradas a lo largo del día.
+
+  - id: s1-lab-pregunta
+    tipo: pregunta
+    titulo: Una de arquitectura
+    pregunta: >-
+      El agente vive en `agente/` y la telemetría en `plataforma/`. ¿Cómo llega
+      el agente a los datos?
+    visibilidad: publica
+    segundos: 45
+    permiteOmitir: true
+    respuesta: Por HTTP, contra la API de la plataforma
+    minutos: 3
+    opciones:
+      - Importa `plataforma.metricas` y llama a sus funciones
+      - Por HTTP, contra la API de la plataforma
+      - Lee `/datos/metricas.csv` del volumen compartido
+      - Recibe los datos por parámetro cuando se lo ejecuta
+    notas: |
+      Treinta segundos. La tercera es la que más se elige, y es razonable: el
+      volumen `datos` existe y la plataforma escribe ahí.
+
+      Después de revelar, la frase: **el agente no monta ese volumen**. No es un
+      descuido, es la decisión que hace que el laboratorio se parezca a
+      producción — y la que obliga a que las herramientas de percepción sean lo
+      que son.
+    solucion:
+      explicacion: |
+        **Por HTTP, contra la API.** El agente no importa nada de la
+        plataforma, no monta su volumen y no sabe dónde está `metricas.csv`.
+        Pide `GET /v1/metricas` y trabaja con lo que le devuelvan.
+
+        Eso no es purismo. Tiene tres consecuencias que se ven hoy y mañana:
+
+        - **Lo que la API no exponga, el agente no lo puede mirar.** El domingo
+          a las 12:30, eso va a explicar por qué la política tiene un agujero.
+        - Por eso el verificador corre en el contenedor del **agente**: para
+          someterse a la misma ceguera. Si corriera en la plataforma
+          comprobaría cosas que el agente no puede ver.
+        - Y por eso las herramientas devuelven **agregados**: si el agente
+          tuviera el CSV a mano, la tentación sería pasárselo entero al modelo.
+
+        En producción es exactamente así, y por la misma razón: quien vigila no
+        debería poder tocar lo vigilado.
+      descartes:
+        - opcion: Importa `plataforma.metricas` y llama a sus funciones
+          razon: >-
+            Sería lo cómodo, y ataría el agente a la implementación de la
+            plataforma: un cambio de formato del CSV lo rompería.
+        - opcion: Lee `/datos/metricas.csv` del volumen compartido
+          razon: >-
+            El volumen existe, pero **el agente no lo monta**. Está en
+            `docker-compose.yml`: su servicio solo monta `memoria`.
+        - opcion: Recibe los datos por parámetro cuando se lo ejecuta
+          razon: >-
+            Entonces alguien tendría que decidir de antemano qué mirar, que es
+            justo lo que el agente existe para decidir solo.
+
+  - id: s1-lab-repo
+    tipo: enlace
+    titulo: Y queda público
+    url: https://github.com/texai/taller-ia-uni-lab
+    descripcion: >-
+      El mismo repositorio que acaban de recorrer, en GitHub. Sigue estando el
+      lunes, con los cuatro escenarios para seguir rompiendo cosas.
+    minutos: 1
+    notas: |
+      Un minuto. Se dice y se pasa: lo importante es que sepan que no es un
+      laboratorio de clase que se apaga el domingo.
+
+      Vuelve en el cierre, con la carpeta `guias/` y todo lo demás.
+
+  - id: s1-lab-transicion
+    tipo: transicion
+    titulo: Dónde estamos
+    vimos: >-
+      La flota, su telemetría, con qué se fabrica cada modelo, y el
+      repositorio entero donde vive todo eso
+    viene: >-
+      El primer reto: encontrar un problema a mano, con la API y pandas, y
+      descubrir cuánto se tarda
+    minutos: 2
+    notas: |
+      Media frase y el mapa, que la aplicación dibuja sola.
+
+      La frase que engancha: **a partir de acá se deja de mirar y se empieza a
+      buscar.** Y el primer archivo del reto 1 —`plataforma/api.py`— es uno de
+      los que acaban de ver en el árbol.
