@@ -1058,3 +1058,84 @@ mirando el diagrama; ninguna validación lo habría atrapado.
 - `npm test` (112), typecheck, lint y build limpios.
 - Comprobado en el navegador: el diagrama de componentes, la comparación del
   sesgo, un `error-comun` de rescate y el `modelo-datos` de la telemetría.
+
+---
+
+## Batch 16 — Contenido · S1·U2 `reto` — Encontrar el problema a mano
+**2026-08-07**
+
+Que sientan en el cuerpo que revisar 192 modelos a mano no escala, y que la
+métrica que estaban mirando no era la que hablaba de plata.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] El escenario visible se resuelve rápido; el silencioso no se resuelve
+- [ ] La pregunta del cierre es cuánto tardarías haciendo esto cada mañana
+- [ ] No se adelanta la solución: acá solo se sufre el problema
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 55 de la unidad (40 de contenido + el receso)
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### Antes de escribir: se auditaron las cifras del caso
+
+El docente pidió cuadrar los números. Se corrió el pipeline completo del
+laboratorio **dos veces**, con el mundo anclado al 7 y al 12 de agosto, para
+separar lo que está medido de lo que además es reproducible.
+
+| | mundo 7-ago | mundo 12-ago | material |
+|---|---|---|---|
+| MAPE flota sana | 13.78% | 13.82% | 13.8% ✓ |
+| MAPE flota rota | 14.47% | 14.45% | 14.5% ✓ |
+| sesgo sano | +0.80% | +0.64% | +0.7% ✓ |
+| sesgo roto | +4.73% | +4.65% | +4.7% ✓ |
+| unidades de más | 36,981 | 36,338 | 36,567 ✗ |
+| modelos sobre umbral | 8 → 16 | 8 → 16 | 7 → 14 ✗ |
+
+- **El MAPE y el sesgo son sólidos** y se usan tal cual. El sesgo de la fila es
+  el cociente de totales, no el promedio de porcentajes — el promedio da +2.9%
+  y +6.6%, y confundirlos cambiaría la tabla.
+- **Las unidades no son reproducibles.** `datos.py` genera el mundo contra
+  `date.today()`, así que cada alumno tiene el suyo según el día en que corrió
+  `make seed`. La métrica dice **36,000** y la nota privada lleva el rango
+  medido.
+- **El "7 a 14" no se pudo reproducir**, y además **no hay ningún umbral
+  definido en el código**. Con MAPE > 25% se mide 8 → 16 en los dos mundos. Lo
+  que se sostiene —y lo que enseña— es que se duplican. La fila se conserva con
+  las cifras del docente y la nota explica por qué la pantalla del alumno puede
+  decir otra cosa.
+- **El "152" no cerraba.** "Revisa las cinco categorías más grandes" son 5 × 24
+  = 120 modelos vigilados, que dejarían 72 sin mirar. Los 152 salen de cinco
+  **tiendas**: 5 × 8 = 40. Se corrigió la frase y no el número, en los dos
+  `README.md` del laboratorio (commit aparte en `texai/taller-ia-uni-lab`).
+
+### Cómo quedó la unidad
+
+**14 ítems: 40 minutos de contenido más el receso de 15.** El esqueleto tenía
+11, y los dos que faltaban son los que sostienen el arco: `s1-r1-visible` —una
+métrica que dice "cinco minutos, una categoría, encontrada a ojo"— y
+`s1-r1-a-mano-2`, la segunda búsqueda, la que no encuentra nada.
+
+**El arco es sufrir, no resolver.** Escenario visible → se resuelve fácil →
+bajar las expectativas a propósito → escenario silencioso → diez minutos sin
+encontrar nada → recién ahí la tabla. Las notas privadas insisten dos veces en
+no adelantar la pista del sesgo: si sale antes, la tabla deja de golpear.
+
+**`s1-r1-a-mano` lleva medido lo que van a ver** en la nota privada: el MAPE de
+la flota sube de 13.8% a 16.0%, bebidas pasa de 12.9% a 30.8% y 18 de sus 24
+tiendas cruzan el 20%. Y el sesgo de bebidas se va a **−32%**: la promoción
+disparó la venta real y el modelo pronosticó de menos. El signo contrario al
+del escenario silencioso, que es lo que después hace que la respuesta correcta
+de la pregunta sea "ninguno de los dos solo".
+
+**La pregunta pública ahora tiene `respuesta`.** El esqueleto no la traía. Es
+"ninguno de los dos solo", y casi nadie la elige antes de discutirla — un
+umbral sobre el sesgo tampoco alcanza, porque la campaña lo movió en la
+dirección opuesta y una tienda muda no mueve ninguna de las dos.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 58 ítems en la sesión 1, 240 minutos.
+- `npm test` (112), typecheck, lint y build limpios.
+- Comprobado en el navegador: la tabla de las dos degradaciones con su fila
+  resaltada, el comando anotado de la API y la comparación de las dos señales.

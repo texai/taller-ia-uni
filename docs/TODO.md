@@ -236,45 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 16 — Contenido · S1·U2 `reto` — Encontrar el problema a mano
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Que sientan en el cuerpo que revisar 192 modelos a mano no escala, y que la métrica que estaban mirando no era la que hablaba de plata.
-
-**Duración** 40 minutos → del orden de 13 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- `retos/README.md` — Reto 1
-- `plataforma/escenario.py` — los cuatro escenarios
-- Las cifras medidas: 13.8%→14.5% de MAPE, 7→14 modelos sobre umbral, +0.7%→+4.7% de sesgo, 36,567 unidades
-
-**Tipos de ítem sugeridos**
-- `comando-anotado` con la llamada a `/v1/metricas`
-- `terminal` con `make romper ESCENARIO=campana_promocional`
-- `tabla` comparando las dos degradaciones
-- `metrica` con las 36,567 unidades
-- `comparacion` entre lo que ve el MAPE y lo que ve el sesgo
-- `pregunta` pública: ¿cuál de las dos alertarías?
-- `pausa-preguntas`
-
-**Criterios de aceptación**
-- [ ] El escenario visible se resuelve rápido; el silencioso no se resuelve
-- [ ] La pregunta del cierre es cuánto tardarías haciendo esto cada mañana para 192 modelos
-- [ ] No se adelanta la solución: acá solo se sufre el problema
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 40 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 17 — Contenido · S1·U3 `reto` — La herramienta de percepción
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura

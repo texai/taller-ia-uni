@@ -41,6 +41,26 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Cifras del caso, auditadas contra el simulador
+- Se corrió el pipeline del laboratorio dos veces, con el mundo anclado al 7 y
+  al 12 de agosto. **El MAPE y el sesgo se sostienen al primer decimal**
+  (13.78/13.82 → 14.47/14.45 y +0.80/+0.64 → +4.73/+4.65) y se usan tal cual.
+- **Las unidades de sobre-stock y el conteo de modelos sobre umbral no son
+  reproducibles**: el mundo se genera contra `date.today()`. La métrica dice
+  36,000 en vez de 36,567, y las notas privadas llevan el rango medido.
+- **El "152 modelos que nadie mira" no cerraba** con "las cinco categorías más
+  grandes" (5 × 24 = 120 vigilados → 72 sin mirar). Sale de cinco **tiendas**.
+  Corregido en los dos `README.md` de `texai/taller-ia-uni-lab`.
+
+### Contenido · S1·U2, encontrar el problema a mano (batch 16)
+- 14 ítems: 40 minutos de contenido más el receso. El arco es sufrir, no
+  resolver — escenario visible que se resuelve en cinco minutos, expectativas
+  bajadas a propósito, escenario silencioso, diez minutos sin encontrar nada, y
+  recién entonces la tabla de las dos degradaciones.
+- Dos ítems nuevos sostienen ese arco: la métrica "cinco minutos" y la segunda
+  búsqueda, la que no encuentra nada.
+- La pregunta pública gana su `respuesta`: "ninguno de los dos solo".
+
 ### Contenido · S1·U1, la unidad de apertura (batch 15)
 - La primera unidad escrita de verdad: 21 ítems, 60 minutos exactos. El
   esqueleto tenía 12 ítems de ~5 minutos y casi todos eran tres cosas juntas —

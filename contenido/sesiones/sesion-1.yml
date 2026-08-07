@@ -411,51 +411,119 @@ unidades:
     objetivos:
       - Sentir que revisar 192 modelos a mano no escala
       - Descubrir que la métrica que estaban mirando no era la que hablaba de plata
+      - Salir con la pregunta de cuánto tardarían haciendo esto cada mañana
     requisitos:
       - Entorno levantado y con datos
+      - Saber qué son el MAPE, el sesgo y la cobertura
     items:
       - id: s1-r1-titulo
         tipo: titulo
         titulo: "Reto 1 · Encuentra el problema a mano"
         entradilla: Sin agente, sin LLM. Tú, la API y pandas.
         minutos: 2
+        notas: |
+          Dejar claro que este reto no se "resuelve": se sufre. El segundo
+          escenario está hecho para que no lo encuentren, y eso es el punto.
 
       - id: s1-r1-encargo
         tipo: markdown
         titulo: El encargo
-        contenido: |
-          Pendiente — batch 16.
         minutos: 3
+        contenido: |
+          Uno de los 192 modelos —o muchos— se está portando mal. Encuéntralo
+          con las herramientas de siempre.
+
+          Tres preguntas, en este orden:
+
+          1. ¿Cuál es el **MAPE medio de la flota** en los últimos 14 días?
+          2. ¿Qué **categoría** está peor? ¿En cuántas tiendas?
+          3. ¿El problema es de esa categoría, de una **región**, o de la
+             **cadena entera**?
+
+          La tercera es la que importa. Las dos primeras son para llegar a
+          ella.
+        notas: |
+          Insistir en el orden. Quien salta directo a mirar modelos
+          individuales se pierde: con 192 series, mirar de a una no converge.
+          El camino es agregar y comparar cortes.
 
       - id: s1-r1-api
         tipo: comando-anotado
         titulo: La telemetría, por la API
+        entradilla: También está en http://localhost:8000/docs, con la interfaz de Swagger
         comando: curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
-        minutos: 6
+        minutos: 5
         segmentos:
           - texto: "-s"
-            explicacion: Pendiente — batch 16
+            explicacion: >-
+              Silencioso. Sin esto curl escupe una barra de progreso que se
+              mezcla con el JSON y ensucia todo lo que venga después en la
+              tubería.
             otrosValores: ["-v", "-i"]
           - texto: "categoria=bebidas"
-            explicacion: Pendiente — batch 16
+            explicacion: >-
+              Filtra por categoría. Los filtros del endpoint son
+              `modelo_id`, `categoria`, `tienda`, `region`, `desde` y `hasta`,
+              y se combinan entre sí.
           - texto: "desde=2026-07-01"
-            explicacion: Pendiente — batch 16
+            explicacion: >-
+              Recorta la ventana. Sin fecha vienen los 90 días de todos los
+              modelos: 17,472 filas, que es exactamente lo que no se puede leer
+              a ojo.
+        notas: |
+          Es la primera vez que ven la API. Vale la pena abrir `/docs` en vivo
+          y dejar que exploren treinta segundos.
 
       - id: s1-r1-romper
         tipo: terminal
         titulo: Romper el mundo
+        entradilla: Primero el escenario visible
         comando: make romper ESCENARIO=campana_promocional
         comandoWindows: .\taller.ps1 romper campana_promocional
         duracion: 20
-        minutos: 4
+        minutos: 2
+        notas: |
+          `romper` cambia el histórico, vuelve a correr el job y recalcula las
+          métricas. Los modelos NO se reentrenan: el mundo cambió y ellos
+          siguen igual, que es justo lo que pasa en producción.
+
+          Es una campaña de descuentos en bebidas, mucho más agresiva que
+          cualquiera del entrenamiento, en las últimas cuatro semanas.
 
       - id: s1-r1-a-mano
         tipo: demo
         titulo: Encontrarlo con pandas
-        minutos: 6
+        minutos: 5
         pasos:
-          - comando: "# agrupar por categoría, comparar 14 días contra 45"
-        observar: Pendiente — batch 16
+          - comando: "# agrupar por categoría, últimos 14 días, y ordenar por MAPE"
+          - comando: "# para la peor: agrupar por tienda y contar cuántas están mal"
+        observar: >-
+          Bebidas se despega del resto y no hay ninguna duda de cuál es. Está
+          mal en las 24 tiendas a la vez, así que no es una tienda: es la
+          categoría. Y el sesgo es fuertemente negativo — el modelo pronosticó
+          de MENOS, porque la promoción disparó la venta real y él no la vio
+          venir.
+        respaldo: >-
+          Si alguien se traba con pandas, la interfaz de :8501 ordena por MAPE
+          con un clic. El objetivo es la lectura, no el groupby.
+        notas: |
+          Medido acá: el MAPE de la flota sube de 13.8% a 16.0%, el de bebidas
+          pasa de 12.9% a 30.8% —más del doble de la flota— y 18 de las 24
+          tiendas de bebidas cruzan el 20%. Estos números se mueven algo según
+          el día en que cada uno generó su mundo; el que no se mueve es que
+          bebidas se despega sola.
+
+      - id: s1-r1-visible
+        tipo: metrica
+        titulo: Cinco minutos
+        valor: "1"
+        unidad: categoría, 24 tiendas, encontrada a ojo
+        contexto: Esto es lo que un tablero con umbrales sí detecta. Ninguna gracia.
+        tono: bueno
+        minutos: 3
+        notas: |
+          Bajar las expectativas a propósito. La sensación de "esto era fácil"
+          es lo que hace que el escenario siguiente duela.
 
       - id: s1-r1-silencioso
         tipo: terminal
@@ -463,45 +531,132 @@ unidades:
         comando: make reparar && make romper ESCENARIO=sesgo_silencioso
         comandoWindows: .\taller.ps1 reparar; .\taller.ps1 romper sesgo_silencioso
         duracion: 40
-        minutos: 3
+        minutos: 2
+        notas: |
+          `reparar` regenera el histórico limpio y vuelve a calcular todo. Sin
+          eso los dos escenarios se apilan y las lecturas dejan de significar
+          nada.
+
+          Este segundo escenario es una caída lenta y pareja de la demanda en
+          TODA la cadena. Nada específico que buscar.
+
+      - id: s1-r1-a-mano-2
+        tipo: demo
+        titulo: Búscalo otra vez
+        entradilla: Las mismas tres preguntas. Diez minutos.
+        minutos: 4
+        pasos:
+          - comando: "# el mismo groupby por categoría"
+          - comando: "# y por región, y por tienda"
+        observar: >-
+          Nada se despega. Ninguna categoría destaca, ninguna región destaca,
+          ninguna tienda destaca. El MAPE de la flota se movió menos de un
+          punto. Si tu criterio es "buscar lo que sobresale", acá no hay nada
+          que encontrar — y sin embargo el mundo cambió.
+        respaldo: >-
+          Dejar que se frustren un rato es parte del ejercicio. A los diez
+          minutos, cortar y pasar a la tabla.
+        notas: |
+          NO dar la pista del sesgo todavía. La tabla siguiente es el momento
+          del golpe, y si sale antes se desarma. Si alguien lo encuentra solo
+          —pasa— pedirle que se lo guarde treinta segundos.
 
       - id: s1-r1-tabla
         tipo: tabla
         titulo: Las dos degradaciones
-        minutos: 6
+        entradilla: El mismo cambio en el mundo, visto por tres señales distintas
+        minutos: 4
         columnas: [Señal, Antes, Después, Lectura]
         filas:
-          - [MAPE de la flota, "13.8%", "14.5%", "Pendiente — batch 16"]
-          - [Modelos sobre umbral, "7 / 192", "14 / 192", "Pendiente — batch 16"]
-          - [Sesgo de la flota, "+0.7%", "+4.7%", "Pendiente — batch 16"]
+          - ["MAPE de la flota", "13.8%", "14.5%", "Se mueve menos que entre dos semanas cualesquiera"]
+          - ["Modelos sobre el umbral", "7 / 192", "14 / 192", "Se duplican, y aun así nadie levanta el teléfono"]
+          - ["Sesgo de la flota", "+0.7%", "+4.7%", "Seis veces. Y el signo dice hacia dónde"]
+        resaltar: [2]
+        notas: |
+          Acá está el taller entero. Darle tiempo.
+
+          Sobre las cifras: el MAPE y el sesgo están medidos y se sostienen
+          entre corridas al primer decimal. El conteo de modelos sobre umbral
+          depende del umbral que se elija y del día en que cada uno generó su
+          mundo — lo que se sostiene es que se duplican. Si alguien ve otro par
+          de números en su pantalla, esa es la razón, y vale la pena decirlo.
 
       - id: s1-r1-metrica
         tipo: metrica
         titulo: Lo que costó
-        valor: "36,567"
+        valor: "36,000"
         unidad: unidades de más en almacén
         contexto: En catorce días. Ninguna alarma sonó.
         tono: malo
-        minutos: 4
+        minutos: 2
+        notas: |
+          El número exacto varía por corrida: medido en dos mundos generados
+          con cinco días de diferencia dio 36,338 y 36,981. Por eso está
+          redondeado. Si alguien pregunta, la explicación es buena: el mundo se
+          genera contra la fecha del día.
 
       - id: s1-r1-comparacion
         tipo: comparacion
-        titulo: Dos señales del mismo modelo
-        minutos: 4
+        titulo: Qué vio cada señal
+        entradilla: El mismo mundo, los mismos datos, los mismos catorce días
+        minutos: 3
         izquierda:
-          titulo: MAPE
-          contenido: Pendiente — batch 16
+          titulo: Lo que vio el MAPE
+          contenido: >-
+            "La flota está igual que siempre." Y tiene razón: el error se movió
+            0.7 puntos, dentro de lo que se mueve solo. El MAPE mide distancia,
+            y la distancia casi no cambió.
         derecha:
-          titulo: Sesgo
-          contenido: Pendiente — batch 16
+          titulo: Lo que vio el sesgo
+          contenido: >-
+            "La flota lleva dos semanas pronosticando de más, y cada vez más."
+            El sesgo mide dirección, y la dirección se disparó. Es la única de
+            las dos que estaba hablando de plata.
+        notas: |
+          Recordarles la definición de la unidad anterior: la misma resta, con
+          y sin valor absoluto. Toda la diferencia está en un par de barras.
 
       - id: s1-r1-pregunta
         tipo: pregunta
         titulo: ¿Cuál alertarías?
-        pregunta: Pendiente — batch 16
+        pregunta: >-
+          Si tuvieras que poner UNA alarma sobre esta flota, y solo una, ¿sobre
+          qué señal la pondrías?
         visibilidad: publica
-        opciones: ["El MAPE", "El sesgo", "Los dos", "Ninguno de los dos solo"]
+        permiteOmitir: true
+        minutos: 3
+        opciones:
+          - El MAPE
+          - El sesgo
+          - Los dos
+          - Ninguno de los dos solo
+        respuesta: Ninguno de los dos solo
+        notas: |
+          La respuesta que buscamos es la cuarta, y casi nadie la elige antes
+          de la discusión. Un umbral sobre el sesgo tampoco alcanza: el
+          escenario de la campaña movió el sesgo en la dirección contraria, y
+          una tienda muda no mueve ninguna de las dos.
+
+          No revelar hasta que hayan respondido todos. Después de revelar, la
+          frase de cierre: no falta una métrica mejor, falta algo que mire
+          varias a la vez y sepa cuál importa hoy.
+
+      - id: s1-r1-cuanto-tardas
+        tipo: markdown
+        titulo: La pregunta que te llevas
         minutos: 2
+        contenido: |
+          Hiciste esto para **dos escenarios y una categoría**, con la clase
+          entera acompañándote y sabiendo de antemano que algo estaba roto.
+
+          Ahora hazlo **cada mañana**, para 192 modelos, en ocho categorías,
+          veinticuatro tiendas y cinco regiones. Sin saber si hoy hay algo.
+
+          ¿Cuánto tardas? ¿Y cuántos lunes aguantas antes de mirar solo las
+          cinco tiendas más grandes y dejar los otros 152 modelos sin mirar?
+        notas: |
+          Es el puente al reto 2. Terminar acá y no explicar la solución: la
+          respuesta empieza después del receso.
 
       - id: s1-receso
         tipo: receso
