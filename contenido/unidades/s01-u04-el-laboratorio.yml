@@ -211,7 +211,9 @@ items:
   - id: s1-lab-lectura
     tipo: lectura
     titulo: Diez minutos para dar la vuelta
-    entradilla: Sin buscar nada concreto. Es la única vez del taller que se mira por mirar.
+    entradilla: >-
+      Reconocer la forma del repositorio antes de trabajar dentro de él.
+      Después ya se entra a buscar algo concreto.
     minutos: 8
     archivos:
       - ruta: README.md
