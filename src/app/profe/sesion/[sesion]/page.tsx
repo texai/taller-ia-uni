@@ -1,15 +1,24 @@
 import { notFound } from "next/navigation";
 
-import { cargarCurso } from "@/lib/contenido";
+import { cargarCurso, sesionSinNotas } from "@/lib/contenido";
 import { resaltarSesion } from "@/lib/resaltado";
 import { Dictado } from "@/components/Dictado";
 
 /**
- * La sesión, como la ve el docente: con todo.
+ * La sesión que el docente proyecta.
  *
- * Notas privadas, ítems de asistencia y respuestas correctas incluidos. Está
- * detrás del middleware, y es dinámica porque una página estática con notas
- * dentro quedaría en la caché de Vercel al alcance de cualquiera con la URL.
+ * **Sin notas privadas**, y esa es la decisión de esta página. El curso se
+ * dicta por videollamada: esta pantalla se comparte, así que todo lo que hay
+ * en ella lo lee la clase. Las notas dicen cosas como «no adelantar el número,
+ * es el golpe de dentro de diez minutos» — proyectadas, son el golpe
+ * arruinado.
+ *
+ * Lleva todo lo demás: las respuestas correctas, para poder revelar, y los
+ * minutos, para el reloj. Las notas viven en el **mando** y en la vista de
+ * revisión, que son las dos pantallas que nadie más ve.
+ *
+ * Dinámica de todos modos: una página con respuestas dentro no puede quedarse
+ * en la caché de Vercel al alcance de cualquiera con la URL.
  */
 
 export const dynamic = "force-dynamic";
@@ -27,7 +36,7 @@ export default async function SesionDocente({
 
   return (
     <Dictado
-      sesion={await resaltarSesion(sesion)}
+      sesion={sesionSinNotas(await resaltarSesion(sesion))}
       curso={curso.id}
       glosario={curso.glosario ?? []}
       modoDocente

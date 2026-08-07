@@ -414,7 +414,7 @@ items:
       - ¿Alguna imagen se quedó construyendo?
       - ¿Quedó alguna duda de qué hace `run --rm` que no sea `up`?
     notas: |
-      Dos minutos, no cinco. El sitio es este y no antes: acabamos de
+      **2 min**, no cinco. El sitio es este y no antes: acabamos de
       teclear los dos comandos que todo el resto del taller da por hechos,
       y si alguien se quedó atrás hay que saberlo **ahora**, no cuando
       empiece el reto 1.
@@ -683,7 +683,7 @@ items:
       el diagrama: nada de lo que viene depende de haber visto esta
       pantalla.
     notas: |
-      Cinco minutos, no diez. La tentación es empezar a analizar acá, y el
+      **5 min**, no diez. La tentación es empezar a analizar acá, y el
       análisis es el reto 1.
 
       **Esto es `make ui`, y es el `up` de la tabla del principio.** Vale

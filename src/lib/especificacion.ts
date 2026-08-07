@@ -169,6 +169,10 @@ export const CAMPOS_PRIVADOS = [
   "respuesta",
   "solucion",
   "minutos",
+  // La instrucción de la lámina de asistencia. La lámina sí la ve la clase
+  // —saber que se está pasando lista es información suya—; qué tiene que hacer
+  // el docente con ella, no.
+  "nota",
 ] as const;
 
 /** Campos que apuntan a un archivo bajo `contenido/`. */

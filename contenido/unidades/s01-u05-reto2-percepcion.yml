@@ -545,7 +545,7 @@ items:
       - De las tres trampas, ¿cuál les parece la más fácil de cometer?
       - ¿Alguien ya la cometió en producción?
     notas: |
-      Dos minutos justo antes de que abran el archivo. Es la última ventana
+      **2 min** justo antes de que abran el archivo. Es la última ventana
       barata: una duda de las tres trampas resuelta acá vale por diez minutos
       leyendo código sin entender qué se está buscando.
 
@@ -590,7 +590,7 @@ items:
       `sum(...) / sum(...)` de una sola línea: es la trampa 1, y es la
       diferencia entre una herramienta que sirve y una que alarma sola.
     notas: |
-      **Diez minutos, y nadie escribe nada.** El laboratorio trae la
+      **10 min**, y nadie escribe nada. El laboratorio trae la
       implementación y el objetivo no es teclearla: es que la sala vea que las
       tres trampas de las últimas seis láminas son tres líneas concretas y
       señalables.

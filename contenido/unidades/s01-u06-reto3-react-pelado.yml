@@ -103,7 +103,7 @@ items:
       ejecución. Y en la salida, cuántas herramientas llamó y en qué orden —
       hace falta para comparar contra las dos ejecuciones siguientes.
     notas: |
-      **Ocho minutos, y es la única ventana del sábado sobre el agente.**
+      **8 min**, y es la única ventana del sábado sobre el agente.
       Alcanza para leer un archivo de ochenta líneas y correrlo una vez.
 
       La pregunta que rinde mientras se pasea por los puestos: «¿en qué línea
@@ -262,7 +262,7 @@ items:
       reacción natural es "bajale la temperatura" — ya está en cero. Lo que
       varía no es el muestreo del modelo, es por dónde entró a mirar.
 
-      Diez minutos de comparación real. Es la parte de la unidad que más
+      **10 min** de comparación real. Es la parte de la unidad que más
       rinde y la que más tienta a acortar.
 
   - id: s1-r3-divergencia

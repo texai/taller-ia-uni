@@ -240,7 +240,7 @@ items:
       los porcentajes. Guardarlo: en el reto 2 esa aparente redundancia es la
       diferencia entre agregar bien y agregar mal.
     notas: |
-      **Diez minutos con la API abierta antes de tocar pandas.** Quien entiende
+      **10 min** con la API abierta antes de tocar pandas. Quien entiende
       los filtros hace el ejercicio en cinco minutos; quien no, pelea con el
       groupby por razones que no son del reto.
 
@@ -386,7 +386,7 @@ items:
           escenario siguiente el sesgo se va hacia el otro lado, y un umbral
           por arriba no habría cazado este.
     notas: |
-      **Cinco minutos, y esa es la sensación que hay que dejar**: esto fue
+      **5 min**, y esa es la sensación que hay que dejar: esto fue
       fácil. La comodidad de esta lámina es lo que hace que la siguiente
       duela.
 
@@ -424,7 +424,7 @@ items:
       - Ninguna de las dos
     notas: |
       **Que comprometan una respuesta antes de mirar.** El valor de esta
-      pregunta no es acertar: es que hayan apostado. Diez minutos después,
+      pregunta no es acertar: es que hayan apostado. **10 min** después,
       cuando el groupby no encuentre nada, la sala tiene algo propio contra
       lo que contrastar.
 

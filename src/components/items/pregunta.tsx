@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import type { ItemPregunta } from "@/lib/tipos";
+import { Prosa } from "./texto";
 import type { Revelado } from "@/lib/vivo";
 
 /**
@@ -181,22 +182,23 @@ export function Pregunta({
             >
               Por qué
             </p>
-            <p className="mt-3 whitespace-pre-line text-xl leading-relaxed">
+            {/*
+              Markdown, no texto plano. Las explicaciones vienen con negritas y
+              con `código` desde el primer día, y proyectadas como texto crudo
+              se leen con los asteriscos puestos — que es peor que no
+              destacarlos, porque el ojo tropieza con ellos.
+            */}
+            <Prosa className="mt-3" tamano="xl">
               {suyo.solucion.explicacion}
-            </p>
+            </Prosa>
 
             {suyo.solucion.descartes?.length ? (
               <ul className="mt-6 space-y-3">
                 {suyo.solucion.descartes.map((d) => (
-                  <li key={d.opcion} className="text-lg leading-relaxed">
-                    <span
-                      className="font-semibold"
-                      style={{ color: "var(--tinta-suave)" }}
-                    >
-                      {d.opcion}
-                    </span>
-                    <span style={{ color: "var(--tinta-suave)" }}> — </span>
-                    <span style={{ color: "var(--tinta-suave)" }}>{d.razon}</span>
+                  <li key={d.opcion} style={{ color: "var(--tinta-suave)" }}>
+                    <Prosa tamano="lg">
+                      {`**${d.opcion}** — ${d.razon}`}
+                    </Prosa>
                   </li>
                 ))}
               </ul>

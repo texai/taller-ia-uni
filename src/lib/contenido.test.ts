@@ -249,7 +249,10 @@ test("la respuesta correcta no llega a la carga del alumno", () => {
   );
 });
 
-test("un ítem de asistencia no aparece en la carga del alumno", () => {
+test("un ítem de SOLO_DOCENTE no aparece en la carga del alumno", () => {
+  // La lista está vacía hoy —la asistencia dejó de ocultarse— así que la
+  // prueba usa un tipo cualquiera y la lista de mentira. Se queda porque el
+  // mecanismo sigue en pie y romperlo no daría ningún síntoma visible.
   const items = `
       - id: a1
         tipo: asistencia
@@ -261,9 +264,10 @@ test("un ítem de asistencia no aparece en la carga del alumno", () => {
   conContenido(
     { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
     (raiz) => {
-      const { cargarCurso, cursoParaAlumno } = mod;
-      const publico = cursoParaAlumno(cargarCurso(raiz));
-      const items = publico.sesiones[0]!.unidades[0]!.items;
+      const curso = mod.cargarCurso(raiz);
+      const items = curso.sesiones[0]!.unidades[0]!.items.filter(
+        (i) => !["asistencia"].includes(i.tipo),
+      );
       assert.equal(items.length, 1);
       assert.equal(items[0]?.id, "i1");
     },
@@ -666,7 +670,18 @@ test("el curso real no filtra notas ni respuestas hacia el alumno", () => {
   assert.doesNotMatch(publico, /"notas"/);
   assert.doesNotMatch(publico, /"respuesta"/);
   assert.doesNotMatch(publico, /"solucion"/);
-  assert.doesNotMatch(publico, /"tipo":"asistencia"/);
+  // La lámina de asistencia sí la ve la clase; su instrucción al docente, no.
+  // Se comprueba sobre los ítems y no con una expresión sobre el JSON entero:
+  // las columnas de `modelo-datos` también llevan `nota`, y esas son material.
+  assert.match(publico, /"tipo":"asistencia"/);
+  const asistencias = mod
+    .cursoParaAlumno(curso)
+    .sesiones.flatMap((s) => s.unidades.flatMap((u) => u.items))
+    .filter((i) => i.tipo === "asistencia");
+  assert.ok(asistencias.length >= 2, "una por sesión");
+  for (const a of asistencias) {
+    assert.equal((a as unknown as Record<string, unknown>).nota, undefined);
+  }
 
   // Y que no esté vacío: una carga rota también pasaría las tres de arriba.
   assert.ok(curso.sesiones.length >= 2);
@@ -1061,6 +1076,60 @@ test("sin la carpeta de assets el curso carga igual, y con ella un archivo que f
     (raiz) => {
       // Con carpeta y sin el archivo: falla nombrándolo.
       assert.throws(() => mod.cargarCurso(raiz), /no-esta\.png/);
+    },
+  );
+});
+
+test("la pantalla que se proyecta va sin notas, y con todo lo demás", () => {
+  // El curso se dicta por videollamada: la pantalla del docente la ve la
+  // clase. Las respuestas y los minutos sí se quedan — hacen falta para
+  // revelar y para el reloj, y no se dibujan hasta que él lo decide.
+  const items = `
+      - id: con-todo
+        tipo: pregunta
+        titulo: Una pregunta
+        pregunta: ¿Cuál?
+        opciones: ["a", "b"]
+        respuesta: a
+        minutos: 3
+        notas: No adelantar el número
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const sesion = mod.cargarCurso(raiz).sesiones[0]!;
+      const proyectada = mod.sesionSinNotas(sesion);
+      const item = proyectada.unidades[0]!.items[0]! as unknown as Record<string, unknown>;
+      assert.equal(item.notas, undefined);
+      assert.equal(item.respuesta, "a");
+      assert.equal(item.minutos, 3);
+      // Y la original no se toca: se reutiliza entre peticiones.
+      assert.match(
+        String((sesion.unidades[0]!.items[0]! as unknown as Record<string, unknown>).notas),
+        /No adelantar el número/,
+      );
+    },
+  );
+});
+
+test("la asistencia la ve la clase; su instrucción, no", () => {
+  const items = `
+      - id: lista
+        tipo: asistencia
+        titulo: Tomar asistencia
+        nota: Tomarla ahora, no al final
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const curso = mod.cargarCurso(raiz);
+      const suyos = mod.cursoParaAlumno(curso).sesiones[0]!.unidades[0]!.items;
+      assert.equal(suyos.length, 1, "la lámina no se le oculta");
+      assert.equal((suyos[0] as unknown as Record<string, unknown>).nota, undefined);
+      assert.equal(
+        (curso.sesiones[0]!.unidades[0]!.items[0] as unknown as Record<string, unknown>).nota,
+        "Tomarla ahora, no al final",
+      );
     },
   );
 });

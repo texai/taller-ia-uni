@@ -464,9 +464,18 @@ export interface ItemPausaPreguntas extends ItemBase {
   disparadores?: string[];
 }
 
-/** Recordatorio de tomar asistencia. Solo lo ve el docente. */
+/**
+ * Tomar asistencia. La lámina la ve la clase; la nota, solo el docente.
+ *
+ * Empezó siendo un ítem oculto por completo, y era un error de forma: el
+ * alumno veía la pantalla saltar de la nada a la portada sin saber que se
+ * estaba pasando lista. Anunciarlo es mejor —la sala sabe qué se espera de
+ * ella— y no cuesta nada, porque lo único que había que esconder era la nota
+ * del docente, no el hecho.
+ */
 export interface ItemAsistencia extends ItemBase {
   tipo: "asistencia";
+  /** Instrucción privada. Se filtra en el servidor, como las notas. */
   nota?: string;
 }
 
@@ -574,8 +583,16 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
 
 export const TIPOS: TipoItem[] = Object.keys(FAMILIA) as TipoItem[];
 
-/** Ítems que el alumno no debe ver. Se filtran en el servidor. */
-export const SOLO_DOCENTE: readonly TipoItem[] = ["asistencia"] as const;
+/**
+ * Ítems que el alumno no debe ver. Se filtran en el servidor.
+ *
+ * Está vacía, y eso es una posición y no un descuido: ocultar una lámina
+ * entera desincroniza las dos pantallas —el docente avanza y la clase ve otra
+ * cosa— y hasta ahora el único caso, la asistencia, se resolvió mejor
+ * quitándole su nota privada y dejando la lámina. Si algún día vuelve a hacer
+ * falta, el mecanismo sigue acá.
+ */
+export const SOLO_DOCENTE: readonly TipoItem[] = [] as const;
 
 // --------------------------------------------------------------------------
 // La jerarquía

@@ -8,7 +8,7 @@ import type {
   ItemReceso,
 } from "@/lib/tipos";
 import { ahora, comoCuentaRegresiva, horaDeRegreso } from "@/lib/reloj";
-import { Caja, Etiqueta, Marco } from "./marco";
+
 
 /**
  * Los ítems de dictado interrumpen; no informan.
@@ -156,23 +156,39 @@ export function PausaPreguntas({ item }: { item: ItemPausaPreguntas }) {
  * este componente solo se dibuja en las vistas del docente. Que exista acá no
  * lo expone.
  */
+/**
+ * Tomar asistencia, y la clase se entera.
+ *
+ * La `nota` la quita el servidor para el alumno, así que su presencia es lo
+ * que distingue las dos caras: con nota, es la pantalla del docente; sin ella,
+ * la que ve la sala. No hace falta preguntarle a nadie quién está mirando.
+ */
 export function Asistencia({ item }: { item: ItemAsistencia }) {
   return (
-    <Marco>
-      <Caja tono="aviso">
-        <Etiqueta>Solo el docente</Etiqueta>
-        <h2 className="mt-3 text-2xl font-semibold">
-          {item.titulo ?? "Tomar asistencia"}
-        </h2>
-        {item.nota && (
+    <Interrupcion etiqueta="Asistencia" color="var(--color-aviso)">
+      <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+        {item.titulo ?? "Tomar asistencia"}
+      </h2>
+      <p className="mt-4 text-xl" style={{ color: "var(--tinta-suave)" }}>
+        Un minuto. El taller se evalúa solo por asistencia, así que esto es lo
+        único que hay que registrar en las ocho horas.
+      </p>
+      {item.nota && (
+        <div className="mt-8">
           <p
-            className="mt-2 text-lg leading-relaxed"
+            className="text-xs font-semibold uppercase tracking-widest"
+            style={{ color: "var(--color-aviso)" }}
+          >
+            Solo el docente
+          </p>
+          <p
+            className="mt-1 text-lg leading-relaxed"
             style={{ color: "var(--tinta-suave)" }}
           >
             {item.nota}
           </p>
-        )}
-      </Caja>
-    </Marco>
+        </div>
+      )}
+    </Interrupcion>
   );
 }

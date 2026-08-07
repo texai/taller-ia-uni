@@ -13,6 +13,7 @@
 
 import type { Caso, ItemCaso } from "@/lib/tipos";
 import { Marco } from "./marco";
+import { Prosa } from "./texto";
 
 export function Caso({ item }: { item: ItemCaso }) {
   // El caso puede venir escrito en el ítem o de un archivo que el cargador ya
@@ -80,9 +81,9 @@ export function Caso({ item }: { item: ItemCaso }) {
                 >
                   {b.titulo}
                 </h3>
-                <p className="mt-2 whitespace-pre-line text-lg leading-relaxed">
+                <Prosa className="mt-2" tamano="lg">
                   {b.contenido}
-                </p>
+                </Prosa>
               </div>
             ))}
           </div>

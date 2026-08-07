@@ -29,6 +29,7 @@ import {
 import { ahora, comoDuracion, minutosEntre } from "@/lib/reloj";
 import { avisosDeTiempo, type Aviso } from "@/lib/avisos";
 import { esMasNueva, type Pauta } from "@/lib/vivo";
+import { Prosa } from "./items/texto";
 import { useSincronia } from "@/components/useSincronia";
 
 /**
@@ -305,15 +306,31 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
             className="mt-4 rounded-xl border-l-2 py-3 pl-4"
             style={{ borderColor: "var(--color-aviso)" }}
           >
+            {/*
+              El minutaje va acá, en dígitos y siempre en el mismo sitio.
+              Antes vivía dentro de la prosa —«Tres minutos, y decirlos
+              completos»— y había que leer la frase para encontrarlo. Dictando
+              se mira de reojo, y de reojo solo se ve lo que está donde
+              siempre.
+            */}
             <p
-              className="text-xs font-semibold uppercase tracking-widest"
+              className="flex items-baseline gap-2 text-xs font-semibold uppercase tracking-widest"
               style={{ color: "var(--color-aviso)" }}
             >
               Notas
+              {typeof item.minutos === "number" && item.minutos > 0 && (
+                <span className="rounded px-1.5 py-0.5 text-sm tabular-nums"
+                  style={{
+                    background: "color-mix(in srgb, var(--color-aviso) 18%, transparent)",
+                  }}
+                >
+                  {item.minutos} min
+                </span>
+              )}
             </p>
-            <p className="mt-1 whitespace-pre-wrap text-base leading-relaxed">
+            <Prosa className="mt-1" tamano="base">
               {item.notas}
-            </p>
+            </Prosa>
           </section>
         )}
 

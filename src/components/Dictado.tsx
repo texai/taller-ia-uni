@@ -28,8 +28,9 @@ import {
 import { RenderizarItem } from "@/components/items";
 import { Pregunta } from "@/components/items/pregunta";
 import { useSincronia } from "@/components/useSincronia";
-import { PanelPreguntas, Preguntar } from "@/components/Preguntar";
+import { Preguntar } from "@/components/Preguntar";
 import { PanelGlosario } from "@/components/items/glosario";
+import { Prosa } from "@/components/items/texto";
 import { comparar } from "@/lib/navegacion";
 
 /**
@@ -101,9 +102,7 @@ export function Dictado({
     pauta,
     estado,
     publicar,
-    preguntas,
     preguntar,
-    atender,
     responder,
     revelar,
     revelado,
@@ -316,7 +315,7 @@ export function Dictado({
               className="mt-2 text-[11px]"
               style={{ color: "var(--color-aviso)" }}
             >
-              Modo docente · esta pantalla muestra las notas privadas
+              Modo docente · sin notas, esta pantalla se comparte
             </p>
           )}
         </div>
@@ -449,9 +448,13 @@ export function Dictado({
                   : "Sin conexión"}
           </span>
 
-          {modoDocente && (
-            <PanelPreguntas preguntas={preguntas} onAtender={atender} />
-          )}
+          {/*
+            Las preguntas de los alumnos NO salen acá aunque esta sea la
+            pantalla del docente: es la que se comparte por videollamada, y una
+            pregunta lleva el nombre de quien la hizo. Preguntar desde el
+            anonimato deja de tener sentido si el nombre acaba proyectado.
+            Viven en el mando, que es la pantalla que no ve nadie.
+          */}
 
           {modoDocente && (
             <button
@@ -523,8 +526,11 @@ export function Dictado({
                 }}
               />
               {/*
-                Las notas solo existen en la carga del docente: en la pública
-                el servidor ya las quitó, así que acá no hay nada que ocultar.
+                Las notas no llegan a esta pantalla: la ruta de dictado las
+                quita en el servidor porque se proyecta por videollamada. Esto
+                se queda por si algún día se dicta en una sala donde la
+                pantalla del docente no la ve nadie — y entonces bastaría con
+                no filtrarlas.
               */}
               {modoDocente && item.notas && (
                 <aside className="mx-auto mt-10 max-w-4xl px-6">
@@ -538,12 +544,11 @@ export function Dictado({
                     >
                       Notas
                     </p>
-                    <p
-                      className="mt-1 whitespace-pre-wrap text-base leading-relaxed"
-                      style={{ color: "var(--tinta-suave)" }}
-                    >
-                      {item.notas}
-                    </p>
+                    <div style={{ color: "var(--tinta-suave)" }}>
+                      <Prosa className="mt-1" tamano="base">
+                        {item.notas}
+                      </Prosa>
+                    </div>
                   </div>
                 </aside>
               )}

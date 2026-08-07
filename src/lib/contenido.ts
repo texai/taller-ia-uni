@@ -685,6 +685,37 @@ export function itemParaAlumno(item: Item): Item {
   return copia as unknown as Item;
 }
 
+/**
+ * La sesión sin las notas del docente, y con todo lo demás.
+ *
+ * Es para la pantalla que se proyecta. El curso se dicta por videollamada, así
+ * que **la pantalla del docente la ve la clase entera**: unas notas que dicen
+ * «no adelantar el número, es el golpe de dentro de diez minutos» proyectadas
+ * son el golpe arruinado, y unas que dicen qué contestará la sala son peores.
+ *
+ * No es lo mismo que `sesionParaAlumno`: esta conserva las respuestas y los
+ * minutos, que el docente necesita para revelar y para el reloj. Lo único que
+ * quita son las notas, y las quita en el SERVIDOR — proyectar es compartir el
+ * navegador, y lo que llega al navegador se puede leer.
+ *
+ * Las notas siguen enteras en el mando y en la vista de revisión, que son las
+ * dos pantallas que nadie más ve.
+ */
+export function sesionSinNotas(sesion: Sesion): Sesion {
+  return {
+    ...sesion,
+    unidades: sesion.unidades.map((u) => ({
+      ...u,
+      items: u.items.map((item) => {
+        if (!("notas" in item)) return item;
+        const copia: Record<string, unknown> = { ...item };
+        delete copia.notas;
+        return copia as unknown as Item;
+      }),
+    })),
+  };
+}
+
 /** Como `itemParaAlumno`, para una unidad entera. */
 export function unidadParaAlumno(unidad: Unidad): Unidad {
   return {

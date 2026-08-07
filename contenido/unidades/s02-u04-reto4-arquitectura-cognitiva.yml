@@ -18,7 +18,7 @@ items:
     entradilla: El corazón del taller
     minutos: 2
     notas: |
-      Noventa minutos. Avisar que el receso va a mitad y que la parte
+      **90 min**. Avisar que el receso va a mitad y que la parte
       difícil —por qué existe `revision`— viene después.
 
   - id: s2-r4-mapa
@@ -203,7 +203,7 @@ items:
       - ¿Qué pasa si dos nodos escriben la misma clave?
     notas: |
       El estado es el primer concepto duro del día y todo lo que sigue lo
-      da por entendido. Tres minutos acá se pagan solos.
+      da por entendido. **3 min** acá se pagan solos.
 
       Si nadie pregunta, lanzar la tercera: dos nodos escribiendo la misma
       clave es exactamente la trampa de la lámina siguiente.
@@ -368,7 +368,7 @@ items:
       no la toma el LLM: la toman un `if` y un contador de vueltas sobre un
       campo que el LLM escribió. Esa distinción es el reto entero.
     notas: |
-      **Doce minutos, y es la ventana más larga del taller.** El grafo es lo
+      **12 min**, y es la ventana más larga del taller. El grafo es lo
       único que hay que entender del domingo, y leerlo entero cuesta menos que
       escucharlo explicado.
 
@@ -432,7 +432,7 @@ items:
     minutos: 15
     notas: |
       A mitad de la unidad a propósito: la segunda parte es la difícil, y
-      noventa minutos seguidos de grafo no los aguanta nadie.
+      **90 min** seguidos de grafo no los aguanta nadie.
 
   - id: s2-r4-diagnostico
     tipo: codigo
@@ -877,7 +877,7 @@ items:
       las dos láminas siguientes traen la salida real de una ejecución
       completa, anotada.
     notas: |
-      Cuatro minutos alcanzan para uno o dos mundos, no para los cuatro.
+      **4 min** alcanzan para uno o dos mundos, no para los cuatro.
       Correr `feed_caido` en clase —que es el que enseña— y dejar los otros
       tres para que los prueben ellos.
 

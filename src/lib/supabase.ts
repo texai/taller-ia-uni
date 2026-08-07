@@ -37,10 +37,28 @@ export function esDocente(usuario: User | null | undefined): boolean {
   return usuario.id === DOCENTE_UID;
 }
 
-/** Cliente para componentes del navegador. */
+/**
+ * Cliente para componentes del navegador. Uno solo, para toda la pestaña.
+ *
+ * Antes devolvía uno nuevo en cada llamada, y cada cliente abre su propio
+ * WebSocket: la vista de dictado tenía uno y el recuadro de preguntas otro,
+ * compitiendo por la misma sesión. Un solo socket es además el único que
+ * refresca su token cuando la sesión se renueva.
+ */
+// El tipo se infiere de una llamada real y no de `ReturnType<typeof
+// createBrowserClient>`: eso último resuelve los genéricos por omisión y
+// devuelve un cliente sin tipar, con lo que `channel()` y compañía pasan a ser
+// `any` y se pierde la comprobación en todo el módulo de sincronía.
+function crearNavegador() {
+  return createBrowserClient(URL!, LLAVE!);
+}
+
+let navegador: ReturnType<typeof crearNavegador> | null = null;
+
 export function clienteNavegador() {
   if (!HAY_SUPABASE) return null;
-  return createBrowserClient(URL!, LLAVE!);
+  navegador ??= crearNavegador();
+  return navegador;
 }
 
 type Galleta = { name: string; value: string; options?: object };
