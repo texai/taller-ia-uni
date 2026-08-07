@@ -1,7 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { canalDePreguntas, canalDeRespuestas, contar, esMasNueva, nombreCanal } from "./vivo";
+import {
+  alRelojDeAqui,
+  canalDePreguntas,
+  canalDeRespuestas,
+  contar,
+  esMasNueva,
+  nombreCanal,
+} from "./vivo";
 import type { RespuestaAlumno } from "./vivo";
 
 function r(
@@ -93,4 +100,64 @@ test("los descartes sobreviven al recuento", () => {
   };
   const r = contar([], "p1", undefined, solucion);
   assert.equal(r.solucion?.descartes?.[0]?.opcion, "El MAPE");
+});
+
+// --------------------------------------------------------------------------
+// El plazo, entre dos relojes
+// --------------------------------------------------------------------------
+
+/**
+ * El caso que lo motivó: en una prueba en vivo la clase veía **quince
+ * segundos menos** que el docente. No era la red — era que el instante de
+ * cierre se calcula en el reloj de quien abre la pregunta y se resta contra el
+ * de quien la recibe.
+ */
+test("el plazo se traduce al reloj de quien lo recibe", () => {
+  // El docente abre 60 s a las 1 000 000 de su reloj.
+  const suya = {
+    preguntaId: "p1",
+    segundos: 60,
+    hasta: 1_000_000 + 60_000,
+    emitido: 1_000_000,
+  };
+
+  // El teléfono del alumno va quince segundos adelantado: recibe el mensaje
+  // cuando su reloj marca 1 015 000.
+  const mia = alRelojDeAqui(suya, 1_015_000);
+
+  // Y le quedan los sesenta que le tocan, no cuarenta y cinco.
+  assert.equal(mia.hasta - 1_015_000, 60_000);
+  // La duración concedida no se toca: la barra de progreso la necesita entera.
+  assert.equal(mia.segundos, 60);
+});
+
+test("y también si el reloj de quien recibe va atrasado", () => {
+  const suya = {
+    preguntaId: "p1",
+    segundos: 60,
+    hasta: 1_000_000 + 60_000,
+    emitido: 1_000_000,
+  };
+  const mia = alRelojDeAqui(suya, 980_000);
+  assert.equal(mia.hasta - 980_000, 60_000);
+});
+
+test("la latencia sí se descuenta, porque es tiempo que el alumno perdió", () => {
+  // Relojes idénticos y 300 ms de red: el alumno tiene 59,7 s, no 60.
+  const suya = {
+    preguntaId: "p1",
+    segundos: 60,
+    hasta: 1_000_000 + 60_000,
+    emitido: 1_000_000,
+  };
+  const mia = alRelojDeAqui(suya, 1_000_300);
+  assert.equal(mia.hasta - 1_000_300, 60_000);
+  // …que es lo mismo que decir que el instante de cierre no se movió.
+  assert.equal(mia.hasta, 1_060_300);
+});
+
+test("sin `emitido` no se corrige nada, que es como se comportaba antes", () => {
+  // Una pestaña vieja a medio taller no puede empeorar lo que había.
+  const vieja = { preguntaId: "p1", segundos: 60, hasta: 1_060_000 };
+  assert.equal(alRelojDeAqui(vieja, 1_015_000).hasta, 1_060_000);
 });

@@ -6,6 +6,7 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { clienteNavegador, HAY_SUPABASE } from "@/lib/supabase";
 import type { Solucion } from "@/lib/tipos";
 import {
+  alRelojDeAqui,
   canalDePreguntas,
   canalDeRespuestas,
   contar,
@@ -269,7 +270,10 @@ export function useSincronia({
       // los alumnos pueden responder. Antes solo veían el enunciado.
       c.on("broadcast", { event: EVENTO_APERTURA }, ({ payload }) => {
         if (deOtra()) return;
-        setApertura(payload as Apertura);
+        // Traducido al reloj de esta máquina antes de guardarlo: el plazo
+        // llega en el del docente, y de ahí salían los quince segundos de
+        // diferencia entre lo que contaba la clase y lo que contaba él.
+        setApertura(alRelojDeAqui(payload as Apertura, Date.now()));
       });
 
       // Una pregunta lanzada al vuelo viaja entera, porque no está en el
@@ -311,7 +315,16 @@ export function useSincronia({
           // con el plazo que queda de verdad.
           const a = aperturaRef.current;
           if (esDocente && a && a.hasta > Date.now()) {
-            void c.send({ type: "broadcast", event: EVENTO_APERTURA, payload: a });
+            // `emitido` se vuelve a sellar. El de la primera emisión ya no
+            // mide el desfase entre relojes sino eso más lo que duró la
+            // reconexión, y quien recibiera esto vería el plazo estirado por
+            // esa misma cantidad. `hasta` no se toca: sigue en el reloj del
+            // docente, que es donde tiene que estar.
+            void c.send({
+              type: "broadcast",
+              event: EVENTO_APERTURA,
+              payload: { ...a, emitido: Date.now() },
+            });
           }
           // Y el alumno vuelve a anunciarse, o dejaría de contar en el
           // denominador de «respondieron todos».
@@ -525,10 +538,15 @@ export function useSincronia({
     (preguntaId: string, segundos: number): Apertura | null => {
       const c = canal.current;
       if (!c || !esDocente) return null;
+      const ahora = Date.now();
       const nueva: Apertura = {
         preguntaId,
         segundos,
-        hasta: Date.now() + segundos * 1000,
+        hasta: ahora + segundos * 1000,
+        // El mismo instante que la base de `hasta`, no otra lectura del reloj:
+        // es lo que hace que el desfase que calcule el alumno sea el desfase y
+        // nada más. Ver `alRelojDeAqui`.
+        emitido: ahora,
       };
       aperturaRef.current = nueva;
       setApertura(nueva);

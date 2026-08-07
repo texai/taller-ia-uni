@@ -5,6 +5,24 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El plazo de la pregunta ya cuenta lo mismo en las dos pantallas
+- Al enviar una pregunta, **la clase veía quince segundos menos** que el
+  docente: el contador del alumno se cerraba mientras el del profesor todavía
+  bajaba.
+- No era la red. El instante de cierre viaja como **marca de tiempo absoluta**
+  —a propósito, es lo que hace que quien se conecte a mitad vea el tiempo que
+  queda de verdad— pero se calcula en el reloj del docente y se restaba contra
+  el del alumno. Dos relojes desfasados quince segundos dan quince segundos de
+  diferencia, exactos.
+- Ahora la apertura lleva también **`emitido`**, el `Date.now()` de quien la
+  manda, y cada pantalla traduce el plazo a su propio reloj al recibirlo. La
+  latencia de red **sí** se descuenta, y es lo correcto: ese tiempo el alumno
+  lo perdió esperando el mensaje.
+- Al reconectar, el docente reemite la pregunta abierta con `emitido` **vuelto
+  a sellar**. Con el de la primera emisión, lo que duró la reconexión se habría
+  sumado al plazo.
+- Con prueba, y comprobada rompiéndola: sin la corrección fallan tres casos.
+
 ### La lámina de glosario dice que es un glosario
 - Proyectada, una lámina de glosario **se ve como cuatro párrafos con un
   borde**: nada la distingue de prosa cualquiera, y la sala no sabe que lo que

@@ -129,8 +129,13 @@ export interface RespuestaAlumno {
  *
  * `hasta` es el instante en que se cierra, no una duración, y esa es la
  * diferencia que importa: quien se conecte a mitad ve el tiempo que queda de
- * verdad, no el que le tocaría si acabara de empezar. Los relojes de dos
- * portátiles no coinciden al segundo y no hace falta que lo hagan.
+ * verdad, no el que le tocaría si acabara de empezar.
+ *
+ * El precio de esa decisión es que el instante está **en el reloj de quien la
+ * abre**, y los relojes de dos máquinas no coinciden. En una prueba en vivo la
+ * clase veía quince segundos menos que el docente: un teléfono con la hora
+ * adelantada resta esos segundos enteros al plazo. Por eso viaja también
+ * `emitido`, que es lo que permite traducir el instante — ver `alRelojDeAqui`.
  */
 export interface Apertura {
   preguntaId: string;
@@ -138,6 +143,37 @@ export interface Apertura {
   hasta: number;
   /** Cuántos segundos se le dieron. Para dibujar la barra de progreso. */
   segundos: number;
+  /**
+   * El `Date.now()` de quien la emitió, en su propio reloj.
+   *
+   * Es la referencia contra la que se mide el desfase. Opcional solo por si
+   * llega un mensaje de una pestaña vieja a medio taller: sin él no se corrige
+   * nada, que es exactamente el comportamiento de antes.
+   */
+  emitido?: number;
+}
+
+/**
+ * El mismo plazo, expresado en el reloj de esta máquina.
+ *
+ * `hasta` viene del portátil del docente. Restarle el `Date.now()` de un
+ * teléfono cuyo reloj va quince segundos adelantado da quince segundos menos
+ * de pregunta, y el alumno ve cerrarse el plazo mientras el docente todavía
+ * cuenta. No es un caso raro: basta con que una de las dos máquinas no haya
+ * sincronizado la hora.
+ *
+ * La corrección es la diferencia entre los dos relojes, medida sobre el mismo
+ * mensaje: `ahora - emitido`. Se lleva dentro la latencia de la red —unas
+ * decenas de milisegundos— y eso acorta el plazo del alumno por esa misma
+ * cantidad, que es lo correcto: ese tiempo lo perdió de verdad esperando el
+ * mensaje.
+ *
+ * No se toca `segundos`: es la duración concedida, y la barra de progreso la
+ * necesita entera para no dibujarse a media asta.
+ */
+export function alRelojDeAqui(a: Apertura, ahora: number): Apertura {
+  if (typeof a.emitido !== "number") return a;
+  return { ...a, hasta: a.hasta + (ahora - a.emitido) };
 }
 
 export const EVENTO_APERTURA = "pregunta-abierta";
