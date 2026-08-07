@@ -64,8 +64,21 @@ Referencias:
 | 41 | El repositorio, a un clic | ✅ Completado |
 | 42 | Los conceptos que se usan sin nombrarse | ✅ Completado |
 | 43 | Las seis guías, descargables desde la clase | ✅ Completado |
+| | **Quinta ronda — cerrar el hilo conductor** | |
+| 44 | Lo que no cuadra | ⬜ Pendiente |
+| 45 | El caso, recorrido y no contado | ⬜ Pendiente |
+| 46 | Con qué se fabrica un modelo | ⬜ Pendiente |
+| 47 | Ninguna palabra se usa antes de abrirse | ⬜ Pendiente |
+| 48 | Cada reto cierra su círculo | ⬜ Pendiente |
+| 49 | La pauta de comandos del docente | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
+
+**La quinta ronda (44 a 49) sale de la auditoría del 7 de agosto por la
+noche**, y tiene un solo objetivo: que el recorrido no deje ni un concepto sin
+abrir ni un comando sin enseñar. El orden importa — 44 son correcciones
+baratas, 45 a 48 son contenido (**uno por conversación**, §13), y 49 se hace al
+final porque necesita que los comandos ya estén todos escritos.
 
 **Ruta mínima para dictar el sábado:** batches 1 a 8. Del 9 al 14 mejoran el
 dictado pero la clase se puede dar sin ellos.
@@ -92,6 +105,7 @@ unidad y no necesita leer el resto del curso.
 | Cuánto contenido fino entra antes del sábado | Batch 3 | El batch deja la estructura de las 8 horas. Llenar cada ítem con su contenido definitivo es trabajo aparte, y puede hacerse en caliente entre sesión y sesión |
 | ~~Retención de preguntas y respuestas~~ | ~~Batch 9, 10~~ | ✅ Resuelto: no se persisten. No hay tablas (ver [`CONVENTIONS.md`](CONVENTIONS.md) §11) |
 | Identificador del docente | Batches 7, 8 | Hace falta el `uuid` del usuario creado en Supabase, para `NEXT_PUBLIC_DOCENTE_UID` y para la política sobre `realtime.messages` |
+| Qué se recorta si el reloj aprieta | Batches 44–48 | La sesión 1 va en **320 min sobre 240** y la 2 en 268; la quinta ronda suma unos 45 más. La decisión tomada es dictar de más antes que quedarse corto, pero no hay forma de marcar un ítem como prescindible: el catálogo no tiene esa marca y el índice no la dibuja. Si hiciera falta, sería un campo `opcional` en `ItemBase` y un punto gris en el índice — **no está planificado**, se anota por si el ensayo del sábado dice otra cosa |
 
 ---
 
@@ -693,6 +707,366 @@ un `p ± 1.96σ` de doce caracteres en `pronosticar.py`.
 
 **Fuera de alcance**
 - Un módulo de estadística. Cada concepto entra pegado al reto que lo usa.
+
+---
+
+# Quinta ronda — cerrar el hilo conductor
+
+Salen de la auditoría completa del contenido del 7 de agosto por la noche, y
+persiguen una sola cosa: **que el recorrido no deje ni un concepto sin abrir ni
+un comando sin enseñar.** El taller se dicta bien; lo que falla son costuras
+concretas, y están todas enumeradas.
+
+El orden no es negociable. El 44 son correcciones de dato y cuesta minutos; del
+45 al 48 son contenido y van **uno por conversación** (§13); el 49 se hace al
+final porque necesita que todos los comandos estén ya escritos.
+
+---
+
+## Batch 44 — Lo que no cuadra
+
+Tres cosas que el material dice mal. Ninguna es de criterio: son datos que se
+contradicen entre láminas, un archivo mal citado y unas horas corridas. Van
+juntas porque las tres se arreglan mirando la fuente, no discutiendo.
+
+**Alcance**
+- [ ] **El ancla se contradice.** `s1-caso-estado` mide `sesgo_pct: 0.801` y
+      `modelos_con_mape_sobre_25: 8`; `s1-r1-tabla` dice **+0.7%** y **7 / 192**
+      para el mismo mundo sano. Son dos de los cuatro números que la sala anota
+      en el minuto diez. Arreglar **midiendo**, no eligiendo: correr `datos`,
+      `pronosticar` y `metricas` y poner lo que salga.
+- [ ] Esa misma cifra vive también en `plataforma/escenario.py` del
+      laboratorio, en el comentario de `CAIDA_SESGO_SILENCIOSO`, y de ahí la
+      cita `s1-r2-calibrado` **literalmente** (§8: un fragmento numerado es
+      literal). Así que el arreglo **toca los dos repositorios**, y el del
+      laboratorio va primero — si no, `npm run numerar` deja el fragmento sin
+      números y la validación lo canta.
+- [ ] El propio comentario del laboratorio ya avisa de que el conteo de modelos
+      se mueve entre ejecuciones y dice `8 → 16`. La fila de `s1-r1-tabla` debe
+      quedar consistente con eso, y su nota decir que lo que se sostiene es que
+      se duplican.
+- [ ] **Un archivo mal citado, en el peor sitio.** `s2-apertura` dice en notas
+      que el bucle de ayer está en `agente/__main__.py`. Está en
+      `agente/plano.py`; `__main__.py` solo registra el subcomando. Es la frase
+      dirigida a quien no vino el sábado, sobre el único archivo que se le pide
+      abrir.
+- [ ] **Las cabeceras de hora.** `s02-u02` marca 09:06 y `s02-u03` marca 09:05,
+      en ese orden; `s02-u05` y `s02-u06` no tienen ninguna. Recalcularlas
+      todas contra los minutos reales de cada unidad, y dejar dicho en el
+      comentario que son orientativas —el reloj real lo dibuja la aplicación—
+      para que nadie las vuelva a tratar como contrato.
+
+**Tests esperados**
+- [ ] `npm run numerar` sigue dando 19 numerados · 0 sin numerar después de
+      tocar el laboratorio
+- [ ] `validar-contenido` limpio
+
+**Fuera de alcance**
+- Volver a medir todas las cifras del curso. Solo las que se contradicen.
+
+**Requisitos externos**
+- El laboratorio corriendo en local para medir: `RUTA_DATOS=<dir> PYTHONPATH=.
+  python3 -m plataforma seed` y después `metricas`.
+
+---
+
+## Batch 45 — El caso, recorrido y no contado
+
+El caso se cuenta muy bien y **no se recorre**. La sala oye «24 tiendas en
+cinco regiones» y no ve nunca la lista; oye «`ventas.csv` es el mundo, 76,800
+filas» y no ve nunca una fila; oye «192 artefactos en disco» y no ve ninguno.
+De los cinco archivos de `/datos` que `s1-caso-estado` enumera, el curso solo
+abre `metricas.csv`.
+
+Y hay una consecuencia narrativa concreta, que es la razón de fondo de este
+batch: el **cierre del reto 5** —el mejor momento del domingo— dice que la
+política tiene un agujero porque *«la telemetría no tiene la señal de si hubo
+stock»*. Esa señal **existe**: `ventas.csv` trae una columna `quiebre_stock`
+que se pierde por el camino. Enseñar la fila cruda el sábado convierte ese
+cierre de limitación abstracta en decisión de instrumentación, que es lo que
+de verdad es.
+
+**Alcance**
+- [ ] **`plataforma/config.py`, el caso escrito en código** — ítem `codigo` en
+      S1·U2, después de `s1-el-caso` y antes de `s1-caso-estado`: las 24
+      tiendas con su región y su factor de tamaño, y las 8 categorías con su
+      demanda base y su amplitud estacional. Es el archivo que convierte «una
+      cadena de retail» en esta cadena.
+- [ ] Con eso se paga otra deuda: **16 de las 24 tiendas no se nombran jamás**
+      en el curso, y las 8 que sí aparecen lo hacen **dentro de una salida**,
+      sin presentación — la primera vez que la sala lee «arequipa» es como un
+      `modelo_id` en un JSON. Las categorías y las regiones sí están
+      enumeradas; las tiendas, no.
+- [ ] **Una fila de `ventas.csv`**, en S1·U3, cerca de `s1-telemetria`: ítem
+      `salida-anotada` con la cabecera y dos o tres filas de verdad, anotando
+      `unidades` contra `unidades_demandadas` —que no son lo mismo, y ahí está
+      el quiebre— y **`quiebre_stock`**, sembrado explícitamente hacia el reto 5.
+- [ ] **El artefacto, en disco** — `ls -la /datos/modelos | head` dentro de
+      `s1-caso-estado` o en un ítem propio: que se vea un `.joblib` con su
+      tamaño. La palabra «artefacto» se usa todo el taller y no tiene imagen.
+- [ ] Revisar que el sembrado del reto 5 (`s2-r5-quiebre-politica`) **cite de
+      vuelta** la columna: hoy dice «una señal que la telemetría no tiene», y
+      tras este batch tiene que decir dónde sí está y dónde se pierde.
+
+**Tests esperados**
+- [ ] `npm run numerar` numera el fragmento de `config.py` contra el
+      laboratorio
+- [ ] `validar-contenido` limpio y `npm run humo` sin errores
+
+**Fuera de alcance**
+- Enseñar `plataforma/datos.py` entero. Cómo se **inventa** el mundo no es del
+  taller; qué **forma** tiene, sí.
+- Tocar el laboratorio. Este batch solo lee de él.
+
+---
+
+## Batch 46 — Con qué se fabrica un modelo
+
+Pregunta literal del docente: *«no he visto en qué momento se usan las
+herramientas específicas que generan los modelos; ¿cómo se generan, con Python
+o con otra herramienta?»*. La respuesta es que se generan con **Python y
+scikit-learn**, y el curso no lo dice en ninguna parte.
+
+Contado sobre los 199 ítems: **scikit-learn, joblib, LangChain, numpy, scipy,
+FastAPI y pydantic tienen cero menciones**; `pandas` una; `uvicorn` una, dentro
+de la causa de un error; `Ridge` una, sin decir de qué librería sale. Alguien
+que termine las ocho horas no puede decir con qué se entrenó el modelo que
+estuvo vigilando.
+
+Y hay una promesa hecha dos veces y nunca pagada: **MLflow**. `s1-recap` dice
+en notas *«el registro de modelos que van a ver hoy es MLflow»* y
+`s1-arquitectura` lo dibuja como arista punteada. En el laboratorio es real
+—`make mlflow` levanta la interfaz en `:5000` y cada uno de los 192
+entrenamientos registra parámetros y `mape_validacion`— y la clase no lo ve.
+De ahí cuelga además el `mape_validacion_medio: 10.382` de `s1-inventario`, que
+la lámina explica que *«sale del registro de los modelos»*: la mitad izquierda
+de la comparación 10.4 → 13.8, que es el argumento de la primera hora, no tiene
+dónde mirarse.
+
+**Alcance**
+- [ ] **La cadena, nombrada**: `pandas` construye las features →
+      `sklearn.linear_model.Ridge` entrena → `joblib.dump` deja el `.joblib` →
+      `mlflow.log_params/log_metric` lo registra. Va como ampliación de
+      `s1-features` / `s1-validacion`, que ya están en el sitio correcto — **no
+      como lámina nueva de inventario de librerías**.
+- [ ] **`make entrenar`, solo y con su salida.** Hoy solo corre dentro de
+      `seed`, donde es la barra de progreso `2/4`. Es el único paso lento del
+      laboratorio y el único que **cambia un artefacto**, y la clase nunca lo
+      ve aislado. Ítem `comando-anotado` + `salida-anotada`.
+- [ ] **La persistencia**: `joblib.dump(modelo, ruta)` y el bump de `version`
+      en el registro. Dos líneas de `plataforma/entrenar.py`, y son las que
+      hacen que «artefacto» deje de ser una abstracción.
+- [ ] **El job cargando los 192.** `s1-intervalo` muestra de
+      `plataforma/pronosticar.py` la sigma y el intervalo, pero no el bucle que
+      abre los `.joblib` y predice. El «job batch de madrugada» del caso no
+      tiene código en pantalla.
+- [ ] **MLflow en pantalla**: `make mlflow`, `:5000`, y una captura de
+      respaldo bajo `public/contenido/img/`. Va en S1·U3, después de
+      `s1-validacion`, que es donde nace el 10.4%. Paga la promesa de
+      `s1-recap` y cierra `s1-inventario`.
+- [ ] **`docker-compose.yml`**, aunque sea un fragmento: dos comandos anotados
+      explican «los servicios declarados ahí» y el mecanismo de `profiles` que
+      esconde `mlflow` y `ollama`, y el archivo no se abre nunca.
+- [ ] Añadir a la tabla `s1-make` las filas que faltan: `make entrenar`,
+      `make mlflow` y `make ollama`.
+
+**Tests esperados**
+- [ ] `validar-contenido` con las rutas nuevas comprobadas contra el
+      laboratorio, y `npm run numerar` cuadrando
+- [ ] La captura de MLflow existe en `public/contenido/img/` y `npm run humo`
+      la abre sin error
+
+**Fuera de alcance**
+- Enseñar a usar MLflow. Se abre, se mira un run, se dice que es el mismo del
+  Módulo 2, y se sigue.
+- Un ítem por librería. Las herramientas se nombran **donde se usan**, no en
+  una lista.
+
+**Requisitos externos**
+- Correr `make mlflow` en el laboratorio para capturar la pantalla. Son unos
+  minutos y hay que tener el `seed` hecho, porque sin runs la interfaz sale
+  vacía.
+
+---
+
+## Batch 47 — Ninguna palabra se usa antes de abrirse
+
+El glosario tiene **39 términos** y está bien escrito, pero solo hay **tres**
+láminas de tipo `glosario` y cubren **13**. Los otros 26 existen únicamente en
+el panel flotante: están a mano si alguien lo abre, y nadie lo abre en mitad de
+una explicación.
+
+El agujero más caro es el del **reto 2**, que proyecta `p < 0.01` sin que nadie
+haya dicho en voz alta qué es un p-valor: `p-valor`, `Kolmogorov-Smirnov`,
+`significativo y relevante`, `ventana y línea base` y `percentil` —el
+vocabulario entero de esa unidad— no aparecen en ninguna lámina. Y hay dos
+palabras que el material **declara como concepto propio y no define nunca**:
+`ReAct`, que es un objetivo del reto 3 y sale en su diagrama de pasos, y
+`arquitectura cognitiva`, que es el título de la sesión 2 completa.
+
+La regla que sale de acá, y que es lo que de verdad entrega este batch:
+**ninguna palabra del glosario se usa en pantalla antes de haberse abierto en
+pantalla.** El panel flotante es el respaldo, no el primer contacto.
+
+### El tipo de ítem
+
+`glosario` ya existe y **no hace falta uno nuevo**: inventar un segundo tipo
+para lo mismo es exactamente lo que §8 evita. Lo que sí le falta es distinguir
+sus dos usos, porque no son el mismo ítem:
+
+- **De apertura** — «estas cuatro palabras se van a usar en lo que viene».
+- **De referencia** — las tres señales juntas, para compararlas.
+
+Se resuelve con **un campo opcional `nuevos`**: cuáles de los términos
+listados se abren por primera vez acá, y cuáles son recordatorio. La lámina los
+dibuja distinto y el docente sabe en cuáles detenerse.
+
+- [ ] `ItemGlosario.nuevos?: string[]`, validado contra `terminos` del propio
+      ítem — un `nuevos` que nombre algo que no está en la lámina es un error.
+- [ ] **Un término solo puede declararse `nuevo` una vez en todo el curso.**
+      Esta es la regla que paga el campo: dos láminas presentando «deriva» como
+      novedad son dos explicaciones que se separan, que es justo lo que el
+      glosario existe para impedir. Falla en validación nombrando las dos.
+- [ ] Fila en `CONVENTIONS.md` §8 y sección propia: **§18 · El vocabulario se
+      abre antes de usarse**.
+
+### Dónde va cada lámina
+
+| Unidad | Ítem | Términos | Nuevos |
+|---|---|---|---|
+| S1·U2 caso | `s1-glosario-caso` | flota, el mundo, artefacto, job batch | los 4 |
+| S1·U3 (existe) | `s1-glosario-docker` | + **servicio**, que falta | servicio |
+| S1·U3 tras `s1-seed-salida` | `s1-glosario-pipeline` | pipeline, telemetría, días-modelo, percentil | los 4 |
+| S1·U3 (existe) | `s1-glosario-senales` | — | MAPE, sesgo, cobertura |
+| S1·U4 tras `s1-r1-encargo` | `s1-glosario-escenarios` | escenario, deriva, anomalía, el mundo | los 3 primeros |
+| S1·U5 tras `s1-r2-tres-reglas` | `s1-glosario-estadistica` | ventana y línea base, Kolmogorov-Smirnov, p-valor, significativo y relevante | los 4 |
+| S1·U6 antes de `s1-r3-bucle` | `s1-glosario-react` | LLM, herramienta, ReAct | LLM, ReAct |
+| S2·U3 (existe) | `s2-glosario-agente` | + **arquitectura cognitiva** | arquitectura cognitiva |
+| S2·U4 antes de `s2-r4-diagnostico` | `s2-glosario-diagnostico` | alcance, severidad y urgencia, deriva, anomalía | los 2 primeros |
+| S2·U5 tras `s2-r5-riesgo` | `s2-glosario-accion` | política, radio de daño | los 2 |
+| S1·U3, con el batch 46 | `s1-glosario-herramientas` | MLflow, LangGraph, Streamlit | los 3 |
+
+13 ya cubiertos + 26 nuevos = **39**. La cobertura queda completa, y eso es
+comprobable.
+
+**Alcance, además de las láminas**
+- [ ] `s1-reto-1` declara en sus objetivos *«por qué el sesgo no se promedia»*
+      y no lo enseña: en toda la unidad eso es un `resaltar` sobre dos líneas
+      del groupby y una nota privada. Se enseña de verdad en el reto 2, trampa
+      1. **Baja el objetivo del reto 1** y se queda donde se cumple.
+
+**Tests esperados**
+- [ ] Todo término de `glosario.yml` aparece en al menos una lámina `glosario`.
+      Es el criterio de aceptación del batch y tiene que ser una prueba, no una
+      revisión a ojo
+- [ ] Un término declarado `nuevo` en dos láminas falla nombrando las dos
+- [ ] Un `nuevos` que no esté en `terminos` falla
+- [ ] `ESPECIFICACION` sigue cubriendo todos los tipos
+
+**Fuera de alcance**
+- Reescribir las definiciones del glosario. Están bien; lo que falta es
+  proyectarlas.
+- Una lámina por término. Van agrupadas por unidad, tres o cuatro cada una.
+
+---
+
+## Batch 48 — Cada reto cierra su círculo
+
+La cadena que sostiene el taller es **reto → intención → concepto → comando →
+código → comprobación**, y dos de los cinco retos no llegan al final.
+
+**El reto 1 es el único sin criterios de aceptación** y el único que no corre
+el verificador, aunque `--reto 1` existe en el laboratorio y comprueba justo lo
+que hace falta antes de un ejercicio de 40 minutos: 192 modelos vivos y
+telemetría suficiente. Con la mano alzada del trabajo previo como único filtro,
+alguien va a pasar el reto entero mirando un mundo a medio poblar y creyendo
+que el problema es suyo.
+
+**El reto 3 tampoco corre `--reto 3`**, que es literalmente la comprobación
+«¿mi llave responde y sabe llamar herramientas?». Es la que evita descubrir a
+las 18:10 que media sala no puede ejecutar la demo — y esa demo es el final del
+sábado.
+
+**Alcance**
+- [ ] `criterios` para el reto 1, en su sitio: después de `s1-r1-encargo`. No
+      son criterios de código —no se escribe ninguno— sino de lectura: los tres
+      cortes que hay que haber mirado y la pregunta que hay que poder
+      contestar.
+- [ ] `make verificar ARGS="--reto 1"` como ítem, al abrir el reto, con su
+      salida real anotada. Es el «¿estoy en condiciones de empezar?».
+- [ ] Lo mismo para el reto 3 con `--reto 3`, antes de `s1-r3-lectura`.
+- [ ] **La lámina de rescate de la llave.** El reto 3 depende de una llave de
+      LLM y hoy la única salida para quien llega sin ella está en notas
+      privadas. Un `error-comun` con los tres caminos: proveedor gratuito
+      (Google AI Studio, Groq), `PROVEEDOR_LLM=mock`, o mirar la pantalla del
+      de al lado. El prework ya lo explica; lo que falta es en clase.
+- [ ] Revisar que los cinco retos declaren en sus objetivos exactamente los
+      conceptos que enseñan, después de lo que mueva el batch 47.
+
+**Tests esperados**
+- [ ] `validar-contenido` limpio, `npm run humo` sin errores
+
+**Fuera de alcance**
+- Añadir comprobaciones nuevas al verificador del laboratorio. Se usan las que
+  ya existen.
+
+---
+
+## Batch 49 — La pauta de comandos del docente
+
+Antes de repasar el contenido a mano, el docente necesita **probar que todos
+los comandos del curso funcionan**, uno por uno, mirando la evidencia de cada
+uno antes de pasar al siguiente. Hoy los comandos están repartidos entre 199
+ítems —dentro de `terminal`, `comando-anotado`, `demo.pasos[]`,
+`lectura.comandos[]` y `salida-anotada.comando`— y no existe ninguna lista.
+
+Lo que hace falta **no es un script que se ejecute de un enter**: es una pauta.
+Un archivo de shell que se lee de arriba abajo y del que se copia un bloque a
+la vez.
+
+**Alcance**
+- [ ] `docs/pauta-de-comandos.sh` — zsh/bash, ejecutable pero **con un guardián
+      al principio que aborta si alguien lo corre entero**. Correrlo de una vez
+      levantaría y rompería el mundo cuatro veces seguidas y no probaría nada:
+      la mitad del valor está en mirar la salida entre comando y comando.
+- [ ] **Estructura por escaleta, no por tema.** Un bloque por unidad, en el
+      orden del dictado, con el `id` del ítem del que sale cada comando, la
+      hora aproximada, y debajo de cada uno un `# evidencia:` con lo que tiene
+      que salir — el número, la línea, el conteo de filas. Así el archivo sirve
+      para dos cosas: probar hoy, y como chuleta el sábado.
+- [ ] Los bloques de preparación separados de los de dictado: lo que se corre
+      **antes** de la clase (`make arriba`, `make seed`, `make verificar`) no
+      es lo que se teclea delante de la sala.
+- [ ] Las variantes de Windows (`.\taller.ps1`) como comentario al lado, no
+      como archivo aparte.
+- [ ] Marcar los que **gastan llave de LLM** y los que **tardan** —`seed`,
+      `entrenar`, `make actuar`— para poder saltarlos en una pasada rápida.
+- [ ] `npm run validar-pauta`: **todo comando que aparezca en el contenido
+      tiene que estar en la pauta.** Sin esta comprobación el archivo se
+      desincroniza en el primer batch de contenido que entre después, y una
+      pauta incompleta es peor que ninguna porque se confía en ella.
+
+**Dónde vive, y por qué acá y no en el laboratorio**
+
+Los comandos se ejecutan en el laboratorio, así que la tentación es ponerlo
+ahí. Va en este repositorio por una sola razón: **es material derivado del
+contenido**, y solo acá se puede comprobar que no se ha quedado corto. Un
+archivo en el otro repositorio no tiene forma de saber que el batch 46 añadió
+`make entrenar`. La primera línea de la pauta dice desde qué directorio se
+corre.
+
+**Tests esperados**
+- [ ] `validar-pauta` falla si se añade un comando a una unidad y no a la pauta
+- [ ] La pauta corrida entera aborta con un mensaje que explica por qué
+
+**Fuera de alcance**
+- Automatizar la comprobación de las evidencias. La pauta dice qué tiene que
+  salir; quien mira es el docente.
+- Los comandos que solo salen en notas privadas y no se dictan.
+
+**Requisitos externos**
+- Se hace **después** de los batches 45, 46 y 48, que son los que añaden
+  comandos nuevos.
 
 ---
 
