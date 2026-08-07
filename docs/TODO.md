@@ -236,46 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 20 — Contenido · S2·U2 `reto` — La arquitectura cognitiva
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-El corazón del taller: cada nodo hace un trabajo y solo uno, y una reflexión que no puede corregir es decorativa.
-
-**Duración** 90 minutos → del orden de 30 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- `retos/README.md` — Reto 4
-- `agente/grafo.py` completo
-- `agente/memoria.py`
-- Las citas reales de reflexión: *estoy dramatizando*, *SÍ hay hallazgo: hay DERIVA*
-
-**Tipos de ítem sugeridos**
-- `diagrama-secuencia` en PlantUML recorrible mensaje a mensaje: percepción, herramientas, diagnóstico, reflexión, revisión
-- `codigo` con `Estado`, `messages_key` y las aristas condicionales
-- `error-comun` con las dos trampas de cableado
-- `cita-agente` con la reflexión acusándose de dramatizar
-- `comparacion` del diagnóstico antes y después de la revisión
-- `criterios` con los cuatro mundos
-- `receso` a mitad
-
-**Criterios de aceptación**
-- [ ] El diagrama de secuencia se recorre paso a paso, no se proyecta entero
-- [ ] Se explica **por qué existe `revision`** con el caso real donde el agente sabía la respuesta y el grafo no lo dejaba decirla
-- [ ] Las dos trampas de cableado quedan anticipadas: son mudas y cuestan una hora
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 90 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 21 — Contenido · S2·U3 `reto` — De la recomendación a la acción
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura

@@ -41,6 +41,20 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Contenido · S2·U2, la arquitectura cognitiva (batch 20)
+- 25 ítems, 105 minutos: la unidad más larga del curso. El diagrama de
+  secuencia recorrible por fin tiene sus trece explicaciones.
+- **El receso se movió al medio.** El esqueleto lo tenía al final, dejando
+  noventa minutos seguidos de grafo; la segunda parte es la difícil.
+- Cuatro ítems seguidos construyen el argumento de `revision`: las tres salidas
+  de la reflexión, el tope de vueltas, por qué hace falta el nodo, y la cita
+  real donde el agente sabía la respuesta con el titular en `sin_hallazgos`.
+  La comparación cierra con el detalle que más cuesta creer: no miró una
+  herramienta más.
+- Las dos trampas de cableado, anticipadas por ser **mudas**: el estado que no
+  se propaga, y `ToolNode` leyendo `messages` en vez de `mensajes` — el agente
+  responde perfectamente y no ejecutó ni una herramienta.
+
 ### Contenido · S2·U1, qué le faltaba al bucle (batch 19)
 - 8 ítems, 25 minutos. Abre el domingo emparejando cada patología del sábado
   con la capa que la resuelve, y presenta el grafo sin explicarlo.

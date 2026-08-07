@@ -1362,3 +1362,93 @@ sitúa al lado del nodo con el que habla.
 - `npm run validar-contenido` pasa: 41 ítems en la sesión 2, 240 minutos.
 - `npm run humo`: 127 pantallas, 0 con error.
 - Comprobado en el navegador: el grafo en sus dos versiones, y la tabla.
+
+---
+
+## Batch 20 — Contenido · S2·U2 `reto` — La arquitectura cognitiva
+**2026-08-07**
+
+El corazón del taller: cada nodo hace un trabajo y solo uno, y una reflexión
+que no puede corregir es decorativa. La unidad más larga del curso.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] El diagrama de secuencia se recorre paso a paso
+- [ ] Se explica **por qué existe `revision`** con el caso real
+- [ ] Las dos trampas de cableado quedan anticipadas
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 105 de la unidad (90 de contenido + receso)
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### 25 ítems, 105 minutos
+
+El esqueleto tenía 14. Los once nuevos no son relleno: cada uno cierra un
+hueco que se veía al escribir el de al lado.
+
+**El diagrama de secuencia es la pieza central**, y por fin tiene sus trece
+explicaciones. Las dos que importan son la 7 —la reflexión devolviendo el
+control a percepción— y la 10, la crítica que queda en pie; las notas privadas
+dicen que hay que dejarlas respirar y que el resto es tubería. Recorrerlo son
+12 de los 90 minutos.
+
+**El receso se movió al medio.** El esqueleto lo tenía al final de la unidad,
+lo que dejaba noventa minutos seguidos de grafo. El brief pedía "receso a
+mitad" y tiene razón: la segunda parte —por qué existe `revision`— es la
+difícil, y nadie la sigue después de hora y media sin parar.
+
+### La cadena que explica `revision`
+
+Cuatro ítems seguidos construyen el argumento, y ese orden es la unidad:
+
+1. **`_tras_reflexion`**, las tres salidas. Toda la arquitectura cabe en cinco
+   líneas de código.
+2. **`MAX_VUELTAS = 2`** — un agente que puede pedir más evidencia
+   indefinidamente no termina. El tope no es una limitación técnica: es la
+   decisión de que en algún momento hay que emitir.
+3. **Por qué existe `revision`** — sin ese nodo, cuando la crítica demuele el
+   diagnóstico y se acaban las vueltas, el agente emite igual la hipótesis
+   demolida. Y las recomendaciones se calculan sobre ese titular, o sea sobre
+   lo que su propia crítica ya declaró insostenible.
+4. **La cita real**: *"Tengo banderas de sesgo encendidas en 8/8 categorías y
+   4/5 regiones. SÍ hay hallazgo: hay DERIVA"* — dicha con el titular en
+   `sin_hallazgos`. Sabía la respuesta y el grafo no lo dejaba decirla.
+
+La `comparacion` del antes y después cierra con el detalle que más cuesta
+creer: **no miró una herramienta más**. La instrucción de `revision` lo dice
+explícitamente — con la evidencia que hay alcanza, y es la misma que sostiene
+las objeciones.
+
+### Las dos trampas, anticipadas
+
+Las dos son **mudas**, y esa es la razón de dedicarles ocho minutos:
+
+- **El estado que no se propaga**: el agente responde bien y perdió el encargo.
+- **`ToolNode` lee `messages`, no `mensajes`**: el agente responde
+  perfectamente y no ejecutó ni una herramienta. El diagnóstico está escrito
+  sobre la nada.
+
+La nota de la segunda añade lo que no es obvio: quien escriba el estado en
+inglés no las sufre, y la conclusión no es "escriban en inglés" sino que un
+nombre distinto al que espera una librería es una trampa que no avisa.
+
+### Otros ítems nuevos
+
+- **`s2-r4-los-seis`**, la tabla de nodos, resaltando `accion` porque es el
+  único sin LLM — siembra el reto 5.
+- **`s2-r4-estado-por-que`**: `add_messages` es una anotación de tres palabras
+  y es la diferencia entre un grafo y seis llamadas independientes.
+- **`s2-r4-alcance`**: la forma importa más que el tamaño. Ocho categorías con
+  bandera no son ocho problemas, son uno — que es exactamente lo que separa el
+  escenario de la campaña del sesgo silencioso.
+- **`s2-r4-feed-caido`**: "vendimos cero" y "no sabemos cuánto vendimos" son
+  cosas distintas. Es el cuarto mundo del criterio y el que más gente falla.
+- **`s2-r4-memoria-tres`**: las tres frases que un tablero nunca dice. Es el
+  argumento más fácil de vender a quien ya tiene un dashboard.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 52 ítems en la sesión 2, 240 minutos.
+- `npm run humo`: 138 pantallas, 0 con error — incluidos los 14 pasos del
+  diagrama de secuencia.
+- Comprobado en el navegador el recorrido del diagrama, mensaje 7 y mensaje 10.
