@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "validar-contenido": "tsx scripts/validar-contenido.ts",
     "test": "node --import tsx --test src/lib/*.test.ts",
-    "humo": "node --import tsx scripts/humo.mjs"
+    "humo": "node --import tsx scripts/humo.mjs",
+    "qr": "node --import tsx scripts/generar-qr.mjs",
+    "qr:leer": "node --import tsx scripts/verificar-qr.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
@@ -33,6 +35,8 @@
     "@types/react-dom": "^19.0.2",
     "eslint": "^9.17.0",
     "eslint-config-next": "^16.3.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.23.9",
     "typescript": "^5.7.2"

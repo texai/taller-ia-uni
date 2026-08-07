@@ -5,6 +5,20 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La portada, y cómo entran los alumnos
+- Fuera el título **«Cursos»**: hay uno solo, y encabezar la página con el
+  plural de algo que no se repite es una etiqueta que no informa.
+- Dos tarjetas. La izquierda es el curso; la derecha existe para el primer
+  minuto de clase, proyectada: **un código QR** y la dirección escrita.
+- El QR se genera a un archivo (`npm run qr`), no en el navegador. La portada
+  se proyecta justo cuando el aula puede no tener red, y un QR que depende de
+  cargar una librería es un QR que a veces no aparece.
+- La dirección vive en un solo sitio, `src/lib/sitio.ts`, de donde salen el
+  enlace y el QR. Y `npm run qr:leer` lo **decodifica desde la página servida**
+  y falla si no lleva a donde debe: un QR es opaco, y el momento de enterarse
+  no puede ser con veinte personas escaneándolo.
+
+
 ### Las tres herramientas que faltaban (batch 36)
 - De las siete herramientas de percepción, tres nunca se mostraban:
   `listar_modelos` y `detalle_modelo` no aparecían, y `agregado_por` estaba

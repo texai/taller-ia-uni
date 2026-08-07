@@ -79,6 +79,7 @@ npm test          # unitarias, sin navegador
 npm run lint
 npm run build     # incluye la validación del contenido
 npm run humo      # abre TODOS los ítems en un navegador de verdad
+npm run qr:leer   # lee el QR de la portada y comprueba a dónde lleva
 ```
 
 `humo` es la única que ve los fallos de hidratación —una lámina que se
@@ -97,6 +98,19 @@ npm i -D playwright && npx playwright install chromium
 Lo busca instalado localmente, luego en `PLAYWRIGHT_MODULO` si esa variable
 apunta a uno ya instalado, y si no lo encuentra lo dice con el comando de
 arriba en vez de reventar.
+
+### El código QR de la portada
+
+Se genera una vez a un archivo, no en el navegador:
+
+```bash
+npm run qr        # regenera public/contenido/img/qr.svg
+```
+
+La dirección sale de `src/lib/sitio.ts`, que es la única copia. Si cambia el
+dominio, se cambia ahí y se regenera. `npm run qr:leer` lo decodifica **desde
+la página servida** y falla si no lleva a donde debe: un QR es opaco, y
+mirándolo no se distingue el correcto del que apunta a otro sitio.
 
 ### Las políticas de Supabase
 
