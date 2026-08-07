@@ -17,6 +17,8 @@
  * propio canal.
  */
 
+import type { Solucion } from "./tipos";
+
 export interface Pauta {
   /** Identificador del ítem donde va la clase. */
   itemId: string;
@@ -127,6 +129,14 @@ export interface Revelado {
   total: number;
   /** La correcta, si la pregunta la tenía. Sale del servidor solo acá. */
   correcta?: string;
+  /**
+   * Por qué es la correcta.
+   *
+   * Viaja en el revelado y no con la carga de la página, por lo mismo que
+   * `correcta`: si estuviera en el HTML, cualquiera la leería antes de
+   * contestar. Es el único momento en que sale del servidor.
+   */
+  solucion?: Solucion;
   momento: number;
 }
 
@@ -171,6 +181,7 @@ export function contar(
   respuestas: RespuestaAlumno[],
   preguntaId: string,
   correcta?: string,
+  solucion?: Solucion,
 ): Revelado {
   const suyas = respuestas.filter((r) => r.preguntaId === preguntaId);
 
@@ -199,6 +210,7 @@ export function contar(
     omitidas,
     total: porAlumno.size,
     correcta,
+    solucion,
     momento: Date.now(),
   };
 }

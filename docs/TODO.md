@@ -265,39 +265,6 @@ cómo se enseñan los comandos y no cabe antes del sábado.
 
 ---
 
-## Batch 23 — La solución dentro del ítem de pregunta
-
-Preguntar a la clase y revelar el resultado sin explicar por qué esa es la
-respuesta deja el momento a medias. Hoy la explicación existe, pero vive en las
-`notas` privadas del docente — que por diseño **no se proyectan**. La clase ve
-el conteo y la opción marcada, y el razonamiento se lo tiene que dar el docente
-de memoria.
-
-**Alcance**
-- [ ] Campo nuevo en `ItemPregunta` para la solución, con su explicación
-- [ ] Se muestra **solo después del revelado**, nunca antes (`CONVENTIONS.md` §12)
-- [ ] Se filtra del cliente del alumno hasta que el revelado ocurre, igual que
-      `respuesta` — no basta con no dibujarlo
-- [ ] Admite explicar también **por qué las otras opciones no**, que suele ser
-      donde está la enseñanza
-- [ ] Los cuatro ítems `pregunta` del curso ganan su solución
-- [ ] `npm run validar-contenido` y `npm run humo` pasan
-
-**Decisión a tomar al implementar**
-Si la solución viaja en el mensaje de revelado —como ya hace `correcta`— o si
-se filtra en el servidor y se entrega con la carga. Lo primero es coherente con
-lo que existe; lo segundo evita un mensaje grande por el canal. Decidir mirando
-`vivo.ts`, no de antemano.
-
-**Tests esperados**
-- [ ] La carga del alumno no lleva la solución antes del revelado
-- [ ] El revelado la incluye
-
-**Fuera de alcance**
-- Cambiar cómo se cuenta o se revela. Eso es el batch 10 y funciona.
-
----
-
 ## Batch 24 — El caso, como contenedor propio
 
 Los cinco retos ocurren dentro de un mismo caso: una cadena de retail, 192
@@ -344,31 +311,42 @@ Hoy, de 26 comandos, 22 son `make X` sin abrir. Lo que `make` esconde:
 
 Y hay un ítem en todo el curso que muestra una salida, sin anotar.
 
+### La decisión ya está tomada
+
+**No hace falta un tipo nuevo para las capas.** Para explicar lo que `make`
+envuelve bastan **dos `comando-anotado` seguidos**: el que se teclea y el que
+eso ejecuta de verdad. Cada uno con sus segmentos, y el recorrido por pasos que
+ya funciona desde el batch 14. Un tipo que represente "capas" sería maquinaria
+nueva para algo que la composición de ítems ya resuelve.
+
+Lo que sí falta es **poder anotar una salida**, que hoy no existe en ningún
+tipo: `terminal` tiene un campo `salida` que se dibuja en bloque, sin señalar
+nada.
+
 **Alcance**
-- [ ] Un ítem tiene que poder mostrar **las capas de un comando**: lo que se
-      teclea, lo que eso ejecuta de verdad, y lo que eso encadena
-- [ ] Cada capa se recorre con los `pasos` del batch 6, como `comando-anotado`
-- [ ] Una **salida anotada**: poder señalar partes de lo que imprime el comando
-      y explicar qué significa cada una
-- [ ] Sirve igual para `docker compose`, para `python -m`, para `curl` y para
-      la salida de un entrenamiento
-- [ ] Los conceptos que hoy no se explican en ninguna parte quedan cubiertos por
-      el tipo: servicio contra contenedor, `run --rm` contra `up -d`, qué es un
-      volumen y qué borra `-v`, qué significa `--profile`
+- [ ] Una salida se puede anotar por segmentos, igual que un comando: señalar
+      un trozo de lo que imprime y explicar qué significa
+- [ ] Se apoya en los `pasos` del batch 6 y reutiliza la maquinaria de
+      `anotaciones.ts`, que ya sabe ubicar y trocear por texto
+- [ ] Un segmento de salida que no aparece en la salida falla en validación,
+      igual que uno de comando
+- [ ] Funciona para la salida de `make seed`, de una corrida verbosa del
+      agente, y de un `docker compose ps`
 
 **Decisión a tomar al implementar**
-Si esto es un tipo nuevo, o si `comando-anotado` crece con un campo de capas y
-otro de salida. Lo segundo reutiliza el recorrido por pasos que ya funciona;
-lo primero evita un tipo que hace dos cosas. Mirar cuánto se parecen de verdad
-antes de decidir.
+Si `comando-anotado` crece con una salida anotable, o si la salida anotada es
+su propio tipo. A favor de lo primero: un comando y su salida se explican
+juntos y se recorrerían en una sola secuencia de pasos. A favor de lo segundo:
+hay salidas que valen por sí solas —la de `make seed`— y forzarlas a colgar de
+un comando las obliga a repetirlo.
 
 **Tests esperados**
-- [ ] Las capas se recorren en orden y ninguna se pierde
-- [ ] Una anotación de salida que no aparece en la salida falla en validación,
-      igual que un segmento de comando que no existe
-- [ ] El número de pasos coincide con capas más segmentos más uno
+- [ ] Una anotación que no aparece en la salida falla nombrándola
+- [ ] Una anotación ambigua —aparece dos veces— falla como ambigua
+- [ ] El número de pasos incluye los segmentos de la salida
 
 **Fuera de alcance**
+- Un tipo para las capas de un comando. Se resuelve con dos ítems seguidos.
 - El contenido. Esto deja el tipo listo; escribirlo es 26 y 27.
 
 ---
@@ -376,6 +354,9 @@ antes de decidir.
 ## Batch 26 — Los comandos, desenvueltos · contenido de la sesión 1
 
 **Depende del batch 25.**
+
+Cada comando envuelto se explica con **dos `comando-anotado` seguidos**: el que
+se teclea y el que eso ejecuta de verdad. No hace falta nada más.
 
 **Alcance**
 - [ ] `make arriba` y `make seed`, abiertos hasta el fondo, incluido qué

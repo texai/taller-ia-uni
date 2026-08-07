@@ -41,6 +41,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### La solución dentro del ítem de pregunta (batch 23)
+- `ItemPregunta` gana `solucion`, con su explicación y sus `descartes` — por qué
+  las otras opciones no, que en tres de las cuatro preguntas del curso es donde
+  está el razonamiento interesante.
+- **Viaja dentro del revelado**, no con la carga de la página: es el mismo trato
+  que `correcta`, y por la misma razón — en el HTML cualquiera la leería antes
+  de contestar. `solucion` entra en `CAMPOS_PRIVADOS`.
+- Los descartes se anclan por el texto de la opción y el cargador exige que
+  exista: uno inventado se dibujaría igual y parecería una opción más.
+- Las cuatro preguntas del curso ganan la suya.
+
+### Batch 25, simplificado antes de implementarlo
+- Decisión del docente: para explicar lo que `make` envuelve **no hace falta un
+  tipo de "capas"** — bastan dos `comando-anotado` seguidos, el que se teclea y
+  el que eso ejecuta. El batch queda reducido a lo que sí falta: **poder anotar
+  una salida**, que hoy no existe en ningún tipo.
+
 ### Auditoría del contenido, y una segunda ronda de ocho batches
 - Revisado el material completo —131 ítems— contra seis requisitos del docente:
   **cinco no estaban y uno estaba a medias.** Ninguno era un fallo de ejecución

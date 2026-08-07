@@ -161,6 +161,48 @@ export function Pregunta({
           {suyo.omitidas > 0 &&
             ` · ${suyo.omitidas} prefirieron no responder`}
         </p>
+
+        {/*
+          La solución, y solo acá.
+
+          Llega dentro del revelado, no con la carga de la página: antes de que
+          el docente lo decida, esta explicación no existe en ningún navegador.
+          Preguntar y mostrar el conteo sin decir por qué deja el momento a
+          medias — la clase ve qué eligió la mayoría y no ve el razonamiento.
+        */}
+        {suyo.solucion && (
+          <div
+            className="mt-10 border-l-2 pl-6"
+            style={{ borderColor: "var(--color-acento)" }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: "var(--color-acento)" }}
+            >
+              Por qué
+            </p>
+            <p className="mt-3 whitespace-pre-line text-xl leading-relaxed">
+              {suyo.solucion.explicacion}
+            </p>
+
+            {suyo.solucion.descartes?.length ? (
+              <ul className="mt-6 space-y-3">
+                {suyo.solucion.descartes.map((d) => (
+                  <li key={d.opcion} className="text-lg leading-relaxed">
+                    <span
+                      className="font-semibold"
+                      style={{ color: "var(--tinta-suave)" }}
+                    >
+                      {d.opcion}
+                    </span>
+                    <span style={{ color: "var(--tinta-suave)" }}> — </span>
+                    <span style={{ color: "var(--tinta-suave)" }}>{d.razon}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        )}
       </Envoltura>
     );
   }

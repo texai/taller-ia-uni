@@ -1602,3 +1602,80 @@ permiso de nadie. Es lo que queda si mañana no vuelven a tocar LangGraph.
 - `npm run validar-contenido` pasa: 131 ítems, 480 minutos, sin avisos.
 - `npm run humo`: 150 pantallas, 0 con error.
 - **Cero `Pendiente — batch` en los dos archivos de sesión.**
+
+---
+
+## Batch 23 — La solución dentro del ítem de pregunta
+**2026-08-07**
+
+Preguntar a la clase y revelar el resultado sin explicar por qué esa es la
+respuesta deja el momento a medias.
+
+**Alcance** (todo hecho)
+- [ ] Campo nuevo en `ItemPregunta` para la solución, con su explicación
+- [ ] Se muestra solo después del revelado
+- [ ] Se filtra del cliente del alumno hasta que el revelado ocurre
+- [ ] Admite explicar por qué las otras opciones no
+- [ ] Los cuatro ítems `pregunta` del curso ganan su solución
+- [ ] Validación y prueba de humo pasan
+
+---
+
+### La decisión: viaja en el revelado, no con la carga
+
+Era la pregunta abierta del batch. Se resolvió mirando `vivo.ts`: `correcta` ya
+viaja dentro del mensaje de revelado, y por una razón que vale igual para la
+solución — **si estuviera en el HTML, cualquiera con las herramientas de
+desarrollador abiertas la leería antes de contestar.**
+
+Filtrarla en el servidor y entregarla con la carga habría necesitado un segundo
+mecanismo para el mismo problema. Ahora `solucion` está en `CAMPOS_PRIVADOS`
+junto a `notas` y `respuesta`, y sale del servidor una sola vez: dentro del
+`Revelado` que publica el docente.
+
+El tamaño del mensaje no es un problema — una explicación son cientos de
+caracteres contra el cuarto de megabyte que admite un broadcast.
+
+### La forma del campo
+
+```yaml
+solucion:
+  explicacion: |
+    ...
+  descartes:
+    - opcion: El MAPE
+      razon: Mide distancia, no dirección
+```
+
+**Los `descartes` no estaban en el alcance con esa forma**, y resultaron ser la
+mitad del valor. Descartar bien una opción plausible enseña más que confirmar
+la correcta, y en tres de las cuatro preguntas del curso el razonamiento
+interesante está justamente ahí: por qué "el sesgo" tampoco alcanza, por qué
+"más herramientas" no era el problema.
+
+Se anclan **por texto de la opción**, y el cargador exige que exista: un
+descarte que nombra una opción inexistente se dibujaría igual, y en clase
+parecería que la pregunta ofrecía una opción más de las que se ofrecieron.
+
+### Las cuatro soluciones
+
+- **`s1-pregunta-hoy`** no tiene respuesta correcta —es un retrato de la sala—
+  y aun así gana solución: lo que importa es que casi siempre gana "cuando se
+  queja el negocio", que no es un mecanismo de detección sino la factura.
+- **`s1-r1-pregunta`** es la que más rinde. Los tres descartes explican por qué
+  el sesgo tampoco alcanza: en la campaña se movió en la dirección contraria, y
+  una tienda muda no mueve ninguna de las dos señales.
+- **`s1-r3-pregunta`** no lleva `respuesta` a propósito, y la solución lo dice:
+  las tres últimas opciones son piezas reales de lo que se construye el
+  domingo. Si tuviera que ir una sola, memoria — es la única sin sustituto.
+- **`s2-pregunta-agregar`** aprovecha para sembrar la unidad siguiente:
+  reflexión aparece en dos filas de la tabla, pero esa segunda fila dice
+  reflexión **más** revisión.
+
+**Verificación**
+- `npm test` (115 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 150 pantallas, 0 con error.
+- **Falta verlo revelado en vivo.** El render de la solución solo ocurre con un
+  `Revelado` en el canal, y la red de este contenedor no llega a Supabase. Los
+  tests cubren que la solución viaja en el revelado y solo ahí; lo que falta es
+  verla en pantalla.

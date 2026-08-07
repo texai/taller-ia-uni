@@ -562,6 +562,30 @@ test("dos segmentos que se pisan fallan al cargar", () => {
   );
 });
 
+test("un descarte que nombra una opción inexistente falla", () => {
+  // Se dibujaría igual, y en clase parecería que la pregunta tenía una opción
+  // más de las que se ofrecieron.
+  const items = `
+      - id: p
+        tipo: pregunta
+        titulo: Una pregunta
+        pregunta: ¿Cuál?
+        opciones: ["A", "B"]
+        solucion:
+          explicacion: es la A
+          descartes:
+            - opcion: "C"
+              razon: no existe
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /descarta `C`, que no es una de las opciones/);
+    },
+  );
+});
+
 // --------------------------------------------------------------------------
 // La invariante, sobre el contenido REAL del curso
 // --------------------------------------------------------------------------
@@ -576,6 +600,7 @@ test("el curso real no filtra notas ni respuestas hacia el alumno", () => {
 
   assert.doesNotMatch(publico, /"notas"/);
   assert.doesNotMatch(publico, /"respuesta"/);
+  assert.doesNotMatch(publico, /"solucion"/);
   assert.doesNotMatch(publico, /"tipo":"asistencia"/);
 
   // Y que no esté vacío: una carga rota también pasaría las tres de arriba.
@@ -589,4 +614,5 @@ test("las notas SÍ están en la carga del docente", () => {
   // hasta proyectarlo.
   const crudo = JSON.stringify(mod.cargarCurso());
   assert.match(crudo, /"notas"/);
+  assert.match(crudo, /"solucion"/);
 });

@@ -166,6 +166,29 @@ unidades:
           Si gana memoria: buena señal, es la que más gente reconoce de su
           propio trabajo. Si gana revisión, es que leyeron bien la fila
           resaltada. Cualquiera de las dos abre la unidad siguiente.
+        solucion:
+          explicacion: |
+            Reflexión, y por la tabla: aparece en dos de las cuatro filas.
+            Ataca la patología de concluir con lo primero que encuentra —porque
+            devuelve el control a percepción cuando le falta evidencia— y la de
+            dramatizar, porque es donde el agente se pilla a sí mismo.
+
+            Pero fíjense en lo que dice esa segunda fila: reflexión **más**
+            revisión. Cuestionarse sin poder corregirse no sirve de nada, y esa
+            es la unidad que viene.
+          descartes:
+            - opcion: Percepción
+              razon: >-
+                Arregla una, la de ordenar por la señal ruidosa, y eso ya lo
+                hicieron ayer en la herramienta.
+            - opcion: Revisión
+              razon: >-
+                Imprescindible, pero sola no hace nada: no hay qué reescribir
+                si nadie objetó antes.
+            - opcion: Memoria
+              razon: >-
+                Arregla una, y es la única sin sustituto. Buena respuesta si
+                fue la suya — pero cubre una patología, no dos.
 
   # ------------------------------------------------------------------ 09:25
   - id: s2-reto-4

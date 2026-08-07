@@ -313,6 +313,24 @@ export interface ItemPregunta extends ItemBase {
   permiteOmitir?: boolean;
   /** `privada` por omisión: el recuento solo llega a la segunda pantalla. */
   visibilidad?: "privada" | "publica";
+  /**
+   * Por qué esa es la respuesta. Se muestra SOLO tras el revelado.
+   *
+   * Preguntar y revelar sin explicar deja el momento a medias: la clase ve qué
+   * eligió la mayoría y no ve el razonamiento. Antes esto vivía en las `notas`
+   * privadas del docente, que por diseño no se proyectan — o sea que la
+   * explicación existía y la clase nunca la veía.
+   */
+  solucion?: Solucion;
+}
+
+export interface Solucion {
+  explicacion: string;
+  /**
+   * Por qué las otras no. Suele ser donde está la enseñanza: descartar bien
+   * una opción plausible enseña más que confirmar la correcta.
+   */
+  descartes?: { opcion: string; razon: string }[];
 }
 
 // --------------------------------------------------------------------------

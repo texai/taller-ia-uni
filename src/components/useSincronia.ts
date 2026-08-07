@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 import { clienteNavegador, HAY_SUPABASE } from "@/lib/supabase";
+import type { Solucion } from "@/lib/tipos";
 import {
   canalDePreguntas,
   canalDeRespuestas,
@@ -317,10 +318,10 @@ export function useSincronia({
    * porque a esa altura no queda a quién sesgar.
    */
   const revelar = useCallback(
-    (preguntaId: string, correcta?: string) => {
+    (preguntaId: string, correcta?: string, solucion?: Solucion) => {
       const c = canal.current;
       if (!c || !esDocente) return;
-      const cuenta = contar(respuestas, preguntaId, correcta);
+      const cuenta = contar(respuestas, preguntaId, correcta, solucion);
       setRevelado(cuenta);
       void c.send({ type: "broadcast", event: EVENTO_REVELADO, payload: cuenta });
     },

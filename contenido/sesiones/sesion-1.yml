@@ -394,6 +394,31 @@ unidades:
           Revelar recién cuando hayan respondido todos. "Cuando se queja el
           negocio" suele ganar, y es la mejor entrada posible al reto 1: para
           cuando el negocio se queja, el sobre-stock ya está comprado.
+        solucion:
+          explicacion: |
+            Acá no hay respuesta correcta: es un retrato de la sala. Lo que
+            importa es que casi siempre gana "cuando se queja el negocio", y esa
+            es la peor de las cuatro — porque para cuando el negocio se queja,
+            el sobre-stock ya está comprado y las semanas ya pasaron.
+          descartes:
+            - opcion: Un tablero con umbrales
+              razon: >-
+                Es lo que suena mejor y es lo que va a fallar hoy: un umbral
+                sobre el MAPE no ve el sesgo silencioso. Lo vamos a comprobar
+                en el reto 1.
+            - opcion: Alguien revisa a mano
+              razon: >-
+                Funciona hasta que hay 192 modelos. Es exactamente lo que
+                vamos a intentar en la próxima hora, para sentir dónde deja de
+                escalar.
+            - opcion: Cuando se queja el negocio
+              razon: >-
+                No es un mecanismo de detección: es la factura. Llega semanas
+                después del problema.
+            - opcion: No nos enteramos
+              razon: >-
+                La respuesta más honesta, y más común de lo que parece. Es el
+                punto de partida de este taller.
 
       - id: s1-repaso-preguntas
         tipo: pausa-preguntas
@@ -640,6 +665,30 @@ unidades:
           No revelar hasta que hayan respondido todos. Después de revelar, la
           frase de cierre: no falta una métrica mejor, falta algo que mire
           varias a la vez y sepa cuál importa hoy.
+        solucion:
+          explicacion: |
+            Ninguno de los dos solo.
+
+            Acaban de ver que el MAPE no vio el sesgo silencioso. Pero el sesgo
+            tampoco alcanza: en la campaña promocional se movió en la dirección
+            CONTRARIA —el modelo pronosticó de menos, no de más— y una tienda
+            que deja de reportar no mueve ninguna de las dos señales.
+
+            No falta una métrica mejor. Falta algo que mire varias a la vez y
+            sepa cuál importa hoy.
+          descartes:
+            - opcion: El MAPE
+              razon: >-
+                Se movió 0.7 puntos con 36 mil unidades de sobre-stock encima.
+                Mide distancia, no dirección.
+            - opcion: El sesgo
+              razon: >-
+                Habría cazado el silencioso, sí. Pero en la campaña el sesgo se
+                fue a −32%, y un umbral por arriba no lo habría visto.
+            - opcion: Los dos
+              razon: >-
+                Mejor, y todavía insuficiente: la tienda muda no mueve ninguna
+                de las dos. Dos umbrales siguen siendo umbrales.
 
       - id: s1-r1-cuanto-tardas
         tipo: markdown
@@ -1229,6 +1278,32 @@ unidades:
 
           Revelar y dejar que discutan. Si gana "memoria", perfecto — es el
           único que no se puede simular con nada más.
+        solucion:
+          explicacion: |
+            Las tres últimas son piezas reales de lo que construimos mañana, y
+            las tres hacen falta. La primera es la que hay que descartar, y es
+            la que casi todo el mundo intenta primero.
+
+            Si tuviera que ir una sola: memoria. Es la única que no se puede
+            simular con nada más — ninguna instrucción hace que la corrida de
+            mañana sepa lo que dijo la de hoy.
+          descartes:
+            - opcion: Un prompt más detallado
+              razon: >-
+                Quince reglas se cumplen a medias y cuáles se olvidan cambia en
+                cada corrida. Y no hay forma de comprobar que las cumplió.
+            - opcion: Que critique su propio diagnóstico antes de emitirlo
+              razon: >-
+                Hace falta, y es lo primero que construimos. Pero criticar sin
+                poder corregir deja el diagnóstico contradiciendo a sus propias
+                objeciones — por eso mañana son dos nodos, no uno.
+            - opcion: Memoria de lo que ya reportó
+              razon: >-
+                La que más falta hace y la única que no tiene sustituto.
+            - opcion: Más herramientas
+              razon: >-
+                El agente ya llamó las correctas. El problema no fue que le
+                faltara con qué mirar; fue que no supo cuándo tenía suficiente.
 
       - id: s1-r3-golpe
         tipo: titulo

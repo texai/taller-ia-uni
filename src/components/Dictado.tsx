@@ -498,7 +498,7 @@ export function Dictado({
                     item.tipo === "pregunta" ? responder(item.id, v) : undefined,
                   onRevelar: () =>
                     item.tipo === "pregunta"
-                      ? revelar(item.id, item.respuesta)
+                      ? revelar(item.id, item.respuesta, item.solucion)
                       : undefined,
                 }}
               />

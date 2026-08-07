@@ -71,3 +71,26 @@ test("la correcta solo aparece en el revelado", () => {
   assert.equal(contar([], "p1").correcta, undefined);
   assert.equal(contar([], "p1", "sesgo").correcta, "sesgo");
 });
+
+// --------------------------------------------------------------------------
+// La solución
+// --------------------------------------------------------------------------
+
+test("la solución viaja en el revelado, y solo ahí", () => {
+  // Es el mismo trato que `correcta`: no existe en ningún navegador hasta que
+  // el docente decide mostrarla.
+  const solucion = { explicacion: "porque el sesgo mide dirección" };
+  const sin = contar([], "p1", "El sesgo");
+  const con = contar([], "p1", "El sesgo", solucion);
+  assert.equal(sin.solucion, undefined);
+  assert.deepEqual(con.solucion, solucion);
+});
+
+test("los descartes sobreviven al recuento", () => {
+  const solucion = {
+    explicacion: "ninguno solo",
+    descartes: [{ opcion: "El MAPE", razon: "mide distancia" }],
+  };
+  const r = contar([], "p1", undefined, solucion);
+  assert.equal(r.solucion?.descartes?.[0]?.opcion, "El MAPE");
+});

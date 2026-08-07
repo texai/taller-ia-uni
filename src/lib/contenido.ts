@@ -251,6 +251,20 @@ function validacionesExtra(item: Item, donde: string, problemas: string[]) {
     }
   }
 
+  if (item.tipo === "pregunta" && item.solucion?.descartes?.length) {
+    // Un descarte que nombra una opción inexistente se dibuja igual, y en
+    // clase parece que la pregunta tenía una opción más. Se ancla por texto,
+    // como los segmentos de un comando.
+    for (const d of item.solucion.descartes) {
+      if (!(item.opciones ?? []).includes(d.opcion)) {
+        problemas.push(
+          `${donde}: la solución descarta \`${d.opcion}\`, que no es una de ` +
+            `las opciones de la pregunta`,
+        );
+      }
+    }
+  }
+
   if (item.tipo === "tabla") {
     const ancho = item.columnas.length;
     item.filas.forEach((fila, i) => {

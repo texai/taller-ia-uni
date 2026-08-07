@@ -104,7 +104,13 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   pregunta: {
     requeridos: ["pregunta"],
-    opcionales: ["opciones", "respuesta", "permiteOmitir", "visibilidad"],
+    opcionales: [
+      "opciones",
+      "respuesta",
+      "permiteOmitir",
+      "visibilidad",
+      "solucion",
+    ],
   },
 };
 
@@ -115,7 +121,14 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
  * enviarla antes del revelado la convierte en un ejercicio de inspeccionar el
  * HTML. Ver `docs/CONVENTIONS.md` §3.
  */
-export const CAMPOS_PRIVADOS = ["notas", "respuesta"] as const;
+/**
+ * Lo que nunca viaja al navegador del alumno con la carga de la página.
+ *
+ * `solucion` está acá por la misma razón que `respuesta`: si viajara con el
+ * HTML, cualquiera con las herramientas de desarrollador abiertas leería la
+ * explicación antes de contestar. Llega por el canal, dentro del revelado.
+ */
+export const CAMPOS_PRIVADOS = ["notas", "respuesta", "solucion"] as const;
 
 /** Campos que apuntan a un archivo bajo `contenido/`. */
 export const CAMPOS_DE_ARCHIVO = ["archivo"] as const;
