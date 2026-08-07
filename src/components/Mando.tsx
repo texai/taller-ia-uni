@@ -224,24 +224,26 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
           puede={Boolean(actual)}
         />
 
-        <Reloj
-          sesion={sesion}
-          pos={pos}
-          desde={actual?.momento ?? null}
-          item={item}
-          tic={tic}
-          inicio={inicio}
-          arrancada={Boolean(arranque)}
-          onArrancar={marcar}
-        />
+        {/*
+          El orden de esta columna es el de la mano del docente, y por eso no
+          es el orden natural de una pantalla.
 
-        <Avisos avisos={avisos} />
+          Al cambiar de lámina lo primero que hace falta es **qué decir**: las
+          notas. Después, de reojo, **si se va tarde**. Y solo entonces el
+          botón de avanzar, que además casi nunca se usa —se avanza con las
+          flechas del teclado, que están atadas a la ventana entera y funcionan
+          desde cualquier sitio de la página.
+
+          Antes iban al revés: reloj, avisos, y un bloque que mezclaba el
+          título con los botones; las notas quedaban debajo de todo eso y había
+          que bajar la vista para encontrar lo único que se lee en cada
+          transición. Lo que sí se queda arriba es la identidad de la lámina
+          —qué unidad, qué título, cuál de cuántas—, porque unas notas sin
+          saber de qué lámina son no se pueden leer.
+        */}
 
         {/* ------------------------------------------------ dónde va la clase */}
-        <section
-          className="mt-4 rounded-xl border p-5"
-          style={{ borderColor: "var(--borde)", background: "var(--lienzo-alto)" }}
-        >
+        <section className="mt-4 px-1">
           <p className="text-xs uppercase tracking-wider" style={{ color: "var(--tinta-suave)" }}>
             {unidad ? `${unidad.tipo} · ${unidad.titulo}` : "Sesión"}
           </p>
@@ -256,47 +258,6 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
 
           {item?.entradilla && (
             <p className="mt-3 text-base leading-relaxed">{item.entradilla}</p>
-          )}
-
-          <div className="mt-5 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => mover(-1)}
-              disabled={!actual}
-              className="flex-1 rounded-lg border px-5 py-4 text-lg disabled:opacity-40"
-              style={{ borderColor: "var(--borde)" }}
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              onClick={() => mover(1)}
-              disabled={!actual}
-              className="flex-[2] rounded-lg border px-5 py-4 text-lg font-medium disabled:opacity-40"
-              style={{
-                borderColor: "var(--color-acento)",
-                color: "var(--color-acento)",
-              }}
-            >
-              Siguiente →
-            </button>
-          </div>
-
-          {!actual && (
-            <div className="mt-4">
-              <p className="text-sm" style={{ color: "var(--color-aviso)" }}>
-                Todavía no llegó la posición de la pantalla principal. Si es la
-                primera vez que se abre la sesión, empieza desde acá.
-              </p>
-              <button
-                type="button"
-                onClick={() => emitir(INICIO, true)}
-                className="mt-3 rounded-lg border px-4 py-2 text-sm"
-                style={{ borderColor: "var(--color-aviso)", color: "var(--color-aviso)" }}
-              >
-                Empezar desde el principio
-              </button>
-            </div>
           )}
         </section>
 
@@ -333,6 +294,70 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
             </Prosa>
           </section>
         )}
+
+        {/* ------------------------------------------- el atraso, y los avisos */}
+        <Reloj
+          sesion={sesion}
+          pos={pos}
+          desde={actual?.momento ?? null}
+          item={item}
+          tic={tic}
+          inicio={inicio}
+          arrancada={Boolean(arranque)}
+          onArrancar={marcar}
+        />
+
+        <Avisos avisos={avisos} />
+
+        {/* ----------------------------------------------------- los controles */}
+        <section
+          className="mt-4 rounded-xl border p-4"
+          style={{ borderColor: "var(--borde)", background: "var(--lienzo-alto)" }}
+        >
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => mover(-1)}
+              disabled={!actual}
+              className="flex-1 rounded-lg border px-5 py-4 text-lg disabled:opacity-40"
+              style={{ borderColor: "var(--borde)" }}
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={() => mover(1)}
+              disabled={!actual}
+              className="flex-[2] rounded-lg border px-5 py-4 text-lg font-medium disabled:opacity-40"
+              style={{
+                borderColor: "var(--color-acento)",
+                color: "var(--color-acento)",
+              }}
+            >
+              Siguiente →
+            </button>
+          </div>
+          <p className="mt-2 text-center text-xs" style={{ color: "var(--tinta-suave)" }}>
+            O las flechas ← → del teclado, desde cualquier parte de la página
+          </p>
+
+          {!actual && (
+            <div className="mt-4">
+              <p className="text-sm" style={{ color: "var(--color-aviso)" }}>
+                Todavía no llegó la posición de la pantalla principal. Si es la
+                primera vez que se abre la sesión, empieza desde acá.
+              </p>
+              <button
+                type="button"
+                onClick={() => emitir(INICIO, true)}
+                className="mt-3 rounded-lg border px-4 py-2 text-sm"
+                style={{ borderColor: "var(--color-aviso)", color: "var(--color-aviso)" }}
+              >
+                Empezar desde el principio
+              </button>
+            </div>
+          )}
+        </section>
 
         {item?.tipo === "pregunta" && (
           <section className="mt-4 text-sm" style={{ color: "var(--tinta-suave)" }}>

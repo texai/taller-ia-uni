@@ -5,6 +5,20 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El mando, en el orden de la mano
+- Al cambiar de lámina lo primero que hace falta es **qué decir**. Las notas
+  privadas suben a lo más alto de la columna; debajo va **el atraso**, y los
+  botones de avanzar al final.
+- Iba al revés: reloj, avisos, y un bloque que mezclaba el título con los
+  botones — las notas quedaban debajo de todo eso, que es bajar la vista para
+  encontrar lo único que se lee en cada transición.
+- Lo que **sí** se queda arriba es la identidad de la lámina —qué unidad, qué
+  título, cuál de cuántas—, porque unas notas sin saber de qué lámina son no se
+  pueden leer. El bloque se partió en dos: identidad arriba, controles abajo.
+- Y los controles recuerdan que **las flechas del teclado siguen funcionando
+  desde cualquier parte de la página**, que es lo que evita que dejarlos abajo
+  cueste un desplazamiento con las notas largas.
+
 ### La respuesta correcta ya no se proyecta antes de preguntar
 - La pantalla del docente **se comparte por Zoom**, y en la lámina de pregunta
   pintaba la opción correcta en verde y con un ✓ **antes de enviarla**. La
