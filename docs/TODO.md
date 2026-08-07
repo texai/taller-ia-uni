@@ -236,47 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 15 — Contenido · S1·U1 `repaso` — Dónde encaja esto, y la flota de 192 modelos
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Situar el taller en el programa y hacer que la clase entienda qué es vigilar 192 modelos desplegados, antes de que aparezca ningún agente.
-
-**Duración** 60 minutos → del orden de 20 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- `README.md` del laboratorio — la sección *El caso*
-- `plataforma/config.py`, `datos.py`, `modelo.py` — cómo está hecha la flota
-- El sílabo y los módulos previos del programa
-
-**Tipos de ítem sugeridos**
-- `titulo` para la apertura
-- `transicion` con el mapa del programa: qué módulos ya vieron
-- `diagrama` de componentes de la solución completa: fuentes de datos, ingesta, entrenamiento, job batch, telemetría, y dónde entrará el agente
-- `modelo-datos` con las columnas de la telemetría
-- `terminal` con `make arriba` y `make seed`
-- `demo` de la interfaz en :8501
-- `asistencia` al inicio
-- `pausa-preguntas` al cerrar
-
-**Criterios de aceptación**
-- [ ] Explica qué es un artefacto entrenado y por qué la relación modelo↔contenedor no es 1 a 1
-- [ ] Deja claro que los 192 modelos vienen dados y no se tocan
-- [ ] Incluye el rescate de entornos rotos dentro de la unidad, no como bloque aparte
-- [ ] Define `cobertura`, `MAPE` y `sesgo` antes de usarlos
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 60 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 16 — Contenido · S1·U2 `reto` — Encontrar el problema a mano
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura

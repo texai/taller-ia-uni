@@ -978,3 +978,83 @@ está ahí por una razón, y esa razón es justamente lo que hay que enseñar.
 - Comprobado en el navegador sobre el comando real del curso, y **también con
   una versión temporal del mismo comando partida en tres líneas con `\`**,
   para ver que la llave cae bajo la línea que le toca y respeta la sangría.
+
+---
+
+## Batch 15 — Contenido · S1·U1 `repaso` — Dónde encaja esto, y la flota de 192 modelos
+**2026-08-07**
+
+La primera unidad escrita de verdad. Sitúa el taller en el programa y hace que
+la clase entienda qué es vigilar 192 modelos desplegados, antes de que aparezca
+ningún agente.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] Artefacto entrenado, y por qué modelo↔contenedor no es 1 a 1
+- [ ] Los 192 modelos vienen dados y no se tocan
+- [ ] El rescate de entornos rotos, dentro de la unidad
+- [ ] `cobertura`, `MAPE` y `sesgo` definidos antes de usarlos
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 60 de la unidad
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### Cómo quedó
+
+**21 ítems, 60 minutos exactos.** El esqueleto tenía 12 ítems de ~5 minutos
+cada uno; la §13 pide entre dos y cuatro, y partirlos no fue relleno: casi
+todos los ítems del esqueleto eran tres cosas juntas. `s1-metricas-definidas`
+declaraba "MAPE, sesgo y cobertura" en una sola lámina de cinco minutos, y las
+tres definiciones son justamente lo que el resto de la sesión usa — ahora son
+tres ítems, uno por métrica, y el del sesgo es una `comparacion` contra el MAPE
+porque la diferencia entre los dos ES el contenido.
+
+**El rescate quedó como tres `error-comun` en medio de la unidad**, después de
+`make arriba` y antes de la telemetría — no como un bloque aparte al principio.
+Salen de las incidencias reales registradas al preparar el laboratorio: el
+motor de Docker cerrado (W1/T5), el contenedor sirviendo el código con el que
+arrancó (T1) y el disco lleno (T3). El segundo lleva nota privada explicando
+que apareció tres veces con tres caras distintas y era el mismo error.
+
+**`s1-modelo-vs-contenedor` es nuevo y hace el trabajo del criterio más difícil
+de cumplir.** Una `comparacion`: a la izquierda lo que la clase vio en el
+taller de Docker y Kubernetes —una imagen, un modelo, un endpoint— y a la
+derecha lo de acá: una imagen, 192 modelos, ningún endpoint. Decirlo como prosa
+no funcionaba; puesto en dos columnas se ve solo.
+
+**`s1-donde-estamos` se ancló a algo verificable.** Antes decía "Fundamentos,
+MLOps, despliegue, generativa y agentes", que es una lista que no se puede
+comprobar. Ahora engancha con lo que sí consta: el taller de Docker, GitHub
+Actions y Kubernetes del mismo programa —cuyo último bloque es "monitoreo
+básico y operación de modelos en producción", y este taller empieza donde lo
+básico deja de alcanzar— y con MLflow, que el propio laboratorio documenta como
+"el mismo registro que usaron en el Módulo 2".
+
+### Decisiones sobre las cifras
+
+- **No se adelanta ningún número del reto 1.** El caso menciona la campaña
+  promocional y el sesgo silencioso como historias, sin las cifras. El
+  13.8% → 14.5%, el 7 → 14 de 192 y el sesgo × 6 son el golpe de la unidad
+  siguiente, y darlos acá lo desactiva.
+- **`17,472` lleva su explicación en las notas**: 192 modelos × 91 días. Es el
+  número que sale en pantalla al hacer `make seed`, y un alumno que vea otro
+  casi seguro dejó el mundo roto de una prueba.
+- **Una cifra del material de origen quedó fuera.** El `README.md` del
+  laboratorio dice "los otros 152 modelos nadie los mira", y esa resta no cierra
+  con "las cinco categorías más grandes" (5 × 24 = 120, que dejaría 72). En vez
+  de propagar un número que no se puede reconstruir, el ítem dice "el resto no
+  lo mira nadie". **Queda pendiente que el docente decida el número correcto.**
+
+### Un error del componente, encontrado escribiendo contenido
+
+El diagrama de componentes usaba `-.registro.->` para etiquetar una arista de
+Mermaid, y Mermaid renderizó **"registr"** — se comió la última letra al partir
+el token. Se cambió a la forma `-.->|registro|`, que no es ambigua. Solo se ve
+mirando el diagrama; ninguna validación lo habría atrapado.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 55 ítems en la sesión 1, 240 minutos.
+- `npm test` (112), typecheck, lint y build limpios.
+- Comprobado en el navegador: el diagrama de componentes, la comparación del
+  sesgo, un `error-comun` de rescate y el `modelo-datos` de la telemetría.

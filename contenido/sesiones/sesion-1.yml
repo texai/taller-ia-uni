@@ -38,7 +38,7 @@ unidades:
         tipo: titulo
         titulo: Un agente que vigila 192 modelos
         entradilla: Arquitectura cognitiva para monitoreo de modelos en producción
-        minutos: 3
+        minutos: 2
         notas: |
           Preguntar quién hizo el trabajo previo. Si hay manos abajo, avisar que
           el rescate va en paralelo durante los próximos quince minutos, sin
@@ -47,50 +47,146 @@ unidades:
       - id: s1-donde-estamos
         tipo: transicion
         titulo: Dónde estamos
-        vimos: Fundamentos, MLOps, despliegue, generativa y agentes
-        viene: Todo junto, sobre un caso que no se deja resolver con una sola de esas piezas
-        minutos: 5
+        vimos: >-
+          Cómo se empaqueta un modelo, cómo se automatiza su despliegue, y qué
+          es monitorear en producción
+        viene: >-
+          Los 192 modelos que ya están desplegados, y el problema de que nadie
+          los mire
+        minutos: 3
+        notas: |
+          Enganchar con el taller de Docker, GitHub Actions y Kubernetes: ahí el
+          último bloque fue "monitoreo básico y operación". Esto empieza justo
+          donde lo básico deja de alcanzar. Y el registro de modelos que van a
+          ver acá es MLflow, el mismo del Módulo 2.
 
       - id: s1-el-caso
         tipo: markdown
         titulo: El caso
+        minutos: 3
         contenido: |
-          Pendiente — batch 15. Va la cadena de 24 tiendas y 8 categorías,
-          los 192 modelos, y el job que corre cada madrugada.
-        minutos: 7
+          Una cadena de retail con **24 tiendas** y **8 categorías** pronostica
+          su demanda todas las noches. Un modelo por tienda y categoría.
+
+          Cada madrugada un job carga los artefactos, proyecta los próximos
+          **14 días**, y con eso se decide qué reponer.
+
+          Los modelos funcionan. Hasta que dejan de funcionar.
+
+          Entra una campaña promocional más agresiva que cualquiera del
+          entrenamiento y una categoría entera empieza a fallar en las 24
+          tiendas a la vez. O peor: la demanda cae despacio en toda la cadena,
+          el modelo sigue pronosticando como antes, y se acumula sobre-stock
+          durante semanas sin que ninguna alarma suene.
+
+          Hoy alguien abre un Excel los lunes y revisa las categorías más
+          grandes. El resto no lo mira nadie.
+        notas: |
+          No dar todavía los números del sesgo silencioso. Eso es el reto 1, y
+          adelantarlo le quita el golpe. Acá basta con que quede la imagen del
+          Excel de los lunes.
+
+      - id: s1-el-numero
+        tipo: metrica
+        titulo: El número del que sale todo
+        valor: "192"
+        unidad: modelos en producción
+        contexto: 24 tiendas × 8 categorías. Ese número es el caso entero.
+        tono: neutro
+        minutos: 2
+        notas: |
+          Preguntar en voz alta cuántos modelos tiene en producción quien
+          trabaja hoy con modelos. La respuesta casi siempre es "uno" o "no
+          sé", y las dos sirven.
+
+      - id: s1-que-es-un-modelo
+        tipo: markdown
+        titulo: Qué es "un modelo en producción"
+        minutos: 4
+        contenido: |
+          Acá un modelo **no es un chatbot**. Es un **artefacto entrenado**: un
+          archivo con los coeficientes que quedaron de ajustar una regresión
+          contra el histórico de una tienda y una categoría.
+
+          Cada uno de los 192 es una regresión Ridge sobre features de:
+
+          - **rezagos** de 7, 14 y 28 días
+          - **medias móviles** de 7 y 28 días
+          - **día de la semana**
+          - si ese día hubo **promoción**
+
+          Deliberadamente simple. El taller no trata de exprimir precisión;
+          trata de vigilar modelos que ya están corriendo.
+        notas: |
+          Si alguien pregunta por qué Ridge y no algo mejor: porque un modelo
+          más complejo no cambiaría nada de lo que vamos a hacer, y sí
+          alargaría el entrenamiento de los 192.
+
+      - id: s1-modelo-vs-contenedor
+        tipo: comparacion
+        titulo: Un modelo no es un contenedor
+        entradilla: La relación no es 1 a 1, y en el taller anterior lo parecía
+        minutos: 3
+        izquierda:
+          titulo: Lo que vieron desplegando
+          contenido: >-
+            Un modelo empaquetado en su imagen, expuesto como servicio de
+            inferencia, respondiendo peticiones HTTP. Una imagen, un modelo, un
+            endpoint.
+        derecha:
+          titulo: Lo que hay acá
+          contenido: >-
+            Un job batch que corre de madrugada, carga los 192 artefactos de
+            disco y escribe un CSV. Nadie necesita una respuesta en 50
+            milisegundos para decidir qué reponer mañana. Una imagen, 192
+            modelos, ningún endpoint.
+        notas: |
+          Este es el punto que más se resiste. Vale la pena decirlo dos veces:
+          el patrón de despliegue dominante en pronóstico de demanda es batch,
+          no servicio. Y desde el lado del monitoreo cambia todo — un servicio
+          se cae y alguien se entera; un job batch termina bien y entrega
+          basura.
 
       - id: s1-arquitectura
         tipo: diagrama
         titulo: La solución completa, por componentes
         clase: componentes
+        minutos: 5
         contenido: |
-          Pendiente — batch 15. Fuentes de datos, ingesta, entrenamiento,
-          registro de modelos, job batch, telemetría, y dónde entra el agente.
-        minutos: 8
+          flowchart LR
+            V[("ventas.csv<br/>el mundo")] --> E["entrenar<br/>192 Ridge"]
+            E --> M[("modelos/<br/>192 artefactos")]
+            E -.->|registro| ML[("MLflow")]
+            M --> J["job batch<br/>de madrugada"]
+            V --> J
+            J --> P[("predicciones.csv")]
+            P -->|cruce contra lo vendido| TM[("metricas.csv<br/>la telemetria")]
+            V --> TM
+            TM --> API["API :8000"]
+            API --> UI["interfaz :8501"]
+            API -.->|mañana| AG["el agente"]
         notas: |
           Es el mapa al que se vuelve toda la clase. Dejarlo bien anclado.
 
-      - id: s1-telemetria
-        tipo: modelo-datos
-        titulo: Qué emite la flota
-        minutos: 6
-        tablas:
-          - nombre: metricas
-            descripcion: Pendiente — batch 15
-            columnas:
-              - { nombre: fecha, tipo: date }
-              - { nombre: modelo_id, tipo: text }
-              - { nombre: mape, tipo: float }
-              - { nombre: sesgo_pct, tipo: float }
-              - { nombre: cobertura, tipo: float }
+          Dos cosas que señalar con el dedo: `ventas.csv` entra DOS veces —una
+          para entrenar y otra para calcular métricas, porque un modelo no se
+          degrada en abstracto sino contra la realidad— y el agente todavía no
+          existe. Lo construimos nosotros.
 
-      - id: s1-que-es-un-modelo
+      - id: s1-el-job
         tipo: markdown
-        titulo: Qué es "un modelo en producción"
+        titulo: El job que corre de madrugada
+        minutos: 2
         contenido: |
-          Pendiente — batch 15. Un artefacto entrenado, no un chatbot. Por qué
-          la relación modelo↔contenedor no es 1 a 1.
-        minutos: 5
+          Carga los 192 artefactos, proyecta 14 días para cada tienda y
+          categoría, y escribe las predicciones. Cada corrida deja una fila en
+          su bitácora: si corrió, cuánto tardó, si falló.
+
+          **El agente también vigila eso.** Un modelo puede estar perfectamente
+          sano y el job caído desde el martes.
+        notas: |
+          Esta última frase es de las que más rinde en la sesión 2: el fallo
+          más común en producción no es un modelo malo, es una tubería rota.
 
       - id: s1-levantar
         tipo: terminal
@@ -99,43 +195,214 @@ unidades:
         comandoWindows: .\taller.ps1 arriba; .\taller.ps1 seed
         salida: "Listo. 192 modelos con 17,472 dias-modelo de telemetria."
         duracion: 300
-        minutos: 5
+        minutos: 3
+        notas: |
+          Quien hizo el trabajo previo ya lo tiene: solo `make arriba`. Los
+          17,472 son 192 modelos × 91 días de histórico evaluado. Si a alguien
+          le sale otro número, casi seguro dejó el mundo roto de una prueba y
+          se arregla con `make reparar`.
+
+      - id: s1-rescate-docker
+        tipo: error-comun
+        titulo: "Rescate · el motor no está corriendo"
+        minutos: 2
+        sintoma: >-
+          open //./pipe/dockerDesktopLinuxEngine: The system cannot find the
+          file specified
+        causa: >-
+          Docker Desktop está cerrado. El mensaje habla de un named pipe, que es
+          el canal entre el cliente de Docker y su motor — y por eso no se
+          parece en nada a "abre Docker".
+        arreglo: >-
+          Abrir Docker Desktop y esperar a que la ballena deje de moverse. Ojo
+          con la trampa: `docker compose version` responde bien con Docker
+          cerrado, porque contesta el cliente. Quien quiera comprobar de verdad
+          que el motor está vivo, `docker info`.
+
+      - id: s1-rescate-recarga
+        tipo: error-comun
+        titulo: "Rescate · el contenedor sirve el código con el que arrancó"
+        minutos: 3
+        sintoma: >-
+          Un 404 en una ruta que está en el archivo. O la interfaz reventando
+          por una columna que llega como texto. O un `git pull` que parece no
+          haber hecho nada.
+        causa: >-
+          Tres síntomas distintos, un solo error: el proceso dentro del
+          contenedor sigue ejecutando el código que había cuando arrancó, no el
+          que hay ahora en disco.
+        arreglo: >-
+          Reiniciar el servicio. En este laboratorio ya está resuelto con
+          `--reload` en uvicorn y con sondeo del sistema de archivos, que hace
+          falta en Windows porque los avisos de cambio no cruzan el montaje.
+        notas: |
+          Este apareció tres veces preparando el taller, con tres caras
+          distintas, y era el mismo error cada vez. Es típico de cualquier
+          laboratorio con volúmenes montados, así que vale por sí solo como
+          material: la pregunta a hacerse siempre es "¿el proceso vio este
+          archivo?".
+
+      - id: s1-rescate-disco
+        tipo: error-comun
+        titulo: "Rescate · disco lleno a mitad de la construcción"
+        minutos: 2
+        sintoma: La construcción de las imágenes falla por espacio.
+        causa: >-
+          Las imágenes de este laboratorio ocupan del orden de 6 GB, y la caché
+          de construcción otro tanto.
+        arreglo: "`docker builder prune -f`, y dejar 12 GB libres antes de empezar."
+
+      - id: s1-telemetria
+        tipo: modelo-datos
+        titulo: Qué emite la flota
+        entradilla: Una fila por modelo y por día. Esto es todo lo que el agente va a poder mirar.
+        minutos: 4
+        tablas:
+          - nombre: metricas
+            descripcion: >-
+              El resultado de cruzar lo que se pronosticó contra lo que
+              realmente se vendió.
+            columnas:
+              - { nombre: fecha, tipo: date }
+              - { nombre: modelo_id, tipo: text, nota: "dem-{categoria}-{tienda}" }
+              - { nombre: categoria, tipo: text }
+              - { nombre: tienda, tipo: text }
+              - { nombre: region, tipo: text, nota: LIMA, NORTE, SUR, CENTRO, ORIENTE }
+              - { nombre: n, tipo: int, nota: días que entraron en el cálculo }
+              - { nombre: mape, tipo: float, nota: cuánto se equivoca }
+              - { nombre: sesgo_pct, tipo: float, nota: hacia qué lado }
+              - { nombre: cobertura, tipo: float, nota: qué tanto acierta el intervalo }
+              - { nombre: latencia_p95_ms, tipo: int }
+              - { nombre: unidades_reales, tipo: float }
+              - { nombre: unidades_pronosticadas, tipo: float }
+              - { nombre: dias_en_promocion, tipo: int }
+              - { nombre: dias_con_quiebre, tipo: int }
+        notas: |
+          Señalar que `unidades_reales` y `unidades_pronosticadas` están además
+          de los porcentajes. No es redundancia: sin las unidades no se puede
+          agregar bien. Por qué, es el reto 2 — no adelantarlo.
+
+      - id: s1-metricas-definidas
+        tipo: markdown
+        titulo: "MAPE: cuánto se equivoca"
+        minutos: 3
+        contenido: |
+          El error porcentual absoluto medio. Para cada día se toma la
+          diferencia entre lo pronosticado y lo vendido, en valor absoluto, y se
+          divide entre lo vendido. El promedio de eso.
+
+          **Es una distancia, no una dirección.** Un modelo que se pasa por 10
+          unidades y otro que se queda corto por 10 tienen exactamente el mismo
+          MAPE.
+
+          Es la métrica que todo el mundo mira, y es la única de las tres que
+          casi siempre está en el tablero.
+        notas: |
+          Insistir en "valor absoluto". De ahí sale toda la unidad siguiente.
+
+      - id: s1-sesgo
+        tipo: comparacion
+        titulo: "Sesgo: hacia qué lado se equivoca"
+        entradilla: La misma resta, sin el valor absoluto
+        minutos: 4
+        izquierda:
+          titulo: MAPE
+          contenido: >-
+            Promedio de |pronóstico − real| ÷ real. Siempre positivo. Dice qué
+            tan lejos cae el modelo, y nada más.
+        derecha:
+          titulo: Sesgo
+          contenido: >-
+            Promedio de (pronóstico − real) ÷ real. Con signo. Positivo
+            significa que el modelo pronostica de más — y pronosticar de más
+            durante tres semanas es inventario que alguien compró y nadie
+            vendió.
+        notas: |
+          Acá va la frase que sostiene el taller: el MAPE puede quedarse quieto
+          mientras el sesgo se dispara. Ese es el modo de falla más caro y el
+          que ningún umbral sobre el MAPE detecta. No dar todavía los números
+          — son del reto 1.
+
+      - id: s1-cobertura
+        tipo: markdown
+        titulo: "Cobertura: la que casi todos leen mal"
+        minutos: 3
+        contenido: |
+          Cada predicción viene con un intervalo. La cobertura es **qué
+          fracción de los días la venta real cayó dentro de ese intervalo**.
+
+          No es el porcentaje de días con predicción disponible. No es cuántos
+          modelos corrieron. Es cuántas veces el modelo dijo la verdad sobre su
+          propia incertidumbre.
+
+          Una cobertura que se desploma es un modelo que dejó de saber lo que
+          no sabe — y eso suele pasar antes de que el MAPE se mueva.
+        notas: |
+          Preguntar qué creen que mide antes de decirlo. La confusión con "días
+          con predicción disponible" es tan común que vale la pena que salga de
+          ellos.
 
       - id: s1-demo-ui
         tipo: demo
         titulo: La flota, de un vistazo
-        minutos: 8
+        minutos: 5
         pasos:
           - comando: make ui
             esperado: "http://localhost:8501"
-        observar: Pendiente — batch 15
-        respaldo: Pendiente — batch 15
+        observar: >-
+          192 filas. Ordenar por MAPE y ver que hay modelos malos que llevan
+          meses siendo malos sin que nadie los toque. Ordenar por sesgo y ver
+          que no es la misma lista. Esa diferencia es el taller entero.
+        respaldo: >-
+          Si la interfaz no levanta, la misma información sale por la API:
+          `curl -s localhost:8000/v1/metricas | head`. Y si tampoco, seguir con
+          el diagrama: nada de lo que viene depende de haber visto esta
+          pantalla.
+        notas: |
+          Cinco minutos, no diez. La tentación es empezar a analizar acá, y el
+          análisis es el reto 1.
 
-      - id: s1-metricas-definidas
-        tipo: markdown
-        titulo: MAPE, sesgo y cobertura
-        contenido: |
-          Pendiente — batch 15. Definir los tres ANTES de usarlos. La cobertura
-          es la que se malinterpreta: fracción de días en que la venta real cayó
-          dentro del intervalo, no días con predicción disponible.
-        minutos: 5
+      - id: s1-flota-dada
+        tipo: criterios
+        titulo: Las reglas del laboratorio
+        minutos: 2
+        criterios:
+          - texto: Los 192 modelos vienen dados. No se tocan.
+            pista: Nadie va a entrenar nada mejor hoy. Ese no es el ejercicio.
+          - texto: La plataforma y su API vienen dadas. Tampoco se tocan.
+          - texto: Lo que construimos es lo que vigila. Nada más.
+        notas: |
+          Decirlo explícitamente ahorra media hora. Siempre hay alguien que
+          quiere mejorar el modelo, y es una conversación legítima que hay que
+          cortar acá.
 
       - id: s1-pregunta-hoy
         tipo: pregunta
         titulo: ¿Cómo se enteran hoy?
-        pregunta: Pendiente — batch 15
+        pregunta: >-
+          En donde trabajas, si un modelo en producción empieza a fallar hoy,
+          ¿cómo se entera alguien?
         visibilidad: publica
+        permiteOmitir: true
+        minutos: 3
         opciones:
           - Un tablero con umbrales
           - Alguien revisa a mano
           - Cuando se queja el negocio
           - No nos enteramos
-        minutos: 4
+        notas: |
+          Revelar recién cuando hayan respondido todos. "Cuando se queja el
+          negocio" suele ganar, y es la mejor entrada posible al reto 1: para
+          cuando el negocio se queja, el sobre-stock ya está comprado.
 
       - id: s1-repaso-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
-        minutos: 4
+        minutos: 2
+        disparadores:
+          - ¿Alguien tiene hoy más de diez modelos en producción?
+          - ¿Quién mira las métricas de esos modelos, y cada cuánto?
+          - ¿Alguna vez se enteraron tarde de que un modelo se había degradado?
 
   # ------------------------------------------------------------------ 16:00
   - id: s1-reto-1

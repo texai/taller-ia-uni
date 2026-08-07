@@ -41,6 +41,24 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Contenido · S1·U1, la unidad de apertura (batch 15)
+- La primera unidad escrita de verdad: 21 ítems, 60 minutos exactos. El
+  esqueleto tenía 12 ítems de ~5 minutos y casi todos eran tres cosas juntas —
+  `s1-metricas-definidas` declaraba MAPE, sesgo y cobertura en una sola lámina,
+  y ahora son tres ítems, con el del sesgo como `comparacion` contra el MAPE
+  porque la diferencia entre los dos **es** el contenido.
+- El rescate de entornos rotos entra como tres `error-comun` en medio de la
+  unidad, sacados de las incidencias reales del laboratorio.
+- Nuevo `s1-modelo-vs-contenedor`: una imagen / un modelo / un endpoint contra
+  una imagen / 192 modelos / ningún endpoint. Como prosa no funcionaba.
+- `s1-donde-estamos` se ancló a lo verificable: el taller de Docker, GitHub
+  Actions y Kubernetes del mismo programa, y MLflow como el registro del
+  Módulo 2.
+- No se adelanta ninguna cifra del reto 1. Y una del material de origen quedó
+  fuera por no cerrar la aritmética — ver `DONE.md`.
+- **Corregido un `-.texto.->` de Mermaid** que renderizaba "registr" en vez de
+  "registro": se parte el token. La forma `-.->|texto|` no es ambigua.
+
 ### Comandos anotados parte por parte (batch 14)
 - `src/lib/anotaciones.ts`, puro y con 14 tests: ubicar un segmento dentro del
   comando, partir el comando en trozos, dibujar la llave y detectar
