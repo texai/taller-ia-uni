@@ -164,6 +164,24 @@ function resolverArchivo(
   donde: string,
   problemas: string[],
 ): void {
+  // `descargas` no tiene un `archivo` suelto: tiene una lista, y cada entrada
+  // apunta a `public/contenido/` igual que `archivo` e `imagen`. Se comprueba
+  // acá para que un PDF que no se copió falle al construir y no proyectado.
+  if (item.tipo === "descargas") {
+    const assets = raizDeAssets(raiz);
+    if (!existsSync(assets)) return;
+    for (const [i, d] of (item.archivos ?? []).entries()) {
+      if (typeof d?.archivo !== "string") continue;
+      if (!existsSync(join(assets, d.archivo))) {
+        problemas.push(
+          `${donde} · archivos[${i}]: no existe el archivo ` +
+            `\`public/contenido/${d.archivo}\``,
+        );
+      }
+    }
+    return;
+  }
+
   const conArchivo = item as Item & { archivo?: string; contenido?: string };
   const ruta = conArchivo.archivo;
   if (!ruta) return;
@@ -287,6 +305,26 @@ function resolverGlosario(
 // --------------------------------------------------------------------------
 
 function validacionesExtra(item: Item, donde: string, problemas: string[]) {
+  if (item.tipo === "descargas") {
+    // Cada entrada necesita las dos cosas: la ruta para bajarlo y el nombre con
+    // el que se anuncia. Una lista de rutas sueltas obligaría a la lámina a
+    // inventar el título a partir del nombre del archivo, que es como se acaba
+    // proyectando `04-las-siete-herramientas.pdf` en una pantalla.
+    const lista = item.archivos;
+    if (!Array.isArray(lista) || !lista.length) {
+      problemas.push(`${donde}: \`archivos\` tiene que ser una lista no vacía`);
+    } else {
+      lista.forEach((d, i) => {
+        if (typeof d?.archivo !== "string" || !d.archivo.trim()) {
+          problemas.push(`${donde} · archivos[${i}]: falta \`archivo\``);
+        }
+        if (typeof d?.titulo !== "string" || !d.titulo.trim()) {
+          problemas.push(`${donde} · archivos[${i}]: falta \`titulo\``);
+        }
+      });
+    }
+  }
+
   if (item.tipo === "diagrama-secuencia") {
     // La fuente se lee ACÁ, al cargar, y no en el navegador. Un diagrama que
     // el lector no entiende tiene que romper la construcción, no aparecer

@@ -1,5 +1,6 @@
 import type {
   ItemArchivo,
+  ItemDescargas,
   ItemDiagrama,
   ItemEnlace,
   ItemImagen,
@@ -77,9 +78,23 @@ export function Enlace({ item }: { item: ItemEnlace }) {
   );
 }
 
+/** El sello del formato, deducido de la extensión. */
+function Formato({ nombre }: { nombre: string }) {
+  return (
+    <span
+      className="shrink-0 rounded-lg border px-3 py-2 font-mono text-sm font-semibold"
+      style={{
+        borderColor: "var(--color-acento)",
+        color: "var(--color-acento)",
+      }}
+    >
+      {nombre.split(".").pop()?.toUpperCase() ?? ""}
+    </span>
+  );
+}
+
 export function Archivo({ item }: { item: ItemArchivo }) {
   const nombre = item.archivo.split("/").pop() ?? item.archivo;
-  const extension = nombre.split(".").pop()?.toUpperCase() ?? "";
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla}>
@@ -89,21 +104,54 @@ export function Archivo({ item }: { item: ItemArchivo }) {
           download
           className="flex items-center gap-4"
         >
-          <span
-            className="rounded-lg border px-3 py-2 font-mono text-sm font-semibold"
-            style={{
-              borderColor: "var(--color-acento)",
-              color: "var(--color-acento)",
-            }}
-          >
-            {extension}
-          </span>
+          <Formato nombre={nombre} />
           <span className="text-xl font-medium underline">{nombre}</span>
         </a>
         {item.descripcion && (
           <p className="mt-4 text-lg leading-relaxed">{item.descripcion}</p>
         )}
       </Caja>
+    </Marco>
+  );
+}
+
+/**
+ * Varios descargables en una lámina.
+ *
+ * Cada fila es el enlace entero —sello, título y porqué— y no solo el título:
+ * proyectado a cuatro metros, un blanco de un centímetro es un blanco al que
+ * nadie apunta, y estas filas existen para que la sala haga clic en ellas.
+ */
+export function Descargas({ item }: { item: ItemDescargas }) {
+  return (
+    <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {item.archivos.map((d) => (
+          <li key={d.archivo}>
+            <a
+              href={`/contenido/${d.archivo}`}
+              download
+              className="flex h-full items-start gap-4 rounded-xl border p-4 transition-colors hover:border-[var(--color-acento)]"
+              style={{ borderColor: "var(--borde)" }}
+            >
+              <Formato nombre={d.archivo} />
+              <span>
+                <span className="block text-lg font-medium underline">
+                  {d.titulo}
+                </span>
+                {d.descripcion && (
+                  <span
+                    className="mt-1 block text-base leading-snug"
+                    style={{ color: "var(--tinta-suave)" }}
+                  >
+                    {d.descripcion}
+                  </span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </Marco>
   );
 }

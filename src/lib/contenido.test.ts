@@ -1080,6 +1080,68 @@ test("sin la carpeta de assets el curso carga igual, y con ella un archivo que f
   );
 });
 
+test("un `descargas` valida cada entrada de su lista, no solo la primera", () => {
+  // La lista es lo único que este tipo tiene, así que sus tres formas de estar
+  // mal —vacía, sin título, apuntando a un PDF que nadie copió— tienen que
+  // fallar al construir. Un descargable roto solo se nota cuando alguien hace
+  // clic, y eso es en clase.
+  const conLista = (entradas: string) => `
+      - id: guias
+        tipo: descargas
+        titulo: Las guías
+        archivos:
+${entradas}
+`;
+
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(conLista("          []")),
+    },
+    (raiz) => assert.throws(() => mod.cargarCurso(raiz), /lista no vacía/),
+  );
+
+  const dos = `          - archivo: archivos/guias/uno.pdf
+            titulo: Uno
+          - archivo: archivos/guias/dos.pdf`;
+
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(conLista(dos)),
+      "../public/contenido/archivos/guias/uno.pdf": "x",
+      "../public/contenido/archivos/guias/dos.pdf": "x",
+    },
+    (raiz) =>
+      // La segunda entrada no tiene título: se nombra por su índice.
+      assert.throws(() => mod.cargarCurso(raiz), /archivos\[1\]: falta `titulo`/),
+  );
+
+  const completas = `          - archivo: archivos/guias/uno.pdf
+            titulo: Uno
+          - archivo: archivos/guias/no-esta.pdf
+            titulo: Dos`;
+
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(conLista(completas)),
+      "../public/contenido/archivos/guias/uno.pdf": "x",
+    },
+    (raiz) => assert.throws(() => mod.cargarCurso(raiz), /no-esta\.pdf/),
+  );
+
+  // Y sin carpeta de assets carga igual, por lo mismo que `imagen`: es una
+  // función serverless donde `public/` no viaja, no material roto.
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(conLista(completas)),
+    },
+    (raiz) => assert.equal(mod.cargarCurso(raiz).sesiones.length, 1),
+  );
+});
+
 test("la pantalla que se proyecta va sin notas, y con todo lo demás", () => {
   // El curso se dicta por videollamada: la pantalla del docente la ve la
   // clase. Las respuestas y los minutos sí se quedan — hacen falta para

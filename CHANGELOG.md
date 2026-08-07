@@ -5,6 +5,26 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Las seis guías, descargables desde la clase
+- Las guías del laboratorio —seis hojas de dos caras— se bajan ahora **desde la
+  propia lámina**, sin salir a la intranet ni al repositorio con la clase
+  empezada. Los PDF viven en `public/contenido/archivos/guias/`.
+- **Tipo `descargas`**: varias descargas en una lámina, en rejilla, cada fila
+  con su sello, su título y su porqué. Seis `archivo` seguidos habrían sido
+  seis láminas que la sala pasa a golpe de flecha, y para la sexta ya nadie
+  está bajando la primera.
+- Van en **dos sitios y los dos hacen falta**: juntas al abrir cada sesión
+  —para bajarlas de una vez— y **cada una en su momento**, con el tipo
+  `archivo`, en la lámina que la usa: Docker antes de los comandos, «si algo
+  falla» tras los tres rescates, la telemetría tras el glosario de las tres
+  señales, los escenarios al empezar el reto 1, las siete herramientas tras sus
+  tres reglas, y la anatomía del agente justo antes de leer el grafo.
+- La lámina del domingo lleva **otro orden**: primero la del día, después las
+  que hoy se dan por sabidas. Quien llega el segundo día las necesita todas.
+- Cada entrada de la lista se valida contra `public/contenido/` al construir,
+  con la misma guarda que evita el 500 de las páginas dinámicas: que falte el
+  PDF es material roto; que falte la carpeta entera no dice nada del contenido.
+
 ### Las preguntas se leen antes de poder contestarlas
 - **Cuatro estados en vez de tres.** Al llegar a la lámina, la clase ve el
   enunciado y nada más: ni opciones ni caja de texto. Antes salían juntos, y

@@ -339,6 +339,29 @@ items:
       siempre vuelve a `percepcion`: ese es el mini-bucle ReAct de ayer,
       ahora encerrado dentro de un solo nodo del grafo grande.
 
+  - id: s2-guia-agente
+    tipo: archivo
+    titulo: "Guía 5 · Anatomía del agente"
+    entradilla: El mapa de los doce minutos que vienen. Ábranla ahora.
+    archivo: archivos/guias/05-anatomia-del-agente.pdf
+    descripcion: >-
+      Del bucle plano al grafo: las cuatro patologías, el trabajo de cada nodo,
+      por qué reflexión **y** revisión, y el freno del reto 5. Dos caras con
+      todo el domingo.
+    minutos: 1
+    notas: |
+      **Va justo antes de la ventana de lectura y eso es a propósito.** Leer
+      `grafo.py` con la tabla de los seis nodos al lado es otro ejercicio: se
+      busca en el archivo lo que la hoja ya nombró, en vez de descubrir el
+      vocabulario y el código a la vez.
+
+      Quien no vino ayer la necesita más que nadie: la primera cara es el bucle
+      plano y sus cuatro patologías, que es la sesión de ayer entera en media
+      página.
+
+      La última sección —el freno— es del reto 5, todavía no. Si alguien
+      pregunta, decir que sí, que está y que se ve después del receso.
+
   - id: s2-r4-lectura
     tipo: lectura
     titulo: El grafo, en su archivo

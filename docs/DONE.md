@@ -2832,3 +2832,60 @@ Cada reto declara ahora en sus objetivos qué concepto introduce.
 - El `diff` y las salidas nuevas vistas en el navegador.
 - 312 + 265 minutos sobre 240 + 240. Deliberado: el docente controla la
   cadencia y prefiere pasarse a quedarse corto.
+
+---
+
+## Batch 43 — Las seis guías, descargables desde la clase
+**2026-08-07**
+
+El laboratorio ya traía seis guías de dos caras (`guias/*.pdf`) y la aplicación
+no las conocía. El único descargable del sitio era el trabajo previo, y su tipo
+`archivo` dibuja un archivo, no seis.
+
+**Alcance** (todo hecho)
+- [x] Tipo `descargas` — interfaz, especificación, renderizador y registro
+- [x] Validación de cada `archivos[]` contra `public/contenido/`
+- [x] Los seis PDF bajo `public/contenido/archivos/guias/`
+- [x] Lámina conjunta al abrir cada sesión
+- [x] Seis láminas de punto de uso, una por guía
+- [x] `CONVENTIONS.md` §8
+
+### Por qué un tipo nuevo y no seis `archivo`
+
+Seis `archivo` seguidos son seis láminas, y una lámina por PDF convierte
+entregar material en un trámite que la sala pasa a golpe de flecha: para cuando
+aparece la sexta, ya nadie está bajando la primera. Un juego de material se
+decide de una vez o no se decide.
+
+Lo que el tipo nuevo **no** sustituye es la mención en su momento, y por eso
+hay dos formas y no una. La lista completa es para bajarlas; la suelta —tipo
+`archivo`, en la lámina donde la guía sirve— es para abrirla. La de Docker va
+antes de la tabla de comandos, la de fallas justo después de los tres rescates
+(el momento de tener a mano la guía de fallas es **antes** de fallar), la de la
+telemetría tras el glosario de las tres señales, la de escenarios al abrir el
+reto 1, la de herramientas tras sus tres reglas, y la del agente pegada a la
+ventana de lectura del grafo — leer `grafo.py` con la tabla de nodos al lado es
+otro ejercicio.
+
+La lámina del domingo repite las seis en **otro orden**: primero la 5, que es
+la del día, y después las que hoy se dan por sabidas. Quien llega el segundo
+día no necesita las mismas guías en la misma prioridad que quien vino ayer.
+
+### Desviación
+
+La guía 3 trae la tabla de los cuatro escenarios **con sus cifras**, incluido
+el sesgo silencioso, y el reto 1 existe para que ese número duela. Se dejó
+igual y se anotó en las notas del docente: el punto del reto es el rato que se
+pasa buscando, no la sorpresa de la cifra, y si la sala va rápida la lámina se
+anuncia después de la tabla de las dos degradaciones.
+
+---
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 199 ítems, sin errores.
+- 165 pruebas (1 nueva, con las cuatro formas de romper un `descargas`), lint,
+  typecheck y build limpios.
+- `npm run humo`: **284 pantallas abiertas, 0 con error**.
+- Los seis PDF pedidos al servidor construido: 200, `application/pdf`, y el
+  tamaño exacto de cada uno.
+- 320 + 268 minutos sobre 240 + 240, ocho minutos más que antes.

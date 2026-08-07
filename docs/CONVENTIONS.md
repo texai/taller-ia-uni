@@ -168,6 +168,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `imagen` | Captura o figura | `archivo`, `pie`, `destacar` |
 | `enlace` | Página que vale la pena visitar | `url`, `descripcion` |
 | `archivo` | Descargable: PDF, Excel, Word, SVG, CSV | `archivo`, `descripcion` |
+| `descargas` | Varios descargables juntos, cada uno con su porqué | `archivos[]` |
 | `comparacion` | Dos lados, uno al lado del otro | `izquierda`, `derecha` |
 | `metrica` | Un número grande y lo que significa | `valor`, `unidad`, `contexto`, `tono` |
 | `tabla` | Datos, sin más | `columnas`, `filas`, `resaltar` |
@@ -214,6 +215,27 @@ exactamente el problema que la regla evita: nadie sabía cuáles eran fieles.
 
 Un `codigo` sin `ruta`, o cuyo contenido no es una cita —la forma de un objeto,
 un ejemplo inventado—, no lleva números y no debería llevar `ruta`.
+
+### Por qué `descargas` y no seis `archivo` seguidos
+
+Seis `archivo` seguidos son seis láminas, y una lámina por PDF convierte
+entregar material en un trámite de treinta segundos que la sala pasa a golpe de
+flecha: para cuando aparece la sexta, ya nadie está bajando la primera.
+
+Un juego de material —las seis guías del taller— se decide de una vez o no se
+decide, y para eso tiene que estar entero a la vista. Por eso `descargas` se
+dibuja como una rejilla de dos columnas y cada fila es el enlace completo,
+sello y título y porqué: proyectado a cuatro metros, un blanco de un centímetro
+es un blanco al que nadie apunta.
+
+Lo que **no** sustituye es la mención en su momento. Las guías siguen
+apareciendo de a una, con el tipo `archivo`, en la lámina donde sirven — la de
+Docker antes de los comandos, la del agente antes de leer el grafo. La lista
+completa es para bajarlas; la suelta es para abrirla.
+
+Sus rutas viven en `public/contenido/`, igual que `imagen` y `archivo`, y se
+validan una por una al cargar: un PDF que no se copió tiene que romper la
+construcción y no descubrirse proyectado.
 
 ### Por qué `diff` y no `comparacion`
 

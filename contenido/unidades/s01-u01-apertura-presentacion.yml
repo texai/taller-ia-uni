@@ -129,6 +129,49 @@ items:
       Lo importante no es que lo lean ahora: es que sepan que lo que falla
       en la próxima media hora está resuelto ahí dentro.
 
+  - id: s1-guias
+    tipo: descargas
+    titulo: Seis guías, de dos caras cada una
+    entradilla: Bájenlas ahora, las seis. Durante el día vamos a volver a ellas por nombre.
+    minutos: 3
+    archivos:
+      - archivo: archivos/guias/01-docker-en-siete-comandos.pdf
+        titulo: 1 · Docker en siete comandos
+        descripcion: Lo que hay que saber de Docker para hoy, y ni una línea más
+      - archivo: archivos/guias/02-leer-la-telemetria.pdf
+        titulo: 2 · Leer la telemetría
+        descripcion: MAPE, sesgo y cobertura, y cómo se lee mal cada una
+      - archivo: archivos/guias/03-romper-el-mundo.pdf
+        titulo: 3 · Romper el mundo
+        descripcion: Los cuatro escenarios, y cómo seguir rompiendo después
+      - archivo: archivos/guias/04-las-siete-herramientas.pdf
+        titulo: 4 · Las siete herramientas
+        descripcion: Los ojos del agente, y las reglas de una herramienta de percepción
+      - archivo: archivos/guias/05-anatomia-del-agente.pdf
+        titulo: 5 · Anatomía del agente
+        descripcion: Del bucle plano al grafo, y por qué esa diferencia importa
+      - archivo: archivos/guias/06-si-algo-falla.pdf
+        titulo: 6 · Si algo falla
+        descripcion: Las trece cosas que se rompieron montando esto
+    notas: |
+      **3 min**, y son de verdad: esperar a que las bajen. Un enlace que se
+      anuncia y no se abre no existe, y a las 17:30 nadie vuelve a la lámina
+      tres.
+
+      Decir para qué **no** son: no sustituyen a la clase ni hay que leerlas
+      ahora. Son para tener al lado mientras se trabaja, y para el lunes. Dos
+      caras cada una a propósito — lo que no cabe en dos caras no se consulta
+      con la clase en marcha.
+
+      Las tres primeras se usan hoy; las otras tres, mañana. Y cada una vuelve
+      a aparecer sola en su momento, así que quien no la baje ahora tiene una
+      segunda oportunidad — pero conviene decir que es más cómodo tenerlas
+      todas ya.
+
+      También están en el aula virtual y en el repositorio, en
+      `github.com/texai/taller-ia-uni-lab` → carpeta `guias/`, ahí en markdown
+      además del PDF.
+
   - id: s1-recap
     tipo: diagrama
     titulo: Lo que ya traen puesto

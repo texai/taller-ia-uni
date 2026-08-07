@@ -49,3 +49,39 @@ items:
       Para quien no vino: no hace falta haber estado. El bucle de ayer está
       en `agente/__main__.py`, en el subcomando `plano`, y se corre con
       `make plano`. Hoy se parte del grafo, que es otro camino.
+
+  - id: s2-guias
+    tipo: descargas
+    titulo: Las seis guías, otra vez
+    entradilla: Las de ayer y las de hoy. Quien llega hoy por primera vez las necesita todas.
+    minutos: 2
+    archivos:
+      - archivo: archivos/guias/05-anatomia-del-agente.pdf
+        titulo: 5 · Anatomía del agente
+        descripcion: La de hoy. Del bucle plano al grafo, y por qué la diferencia importa
+      - archivo: archivos/guias/04-las-siete-herramientas.pdf
+        titulo: 4 · Las siete herramientas
+        descripcion: Los ojos del agente. De ayer, y hoy se dan por sabidas
+      - archivo: archivos/guias/06-si-algo-falla.pdf
+        titulo: 6 · Si algo falla
+        descripcion: Las trece cosas que se rompieron montando esto
+      - archivo: archivos/guias/01-docker-en-siete-comandos.pdf
+        titulo: 1 · Docker en siete comandos
+        descripcion: Para quien no estuvo ayer y arranca hoy con `make arriba`
+      - archivo: archivos/guias/02-leer-la-telemetria.pdf
+        titulo: 2 · Leer la telemetría
+        descripcion: MAPE, sesgo y cobertura. El vocabulario de las dos sesiones
+      - archivo: archivos/guias/03-romper-el-mundo.pdf
+        titulo: 3 · Romper el mundo
+        descripcion: Los cuatro escenarios, que hoy se usan los cuatro
+    notas: |
+      **2 min**, y el orden no es el mismo del sábado: primero la 5, que es la
+      de hoy, y después las que hoy se dan por sabidas.
+
+      Quien estuvo ayer ya las tiene y pasa de largo. Esta lámina es para quien
+      llega hoy: la 1 y la 2 son la media hora de contexto que se perdió, y
+      leerlas en el receso le alcanza para seguir.
+
+      La 5 conviene señalarla aparte: es el mapa del domingo entero, y tenerla
+      abierta durante la ventana de lectura del grafo ahorra la mitad de las
+      preguntas.

@@ -134,6 +134,25 @@ items:
       dentro de un comando anotado: **`up` deja algo vivo, `run` ejecuta y
       desaparece**.
 
+  - id: s1-guia-docker
+    tipo: archivo
+    titulo: "Guía 1 · Docker en siete comandos"
+    entradilla: Estas cuatro palabras y los siete comandos que vienen, en dos caras
+    archivo: archivos/guias/01-docker-en-siete-comandos.pdf
+    descripcion: >-
+      Las cuatro palabras de recién, los siete comandos del taller, la
+      diferencia entre `up` y `run`, y dónde viven los datos. Es la hoja para
+      tener al lado durante la próxima hora.
+    minutos: 1
+    notas: |
+      **1 min**: se anuncia y se pasa. Quien la bajó en la lámina de apertura
+      ya la tiene; esto es para el que no, y para que sepa **cuál** de las seis
+      es la que sirve ahora.
+
+      La frase que conviene decir: lo que viene —la tabla de `make`, los dos
+      comandos anotados y la demo— está entero acá dentro. Quien se pierda en
+      un comando no tiene que levantar la mano: lo busca.
+
   - id: s1-make
     tipo: tabla
     titulo: Todos los comandos del taller son atajos
@@ -473,6 +492,26 @@ items:
       de construcción otro tanto.
     arreglo: "`docker builder prune -f`, y dejar 12 GB libres antes de empezar."
 
+  - id: s1-guia-fallas
+    tipo: archivo
+    titulo: "Guía 6 · Si algo falla"
+    entradilla: Los tres rescates de recién, y otras diez. Seis solo de Windows.
+    archivo: archivos/guias/06-si-algo-falla.pdf
+    descripcion: >-
+      Trece incidencias reales, con su síntoma y su arreglo: Docker, Windows,
+      el agente sin llave y los datos. Ninguna es interesante por sí sola;
+      juntas son la mitad del tiempo.
+    minutos: 1
+    notas: |
+      Va acá y no en el cierre a propósito: **el momento de tener a mano la
+      guía de fallas es antes de fallar**, no después. Los tres rescates de las
+      tres láminas anteriores son las tres primeras entradas.
+
+      Decir que la primera línea de la guía es `make verificar`, y que esa es
+      la respuesta a casi todo lo que va a pasar hoy. Quien se quede atascado
+      en cualquier momento de las ocho horas: esta hoja primero, la mano
+      levantada después.
+
   - id: s1-telemetria
     tipo: modelo-datos
     titulo: Qué emite la flota
@@ -665,6 +704,25 @@ items:
       botón de abajo a la derecha. Es la primera vez que aparece y conviene
       señalarlo: de acá al domingo nadie va a levantar la mano para preguntar
       qué era la cobertura.
+
+  - id: s1-guia-telemetria
+    tipo: archivo
+    titulo: "Guía 2 · Leer la telemetría"
+    entradilla: Las tres señales que acabamos de ver, con sus tres formas de leerlas mal
+    archivo: archivos/guias/02-leer-la-telemetria.pdf
+    descripcion: >-
+      Qué emite la flota, qué dice cada señal, y los cuatro números del mundo
+      sano contra los que se lee todo lo demás: 13.8%, +0.8%, 88.7%, 8 de 192.
+    minutos: 1
+    notas: |
+      **Es la guía que hay que tener abierta el resto del sábado**, y conviene
+      decirlo así. La última página trae los cuatro números del mundo sano, que
+      son los que la sala tenía que anotar hace dos láminas — quien no lo hizo,
+      los tiene acá.
+
+      Es también la que rescata al que llegue tarde al reto 1: las tres formas
+      de leer mal la telemetría son el reto 1, la trampa 1 del reto 2, y la
+      pregunta de la cobertura de hace un minuto.
 
   - id: s1-demo-ui
     tipo: demo

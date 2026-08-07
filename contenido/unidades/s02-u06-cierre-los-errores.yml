@@ -279,8 +279,13 @@ items:
     descripcion: >-
       Todo lo de estas ocho horas: la plataforma, el agente, los cinco
       retos, el verificador, los cuatro escenarios, y la bitácora de lo que
-      se rompió construyéndolo.
+      se rompió construyéndolo. En `guias/` están las seis guías, en markdown
+      además del PDF.
     minutos: 2
+    notas: |
+      Nombrar la carpeta `guias/` al pasar. Las seis se bajaron hoy en PDF;
+      ahí están además en markdown, que es el formato que se puede copiar a
+      un README propio el lunes.
 
   - id: s2-c-preguntas
     tipo: pausa-preguntas

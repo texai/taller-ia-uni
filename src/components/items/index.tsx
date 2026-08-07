@@ -21,7 +21,7 @@ import {
   Terminal,
 } from "./codigo";
 import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos";
-import { Archivo, Diagrama, Enlace, Imagen } from "./medios";
+import { Archivo, Descargas, Diagrama, Enlace, Imagen } from "./medios";
 import { DiagramaSecuencia } from "./secuencia";
 import { Caso } from "./caso";
 import { Glosario } from "./glosario";
@@ -110,6 +110,8 @@ export function RenderizarItem({
       return <Enlace item={item} />;
     case "archivo":
       return <Archivo item={item} />;
+    case "descargas":
+      return <Descargas item={item} />;
     case "diff":
       return <Diff item={item} />;
     case "comparacion":
