@@ -1074,11 +1074,55 @@ apuntar a **lo que el comando de verdad movió**:
 | **Quita filas** (`feed_caido`) | `wc -l` de `metricas.csv`: 17,472 → 17,304, que son exactamente las 168 de una tienda |
 | Cambia qué corre (`arriba`, `ui`, `abajo`) | `docker compose ps`, la misma línea las dos veces |
 
-El caso que mejor explica la regla es `make romper ESCENARIO=sesgo_silencioso`:
-no crea ni borra nada, y `ls` da idéntico antes y después. Lo único que cambió
-es que el sesgo de la flota pasó de +0.8% a +4.7% — y esa es, además, **la
-lección central del taller**. Si la sonda no la enseña, el ensayo no probó lo
-que importa.
+### El caso que define la sonda, medido
+
+`make romper ESCENARIO=sesgo_silencioso` no crea ni borra nada. Medido el 7 de
+agosto corriendo el laboratorio de verdad:
+
+| | sano | tras `romper` | qué dice |
+|---|---|---|---|
+| nombre del archivo | `metricas.csv` | `metricas.csv` | igual |
+| filas | 17,472 | 17,472 | igual |
+| tamaño | 1,717,319 B | 1,717,018 B | **0.02% de diferencia** |
+| `mape_medio` | 13.782 | 14.468 | apenas se mueve |
+| **`sesgo_pct`** | **0.801** | **4.733** | **× 6** |
+| `unidades_de_mas` | 6,532 | 36,981 | la plata |
+| `modelos_con_mape_sobre_25` | 8 | 16 | se duplican |
+
+Un `ls -l` da tres cifras idénticas y una que difiere en trescientos bytes
+sobre 1.7 MB. **La sonda de archivos no prueba absolutamente nada acá**, y
+este es el comando más importante del taller. Y `make reparar` devuelve
+exactamente 13.782 / 0.801 / 8: es reproducible, así que sirve de sonda.
+
+### Hace falta un comando que no existe
+
+Se comprobó: **la API no tiene ningún endpoint que devuelva el agregado de la
+flota.** Sus rutas son `/salud`, `/v1/modelos`, `/v1/metricas` —filas crudas—,
+`/v1/series/{id}`, `/v1/job/ejecuciones` y `/v1/reentrenamientos`. `/salud`
+solo dice cuántas filas y cuántos modelos hay, que es justo lo que **no**
+cambia. Un `curl` a `/v1/metricas` devuelve 17,472 filas sin agregar.
+
+Quien sí calcula esos cuatro números es `resumen_flota` de
+`agente/herramientas.py`, y llamarla a mano es una línea impresentable para
+una pauta.
+
+- [ ] **Añadir `make senales` al laboratorio**: imprime los cuatro números de
+      la flota en la ventana de 14 días. Es una receta de una línea sobre
+      `resumen_flota`, y con ella la sonda del comando más importante del
+      taller cabe en una palabra, funciona igual en Windows por `taller.ps1`, y
+      se puede teclear delante de la sala.
+
+**Y este es candidato claro a subir a contenido.** Las sondas existen para la
+pauta y no son material del curso —el alumno no necesita ver un `docker compose
+ps` entre lámina y lámina—, pero cuando una sonda enseña algo por sí misma, sí
+entra. Esta lo hace: *mira los cuatro números, rompe el mundo, míralos otra
+vez* **es** el reto 1 en dos comandos. Hoy esa comparación se hace con dos
+capturas de Streamlit (`ui-flota-sana.png` y `ui-flota-sesgo.png`), que está
+bien para proyectar y no sirve para ensayar: dos imágenes no se diferencian de
+un vistazo y exigen tener el navegador arriba. La interfaz se queda como demo
+de clase; el comando es la sonda.
+
+- [ ] Si se promueve, va en el reto 1 alrededor de `s1-r1-romper` y `s1-r1-silencioso`, y lo recoge el batch 48.
 
 **Alcance**
 - [ ] `docs/pauta-de-comandos.sh` — zsh/bash, ejecutable pero **con un guardián
@@ -1119,7 +1163,8 @@ que importa.
 
 Se documenta acá para que la conversación que lo implemente no tenga que
 inventarlo, y para que la elección de sonda sea una decisión discutible y no
-una ocurrencia.
+una ocurrencia. **Ninguna sonda de esta tabla es un `ls`** salvo las dos donde
+de verdad aparecen o desaparecen archivos.
 
 | Comando del curso | Sonda antes | Sonda después · qué demuestra |
 |---|---|---|
@@ -1127,8 +1172,8 @@ una ocurrencia.
 | `make seed` | `ls -la /datos` | `ls -la /datos` y `ls /datos/modelos \| wc -l` → 192 |
 | `make ui` | `curl -s -o /dev/null -w '%{http_code}' :8501` | el mismo, ahora 200 · y `docker compose ps` |
 | `make estado` | — | se evidencia solo |
-| `make romper ESCENARIO=x` | `curl -s :8000/v1/resumen` → MAPE 13.8 | el mismo → el MAPE del escenario. **Es la evidencia central del taller** |
-| `make reparar` | `curl -s :8000/v1/resumen` degradado | el mismo → vuelve a 13.8 · y `wc -l metricas.csv` → 17,472 |
+| `make romper ESCENARIO=x` | `make senales` → 13.8 / +0.8 / 8 | el mismo → 14.5 / **+4.7** / 16. **Es la evidencia central del taller** |
+| `make reparar` | `make senales` degradado | el mismo → vuelve exacto a 13.782 / 0.801 / 8 |
 | `make entrenar` | `ls -l --time-style=full /datos/modelos \| head` | el mismo → las marcas de tiempo cambiaron, y la `version` del registro subió |
 | `make mlflow` | `curl -s -o /dev/null -w '%{http_code}' :5000` | el mismo → 200 · y el número de runs |
 | `make plano` / `make agente` | `make memoria` → lo que había | `make memoria` → una entrada más. **Es la prueba de que el agente escribió** |
@@ -1169,10 +1214,16 @@ corre.
   salir; quien mira es el docente. Lo que sí se comprueba es que **la sonda
   esté**, no que su salida sea la correcta.
 - Los comandos que solo salen en notas privadas y no se dictan.
+- **Meter las sondas en el contenido del curso.** Son de la pauta. Al alumno no
+  le aporta ver un `docker compose ps` entre lámina y lámina. La excepción es
+  la sonda que enseña algo por sí sola —hoy solo `make senales`— y esa entra
+  por un batch de contenido, no por este.
 
 **Requisitos externos**
 - Se hace **después** de los batches 45, 46 y 48, que son los que añaden
   comandos nuevos.
+- Necesita `make senales` en el laboratorio. Es la única sonda que hay que
+  construir; todas las demás usan comandos que ya existen.
 
 ---
 
