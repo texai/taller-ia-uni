@@ -47,7 +47,7 @@ Referencias:
 | 26 | Los comandos, desenvueltos · sesión 2 | ✅ Completado |
 | 27 | El recap de apertura, con diagramas | ✅ Completado |
 | 28 | Diagrama de pasos al abrir cada reto | ✅ Completado |
-| 29 | El ritmo: preguntas y pausas repartidas | ⬜ Pendiente |
+| 29 | El ritmo: preguntas y pausas repartidas | ✅ Completado |
 | 30 | La salida anotada | ⬜ Pendiente |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
@@ -450,20 +450,20 @@ agujero está donde más duele: **`s2-reto-4` son 105 minutos y 25 ítems con ce
 preguntas y cero pausas.**
 
 **Alcance**
-- [ ] Repartir preguntas y pausas por las unidades, con un criterio escrito y no
+- [x] Repartir preguntas y pausas por las unidades, con un criterio escrito y no
       a ojo
-- [ ] Ninguna unidad de más de 40 minutos sin al menos dos momentos
-- [ ] Cada pregunta nueva llega con su solución (batch 23)
-- [ ] Las preguntas se ponen donde hay algo que **decidir o predecir**, no como
+- [x] Ninguna unidad de más de 40 minutos sin al menos dos momentos
+- [x] Cada pregunta nueva llega con su solución (batch 23)
+- [x] Las preguntas se ponen donde hay algo que **decidir o predecir**, no como
       control de lectura
-- [ ] Los minutos siguen sumando lo que cada unidad tiene reservado: lo que
+- [x] Los minutos siguen sumando lo que cada unidad tiene reservado: lo que
       entra, saca a algo
 
 **Excepción a la §13, deliberada.** Es un reparto global del ritmo. Decidirlo
 unidad por unidad es exactamente lo que produjo el desbalance actual.
 
 **Tests esperados**
-- [ ] Una comprobación en `validar-contenido` que avise si una unidad larga se
+- [x] Una comprobación en `validar-contenido` que avise si una unidad larga se
       queda sin interacción
 
 **Fuera de alcance**

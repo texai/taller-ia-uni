@@ -12,9 +12,12 @@ import {
   minutosHasta,
   pasosDe,
   retroceder,
+  reprochesDeRitmo,
+  ritmoDe,
   totalItems,
 } from "./navegacion";
-import type { Item, Sesion } from "./tipos";
+import { cargarCurso } from "./contenido";
+import type { Item, Sesion, Unidad } from "./tipos";
 
 function item(id: string, extra: Partial<Item> = {}): Item {
   return { id, tipo: "titulo", titulo: id, ...extra } as Item;
@@ -244,4 +247,85 @@ test("los totales se calculan, nunca se declaran", () => {
     0,
   );
   assert.equal(porUnidades, minutosDeSesion(CON_MINUTOS));
+});
+
+// --------------------------------------------------------------------------
+// El ritmo
+// --------------------------------------------------------------------------
+
+function unidadCon(items: Item[]): Unidad {
+  return { id: "u", tipo: "reto", titulo: "Prueba", items };
+}
+
+/** Un ítem cualquiera de contenido, con sus minutos. */
+function lamina(min: number): Item {
+  return { id: `l${min}`, tipo: "titulo", titulo: "x", minutos: min } as Item;
+}
+
+const PREGUNTA = {
+  id: "q",
+  tipo: "pregunta",
+  pregunta: "¿?",
+  minutos: 3,
+} as Item;
+const PAUSA = { id: "p", tipo: "pausa-preguntas", minutos: 2 } as Item;
+const RECESO = { id: "r", tipo: "receso", minutos: 15 } as Item;
+
+test("el tramo mayor es lo seguido sin que pase nada", () => {
+  const u = unidadCon([lamina(10), lamina(10), PREGUNTA, lamina(5)]);
+  assert.equal(ritmoDe(u).tramoMayor, 20);
+});
+
+test("el tramo que queda abierto al final también cuenta", () => {
+  const u = unidadCon([lamina(5), PREGUNTA, lamina(30)]);
+  assert.equal(ritmoDe(u).tramoMayor, 30);
+});
+
+test("el receso corta un tramo pero no cuenta como momento", () => {
+  const u = unidadCon([lamina(20), RECESO, lamina(20)]);
+  const r = ritmoDe(u);
+  assert.equal(r.tramoMayor, 20, "el receso corta");
+  assert.equal(r.momentos, 0, "descansar no es participar");
+});
+
+test("preguntas y pausas cuentan como momentos", () => {
+  assert.equal(ritmoDe(unidadCon([PREGUNTA, PAUSA])).momentos, 2);
+});
+
+test("una unidad corta sin interacción no se reprocha", () => {
+  assert.deepEqual(reprochesDeRitmo(unidadCon([lamina(20)])), []);
+});
+
+/**
+ * El caso que motivó toda esta maquinaria: `s2-reto-4` tenía 105 minutos y 25
+ * ítems sin una sola pregunta ni pausa, y nadie lo decidió — se coló.
+ */
+test("una unidad larga sin momentos se reprocha por las dos razones", () => {
+  const u = unidadCon([lamina(50), lamina(50)]);
+  const reproches = reprochesDeRitmo(u);
+  assert.equal(reproches.length, 2);
+  assert.match(reproches[0] ?? "", /sin ningún momento/);
+  assert.match(reproches[1] ?? "", /100 min seguidos/);
+});
+
+test("una unidad larga con un solo momento sigue faltándole uno", () => {
+  const u = unidadCon([lamina(20), PREGUNTA, lamina(20)]);
+  const reproches = reprochesDeRitmo(u);
+  assert.equal(reproches.length, 1);
+  assert.match(reproches[0] ?? "", /con un solo momento/);
+});
+
+test("una unidad larga bien repartida no se reprocha", () => {
+  const u = unidadCon([lamina(20), PREGUNTA, lamina(20), PAUSA, lamina(20)]);
+  assert.deepEqual(reprochesDeRitmo(u), []);
+});
+
+test("el curso real respira: ninguna unidad se reprocha", () => {
+  const curso = cargarCurso();
+  const malas = curso.sesiones.flatMap((s) =>
+    s.unidades.flatMap((u) =>
+      reprochesDeRitmo(u).map((r) => `${u.id}: ${r}`),
+    ),
+  );
+  assert.deepEqual(malas, []);
 });

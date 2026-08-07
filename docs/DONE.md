@@ -2091,3 +2091,86 @@ Salieron de prosa que el mapa ahora anticipa. Las dos sesiones siguen en 240.
 - `npm run humo`: 180 pantallas, 0 con error.
 - Los cinco mapas y los diagramas ya existentes vistos a 1440×900, antes y
   después del cambio de ancho.
+
+---
+
+## Batch 29 — El ritmo: preguntas y pausas repartidas
+
+Había **ocho momentos de interacción en ocho horas**, uno cada sesenta minutos,
+y el agujero estaba donde más duele: `s2-reto-4` eran 107 minutos y 27 ítems
+con cero preguntas y cero pausas. Ahora son **veintiuno**, y ningún tramo pasa
+de veinticinco minutos.
+
+### Primero el criterio, después el reparto
+
+El alcance pedía un criterio escrito y no a ojo. Son dos reglas, en
+`CONVENTIONS.md` §17 y comprobadas por `validar-contenido`:
+
+- Nada dura más de **25 minutos seguidos**. Preguntas, pausas y el receso
+  cortan el tramo; todo lo demás lo alarga.
+- Una unidad de más de **40 minutos** necesita **al menos dos** momentos. Una
+  sola pregunta al final de una hora no es ritmo, es una despedida.
+
+Las dos cifras viven en `navegacion.ts` —`TRAMO_MAXIMO`, `UNIDAD_LARGA`— junto
+a `ritmoDe` y `reprochesDeRitmo`, con nueve tests. Que sea un **aviso y no un
+error** es deliberado: hay unidades donde un tramo largo se justifica, pero se
+justifica a sabiendas. El desbalance no lo decidió nadie, se coló.
+
+La comprobación fue además la lista de trabajo de este batch. Al empezar
+señalaba doce descuadres en seis unidades; al terminar, ninguno.
+
+| | Antes | Después |
+|---|---|---|
+| `s1-flota` | 2 momentos, 49 min de tramo | 4 momentos, 21 min |
+| `s1-reto-1` | 1, 37 min | 2, 23 min |
+| `s1-reto-2` | 1, 55 min | 3, 25 min |
+| `s1-reto-3` | 2, 44 min | 3, 25 min |
+| `s2-reto-4` | **0**, 48 min | 3, 24 min |
+| `s2-reto-5` | 1, 56 min | 2, 25 min |
+| `s2-cierre` | 1, 40 min | 3, 25 min |
+
+### Siete preguntas, y todas piden apostar antes de ver
+
+Ninguna es control de lectura. Las siete son de una de tres clases —predicción,
+decisión de diseño, o intuición razonable y falsa— y todas llegan **antes** del
+contenido que responden, no después:
+
+| Pregunta | Dónde | Qué hace |
+|---|---|---|
+| Cobertura del 97% en un intervalo del 90% | antes de explicar cobertura | la métrica que casi todos leen al revés |
+| ¿Qué señal se va a mover? | antes del escenario silencioso | que apuesten antes de que el groupby no encuentre nada |
+| Doce tiendas a +10% y doce a −10% | antes del código del sesgo | el error de promediar porcentajes, en una cuenta mental |
+| ¿Cuánto se parecerán tres corridas? | antes de correrlas | temperatura 0 no hace determinista al sistema |
+| Si nadie puede reescribir el diagnóstico… | antes de explicar `revision` | la sala llega sola en treinta segundos |
+| Una tienda muda: ¿qué recomienda? | antes de los criterios del reto 4 | la trampa de la unidad, como apuesta |
+| De nueve errores, ¿cuántos del modelo? | antes de la tabla del cierre | la tesis del taller, preguntada |
+
+La última es la única del taller cuya respuesta *es* la conclusión. Si la sala
+contesta «ninguno» en bloque, mejor: significa que las ocho horas funcionaron.
+
+### Cinco pausas, todas antes de algo caro
+
+Antes, no después. La de `s1-flota` va justo después de `make seed` y antes de
+los tres rescates — si alguien se quedó sin entorno hay que saberlo entonces y
+no cuando empiece el reto. La de `s1-reto-2` cae dos minutos antes de que
+veinte personas empiecen a teclear. La de `s2-reto-4`, después del estado, que
+es el primer concepto duro del día y del que todo lo demás depende.
+
+### Los minutos: 33 comprados, 33 pagados
+
+Dieciséis en la sesión 1, diecisiete en la 2, y las dos siguen en 240. Salieron
+de recortar un minuto aquí y allá en treinta ítems de prosa, más dos del demo
+de las tres corridas —que con la apuesta hecha de antemano se mira mejor en
+diez minutos que en doce.
+
+Un movimiento sin costo: `s2-r5-preguntas` estaba al final de su unidad, donde
+una pausa ya no sirve de nada. Ahora va después de la comparación de los dos
+resultados, que es donde la sala tiene algo que preguntar.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 156 ítems, 240 + 240 min, **sin avisos**.
+- `npm test` (134 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 192 pantallas, 0 con error.
+- El propio curso es un test: `reprochesDeRitmo` sobre las doce unidades reales
+  tiene que devolver vacío, y falla la suite si alguien mete cuarenta minutos
+  de láminas seguidas.

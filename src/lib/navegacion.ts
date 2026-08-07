@@ -11,7 +11,7 @@
  * del diagrama y no al principio del diagrama. Ver `CONVENTIONS.md` §10.
  */
 
-import type { Item, Sesion, Unidad } from "./tipos";
+import type { Item, Sesion, TipoItem, Unidad } from "./tipos";
 
 
 export interface Posicion {
@@ -189,4 +189,77 @@ export function comparar(a: Posicion, b: Posicion): number {
   if (a.unidad !== b.unidad) return a.unidad - b.unidad;
   if (a.item !== b.item) return a.item - b.item;
   return a.paso - b.paso;
+}
+
+// --------------------------------------------------------------------------
+// El ritmo de una unidad
+// --------------------------------------------------------------------------
+
+/**
+ * Minutos seguidos que puede durar un tramo sin que pase nada.
+ *
+ * No sale de ninguna teoría: sale de que veinticinco minutos son el largo de
+ * los tramos que en las pruebas de dictado se sostuvieron, y de que a partir
+ * de treinta la sala deja de preguntar aunque tenga preguntas. Está acá y no
+ * en la cabeza de nadie para que el descuadre se vea al construir, no en el
+ * aula.
+ */
+export const TRAMO_MAXIMO = 25;
+
+/** A partir de estos minutos, una unidad necesita al menos dos momentos. */
+export const UNIDAD_LARGA = 40;
+
+/** Ítems que cortan un tramo: algo pasa, y no lo hace el docente hablando. */
+const CORTAN: readonly TipoItem[] = ["pregunta", "pausa-preguntas", "receso"];
+
+export interface Ritmo {
+  /** Preguntas y pausas. El receso no cuenta: descansar no es participar. */
+  momentos: number;
+  /** El tramo más largo, en minutos, sin que pase nada. */
+  tramoMayor: number;
+}
+
+/**
+ * Cómo respira una unidad.
+ *
+ * Dos cifras, porque los dos fallos son distintos: una unidad puede tener
+ * cuatro momentos y aun así abrir con cuarenta minutos seguidos de láminas, y
+ * otra puede no tener ninguno y durar quince.
+ */
+export function ritmoDe(unidad: Unidad): Ritmo {
+  let momentos = 0;
+  let tramo = 0;
+  let mayor = 0;
+
+  for (const item of unidad.items) {
+    if (CORTAN.includes(item.tipo)) {
+      if (item.tipo !== "receso") momentos++;
+      mayor = Math.max(mayor, tramo);
+      tramo = 0;
+      continue;
+    }
+    tramo += item.minutos ?? 0;
+  }
+
+  return { momentos, tramoMayor: Math.max(mayor, tramo) };
+}
+
+/** Qué le reprocharías al ritmo de esta unidad. Vacío si está bien. */
+export function reprochesDeRitmo(unidad: Unidad): string[] {
+  const { momentos, tramoMayor } = ritmoDe(unidad);
+  const minutos = minutosDeUnidad(unidad);
+  const reproches: string[] = [];
+
+  if (minutos > UNIDAD_LARGA && momentos < 2) {
+    reproches.push(
+      `${minutos} min ${momentos === 0 ? "sin ningún" : "con un solo"} momento ` +
+        `de interacción; a partir de ${UNIDAD_LARGA} hacen falta dos`,
+    );
+  }
+  if (tramoMayor > TRAMO_MAXIMO) {
+    reproches.push(
+      `${tramoMayor} min seguidos sin que pase nada (el tope es ${TRAMO_MAXIMO})`,
+    );
+  }
+  return reproches;
 }

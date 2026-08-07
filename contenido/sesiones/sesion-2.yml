@@ -298,7 +298,7 @@ unidades:
         tipo: diagrama-secuencia
         titulo: Una corrida, mensaje a mensaje
         archivo: puml/grafo-agente.puml
-        minutos: 12
+        minutos: 11
         notas: |
           Recorrerlo de a un mensaje. Proyectarlo entero de una vez es
           exactamente lo que este tipo de ítem existe para evitar.
@@ -394,7 +394,7 @@ unidades:
       - id: s2-r4-estado-por-que
         tipo: markdown
         titulo: Por qué `add_messages` y no una lista
-        minutos: 3
+        minutos: 2
         contenido: |
           Todos los campos del estado se **reemplazan** cuando un nodo los
           devuelve. `mensajes` no: `add_messages` hace que se **acumulen**.
@@ -409,6 +409,21 @@ unidades:
           `vueltas` es el otro campo que merece un segundo: es un entero que
           cuenta cuántas veces pasó por reflexión, y es lo que evita el bucle
           infinito.
+
+      - id: s2-r4-pausa
+        tipo: pausa-preguntas
+        titulo: Pausa · el estado, antes de cablear
+        minutos: 3
+        disparadores:
+          - ¿Por qué el estado tiene una clave para los mensajes y otra para la hipótesis?
+          - ¿Alguien ha usado un grafo de este tipo fuera de LangGraph?
+          - ¿Qué pasa si dos nodos escriben la misma clave?
+        notas: |
+          El estado es el primer concepto duro del día y todo lo que sigue lo
+          da por entendido. Tres minutos acá se pagan solos.
+
+          Si nadie pregunta, lanzar la tercera: dos nodos escribiendo la misma
+          clave es exactamente la trampa de la lámina siguiente.
 
       - id: s2-r4-percepcion
         tipo: codigo
@@ -632,11 +647,60 @@ unidades:
           Si la vieron ayer, decirlo: es la misma cita. Ayer era el síntoma;
           hoy es la prueba de que el nodo funciona.
 
+      - id: s2-r4-pregunta-revision
+        tipo: pregunta
+        titulo: Antes de la respuesta
+        pregunta: >-
+          La reflexión acaba de demoler el diagnóstico y ya no quedan vueltas.
+          Si el grafo no tiene ningún nodo que pueda reescribirlo, ¿qué sale
+          impreso?
+        visibilidad: publica
+        permiteOmitir: true
+        respuesta: El diagnóstico demolido, con sus propias objeciones debajo
+        minutos: 3
+        opciones:
+          - El diagnóstico demolido, con sus propias objeciones debajo
+          - No sale nada; el agente se calla
+          - Sale solo la crítica
+          - El agente vuelve a percibir igual
+        notas: |
+          Esta pregunta existe porque el error pasó de verdad construyendo el
+          taller, y la sala llega a la respuesta sola en treinta segundos.
+          Revelar y pasar rápido: la lámina siguiente es la explicación larga.
+        solucion:
+          explicacion: |
+            **Sale el diagnóstico demolido, y debajo las objeciones que lo
+            demuelen.** El titular termina contradiciendo a las recomendaciones
+            impresas a dos centímetros.
+
+            Es el argumento entero de la unidad: **cuestionarse sin poder
+            corregirse no sirve de nada.** Una reflexión que solo objeta es
+            decorativa — peor que decorativa, porque produce un documento que se
+            contradice a sí mismo y que nadie puede firmar.
+
+            Por eso hay dos capas y no una. `reflexion` objeta; `revision`
+            reescribe haciéndose cargo de las objeciones. La tabla del repaso de
+            esta mañana ya lo decía en su fila resaltada: *cuestionarse no
+            basta, hace falta poder reescribir el diagnóstico*.
+          descartes:
+            - opcion: No sale nada; el agente se calla
+              razon: >-
+                Callarse sería una decisión, y nadie la programó. Un grafo
+                emite lo que tenga en el estado cuando llega al final.
+            - opcion: Sale solo la crítica
+              razon: >-
+                La crítica sin el diagnóstico no es accionable, y además no es
+                lo que el nodo de recomendación lee.
+            - opcion: El agente vuelve a percibir igual
+              razon: >-
+                Vuelve mientras le queden vueltas. La pregunta es justamente qué
+                pasa cuando se acaban.
+
       - id: s2-r4-por-que-revision
         tipo: markdown
         titulo: Por qué existe `revision`
         entradilla: La pregunta más importante de la unidad
-        minutos: 3
+        minutos: 2
         contenido: |
           Una reflexión que solo puede **objetar** es decorativa.
 
@@ -667,7 +731,7 @@ unidades:
           con la misma evidencia, decía que sí los había y explicaba por qué.
           Sin `revision`, esa corrida se emitía con el titular equivocado y la
           respuesta correcta enterrada en las objeciones.
-        minutos: 3
+        minutos: 2
         notas: |
           Dejarla en pantalla. Es la mejor justificación de arquitectura del
           taller entero, y la escribió el agente.
@@ -676,7 +740,7 @@ unidades:
         tipo: comparacion
         titulo: Antes y después de la revisión
         entradilla: Misma corrida, misma evidencia, sin llamar una herramienta más
-        minutos: 4
+        minutos: 3
         izquierda:
           titulo: El diagnóstico que salía
           contenido: >-
@@ -696,7 +760,7 @@ unidades:
       - id: s2-r4-memoria
         tipo: markdown
         titulo: Memoria
-        minutos: 3
+        minutos: 2
         contenido: |
           Un JSON en disco. Deliberadamente simple: lo que importa no es el
           motor de persistencia, sino **cuándo** se usa — el agente consulta su
@@ -780,7 +844,7 @@ unidades:
       - id: s2-r4-feed-caido
         tipo: error-comun
         titulo: "La trampa · una tienda que dejó de reportar"
-        minutos: 4
+        minutos: 3
         sintoma: >-
           Las métricas de la flota se ven impecables. Mejor que ayer, incluso.
         causa: >-
@@ -796,10 +860,67 @@ unidades:
           el agente tiene que notarlo. Es el cuarto mundo del criterio de
           aceptación y el que más gente falla.
 
+      - id: s2-r4-pregunta-feed
+        tipo: pregunta
+        titulo: La trampa, antes de caer en ella
+        pregunta: >-
+          Una tienda dejó de reportar: sus filas no llegan en cero, no llegan.
+          Las métricas de la flota se ven impecables — mejor que ayer, incluso.
+          ¿Qué debería recomendar el agente?
+        visibilidad: publica
+        permiteOmitir: false
+        respuesta: Revisar el feed de esa tienda, y no tocar ningún modelo
+        minutos: 3
+        opciones:
+          - Reentrenar los modelos de esa tienda
+          - Revisar el feed de esa tienda, y no tocar ningún modelo
+          - Nada; la flota se ve sana
+          - Reentrenar la flota, por si acaso
+        notas: |
+          El criterio de aceptación del reto, convertido en pregunta antes de
+          enunciarlo. La primera opción es la trampa y suele ganar: **si algo
+          va mal con una tienda, reentrenar sus modelos suena a lo correcto.**
+
+          Revelar y encadenar directo con los cuatro criterios.
+        solucion:
+          explicacion: |
+            **Revisar el feed, y no tocar ningún modelo.** El problema es de
+            datos, no de modelo, y las dos cosas se arreglan en sitios
+            distintos.
+
+            Reentrenar acá es el peor de los cuatro resultados posibles: el
+            modelo de arequipa está **sano**, y entrenarlo contra un histórico
+            en el que la tienda dejó de vender le enseña que la demanda se
+            desplomó. Se rompe un modelo que funcionaba, con datos fantasma, y
+            el daño no se ve hasta que el feed vuelve.
+
+            Por eso la telemetría no alcanza: la flota se ve mejor que ayer
+            —faltan justo las filas de una tienda que tiraba el promedio hacia
+            abajo— y hace falta una herramienta que pregunte *quién dejó de
+            hablar*, no *quién se equivoca más*.
+
+            Este es el mundo que separa un agente que ayuda de uno que hace
+            daño, y en el reto 5 se convierte en una regla de código: sobre
+            `anomalia`, no se reentrena. Nunca.
+          descartes:
+            - opcion: Reentrenar los modelos de esa tienda
+              razon: >-
+                Es la respuesta que más se elige y la que rompe algo. Entrena
+                con datos que no existen y degrada un modelo que estaba bien.
+            - opcion: Nada; la flota se ve sana
+              razon: >-
+                La flota se ve sana **porque** falta una tienda. Es el síntoma,
+                no la tranquilidad.
+            - opcion: Reentrenar la flota, por si acaso
+              razon: >-
+                "Por si acaso" sobre 192 modelos deja la cadena sin ninguno con
+                que comparar. Es la acción que en el reto 5 necesita una firma
+                humana.
+
       - id: s2-r4-criterios
         tipo: criterios
         titulo: Cuatro mundos, cuatro lecturas
-        minutos: 3
+        minutos: 2
         criterios:
           - texto: "Mundo sano → sin_hallazgos, severidad baja"
             pista: Una guardia tranquila es un resultado, no un fracaso
@@ -812,7 +933,7 @@ unidades:
       - id: s2-r4-correr
         tipo: demo
         titulo: Correrlo contra los cuatro mundos
-        minutos: 4
+        minutos: 3
         pasos:
           - comando: make romper ESCENARIO=feed_caido
           - comando: make agente ARGS="--verboso"
@@ -972,7 +1093,7 @@ unidades:
       - id: s2-r5-riesgo
         tipo: markdown
         titulo: Equivocarse deja de costar una alerta
-        minutos: 3
+        minutos: 2
         contenido: |
           Mientras el agente solo miraba, equivocarse costaba **una alerta de
           más**. Alguien la leía, se encogía de hombros, seguía.
@@ -990,7 +1111,7 @@ unidades:
       - id: s2-r5-apagado
         tipo: markdown
         titulo: Viene apagado
-        minutos: 3
+        minutos: 2
         contenido: |
           ```
           EJECUTAR_ACCIONES=1
@@ -1090,10 +1211,70 @@ unidades:
           la pregunta que sirve para cualquier acción automatizada, no solo
           para reentrenar.
 
+      - id: s2-r5-pregunta-politica
+        tipo: pregunta
+        titulo: ¿Cuál dejarías que ejecute solo?
+        pregunta: >-
+          El agente tiene permiso para actuar. De estas cuatro acciones que él
+          mismo podría recomendar, ¿cuál dejarías que dispare sin preguntarle a
+          nadie?
+        visibilidad: publica
+        permiteOmitir: true
+        respuesta: Reentrenar una categoría con deriva confirmada
+        minutos: 3
+        opciones:
+          - Reentrenar una categoría con deriva confirmada
+          - Reentrenar la flota completa
+          - Investigar por qué una tienda dejó de reportar
+          - Ninguna; que todo lo apruebe una persona
+        notas: |
+          La pregunta de diseño de la unidad, hecha antes de mostrar el código
+          de la política. Vale la pena dejar discutir un minuto: casi siempre
+          sale alguien defendiendo la última opción, y esa conversación es la
+          que hay que tener.
+
+          El criterio que se busca no es "qué tan seguro estoy" sino **qué tan
+          caro es equivocarse y cuánto cuesta deshacerlo**.
+        solucion:
+          explicacion: |
+            **Reentrenar una categoría con deriva confirmada.** Es la única de
+            las cuatro que cumple las dos condiciones: el diagnóstico es de
+            modelo —no de datos— y el radio de daño es reversible.
+
+            Las dos reglas que hacen todo el trabajo pesado:
+
+            1. **La naturaleza del problema.** Si el diagnóstico es una
+               anomalía, el problema está en los datos; reentrenar contra un
+               feed roto enseña ruido y arruina un modelo sano.
+            2. **El radio de daño.** Una categoría son 24 modelos y se revierte
+               entrenando de nuevo. La flota son 192 a la vez, y si el
+               diagnóstico estaba mal no queda ninguno sano con que comparar.
+               Una acción sin vuelta atrás necesita una firma.
+
+            Fíjense en lo que **no** es el criterio: no es la confianza del
+            agente. Un agente muy seguro de algo equivocado es exactamente el
+            caso que la política tiene que frenar, y por eso el freno no vive
+            en el prompt.
+          descartes:
+            - opcion: Reentrenar la flota completa
+              razon: >-
+                No por improbable, sino por irreversible: deja 192 modelos sin
+                punto de comparación. Es la que necesita una persona.
+            - opcion: Investigar por qué una tienda dejó de reportar
+              razon: >-
+                No se puede automatizar porque termina en un humano por
+                definición: si el agente pudiera cerrarla solo, no sería una
+                investigación.
+            - opcion: Ninguna; que todo lo apruebe una persona
+              razon: >-
+                Es defendible y es donde muchos equipos empiezan. Pero si nadie
+                puede actuar sin firma, el agente es un informe con pasos
+                extra — y el lunes por la mañana la firma no llega.
+
       - id: s2-r5-urgencia
         tipo: error-comun
         titulo: "El error propio · frenar por urgencia"
-        minutos: 4
+        minutos: 3
         sintoma: >-
           La acción no se disparaba nunca. El agente recomendaba reentrenar, la
           política lo dejaba pasar en el papel, y no pasaba nada.
@@ -1132,7 +1313,7 @@ unidades:
         entradilla: El objetivo se declara en campos, no en prosa
         lenguaje: python
         ruta: agente/accion.py
-        minutos: 3
+        minutos: 2
         contenido: |
           def _filtro_de(rec: dict) -> dict | None:
               tipo = (rec.get("objetivo_tipo") or "").strip()
@@ -1155,7 +1336,7 @@ unidades:
         tipo: comando-anotado
         titulo: Correrlo con permiso para actuar
         comando: docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso
-        minutos: 4
+        minutos: 3
         segmentos:
           - texto: "--rm"
             explicacion: >-
@@ -1273,6 +1454,17 @@ unidades:
           habría pasado la política. Es el modo en que conviene dejarlo cuando
           la clase termine.
 
+      - id: s2-r5-preguntas
+        tipo: pausa-preguntas
+        titulo: Pausa para preguntas
+        minutos: 3
+        disparadores:
+          - ¿Qué acción de su trabajo dejarían automatizar, y cuál nunca?
+          - ¿Cómo sabrían que una acción es reversible antes de ejecutarla?
+          - ¿Qué campo de los que escribe su agente usarían como freno? ¿Y por qué no?
+
+  # ------------------------------------------------------------------ 12:10
+
       - id: s2-r5-api-escribe
         tipo: markdown
         titulo: La única ruta que escribe
@@ -1326,16 +1518,6 @@ unidades:
           ejecución no se puede inspeccionar es un agente en el que hay que
           creer, y creer no escala.
 
-      - id: s2-r5-preguntas
-        tipo: pausa-preguntas
-        titulo: Pausa para preguntas
-        minutos: 3
-        disparadores:
-          - ¿Qué acción de su trabajo dejarían automatizar, y cuál nunca?
-          - ¿Cómo sabrían que una acción es reversible antes de ejecutarla?
-          - ¿Qué campo de los que escribe su agente usarían como freno? ¿Y por qué no?
-
-  # ------------------------------------------------------------------ 12:10
   - id: s2-cierre
     tipo: cierre
     titulo: Los errores, y dónde estaban de verdad
@@ -1371,10 +1553,70 @@ unidades:
           No adelantar la conclusión. La tabla siguiente la produce sola si se
           lee la columna de la derecha en voz alta, fila por fila.
 
+      - id: s2-c-pregunta-errores
+        tipo: pregunta
+        titulo: Antes de ver la lista
+        pregunta: >-
+          Nueve errores de diseño salieron construyendo este laboratorio.
+          ¿Cuántos creen que estaban en el modelo de lenguaje?
+        visibilidad: publica
+        permiteOmitir: false
+        respuesta: Ninguno
+        minutos: 3
+        opciones:
+          - Ninguno
+          - Uno o dos
+          - La mitad
+          - Casi todos
+        notas: |
+          La pregunta que abre el cierre, y la única del taller cuya respuesta
+          es la tesis entera. Preguntarla **antes** de proyectar la tabla.
+
+          Si la sala ya viene convencida y contesta "ninguno" en bloque, mejor:
+          significa que las ocho horas hicieron su trabajo. Revelar igual y
+          pasar a la tabla, que es la evidencia.
+        solucion:
+          explicacion: |
+            **Ninguno.** Los nueve estaban en lo que le dimos de comer o en cómo
+            lo cableamos:
+
+            - dos de **cableado del grafo** — el contexto no llegaba, el estado
+              no se propagaba
+            - uno de un **simulador que no podía fallar**, y que por eso no
+              verificaba nada
+            - cuatro de **estadística bien calculada y mal planteada** —
+              promediar porcentajes, medir lo normal con la ventana que
+              auditas, confundir significancia con relevancia, ordenar los
+              hallazgos por la métrica ruidosa
+            - dos de **forma del contrato** — campos sin definir, alcances que
+              el código no podía interpretar
+
+            El agente los sufrió todos. Varios los diagnosticó él mismo en su
+            reflexión, antes que nosotros.
+
+            **Cuando un agente se equivoca, la primera sospecha no debería ser
+            el modelo.** Casi siempre es lo que le diste de comer — y eso es una
+            buena noticia, porque lo que le diste de comer sí lo controlas.
+          descartes:
+            - opcion: Uno o dos
+              razon: >-
+                Es la respuesta prudente, y sigue siendo demasiado. El
+                laboratorio corrió con proveedores distintos y ninguno de los
+                nueve cambió de sitio.
+            - opcion: La mitad
+              razon: >-
+                Es la intuición con la que casi todo el mundo llega a un curso
+                de agentes, y es la que las ocho horas vienen a mover.
+            - opcion: Casi todos
+              razon: >-
+                Sería la conclusión cómoda: si la culpa es del modelo, no hay
+                nada que hacer salvo esperar al siguiente. Es justo lo
+                contrario.
+
       - id: s2-c-errores
         tipo: tabla
         titulo: Los nueve, y dónde vivía el arreglo
-        minutos: 7
+        minutos: 6
         columnas: [El error, Dónde vivía el arreglo]
         filas:
           - ["El contexto no llegaba a la API", "En cómo se abre la conversación: un `HumanMessage` con el encargo"]
@@ -1407,6 +1649,19 @@ unidades:
         notas: |
           Dejarlo en pantalla en silencio. Es el número que resume el taller.
 
+      - id: s2-c-pausa
+        tipo: pausa-preguntas
+        titulo: Pausa · lo que acaban de ver
+        minutos: 2
+        disparadores:
+          - ¿Cuál de los nueve les resultó más familiar?
+          - ¿Alguno de estos lo habrían atribuido al modelo?
+          - ¿Cuántos de estos los detectaría su equipo hoy?
+        notas: |
+          Corta, y en el sitio exacto: la tabla y el número acaban de aterrizar,
+          y lo que viene son dos citas del agente acusándose a sí mismo. Dejar
+          que la sala respire entre la evidencia y el remate.
+
       - id: s2-c-cita-1
         tipo: cita-agente
         titulo: El agente encontró varios antes que nosotros
@@ -1436,7 +1691,7 @@ unidades:
           como "días con predicción disponible" en vez de "días en que la venta
           real cayó dentro del intervalo", y gastó tres objeciones en algo que
           no era un problema.
-        minutos: 4
+        minutos: 3
         notas: |
           La lección se lleva a cualquier equipo: **un nombre ambiguo sin
           definición le cuesta razonamiento a un agente, igual que a una
@@ -1548,7 +1803,7 @@ unidades:
       - id: s2-c-preguntas
         tipo: pausa-preguntas
         titulo: Lo que quede
-        minutos: 6
+        minutos: 5
         disparadores:
           - ¿Qué de esto se llevarían a lo que están construyendo ahora?
           - ¿Dónde creen que estaría el primer error de su propio agente?

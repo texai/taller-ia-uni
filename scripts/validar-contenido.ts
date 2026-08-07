@@ -6,7 +6,7 @@
  */
 
 import { cargarCurso, ErrorDeContenido, recorrer } from "../src/lib/contenido";
-import { minutosDeSesion } from "../src/lib/navegacion";
+import { minutosDeSesion, reprochesDeRitmo } from "../src/lib/navegacion";
 import { minutosEntre } from "../src/lib/reloj";
 
 const VERDE = "\x1b[32m";
@@ -57,6 +57,26 @@ try {
   if (descuadres.length) {
     console.log(`\n${AMARILLO}Minutos que no caben en la hora:${FIN}`);
     for (const d of descuadres) console.log(`  ${AMARILLO}·${FIN} ${d}`);
+  }
+
+  // El ritmo.
+  //
+  // Un aviso y no un error: el reparto de preguntas y pausas es una decisión
+  // del docente, y hay unidades donde un tramo largo se justifica. Pero se
+  // justifica *a sabiendas* — el desbalance que encontró la auditoría del 7 de
+  // agosto (una unidad de 105 minutos con cero interacciones) no lo decidió
+  // nadie, se coló.
+  const ritmos: string[] = [];
+  for (const sesion of curso.sesiones) {
+    for (const unidad of sesion.unidades) {
+      for (const r of reprochesDeRitmo(unidad)) {
+        ritmos.push(`${sesion.id} · ${unidad.id}: ${r}`);
+      }
+    }
+  }
+  if (ritmos.length) {
+    console.log(`\n${AMARILLO}Unidades que no respiran:${FIN}`);
+    for (const r of ritmos) console.log(`  ${AMARILLO}·${FIN} ${r}`);
   }
 } catch (e) {
   if (e instanceof ErrorDeContenido) {

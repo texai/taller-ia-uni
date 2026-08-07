@@ -125,7 +125,7 @@ unidades:
       - id: s1-que-es-un-modelo
         tipo: markdown
         titulo: Qué es "un modelo en producción"
-        minutos: 3
+        minutos: 2
         contenido: |
           Acá un modelo **no es un chatbot**. Es un **artefacto entrenado**: un
           archivo con los coeficientes que quedaron de ajustar una regresión
@@ -174,7 +174,7 @@ unidades:
         tipo: diagrama
         titulo: La solución completa, por componentes
         clase: componentes
-        minutos: 5
+        minutos: 4
         contenido: |
           flowchart LR
             V[("ventas.csv<br/>el mundo")] --> E["entrenar<br/>192 Ridge"]
@@ -350,6 +350,23 @@ unidades:
           Quien hizo el trabajo previo ya tiene todo esto y solo necesita
           `make arriba`.
 
+      - id: s1-flota-pausa
+        tipo: pausa-preguntas
+        titulo: Pausa · ¿a alguien no le levantó?
+        minutos: 2
+        disparadores:
+          - ¿Alguien vio un número distinto de 17,472?
+          - ¿Alguna imagen se quedó construyendo?
+          - ¿Quedó alguna duda de qué hace `run --rm` que no sea `up`?
+        notas: |
+          Dos minutos, no cinco. El sitio es este y no antes: acabamos de
+          teclear los dos comandos que todo el resto del taller da por hechos,
+          y si alguien se quedó atrás hay que saberlo **ahora**, no cuando
+          empiece el reto 1.
+
+          Los tres rescates vienen justo después. Si alguien levanta la mano
+          con uno de ellos, la respuesta es "es la siguiente lámina".
+
       - id: s1-rescate-docker
         tipo: error-comun
         titulo: "Rescate · el motor no está corriendo"
@@ -433,7 +450,7 @@ unidades:
       - id: s1-metricas-definidas
         tipo: markdown
         titulo: "MAPE: cuánto se equivoca"
-        minutos: 3
+        minutos: 2
         contenido: |
           El error porcentual absoluto medio. Para cada día se toma la
           diferencia entre lo pronosticado y lo vendido, en valor absoluto, y se
@@ -471,10 +488,58 @@ unidades:
           que ningún umbral sobre el MAPE detecta. No dar todavía los números
           — son del reto 1.
 
+      - id: s1-pregunta-cobertura
+        tipo: pregunta
+        titulo: Antes de verlo
+        pregunta: >-
+          Un modelo publica intervalos de predicción al 90%. Midiendo los
+          últimos 14 días, la realidad cae dentro del intervalo el 97% de las
+          veces. ¿Qué está pasando?
+        visibilidad: publica
+        permiteOmitir: true
+        respuesta: El modelo se está cubriendo las espaldas
+        minutos: 3
+        opciones:
+          - El modelo está muy bien calibrado
+          - El modelo se está cubriendo las espaldas
+          - Faltan datos para decirlo
+          - El intervalo está mal calculado
+        notas: |
+          Es la métrica que casi todos leen mal, y por eso se pregunta **antes**
+          de explicarla. Dejar que se equivoquen: la primera opción es la que
+          gana casi siempre, y equivocarse acá es lo que hace que la
+          explicación se quede.
+        solucion:
+          explicacion: |
+            **97% de cobertura en un intervalo del 90% no es estar mejor: es
+            estar peor.** El modelo prometió acertar 9 de cada 10 veces y
+            acierta 9.7 — porque abrió el intervalo más de lo necesario.
+
+            Un intervalo que casi nunca falla es un intervalo tan ancho que no
+            sirve para decidir nada. "Entre 40 y 400 unidades" nunca se
+            equivoca, y nunca ayuda a reponer.
+
+            Lo que se busca es cobertura **cerca** del nominal, por arriba o por
+            abajo. Alejarse hacia arriba es tan síntoma como alejarse hacia
+            abajo, y es el que nadie mira porque suena a buena noticia.
+          descartes:
+            - opcion: El modelo está muy bien calibrado
+              razon: >-
+                Calibrado sería 90%. 97% es siete puntos de más, y en un tablero
+                pintado de verde eso pasa por excelencia.
+            - opcion: Faltan datos para decirlo
+              razon: >-
+                Catorce días de 192 modelos son 2,688 observaciones. La duda
+                razonable acá no es de tamaño de muestra.
+            - opcion: El intervalo está mal calculado
+              razon: >-
+                Puede estarlo, pero no hace falta suponerlo: un intervalo bien
+                calculado sobre un modelo inseguro da exactamente esto.
+
       - id: s1-cobertura
         tipo: markdown
         titulo: "Cobertura: la que casi todos leen mal"
-        minutos: 3
+        minutos: 2
         contenido: |
           Cada predicción viene con un intervalo. La cobertura es **qué
           fracción de los días la venta real cayó dentro de ese intervalo**.
@@ -493,7 +558,7 @@ unidades:
       - id: s1-demo-ui
         tipo: demo
         titulo: La flota, de un vistazo
-        minutos: 5
+        minutos: 4
         pasos:
           - comando: docker compose up -d ui
             esperado: "http://localhost:8501"
@@ -776,6 +841,60 @@ unidades:
           Bajar las expectativas a propósito. La sensación de "esto era fácil"
           es lo que hace que el escenario siguiente duela.
 
+      - id: s1-r1-prediccion
+        tipo: pregunta
+        titulo: Antes de correrlo, apuesten
+        pregunta: >-
+          El segundo escenario es una caída lenta y pareja de la demanda en
+          TODA la cadena, sin nada específico que buscar. ¿Qué señal se va a
+          mover?
+        visibilidad: publica
+        permiteOmitir: false
+        respuesta: El sesgo, y el MAPE casi nada
+        minutos: 3
+        opciones:
+          - El MAPE, claramente
+          - El sesgo, y el MAPE casi nada
+          - Las dos por igual
+          - Ninguna de las dos
+        notas: |
+          **Que comprometan una respuesta antes de mirar.** El valor de esta
+          pregunta no es acertar: es que hayan apostado. Diez minutos después,
+          cuando el groupby no encuentre nada, la sala tiene algo propio contra
+          lo que contrastar.
+
+          No revelar todavía. Guardar el revelado para después del ejercicio a
+          mano — la tabla de las dos degradaciones es el momento.
+        solucion:
+          explicacion: |
+            **El sesgo, y el MAPE casi nada.** Y ese "casi nada" es el taller
+            entero.
+
+            El MAPE mide *cuánto* te equivocas, sin signo. Si la demanda cae un
+            poco en todas partes, el modelo se pasa un poco en todas partes: el
+            error absoluto apenas cambia. El sesgo mide *hacia qué lado*, y ahí
+            todos los errores empujan en la misma dirección y se suman.
+
+            Medido acá: el MAPE de la flota pasa de 13.8% a 14.5% —menos de lo
+            que se mueve entre dos semanas cualesquiera— y el sesgo de +0.7% a
+            +4.7%. Son más de 36,000 unidades de más en almacén en catorce días.
+
+            Un tablero con umbral sobre el MAPE no suena. Nunca.
+          descartes:
+            - opcion: El MAPE, claramente
+              razon: >-
+                Es la respuesta que más se elige y la que hace daño: es la
+                señal que está en todos los tableros, y es exactamente la que
+                no se entera.
+            - opcion: Las dos por igual
+              razon: >-
+                Se moverían las dos si la caída fuera brusca o concentrada. Lo
+                que hace silencioso a este escenario es que es lento y parejo.
+            - opcion: Ninguna de las dos
+              razon: >-
+                Sería cierto si el mundo no hubiera cambiado. Cambió, y hay una
+                señal que sí lo dice — el problema es que nadie la mira.
+
       - id: s1-r1-silencioso
         tipo: terminal
         titulo: Ahora el silencioso
@@ -824,7 +943,7 @@ unidades:
         tipo: tabla
         titulo: Las dos degradaciones
         entradilla: El mismo cambio en el mundo, visto por tres señales distintas
-        minutos: 4
+        minutos: 3
         columnas: [Señal, Antes, Después, Lectura]
         filas:
           - ["MAPE de la flota", "13.8%", "14.5%", "Se mueve menos que entre dos semanas cualesquiera"]
@@ -991,7 +1110,7 @@ unidades:
       - id: s1-r2-por-que
         tipo: markdown
         titulo: Por qué agregar, y no volcar filas
-        minutos: 3
+        minutos: 2
         contenido: |
           La telemetría son **17,472 filas**. Un LLM no puede leerlas, y aunque
           pudiera, no debe: se las tragaría enteras para responder "¿cómo va la
@@ -1044,6 +1163,60 @@ unidades:
           Señalar que la docstring NO es documentación: es lo que el LLM lee
           para decidir cuándo llamarla. Es prompt, y se escribe como prompt.
 
+      - id: s1-r2-pregunta-sesgo
+        tipo: pregunta
+        titulo: Una cuenta rápida
+        pregunta: >-
+          Bebidas son 24 modelos, uno por tienda. Doce tienen un sesgo de +10%
+          y doce de −10%. ¿Cuál es el sesgo de la categoría?
+        visibilidad: publica
+        permiteOmitir: true
+        respuesta: Depende de cuánto vende cada tienda
+        minutos: 3
+        opciones:
+          - "0%: se cancelan"
+          - Depende de cuánto vende cada tienda
+          - "+10% o −10%, según cuál pese más en número"
+          - No se puede calcular sin los datos crudos
+        notas: |
+          Treinta segundos de cuenta mental y el resto de discusión. La
+          respuesta intuitiva es la primera y es la que produce el error más
+          caro del reto 2.
+
+          Si alguien contesta la segunda de entrada, pedirle que lo explique en
+          voz alta: acaba de dar la clase.
+        solucion:
+          explicacion: |
+            **Depende de cuánto vende cada tienda.** El sesgo de un grupo no es
+            el promedio de los sesgos de sus partes: es la diferencia de sus
+            totales.
+
+            Si las doce tiendas con +10% son las grandes, la categoría está
+            claramente sobre-pronosticada aunque el promedio de los porcentajes
+            dé cero. Un porcentaje ya es un cociente, y promediar cocientes le
+            da el mismo peso a una tienda de Lima que a una de provincia con la
+            décima parte del volumen.
+
+            La fórmula correcta es una sola línea, y es la del ítem siguiente:
+
+                sesgo = (suma de predicho − suma de real) / suma de real
+
+            Este es uno de los cuatro errores de estadística que salieron
+            construyendo el laboratorio, y el más fácil de cometer sin notarlo.
+          descartes:
+            - opcion: "0%: se cancelan"
+              razon: >-
+                Solo si las 24 tiendas vendieran exactamente lo mismo. Con
+                datos reales nunca pasa, y con promoción menos.
+            - opcion: "+10% o −10%, según cuál pese más en número"
+              razon: >-
+                Está a mitad de camino: entiende que hay un peso, pero el peso
+                no es cuántas tiendas hay de cada lado, es cuánto vende cada una.
+            - opcion: No se puede calcular sin los datos crudos
+              razon: >-
+                Se calcula perfectamente con los totales, que es lo que la
+                telemetría ya trae. No hace falta bajar a las filas.
+
       - id: s1-r2-sesgo-codigo
         tipo: codigo
         titulo: "Trampa 1 · Cómo se calcula el sesgo de un grupo"
@@ -1068,7 +1241,7 @@ unidades:
         tipo: comparacion
         titulo: El sesgo no se promedia
         entradilla: Dos cuentas sobre los mismos datos, y una está sesgada
-        minutos: 3
+        minutos: 2
         izquierda:
           titulo: Promedio de porcentajes
           contenido: >-
@@ -1239,6 +1412,19 @@ unidades:
           De ahí que el umbral de sesgo sea de un dígito y el de MAPE de dos.
           No están en la misma escala porque no parten del mismo sitio.
 
+      - id: s1-r2-pausa-taller
+        tipo: pausa-preguntas
+        titulo: Pausa · antes de escribir código
+        minutos: 2
+        disparadores:
+          - ¿Quedó claro por qué se calibra contra la flota sana y no contra un umbral de manual?
+          - De las tres trampas, ¿cuál les parece la más fácil de cometer?
+          - ¿Alguien ya la cometió en producción?
+        notas: |
+          Dos minutos justo antes de que empiecen a teclear. Es la última
+          ventana barata: una duda de las tres trampas resuelta acá vale por
+          diez minutos de depuración con el laboratorio corriendo.
+
       - id: s1-r2-criterios
         tipo: criterios
         titulo: Cuándo terminaste
@@ -1258,7 +1444,7 @@ unidades:
         tipo: demo
         titulo: Escribirla
         entradilla: Manos al teclado
-        minutos: 9
+        minutos: 8
         pasos:
           - comando: "# abrir agente/herramientas.py y escribir comparar_periodos"
           - comando: make reparar
@@ -1496,11 +1682,64 @@ unidades:
           `make actuar` es esta misma línea con `-e EJECUTAR_ACCIONES=1`
           delante del nombre del servicio. Se ve mañana; mencionarlo acá basta.
 
+      - id: s1-r3-prediccion
+        tipo: pregunta
+        titulo: Antes de correrlo tres veces
+        pregunta: >-
+          Mismo mundo, misma pregunta, temperatura 0, tres corridas seguidas.
+          ¿Cuánto se van a parecer los tres diagnósticos?
+        visibilidad: publica
+        permiteOmitir: false
+        respuesta: Coincidirán en el hallazgo, no en la severidad ni en el orden
+        minutos: 3
+        opciones:
+          - Idénticos; temperatura 0 es determinista
+          - Coincidirán en el hallazgo, no en la severidad ni en el orden
+          - Cada uno encontrará una cosa distinta
+          - No se puede saber
+        notas: |
+          Que aposten antes de mirar. La primera opción es la que la mayoría de
+          la sala cree, y es una creencia razonable — por eso duele.
+
+          Revelar **después** de las tres corridas, no antes.
+        solucion:
+          explicacion: |
+            **Coinciden en el hallazgo y divergen en todo lo demás.** El
+            escenario lo saca casi siempre; lo que cambia es qué herramientas
+            llamó y en qué orden, qué categorías nombró, y sobre todo qué
+            severidad le puso.
+
+            Y sí, temperatura 0 es determinista **en el muestreo del siguiente
+            token**. No lo es el recorrido: basta que una llamada a herramienta
+            salga en otro orden para que el contexto de la siguiente sea otro,
+            y a partir de ahí las dos corridas son dos conversaciones distintas.
+
+            Esa es la diferencia entre un modelo determinista y un **sistema**
+            determinista. Un bucle sin arquitectura no tiene sitios donde el
+            recorrido se ancle, así que hereda toda la varianza del camino.
+
+            Es la patología más incómoda de las cuatro: no se puede firmar un
+            informe cuya severidad depende de en qué orden se llamó a una API.
+          descartes:
+            - opcion: "Idénticos; temperatura 0 es determinista"
+              razon: >-
+                Determinista es el muestreo, no el recorrido. El bucle vuelve a
+                llamar al modelo con un contexto que él mismo fue construyendo.
+            - opcion: Cada uno encontrará una cosa distinta
+              razon: >-
+                Sería peor y no es lo que pasa: las herramientas de percepción
+                del reto 2 hacen bien su trabajo, y el hallazgo aparece. El
+                problema está una capa más arriba.
+            - opcion: No se puede saber
+              razon: >-
+                Se puede, y es exactamente lo que vamos a hacer: correrlo tres
+                veces y mirar. Doce minutos.
+
       - id: s1-r3-tres-veces
         tipo: demo
         titulo: El mismo escenario, tres veces
         entradilla: Mismo mundo, misma pregunta, temperatura cero
-        minutos: 12
+        minutos: 10
         pasos:
           - comando: make romper ESCENARIO=sesgo_silencioso
           - comando: make agente ARGS="--verboso"
@@ -1526,7 +1765,7 @@ unidades:
       - id: s1-r3-divergencia
         tipo: markdown
         titulo: Qué diverge, exactamente
-        minutos: 3
+        minutos: 2
         contenido: |
           No es que una corrida acierte y otra falle. Las tres son
           **defendibles**. Lo que cambia es:
@@ -1546,7 +1785,7 @@ unidades:
         tipo: tabla
         titulo: Las cuatro patologías
         entradilla: Ninguna es del modelo. Todas son de la forma del bucle.
-        minutos: 5
+        minutos: 4
         columnas: [Qué hace, Por qué pasa, Qué cuesta]
         filas:
           - ["Concluye con lo primero que encuentra", "Nada le dice cuándo tiene suficiente", "Diagnósticos que no contrastan contra una línea base"]
@@ -1574,7 +1813,7 @@ unidades:
           Las 9,436 unidades existían: era la suma de los errores absolutos.
           Pero un error de pronóstico que a veces sobra y a veces falta no es
           inventario de más. El número era real y la frase era falsa.
-        minutos: 5
+        minutos: 3
         notas: |
           Esto lo escribió el agente, y no en la corrida pelada: lo dijo cuando
           se le agregó un nodo que lo obliga a criticarse. Ese nodo es lo
@@ -1601,7 +1840,7 @@ unidades:
       - id: s1-r3-prompt
         tipo: markdown
         titulo: Por qué no se arregla con un prompt más largo
-        minutos: 4
+        minutos: 3
         contenido: |
           La reacción natural es escribir instrucciones mejores: *"no
           dramatices"*, *"contrasta contra una línea base"*, *"no repitas

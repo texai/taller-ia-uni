@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El ritmo: preguntas y pausas repartidas (batch 29)
+- Había **ocho momentos de interacción en ocho horas**, y `s2-reto-4` eran 107
+  minutos con cero. Ahora son **veintiuno**, y ningún tramo pasa de 25 minutos.
+- **El criterio está escrito y se comprueba solo**: nada dura más de 25 minutos
+  seguidos, y una unidad de más de 40 necesita al menos dos momentos.
+  `validar-contenido` avisa, `CONVENTIONS.md` §17 lo explica, y `ritmoDe` /
+  `reprochesDeRitmo` lo calculan con nueve tests. El curso real es uno de ellos.
+- **Siete preguntas nuevas, todas antes del contenido que responden.** Ninguna
+  es control de lectura: se apuesta antes de correr el escenario silencioso, se
+  elige qué acción dejarías que un agente dispare solo, y se contesta qué pasa
+  con una cobertura del 97% en un intervalo del 90%. Cada una con su solución y
+  sus descartes.
+- **Cinco pausas, todas antes de algo caro** y no después: antes de teclear,
+  antes de cablear el grafo, después de levantar el entorno.
+- 33 minutos comprados y 33 pagados, sacados de un minuto aquí y allá en
+  treinta ítems de prosa. Las dos sesiones siguen en 240.
+
 ### Diagrama de pasos al abrir cada reto (batch 28)
 - Los cinco retos abren ahora con **`Los pasos de este reto`**: pasos numerados
   en columna y un hexágono al final con lo que se llevan — el criterio de

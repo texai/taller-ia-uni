@@ -594,3 +594,46 @@ Costaron encontrar y conviene no volver a pisarlas: una etiqueta escrita
 `-.texto.->` se dibuja truncada, así que va como `-.->|texto|`; y dos aristas
 que forman un ciclo reordenan el grafo entero, que es cómo `memoria` terminó
 una vez en el extremo derecho del dibujo.
+
+## 17 · Ninguna unidad se queda sin respirar
+
+Dos reglas, y las comprueba `validar-contenido` en cada construcción:
+
+- **Nada dura más de 25 minutos seguidos.** Preguntas, pausas y el receso
+  cortan el tramo; todo lo demás lo alarga.
+- **Una unidad de más de 40 minutos necesita al menos dos momentos.** Una sola
+  pregunta al final de una hora no es ritmo, es una despedida.
+
+El número no sale de ninguna teoría: sale de que a partir de la media hora la
+sala deja de preguntar aunque tenga preguntas. Está en `navegacion.ts`
+—`TRAMO_MAXIMO`, `UNIDAD_LARGA`— para que el descuadre se vea al construir y no
+en el aula. Es un **aviso y no un error**: hay unidades donde un tramo largo se
+justifica, pero se justifica *a sabiendas*. El desbalance que encontró la
+auditoría —una unidad de 105 minutos con cero interacciones— no lo decidió
+nadie, se coló.
+
+### Dónde va una pregunta
+
+**Donde hay algo que decidir o predecir, nunca como control de lectura.** Una
+pregunta cuya respuesta acaba de estar en pantalla no mide nada y le dice a la
+sala que esto va de prestar atención.
+
+Las que funcionan son de tres clases, y las tres piden que la sala se
+comprometa **antes** de ver:
+
+| Clase | Qué hace | Ejemplo |
+|---|---|---|
+| Predicción | Apostar antes de correr algo | *¿Qué señal se va a mover?* antes del escenario silencioso |
+| Decisión de diseño | Elegir, y defenderlo | *¿Cuál dejarías que el agente ejecute solo?* |
+| Intuición equivocada | Sacar a la luz una creencia razonable y falsa | *97% de cobertura en un intervalo del 90%, ¿qué pasa?* |
+
+Y la regla que las hace baratas: **una pregunta sin `solucion` no es una
+pregunta, es una encuesta** (§12). Si al escribirla no aparece la explicación,
+la pregunta no estaba lista.
+
+### Dónde va una pausa
+
+Antes de algo caro, no después. Dos minutos antes de que veinte personas
+empiecen a teclear valen por diez de depuración con el laboratorio corriendo.
+Los `disparadores` no son decoración: si nadie levanta la mano, el docente
+lanza uno y la pausa ocurre igual.
