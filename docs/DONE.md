@@ -1758,3 +1758,114 @@ primer archivo bajo `casos/` falló con un `ENOENT` que no tenía nada que ver
 con lo que se estaba probando. Ahora cada archivo se lleva su carpeta. Era una
 lista que había que acordarse de ampliar, y el olvido no se nota hasta que
 alguien pierde diez minutos.
+
+---
+
+## Batch 25 — Los comandos, desenvueltos · sesión 1
+
+De 26 comandos del curso, 22 eran `make X` sin abrir. El objetivo del docente
+era el contrario: que el alumno entienda cada parámetro y sepa leer cada
+salida, en vez de teclear un atajo y mirar pasar el texto.
+
+### El mapa primero, el detalle después
+
+La sesión abre ahora con una tabla —`s1-make`, tres minutos— con los siete
+atajos y lo que cada uno ejecuta de verdad. Es la mitad barata del trabajo:
+siete comandos por el precio de uno, y deja dicha la tesis de la unidad, que es
+que **ningún comando del taller es magia**. El propio código de la plataforma
+la dice en su docstring: *"en clase se usan los atajos del Makefile, pero
+conviene que los alumnos vean que detrás no hay magia"*.
+
+Después, cuatro `comando-anotado` con el comando real, no el atajo:
+
+| Ítem | Comando | Qué enseña |
+|---|---|---|
+| `s1-levantar` | `docker compose up -d plataforma ui` | `up`, `-d`, por qué se nombran los servicios |
+| `s1-seed` | `docker compose run --rm plataforma python -m plataforma seed` | `run` contra `up`, `--rm`, la costura servicio / programa |
+| `s1-r1-romper` | `… escenario --nombre campana_promocional` | el subcomando y su validación |
+| `s1-r2-verificar` | `docker compose run --rm agente python -m retos.verificar --reto 2` | por qué corre en el contenedor del **agente** |
+| `s1-r3-correr` | `docker compose run --rm agente python -m agente run --verboso` | el `run` que aparece dos veces y no es el mismo |
+
+Ningún tipo nuevo: son dos comandos seguidos —el que se teclea, en la tabla, y
+el que corre, en su ítem— tal como se decidió al reordenar los batches.
+
+### Dos salidas, leídas
+
+`make seed` y `make verificar --reto 2` ganaron su ítem de salida con el texto
+real del laboratorio. La lectura va en las notas del docente, línea por línea:
+las cuatro etapas de `seed` **son las cuatro flechas del diagrama de
+arquitectura en orden**, y los 17,472 días-modelo son 192 × 91.
+
+De la salida del verificador, lo que más rinde es que las tres primeras
+comprobaciones son sobre el **mundo sano**: una herramienta que enciende
+banderas donde no pasa nada hace que el agente de mañana persiga fantasmas, y
+los falsos positivos se pagan más caros porque nadie desactiva la alarma que no
+suena — desactivan la que suena siempre.
+
+### El Makefile, mostrado tal cual
+
+`s1-r1-romper-receta` enseña las cuatro líneas de la receta de `romper` con las
+dos del medio resaltadas. Lo que importa es lo que **no** está en la lista: no
+hay `entrenar`. El mundo cambió, se volvió a correr el job con los modelos
+viejos, y se midió. Eso no es una simplificación del laboratorio — es
+literalmente producción, donde el reentrenamiento es mensual y el mundo cambia
+cuando le da la gana.
+
+### Un error corregido en el material
+
+La nota de `s1-r3-correr` decía que `--verboso` imprime cada llamada a
+herramienta. **No es cierto**: esas líneas salen siempre. `--verboso` añade al
+final un resumen con las herramientas llamadas, en orden. Lo encontró abrir el
+comando, que es exactamente el argumento de este batch.
+
+### Los minutos: 16 comprados, 16 pagados
+
+Las dos sesiones siguen en 240. El detalle:
+
+| | Antes | Después |
+|---|---|---|
+| `s1-flota` | 50 | 55 |
+| `s1-reto-1` | 55 | 55 |
+| `s1-reto-2` | 60 | 59 |
+| `s1-reto-3` | 65 | 61 |
+
+El grueso salió del reto 3, donde había trece minutos hablando de una
+divergencia que la clase acababa de mirar durante doce, y ocho diciendo dos
+veces que no se arregla con un prompt más largo. Se cayó también `s1-el-job`:
+sus dos minutos de prosa sobre el job de madrugada ahora se dicen sobre la
+línea `3/4 Corriendo el job batch de pronostico...`, que está en pantalla.
+
+### Tres fallos de renderizado que salieron a la luz
+
+Escribir contenido sobre comandos destapó que **el markdown no llegaba a los
+campos donde más falta hace**:
+
+1. La explicación de un segmento anotado, el "qué hay que ver" de una demo y
+   las celdas de una tabla se dibujaban como texto plano. El material ya escrito
+   tenía comillas invertidas ahí desde el batch 16 — `` `modelo_id` `` — que
+   salían proyectadas con las comillas a la vista. Nuevo componente `Prosa`.
+2. **`resaltar:` en un ítem de código no hacía nada.** El campo existía desde el
+   batch 4, la especificación lo aceptaba, y ningún renderizador lo miraba. Ahora
+   Shiki marca las líneas con un transformador y el CSS las pinta. Con tests:
+   `lineasResaltadas` cuenta sobre lo mostrado, no sobre el archivo, para que
+   mover un recorte no obligue a rehacer los números.
+3. Las tablas de comandos se leían en la tipografía del texto, que es
+   exactamente donde un guion doble deja de distinguirse de uno solo.
+
+### Y un fallo del propio `npm run humo`
+
+**La prueba de humo pasaba contra un servidor viejo.** Enumera los ítems
+leyendo el YAML del disco, pero quien los dibuja es una construcción de algún
+momento; con la vieja levantada, un `?item=` que todavía no existe no da error
+— la página cae en el primer ítem y devuelve 200. Las 21 pantallas nuevas de
+este batch pasaron sin haberse abierto nunca.
+
+Ahora, antes de recorrer nada, comprueba que el servidor conoce todos los
+identificadores del contenido y aborta diciendo cuál falta. Verificado al
+revés: renombrando un ítem sin reconstruir, la comprobación falla nombrándolo.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 134 ítems, 240 + 240 min.
+- `npm test` (125 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 170 pantallas, 0 con error, contra una construcción fresca.
+- Las cinco láminas nuevas, vistas en el navegador paso a paso.

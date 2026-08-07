@@ -46,12 +46,55 @@ export function comoTextoPlano(codigo: string): string {
   return `<pre><code>${escapar(codigo.trimEnd())}</code></pre>`;
 }
 
-async function resaltar(codigo: string, lenguaje: string): Promise<string> {
+/**
+ * Expande `resaltar: [3, "10-14"]` a un conjunto de números de línea.
+ *
+ * Se cuentan sobre lo que se MUESTRA, no sobre el archivo: si el ítem trae
+ * `lineas: "40-60"`, la 1 es la 40 del archivo. Contar sobre el archivo
+ * obligaría a rehacer los números cada vez que alguien mueve el recorte, que
+ * es justo lo que nadie se acuerda de hacer.
+ */
+export function lineasResaltadas(resaltar?: (number | string)[]): Set<number> {
+  const lineas = new Set<number>();
+  for (const entrada of resaltar ?? []) {
+    if (typeof entrada === "number") {
+      lineas.add(entrada);
+      continue;
+    }
+    const [desde, hasta] = String(entrada)
+      .split("-")
+      .map((n) => Number(n.trim()));
+    if (!desde) continue;
+    for (let i = desde; i <= (hasta ?? desde); i++) lineas.add(i);
+  }
+  return lineas;
+}
+
+async function resaltar(
+  codigo: string,
+  lenguaje: string,
+  destacadas?: Set<number>,
+): Promise<string> {
   try {
     return await codeToHtml(codigo.trimEnd(), {
       lang: lenguaje,
       themes: { light: "github-light", dark: "github-dark" },
       defaultColor: false,
+      transformers: destacadas?.size
+        ? [
+            {
+              // Shiki emite un `<span class="line">` por línea y las numera
+              // desde 1. Marcarla acá y pintarla con CSS sale más barato que
+              // rearmar el HTML, y así el resaltado por línea y el de sintaxis
+              // conviven sin pisarse.
+              line(nodo, numero) {
+                if (destacadas.has(numero)) {
+                  this.addClassToHast(nodo, "linea-resaltada");
+                }
+              },
+            },
+          ]
+        : undefined,
     });
   } catch {
     // Un lenguaje que Shiki no conoce no puede tumbar la lámina.
@@ -79,7 +122,8 @@ export async function resaltarSesion(sesion: Sesion): Promise<Sesion> {
 async function resaltarItem(item: Item): Promise<Item> {
   if (item.tipo === "codigo") {
     const fuente = recortar(item.contenido ?? "", item.lineas);
-    return { ...item, html: await resaltar(fuente, item.lenguaje) };
+    const destacadas = lineasResaltadas(item.resaltar);
+    return { ...item, html: await resaltar(fuente, item.lenguaje, destacadas) };
   }
 
   if (item.tipo === "terminal") {

@@ -153,6 +153,21 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 
 `id`, `tipo`, `titulo`, `entradilla`, `notas` (privadas), `minutos`.
 
+### Dónde vale escribir markdown
+
+En **el cuerpo de cualquier campo de prosa**: `contenido`, las notas del
+docente, la explicación de un segmento anotado, el `observar` y el `respaldo`
+de una demo, las celdas de una tabla, los bloques de un caso. Todos pasan por
+`Markdown` o por `Prosa`.
+
+En **`titulo` y `entradilla`, no**. Son texto plano a propósito: además de
+proyectarse, viajan al índice lateral y a la vista previa del mando, donde un
+asterisco suelto se vería tal cual.
+
+La regla vale la pena porque el fallo es silencioso en la peor dirección: una
+comilla invertida en un campo que no la interpreta no rompe nada, no falla en
+validación, y se descubre proyectada delante de la clase.
+
 ### Los tipos que merecen justificación
 
 - **`comparacion`** — la mitad de lo que enseña este taller es un contraste:

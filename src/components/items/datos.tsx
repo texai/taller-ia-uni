@@ -6,7 +6,7 @@ import type {
   ItemTabla,
 } from "@/lib/tipos";
 import { Caja, Etiqueta, Marco } from "./marco";
-import { Markdown } from "./texto";
+import { Markdown, Prosa } from "./texto";
 
 /** Datos, sin más. `resaltar` marca las filas que importan. */
 export function Tabla({ item }: { item: ItemTabla }) {
@@ -43,6 +43,13 @@ export function Tabla({ item }: { item: ItemTabla }) {
                     : undefined
                 }
               >
+                {/*
+                  Las celdas van con markdown: media docena de tablas del curso
+                  son de comandos y de nombres de campo, y sin comillas
+                  invertidas se leen en la tipografía del texto, que es
+                  exactamente donde un guion doble deja de distinguirse de uno
+                  solo.
+                */}
                 {fila.map((celda, j) => (
                   <td
                     key={j}
@@ -52,7 +59,7 @@ export function Tabla({ item }: { item: ItemTabla }) {
                       fontWeight: resaltadas.has(i) ? 600 : 400,
                     }}
                   >
-                    {celda}
+                    <Prosa tamano="lg">{String(celda)}</Prosa>
                   </td>
                 ))}
               </tr>

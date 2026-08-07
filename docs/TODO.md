@@ -43,7 +43,7 @@ Referencias:
 | | **Segunda ronda — la auditoría del 7 de agosto** | |
 | 23 | La solución dentro del ítem de pregunta | ✅ Completado |
 | 24 | El caso, como contenedor propio | ✅ Completado |
-| 25 | Los comandos, desenvueltos · sesión 1 | ⬜ Pendiente |
+| 25 | Los comandos, desenvueltos · sesión 1 | ✅ Completado |
 | 26 | Los comandos, desenvueltos · sesión 2 | ⬜ Pendiente |
 | 27 | El recap de apertura, con diagramas | ⬜ Pendiente |
 | 28 | Diagrama de pasos al abrir cada reto | ⬜ Pendiente |
@@ -345,15 +345,15 @@ desde el batch 14. Un tipo que represente "capas" sería maquinaria nueva para
 algo que la composición de ítems ya resuelve.
 
 **Alcance**
-- [ ] `make arriba` y `make seed`, abiertos hasta el fondo, incluido qué
+- [x] `make arriba` y `make seed`, abiertos hasta el fondo, incluido qué
       construye y por qué tarda
-- [ ] La salida de `make seed` mostrada y leída: qué son 17,472 días-modelo y
+- [x] La salida de `make seed` mostrada y leída: qué son 17,472 días-modelo y
       de dónde salen los 192
-- [ ] `make romper` y `make reparar`, con las tres etapas que encadenan
-- [ ] `make ui` contra `make agente`: por qué uno es `up -d` y el otro
+- [x] `make romper` y `make reparar`, con las tres etapas que encadenan
+- [x] `make ui` contra `make agente`: por qué uno es `up -d` y el otro
       `run --rm`, y qué significa eso para el estado
-- [ ] `make verificar`, y cómo se lee su salida
-- [ ] Cada parámetro que aparece —`--rm`, `-v`, `-e`, `-d`— explicado la primera
+- [x] `make verificar`, y cómo se lee su salida
+- [x] Cada parámetro que aparece —`--rm`, `-v`, `-e`, `-d`— explicado la primera
       vez que se ve, y no dos veces
 
 **Cómo se muestran las salidas, por ahora**

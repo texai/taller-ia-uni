@@ -54,6 +54,46 @@ export function Markdown({ children }: { children: string }) {
   );
 }
 
+/**
+ * Un párrafo suelto que además admite markdown.
+ *
+ * Existe porque explicar un comando sin poder escribir `--rm` entre comillas
+ * invertidas no se puede: los campos que describen comandos —la explicación de
+ * un segmento anotado, el "qué hay que ver" de una demo— se escriben con
+ * markdown por reflejo, y hasta que esto existió salían proyectados con los
+ * asteriscos y las comillas a la vista.
+ *
+ * No reutiliza `Markdown` porque aquel fija el tamaño del párrafo y acá el
+ * tamaño lo pone quien llama. Dos juegos de clases sobre el mismo elemento se
+ * resuelven por orden en la hoja, que es una forma de perder en silencio.
+ *
+ * Las clases van enteras y literales en el mapa: Tailwind lee el código fuente
+ * como texto, así que una clase compuesta con una plantilla no se genera.
+ */
+const TAMANO_PROSA = {
+  base: "[&_p]:text-base [&_li]:text-base",
+  lg: "[&_p]:text-lg [&_li]:text-lg",
+  xl: "[&_p]:text-xl [&_li]:text-xl",
+} as const;
+
+export function Prosa({
+  children,
+  className = "",
+  tamano = "lg",
+}: {
+  children: string;
+  className?: string;
+  tamano?: keyof typeof TAMANO_PROSA;
+}) {
+  return (
+    <div
+      className={`${className} ${TAMANO_PROSA[tamano]} [&_p]:leading-relaxed [&_p]:my-0 [&_p+p]:mt-3 [&_strong]:font-semibold [&_a]:underline [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-6 [&_code]:px-0.5 [&_code]:text-[0.92em] [&_code]:font-mono`}
+    >
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+    </div>
+  );
+}
+
 export function BloqueMarkdown({ item }: { item: ItemMarkdown }) {
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="estrecho">

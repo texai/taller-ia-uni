@@ -8,6 +8,7 @@ import type {
 import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
 import { comoTextoPlano, recortar } from "@/lib/resaltado";
 import { Caja, Etiqueta, Marco } from "./marco";
+import { Prosa } from "./texto";
 
 /**
  * Un fragmento de código.
@@ -222,7 +223,9 @@ export function ComandoAnotado({
             {indice !== null && `${indice + 1} / ${item.segmentos.length}`}
           </p>
           <p className="mt-2 font-mono text-lg font-semibold">{enfocado.texto}</p>
-          <p className="mt-2 text-xl leading-relaxed">{enfocado.explicacion}</p>
+          <Prosa className="mt-2" tamano="xl">
+            {enfocado.explicacion}
+          </Prosa>
           {enfocado.otrosValores?.length ? (
             <p
               className="mt-3 font-mono text-base"
@@ -244,7 +247,9 @@ export function ComandoAnotado({
               style={{ borderColor: "var(--borde)" }}
             >
               <dt className="font-mono text-base font-semibold">{seg.texto}</dt>
-              <dd className="mt-1 text-lg leading-relaxed">{seg.explicacion}</dd>
+              <dd className="mt-1">
+                <Prosa tamano="lg">{seg.explicacion}</Prosa>
+              </dd>
             </div>
           ))}
         </dl>
@@ -312,19 +317,18 @@ export function Demo({ item }: { item: ItemDemo }) {
       {item.observar && (
         <div className="mt-6">
           <Etiqueta>Qué hay que ver</Etiqueta>
-          <p className="mt-2 text-lg leading-relaxed">{item.observar}</p>
+          <Prosa className="mt-2" tamano="lg">
+            {item.observar}
+          </Prosa>
         </div>
       )}
 
       {item.respaldo && (
-        <div className="mt-6">
+        <div className="mt-6" style={{ color: "var(--tinta-suave)" }}>
           <Etiqueta>Si falla en vivo</Etiqueta>
-          <p
-            className="mt-2 text-base leading-relaxed"
-            style={{ color: "var(--tinta-suave)" }}
-          >
+          <Prosa className="mt-2" tamano="base">
             {item.respaldo}
-          </p>
+          </Prosa>
         </div>
       )}
     </Marco>

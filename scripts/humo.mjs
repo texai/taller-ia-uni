@@ -23,10 +23,48 @@ const PUERTO = process.argv[2] ?? "3000";
 const BASE = `http://localhost:${PUERTO}`;
 
 const { cargarCurso } = await import("../src/lib/contenido.ts");
+const { SOLO_DOCENTE } = await import("../src/lib/tipos.ts");
 const curso = cargarCurso();
 
 const navegador = await chromium.launch();
 const pagina = await navegador.newPage({ viewport: { width: 1440, height: 900 } });
+
+/**
+ * Antes de nada, comprobar que el servidor sirve ESTE contenido.
+ *
+ * Los ítems se enumeran leyendo el YAML del disco, pero quien los dibuja es un
+ * servidor que se construyó en algún momento. Con la construcción vieja
+ * levantada, un `?item=` que todavía no existe no da error: la página cae en el
+ * primer ítem y devuelve 200. Todas las pantallas nuevas pasarían sin haberse
+ * abierto nunca — que es exactamente lo que esta comprobación existe para
+ * evitar.
+ */
+for (const sesion of curso.sesiones) {
+  const esperados = sesion.unidades
+    .flatMap((u) => u.items)
+    .filter((i) => !SOLO_DOCENTE.includes(i.tipo))
+    .map((i) => i.id);
+  const r = await pagina.goto(`${BASE}/curso/${curso.id}/sesion/${sesion.id}`, {
+    waitUntil: "load",
+    timeout: 30000,
+  });
+  const html = (await r?.text()) ?? "";
+  if (!html) {
+    console.error(`${sesion.id} no respondió. ¿Está en pie el servidor?`);
+    process.exit(2);
+  }
+  // El identificador de cada ítem viaja en la página: está en el índice lateral
+  // y en la carga que hidrata la vista. Buscarlos uno a uno es más tosco que
+  // contar, y no se deja engañar por un número suelto del HTML.
+  const faltan = esperados.filter((id) => !html.includes(id));
+  if (faltan.length) {
+    console.error(
+      `El servidor no conoce ${faltan.length} ítems de ${sesion.id}, empezando por \`${faltan[0]}\`.\n` +
+        `Está corriendo una construcción vieja: npm run build y vuelve a levantarlo.`,
+    );
+    process.exit(2);
+  }
+}
 
 let fallos = 0;
 let vistos = 0;

@@ -95,7 +95,7 @@ unidades:
       - id: s1-que-es-un-modelo
         tipo: markdown
         titulo: Qué es "un modelo en producción"
-        minutos: 4
+        minutos: 3
         contenido: |
           Acá un modelo **no es un chatbot**. Es un **artefacto entrenado**: un
           archivo con los coeficientes que quedaron de ajustar una regresión
@@ -119,7 +119,7 @@ unidades:
         tipo: comparacion
         titulo: Un modelo no es un contenedor
         entradilla: La relación no es 1 a 1, y en el taller anterior lo parecía
-        minutos: 3
+        minutos: 2
         izquierda:
           titulo: Lo que vieron desplegando
           contenido: >-
@@ -166,34 +166,159 @@ unidades:
           degrada en abstracto sino contra la realidad— y el agente todavía no
           existe. Lo construimos nosotros.
 
-      - id: s1-el-job
-        tipo: markdown
-        titulo: El job que corre de madrugada
-        minutos: 2
-        contenido: |
-          Carga los 192 artefactos, proyecta 14 días para cada tienda y
-          categoría, y escribe las predicciones. Cada corrida deja una fila en
-          su bitácora: si corrió, cuánto tardó, si falló.
-
-          **El agente también vigila eso.** Un modelo puede estar perfectamente
-          sano y el job caído desde el martes.
+      - id: s1-make
+        tipo: tabla
+        titulo: Todos los comandos del taller son atajos
+        entradilla: Y hoy los abrimos. Detrás de cada make hay un docker compose que se puede teclear entero.
+        minutos: 3
+        columnas: [Lo que tecleas, Lo que corre de verdad]
+        filas:
+          - ["`make arriba`", "`docker compose build` y luego `docker compose up -d plataforma ui`"]
+          - ["`make seed`", "`docker compose run --rm plataforma python -m plataforma seed`"]
+          - ["`make romper ESCENARIO=x`", "`escenario --nombre x`, después `pronosticar`, después `metricas`"]
+          - ["`make agente`", "`docker compose run --rm agente python -m agente run`"]
+          - ["`make actuar`", "lo mismo, más `-e EJECUTAR_ACCIONES=1`"]
+          - ["`make ui`", "`docker compose up -d ui` — **`up`, no `run`**"]
+          - ["`make reset`", "`docker compose down -v` — la `-v` borra los volúmenes"]
+        resaltar: [5]
         notas: |
-          Esta última frase es de las que más rinde en la sesión 2: el fallo
-          más común en producción no es un modelo malo, es una tubería rota.
+          Empezar por qué es `make`: un ejecutor de recetas de 1976, anterior a
+          Docker y a casi todo lo demás. Lee el archivo `Makefile` del
+          directorio, busca la receta que le pediste y ejecuta sus líneas. Nada
+          más. `make ayuda` las lista todas, y `cat Makefile` las muestra.
+
+          La fila resaltada es la trampa del día: **`make ui` usa `up`, no
+          `run`**, y esa palabra decide si algo queda vivo o se ejecuta y
+          desaparece. Vuelve tres veces durante la clase.
+
+          Lo que quiero que se lleven no es la tabla: es que **ningún comando
+          del taller es magia**, y que el día que trabajen sin este Makefile
+          sepan escribir la columna de la derecha. El propio código de la
+          plataforma lo dice en su docstring — "en clase se usan los atajos del
+          Makefile, pero conviene que los alumnos vean que detrás no hay
+          magia".
 
       - id: s1-levantar
-        tipo: terminal
+        tipo: comando-anotado
         titulo: Levantar el entorno
-        comando: make arriba && make seed
-        comandoWindows: .\taller.ps1 arriba; .\taller.ps1 seed
-        salida: "Listo. 192 modelos con 17,472 dias-modelo de telemetria."
+        entradilla: Esto es lo que hace make arriba, sin el atajo
+        comando: docker compose up -d plataforma ui
+        minutos: 3
+        segmentos:
+          - texto: docker compose
+            explicacion: >-
+              Lee `docker-compose.yml` y trabaja sobre los servicios declarados
+              ahí. Con guion —`docker-compose`— es la versión 1, un binario
+              aparte que ya no se instala; sin guion es el plugin actual. El
+              Makefile detecta cuál tienes, para no obligar a nadie a
+              reinstalar Docker el sábado por la mañana.
+            otrosValores: ["docker-compose"]
+          - texto: up
+            explicacion: >-
+              Levanta los servicios y los deja corriendo. Si falta la imagen,
+              la construye antes. `make arriba` además fuerza un `build`
+              previo, porque construye TRES imágenes y solo levanta dos: la del
+              agente no es un servicio, y sin ese `build` su construcción le
+              cae encima al alumno en plena clase.
+            otrosValores: ["down", "ps", "logs", "build", "run"]
+          - texto: "-d"
+            explicacion: >-
+              Detached. Devuelve la terminal en lugar de quedarse pegado a los
+              logs. Sin esto, cerrar la ventana se lleva los servicios por
+              delante. Para ver los logs después, `make logs`.
+          - texto: plataforma ui
+            explicacion: >-
+              Qué servicios levantar, con el nombre que tienen en el YAML. Sin
+              nombres levantaría todos los que no estén detrás de un `profile`
+              — `mlflow` y `ollama` lo están, por eso hay que pedirlos aparte.
+              Nombrar los dos deja claro que **`agente` no es un servicio**.
+        notas: |
+          Es el primer comando de Docker que muchos van a leer entero. Ir
+          despacio: cada paso del recorrido es un segmento.
+
+          Si alguien pregunta por qué el agente no es un servicio: porque no
+          escucha nada. Corre una vez al día, produce un diagnóstico y termina.
+          Eso es el ítem de `--rm`, dos pantallas más adelante.
+
+      - id: s1-seed
+        tipo: comando-anotado
+        titulo: Poblar el mundo
+        entradilla: Y esto es make seed
+        comando: docker compose run --rm plataforma python -m plataforma seed
+        minutos: 4
+        segmentos:
+          - texto: run
+            explicacion: >-
+              Arranca un contenedor **nuevo** del servicio, le pasa un comando,
+              y termina cuando el comando termina. Es lo contrario de `up`:
+              `up` deja algo vivo escuchando, `run` ejecuta una tarea y se va.
+              Por eso `make estado` nunca muestra nada de esto.
+            otrosValores: ["up", "exec"]
+          - texto: "--rm"
+            explicacion: >-
+              Borra el contenedor al terminar. Sin esto cada corrida deja uno
+              parado en disco, y a la décima `docker ps -a` es una lista de
+              cadáveres. Se puede borrar el contenedor sin perder nada porque
+              lo que se produce no vive en él: vive en el volumen `datos`.
+          - texto: plataforma python
+            explicacion: >-
+              La costura de la línea. A la izquierda de ese espacio, el
+              servicio tal como se llama en el YAML —de ahí salen la imagen,
+              los volúmenes y las variables de entorno, sin repetir nada acá—;
+              a la derecha, lo que se ejecuta **dentro** del contenedor. Todo
+              lo que sigue ya no es de Docker.
+            otrosValores: ["agente python", "ui python"]
+          - texto: -m plataforma seed
+            explicacion: >-
+              `-m` corre un paquete de Python como si fuera un programa,
+              buscando su `__main__.py`. `seed` es un subcomando de **ese**
+              programa: hay también `datos`, `entrenar`, `pronosticar`,
+              `metricas` y `escenario`, y cada uno tiene su atajo en el
+              Makefile. `seed` encadena los cuatro primeros.
+        notas: |
+          El segmento de `--rm` es el que más rinde. La pregunta natural —"si
+          borras el contenedor, ¿dónde quedan los 192 modelos?"— es la puerta
+          de entrada a los volúmenes, y vale la pena dejar que la hagan.
+
+          En Windows esta línea se teclea igual. El `.\taller.ps1` envuelve al
+          `make`, no al `docker compose`.
+
+      - id: s1-seed-salida
+        tipo: terminal
+        titulo: Y esto es lo que imprime
+        entradilla: Cinco minutos de espera, cuatro líneas de salida
+        comando: docker compose run --rm plataforma python -m plataforma seed
+        salida: |
+          1/4 Generando historico de ventas...
+          2/4 Entrenando la flota (192 modelos)...
+          3/4 Corriendo el job batch de pronostico...
+          4/4 Calculando metricas...
+
+          Listo. 192 modelos con 17,472 dias-modelo de telemetria.
         duracion: 300
         minutos: 3
         notas: |
-          Quien hizo el trabajo previo ya lo tiene: solo `make arriba`. Los
-          17,472 son 192 modelos × 91 días de histórico evaluado. Si a alguien
-          le sale otro número, casi seguro dejó el mundo roto de una prueba y
-          se arregla con `make reparar`.
+          Leer las cuatro etapas de a una, señalando el diagrama de
+          arquitectura: **son sus cuatro flechas, en orden**.
+
+          - `1/4 datos` escribe `ventas.csv`. Es el mundo.
+          - `2/4 entrenar` deja 192 artefactos en disco. Corta 91 días antes de
+            hoy: lo que queda sin ver es contra lo que se va a evaluar.
+          - `3/4 pronosticar` es **el job de madrugada**. Carga los 192, proyecta
+            los días que quedaron fuera del entrenamiento y escribe
+            `predicciones.csv`. Cada corrida deja además una fila en su
+            bitácora: si corrió, cuánto tardó, si falló. El agente también
+            vigila eso — un modelo puede estar perfectamente sano y el job
+            caído desde el martes.
+          - `4/4 metricas` cruza predicción contra realidad. Es la única etapa
+            que produce telemetría, y sin ella no hay nada que monitorear.
+
+          **Los 17,472 son 192 × 91.** Un dato por modelo y por día evaluado.
+          Si a alguien le sale otro número, casi seguro dejó el mundo roto de
+          una prueba: `make reparar` y listo.
+
+          Quien hizo el trabajo previo ya tiene todo esto y solo necesita
+          `make arriba`.
 
       - id: s1-rescate-docker
         tipo: error-comun
@@ -215,7 +340,7 @@ unidades:
       - id: s1-rescate-recarga
         tipo: error-comun
         titulo: "Rescate · el contenedor sirve el código con el que arrancó"
-        minutos: 3
+        minutos: 2
         sintoma: >-
           Un 404 en una ruta que está en el archivo. O la interfaz reventando
           por una columna que llega como texto. O un `git pull` que parece no
@@ -340,8 +465,10 @@ unidades:
         titulo: La flota, de un vistazo
         minutos: 5
         pasos:
-          - comando: make ui
+          - comando: docker compose up -d ui
             esperado: "http://localhost:8501"
+          - comando: docker compose ps
+            esperado: plataforma y ui, corriendo. El agente no aparece.
         observar: >-
           192 filas. Ordenar por MAPE y ver que hay modelos malos que llevan
           meses siendo malos sin que nadie los toque. Ordenar por sesgo y ver
@@ -354,6 +481,16 @@ unidades:
         notas: |
           Cinco minutos, no diez. La tentación es empezar a analizar acá, y el
           análisis es el reto 1.
+
+          **Esto es `make ui`, y es el `up` de la tabla del principio.** Vale
+          la pena hacer el segundo paso —`docker compose ps`, que es `make
+          estado`— para que se vea con los ojos: la interfaz y la plataforma
+          están ahí porque se levantaron con `up -d`; de los `run --rm` que
+          llevamos corridos no queda ni rastro. Uno deja algo vivo; el otro
+          ejecuta y desaparece.
+
+          Se apagan con `make abajo`, que es `docker compose down`. Sin la
+          `-v`: esa borraría los volúmenes, y con ellos los 192 modelos.
 
       - id: s1-flota-dada
         tipo: criterios
@@ -493,20 +630,62 @@ unidades:
           y dejar que exploren treinta segundos.
 
       - id: s1-r1-romper
-        tipo: terminal
+        tipo: comando-anotado
         titulo: Romper el mundo
-        entradilla: Primero el escenario visible
-        comando: make romper ESCENARIO=campana_promocional
-        comandoWindows: .\taller.ps1 romper campana_promocional
-        duracion: 20
-        minutos: 2
+        entradilla: Primero el escenario visible. Esta es la primera de las tres etapas de make romper.
+        comando: docker compose run --rm plataforma python -m plataforma escenario --nombre campana_promocional
+        minutos: 3
+        segmentos:
+          - texto: escenario
+            explicacion: >-
+              El subcomando que degrada el mundo. Reescribe el histórico de
+              ventas ya generado: no toca los modelos ni las predicciones, solo
+              la realidad contra la que se van a medir.
+            otrosValores: ["datos", "entrenar", "pronosticar", "metricas", "seed"]
+          - texto: "--nombre campana_promocional"
+            explicacion: >-
+              Cuál de las cuatro degradaciones aplicar. Es obligatorio y no
+              admite un valor inventado: el programa lo valida contra su lista
+              y falla enumerando las opciones. Esta es una campaña de descuentos
+              en bebidas, mucho más agresiva que cualquiera del entrenamiento,
+              en las últimas cuatro semanas.
+            otrosValores: ["sesgo_silencioso", "feed_caido", "quiebre_stock"]
         notas: |
-          `romper` cambia el histórico, vuelve a correr el job y recalcula las
-          métricas. Los modelos NO se reentrenan: el mundo cambió y ellos
-          siguen igual, que es justo lo que pasa en producción.
+          Hay dos parámetros más que hoy no usamos y conviene nombrar:
+          `--categoria` y `--tienda` acotan el daño a un corte concreto, y
+          `--desde` mueve la fecha en que empieza. Sirven para armarse
+          escenarios propios después del taller.
 
-          Es una campaña de descuentos en bebidas, mucho más agresiva que
-          cualquiera del entrenamiento, en las últimas cuatro semanas.
+          El comando imprime cuántas filas tocó y termina diciendo
+          `ahora corre: make pronosticar && make metricas`. Esa es la pista de
+          lo que viene en el ítem siguiente.
+
+      - id: s1-r1-romper-receta
+        tipo: codigo
+        titulo: Por qué son tres comandos y no uno
+        entradilla: La receta de make romper, tal cual está en el Makefile
+        lenguaje: makefile
+        ruta: Makefile
+        minutos: 2
+        resaltar: ["2-3"]
+        contenido: |
+          romper:  ## Degrada los datos, rompe el mundo
+          	$(EN_PLATAFORMA) escenario --nombre $(ESCENARIO)
+          	$(MAKE) pronosticar
+          	$(MAKE) metricas
+        notas: |
+          Tres líneas, tres contenedores, en orden. Y lo que importa es **lo
+          que NO está en la lista**: no hay `entrenar`.
+
+          El mundo cambió, se volvió a correr el job con los modelos viejos, y
+          se midió. Los 192 modelos siguen siendo exactamente los mismos de
+          hace un minuto. Eso no es una simplificación del laboratorio: es
+          literalmente lo que pasa en producción, donde el reentrenamiento es
+          semanal o mensual y el mundo cambia cuando le da la gana.
+
+          `$(EN_PLATAFORMA)` es la variable de arriba del archivo:
+          `docker compose run --rm plataforma python -m plataforma`. Se define
+          una vez y se reutiliza en las seis recetas de la plataforma.
 
       - id: s1-r1-a-mano
         tipo: demo
@@ -538,7 +717,7 @@ unidades:
         unidad: categoría, 24 tiendas, encontrada a ojo
         contexto: Esto es lo que un tablero con umbrales sí detecta. Ninguna gracia.
         tono: bueno
-        minutos: 3
+        minutos: 2
         notas: |
           Bajar las expectativas a propósito. La sensación de "esto era fácil"
           es lo que hace que el escenario siguiente duela.
@@ -551,9 +730,17 @@ unidades:
         duracion: 40
         minutos: 2
         notas: |
-          `reparar` regenera el histórico limpio y vuelve a calcular todo. Sin
-          eso los dos escenarios se apilan y las lecturas dejan de significar
-          nada.
+          Acá sí conviene el atajo: son seis contenedores seguidos y teclearlos
+          a mano no enseña nada nuevo.
+
+          **`reparar` es `romper` con la primera línea cambiada.** Donde uno
+          pone `escenario --nombre x`, el otro pone `datos`, que regenera el
+          histórico limpio desde la semilla. Las otras dos líneas son idénticas:
+          `pronosticar` y `metricas`. Por eso vuelve al mundo sano sin
+          reentrenar nada — los 192 modelos no se han tocado en toda la tarde.
+
+          Sin el `reparar` los dos escenarios se apilan y las lecturas dejan de
+          significar nada.
 
           Este segundo escenario es una caída lenta y pareja de la demanda en
           TODA la cadena. Nada específico que buscar.
@@ -617,7 +804,7 @@ unidades:
         tipo: comparacion
         titulo: Qué vio cada señal
         entradilla: El mismo mundo, los mismos datos, los mismos catorce días
-        minutos: 3
+        minutos: 2
         izquierda:
           titulo: Lo que vio el MAPE
           contenido: >-
@@ -830,7 +1017,7 @@ unidades:
         tipo: tabla
         titulo: Lo que infla, medido
         entradilla: Flota sana, últimos 14 días. Las ocho categorías, las dos cuentas.
-        minutos: 3
+        minutos: 2
         columnas: [Categoría, Promedio de %, Cociente de totales, Infla]
         filas:
           - ["panadería", "+9.4%", "+6.7%", "+2.8 pp"]
@@ -910,7 +1097,7 @@ unidades:
         tipo: tabla
         titulo: El umbral depende de por dónde cortes
         entradilla: Lo peor que se mueve solo en la flota sana, por dimensión
-        minutos: 4
+        minutos: 3
         columnas: [Dimensión, Modelos por grupo, Máx Δ MAPE, Máx Δ sesgo]
         filas:
           - ["categoría", 24, "+20.8%", "1.06 pp"]
@@ -1018,21 +1205,83 @@ unidades:
           flota sana, no el código.
 
       - id: s1-r2-verificar
-        tipo: terminal
+        tipo: comando-anotado
         titulo: Comprobarlo
-        comando: make verificar ARGS="--reto 2"
-        comandoWindows: .\taller.ps1 verificar --reto 2
-        duracion: 60
+        entradilla: make verificar ARGS="--reto 2", abierto
+        comando: docker compose run --rm agente python -m retos.verificar --reto 2
         minutos: 3
+        segmentos:
+          - texto: agente
+            explicacion: >-
+              El servicio del **agente**, no el de la plataforma. No es un
+              descuido: el verificador corre donde correrá el agente, que a
+              propósito no tiene acceso ni al código de la plataforma ni a su
+              disco. Se habla con ella por HTTP, igual que en producción. Si
+              esto corriera en `plataforma`, comprobaría cosas que el agente no
+              podría ver.
+            otrosValores: ["plataforma"]
+          - texto: python -m retos.verificar
+            explicacion: >-
+              El verificador vive en `retos/`, que está montado dentro del
+              contenedor del agente. Por eso ve tu código recién escrito sin
+              tener que reconstruir la imagen.
+          - texto: "--reto 2"
+            explicacion: >-
+              Corre solo las comprobaciones de este reto. Sin el parámetro los
+              corre los cinco, que es lo que uno quiere el sábado a las 14:30 y
+              no a las 15:05. `--con-llm` añade las que gastan tokens.
+            otrosValores: ["--reto 1", "--con-llm", "(sin argumentos)"]
         notas: |
-          El verificador deja el mundo sano al terminar. Si alguien ve 17,304
-          filas en vez de 17,472, es que quedó en `feed_caido` — `make
-          reparar` y listo.
+          Vale la pena detenerse en el primer segmento. Es una decisión de
+          diseño del laboratorio, no un detalle: **el verificador se somete a
+          la misma ceguera que el agente**.
+
+      - id: s1-r2-verificar-salida
+        tipo: terminal
+        titulo: Cómo se lee su salida
+        comando: docker compose run --rm agente python -m retos.verificar --reto 2
+        salida: |
+          Reto 2 · percepcion
+            ✓ la flota sana no enciende ninguna bandera
+            ✓ el sesgo de una flota sana ronda cero
+            ✓ no hay anomalias donde no las hay
+            ✓ la campana promocional se ve, y solo en bebidas
+            ✓ el sesgo silencioso aparece en las 8 categorias
+            ✓ y el MAPE casi no se entera (por eso es silencioso)
+            ✓ la tienda muda se detecta como anomalia
+            ✓ y NO se confunde con deriva: la flota se ve sana
+
+          Regenerando los datos limpios (el mundo sano)...
+
+          Las 8 comprobaciones pasaron.
+        duracion: 60
+        minutos: 2
+        notas: |
+          Tres cosas que leer en voz alta:
+
+          1. **Las tres primeras son sobre el mundo sano.** Si una herramienta
+             enciende banderas donde no pasa nada, el agente de mañana va a
+             perseguir fantasmas. Los falsos positivos se pagan más caros que
+             los falsos negativos, porque nadie desactiva una alarma que no
+             suena — desactivan la que suena siempre.
+          2. **Cada comprobación cambia el mundo antes de mirar.** El
+             verificador aplica `campana_promocional`, mide, aplica
+             `sesgo_silencioso`, mide, aplica `feed_caido`, mide. Por eso tarda
+             un minuto.
+          3. **La penúltima línea es la que salva la clase.** Deja los datos
+             limpios al terminar, porque la última comprobación los dejó rotos.
+
+          Cuando algo falla, la línea sale con `✗` y debajo, en gris, el detalle
+          con el número que salió — no "falló", sino "sesgo: 3.4%. Cuidado con
+          promediar porcentajes". El detalle es la pista.
+
+          Si alguien ve 17,304 filas en vez de 17,472, es que quedó en
+          `feed_caido`: `make reparar` y listo.
 
       - id: s1-r2-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
-        minutos: 3
+        minutos: 2
         disparadores:
           - ¿Dónde más han visto promediar porcentajes que ya eran cocientes?
           - ¿Cómo calibrarían un umbral si no tuvieran un mundo sano de referencia?
@@ -1089,7 +1338,7 @@ unidades:
       - id: s1-r3-que-hace-bien
         tipo: markdown
         titulo: Y funciona
-        minutos: 3
+        minutos: 2
         contenido: |
           Conviene decirlo antes de romperlo, porque es verdad y porque es la
           razón de que este patrón esté en todas partes:
@@ -1109,18 +1358,50 @@ unidades:
           código. El problema aparece cuando hay que confiar en él sin mirar.
 
       - id: s1-r3-correr
-        tipo: terminal
+        tipo: comando-anotado
         titulo: Correrlo
-        comando: make agente ARGS="--verboso"
-        comandoWindows: .\taller.ps1 agente --verboso
-        duracion: 43
+        entradilla: make agente ARGS="--verboso", abierto. Y acá el atajo esconde algo que importa.
+        comando: docker compose run --rm agente python -m agente run --verboso
         minutos: 3
+        segmentos:
+          - texto: compose run
+            explicacion: >-
+              El `run` de Docker. Arranca un contenedor, ejecuta y termina. Fíjate
+              en la línea entera: la palabra `run` aparece **dos veces**, y no
+              son la misma cosa.
+          - texto: "--rm"
+            explicacion: >-
+              El agente **no es un servicio**: se ejecuta, produce un
+              diagnóstico y desaparece. Es exactamente el patrón de un job de
+              monitoreo — una vez al día, no escuchando en un puerto. Y sin
+              embargo su memoria sobrevive a las corridas, porque vive en el
+              volumen `memoria` y no en el contenedor. Eso es el reto 4.
+          - texto: -m agente run
+            explicacion: >-
+              El segundo `run`, que es un subcomando **del agente** y no de
+              Docker. Todo lo que va después de `python` lo interpreta el
+              programa de dentro; Docker no sabe qué significa. El otro
+              subcomando es `memoria`.
+            otrosValores: ["-m agente memoria"]
+          - texto: "--verboso"
+            explicacion: >-
+              Añade al final un resumen con las herramientas que llamó, en
+              orden. Ojo con lo que **no** hace: las líneas `→ herramienta(...)`
+              que van saliendo durante la corrida se imprimen siempre, con o sin
+              esta bandera. El otro parámetro es `--fecha`, que fija el día que
+              el agente cree que es.
+            otrosValores: ["--fecha 2026-08-08"]
         notas: |
-          `--verboso` imprime cada llamada a herramienta con sus argumentos.
-          Es lo que hace que esto sea observable en vez de mágico.
+          El segmento del `run` duplicado es de los que más ordena la cabeza:
+          hasta acá todo lo que venía después del nombre del servicio era "lo
+          que se ejecuta dentro", y esta es la primera línea donde eso se ve
+          con claridad porque la misma palabra está a los dos lados.
 
           Si alguien no tiene llave, `PROVEEDOR_LLM=mock` recorre el bucle
           igual. No razona, pero nadie se queda mirando la pantalla.
+
+          `make actuar` es esta misma línea con `-e EJECUTAR_ACCIONES=1`
+          delante del nombre del servicio. Se ve mañana; mencionarlo acá basta.
 
       - id: s1-r3-tres-veces
         tipo: demo
@@ -1218,7 +1499,7 @@ unidades:
           en vez de por quien escribe la herramienta. La herramienta puede estar
           bien calibrada y el razonamiento encima seguir leyendo mal lo que le
           entregan.
-        minutos: 4
+        minutos: 3
         notas: |
           Enlazar con el reto 2: ahí el riesgo era poner mal el umbral; acá es
           leer mal la bandera. Son dos capas distintas y las dos hay que
@@ -1227,7 +1508,7 @@ unidades:
       - id: s1-r3-prompt
         tipo: markdown
         titulo: Por qué no se arregla con un prompt más largo
-        minutos: 5
+        minutos: 4
         contenido: |
           La reacción natural es escribir instrucciones mejores: *"no
           dramatices"*, *"contrasta contra una línea base"*, *"no repitas
@@ -1302,7 +1583,7 @@ unidades:
         tipo: titulo
         titulo: Nada de esto se arregla con un prompt más largo
         destacado: ¿Qué le falta a este bucle?
-        minutos: 3
+        minutos: 2
         notas: |
           Dejarlo en pantalla en silencio unos segundos. Es el final del
           sábado y la pregunta con la que tienen que irse.
@@ -1310,7 +1591,7 @@ unidades:
       - id: s1-r3-preguntas
         tipo: pausa-preguntas
         titulo: Pausa para preguntas
-        minutos: 5
+        minutos: 4
         disparadores:
           - ¿Alguno tiene hoy un agente en producción? ¿Cómo saben que no divaga?
           - ¿Qué harían ustedes para que dos corridas del mismo día coincidieran?

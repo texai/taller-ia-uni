@@ -5,6 +5,41 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Los comandos, desenvueltos · sesión 1 (batch 25)
+- De 26 comandos del curso, 22 eran `make X` sin abrir. La sesión 1 abre ahora
+  con una **tabla de los siete atajos y lo que cada uno ejecuta de verdad**, y
+  cinco `comando-anotado` explican el comando real —no el atajo— parte por
+  parte: `up` contra `run`, `--rm`, `-d`, `-e`, la costura entre el servicio y
+  el programa que corre dentro, y el `run` que aparece dos veces en la misma
+  línea sin ser el mismo.
+- **Dos salidas reales, con su lectura**: la de `make seed` —cuyas cuatro
+  etapas son las cuatro flechas del diagrama de arquitectura, en orden— y la de
+  `make verificar --reto 2`.
+- La receta de `make romper` se muestra tal cual está en el Makefile, con las
+  líneas que importan resaltadas. Lo que enseña es lo que **no** está: no hay
+  `entrenar`. El mundo cambió y los modelos siguen igual.
+- Corregido un error del material: `--verboso` no imprime las llamadas a
+  herramienta —esas salen siempre— sino un resumen al final. Lo encontró abrir
+  el comando.
+- Los 16 minutos que esto cuesta salieron de donde sobraban, casi todos del
+  reto 3. Las dos sesiones siguen en 240.
+
+### El markdown llega a donde hacía falta
+- Nuevo componente `Prosa`: la explicación de un segmento anotado, el "qué hay
+  que ver" de una demo y las celdas de una tabla se dibujaban como texto plano.
+  El material tenía comillas invertidas ahí desde el batch 16, y salían
+  proyectadas con las comillas a la vista.
+- **`resaltar:` en un ítem de código ya funciona.** El campo existía desde el
+  batch 4 y ningún renderizador lo miraba. Ahora Shiki marca las líneas y el CSS
+  las pinta; las líneas se cuentan sobre lo mostrado, no sobre el archivo.
+
+### `npm run humo` ya no pasa contra una construcción vieja
+- Enumeraba los ítems leyendo el YAML y los abría contra el servidor que
+  hubiera levantado. Con uno viejo, un `?item=` inexistente no da error: la
+  página cae en el primer ítem y devuelve 200, así que las pantallas nuevas
+  pasaban sin haberse abierto. Ahora comprueba primero que el servidor conoce
+  todos los identificadores y aborta diciendo cuál falta.
+
 ### El caso, como contenedor propio (batch 24)
 - Nuevo tipo **`caso`**, y no solo de ítem: también de **unidad**. Los cinco
   retos ocurren dentro de una misma cadena de retail, y ese marco era hasta hoy

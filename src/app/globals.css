@@ -76,3 +76,23 @@ body {
   outline-offset: 3px;
   border-radius: 3px;
 }
+
+/*
+ * Lineas resaltadas dentro de un fragmento de codigo.
+ *
+ * La marca la pone Shiki en el servidor, a partir de `resaltar:` del YAML
+ * (ver `src/lib/resaltado.ts`). Acá solo se pinta.
+ *
+ * El fondo se estira a los lados con un padding negativo compensado porque la
+ * linea es un `<span>` dentro de un `<pre>` con relleno: sin eso la banda
+ * termina donde termina el texto, y una banda irregular proyectada se lee como
+ * un fallo de la lamina y no como un enfasis.
+ */
+.linea-resaltada {
+  display: inline-block;
+  width: calc(100% + 2.5rem);
+  margin: 0 -1.25rem;
+  padding: 0 1.25rem;
+  background: color-mix(in srgb, var(--color-acento) 14%, transparent);
+  box-shadow: inset 3px 0 0 var(--color-acento);
+}
