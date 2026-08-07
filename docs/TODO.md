@@ -238,6 +238,258 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
+# Segunda ronda — lo que la auditoría del 7 de agosto encontró
+
+El contenido quedó completo respecto de los batches 15 a 22: 131 ítems, 480
+minutos, cero marcadores pendientes. Pero una revisión del material contra seis
+requisitos del docente encontró que **cinco no estaban** y uno estaba a medias.
+Ninguno era un fallo de ejecución de aquellos batches: son cosas que aquellos
+batches nunca incluyeron.
+
+El inventario completo, con la hora de reloj a la que cae cada ítem, está en
+<https://claude.ai/code/artifact/0c47845c-d7fa-43fd-9700-a5e11202557b>.
+
+| # | Requisito | Estado | La evidencia |
+|---|---|---|---|
+| 23 | La solución dentro del ítem de pregunta | Falta | `pregunta` dice cuál es la correcta y no tiene dónde decir por qué |
+| 24 | El caso como contenedor propio | Falta | Es un `markdown` de 3 min, recontado en S2 como otro markdown |
+| 25–27 | Los comandos, desenvueltos | Falta | 22 de 26 comandos son `make X` sin abrir; 1 sola salida mostrada, sin anotar |
+| 28 | Recap con diagramas al abrir sesión | Falta | Las dos sesiones abren con prosa; el diagrama de componentes de S1 va después del caso |
+| 29 | Diagrama de pasos al abrir cada reto | Falta | Retos 1, 2, 3 y 5 sin ningún diagrama |
+| 30 | Preguntas y pausas repartidas | A medias | 9 en 8 horas; `s2-reto-4` son 105 minutos con cero |
+
+**Orden sugerido por costo y por urgencia.** La clase de la sesión 1 es el
+sábado 8; la de la sesión 2, el domingo 9. Los batches 23 y 30 son los que más
+cambian la clase por lo que cuestan. El bloque 25–27 es un rediseño real de
+cómo se enseñan los comandos y no cabe antes del sábado.
+
+---
+
+## Batch 23 — La solución dentro del ítem de pregunta
+
+Preguntar a la clase y revelar el resultado sin explicar por qué esa es la
+respuesta deja el momento a medias. Hoy la explicación existe, pero vive en las
+`notas` privadas del docente — que por diseño **no se proyectan**. La clase ve
+el conteo y la opción marcada, y el razonamiento se lo tiene que dar el docente
+de memoria.
+
+**Alcance**
+- [ ] Campo nuevo en `ItemPregunta` para la solución, con su explicación
+- [ ] Se muestra **solo después del revelado**, nunca antes (`CONVENTIONS.md` §12)
+- [ ] Se filtra del cliente del alumno hasta que el revelado ocurre, igual que
+      `respuesta` — no basta con no dibujarlo
+- [ ] Admite explicar también **por qué las otras opciones no**, que suele ser
+      donde está la enseñanza
+- [ ] Los cuatro ítems `pregunta` del curso ganan su solución
+- [ ] `npm run validar-contenido` y `npm run humo` pasan
+
+**Decisión a tomar al implementar**
+Si la solución viaja en el mensaje de revelado —como ya hace `correcta`— o si
+se filtra en el servidor y se entrega con la carga. Lo primero es coherente con
+lo que existe; lo segundo evita un mensaje grande por el canal. Decidir mirando
+`vivo.ts`, no de antemano.
+
+**Tests esperados**
+- [ ] La carga del alumno no lleva la solución antes del revelado
+- [ ] El revelado la incluye
+
+**Fuera de alcance**
+- Cambiar cómo se cuenta o se revela. Eso es el batch 10 y funciona.
+
+---
+
+## Batch 24 — El caso, como contenedor propio
+
+Los cinco retos ocurren dentro de un mismo caso: una cadena de retail, 192
+modelos, un job de madrugada, una forma de fallar que no suena. Hoy ese marco
+es un `markdown` de tres minutos, uno más entre veintiuno, y se vuelve a contar
+en la sesión 2 como otro markdown suelto.
+
+**Alcance**
+- [ ] Tipo `caso` en el catálogo (`CONVENTIONS.md` §8): la empresa, la escala,
+      el problema de negocio, y la arquitectura de modelos que ya existe
+- [ ] Se dibuja como un contenedor, no como una lámina de texto: la clase tiene
+      que reconocerlo como "el marco de todo lo que viene"
+- [ ] Una sola definición del caso, referenciada desde las dos sesiones
+- [ ] Reemplaza `s1-el-caso` y la parte de caso de `s2-para-quien-no-vino`
+- [ ] Va **antes** de cualquier reto, después del recap del batch 28
+
+**Decisión a tomar al implementar**
+Si el caso vive en su propio archivo bajo `contenido/` y las dos sesiones lo
+referencian, o si se declara una vez en `curso.yml`. Lo segundo dice mejor lo
+que es —el caso es del curso, no de una sesión— pero obliga a que el cargador
+lo resuelva hacia abajo.
+
+**Fuera de alcance**
+- Cambiar el contenido del caso. El texto de `s1-el-caso` está escrito y
+  medido; esto es darle el sitio que le corresponde.
+
+---
+
+## Batch 25 — Los comandos, desenvueltos · la maquinaria
+
+**Es el hueco más grande del curso y el que más lejos está del objetivo del
+docente**: que el alumno entienda cada parámetro y sepa leer cada salida, en
+vez de teclear `make X` y mirar pasar el texto.
+
+Hoy, de 26 comandos, 22 son `make X` sin abrir. Lo que `make` esconde:
+
+    make seed     → docker compose run --rm plataforma python -m plataforma seed
+                    → datos, entrenar, pronosticar, metricas (cuatro etapas)
+    make romper   → escenario --nombre X, después pronosticar, después metricas
+    make agente   → docker compose run --rm agente python -m agente run
+    make actuar   → lo mismo, más -e EJECUTAR_ACCIONES=1
+    make ui       → docker compose up -d ui        (¡distinto de run --rm!)
+    make reset    → docker compose down -v         (borra los volúmenes)
+
+Y hay un ítem en todo el curso que muestra una salida, sin anotar.
+
+**Alcance**
+- [ ] Un ítem tiene que poder mostrar **las capas de un comando**: lo que se
+      teclea, lo que eso ejecuta de verdad, y lo que eso encadena
+- [ ] Cada capa se recorre con los `pasos` del batch 6, como `comando-anotado`
+- [ ] Una **salida anotada**: poder señalar partes de lo que imprime el comando
+      y explicar qué significa cada una
+- [ ] Sirve igual para `docker compose`, para `python -m`, para `curl` y para
+      la salida de un entrenamiento
+- [ ] Los conceptos que hoy no se explican en ninguna parte quedan cubiertos por
+      el tipo: servicio contra contenedor, `run --rm` contra `up -d`, qué es un
+      volumen y qué borra `-v`, qué significa `--profile`
+
+**Decisión a tomar al implementar**
+Si esto es un tipo nuevo, o si `comando-anotado` crece con un campo de capas y
+otro de salida. Lo segundo reutiliza el recorrido por pasos que ya funciona;
+lo primero evita un tipo que hace dos cosas. Mirar cuánto se parecen de verdad
+antes de decidir.
+
+**Tests esperados**
+- [ ] Las capas se recorren en orden y ninguna se pierde
+- [ ] Una anotación de salida que no aparece en la salida falla en validación,
+      igual que un segmento de comando que no existe
+- [ ] El número de pasos coincide con capas más segmentos más uno
+
+**Fuera de alcance**
+- El contenido. Esto deja el tipo listo; escribirlo es 26 y 27.
+
+---
+
+## Batch 26 — Los comandos, desenvueltos · contenido de la sesión 1
+
+**Depende del batch 25.**
+
+**Alcance**
+- [ ] `make arriba` y `make seed`, abiertos hasta el fondo, incluido qué
+      construye y por qué tarda
+- [ ] La salida de `make seed` anotada: qué son 17,472 días-modelo y de dónde
+      salen los 192
+- [ ] `make romper` y `make reparar`, con las tres etapas que encadenan
+- [ ] `make ui` contra `make agente`: por qué uno es `up -d` y el otro
+      `run --rm`, y qué significa eso para el estado
+- [ ] `make verificar`, y cómo se lee su salida
+- [ ] La llamada a la API que ya está anotada gana su salida anotada
+
+**Fuera de alcance**
+- La sesión 2. Es el batch 27.
+
+---
+
+## Batch 27 — Los comandos, desenvueltos · contenido de la sesión 2
+
+**Depende del batch 25.**
+
+**Alcance**
+- [ ] `make agente ARGS="--verboso"` abierto, y cómo se lee una corrida verbosa:
+      qué línea es una llamada a herramienta, cuál es un veredicto de reflexión,
+      cuál es el paso por la política
+- [ ] `make actuar` contra `make agente`: dónde entra `-e EJECUTAR_ACCIONES=1`
+      y qué cambia en la salida
+- [ ] La salida de un reentrenamiento, anotada: qué modelos tocó, cuánto tardó,
+      qué quedó en la bitácora
+- [ ] `make memoria`, que hoy no aparece en el curso y es la única forma de ver
+      lo que el agente recuerda
+
+**Fuera de alcance**
+- La sesión 1. Es el batch 26.
+
+---
+
+## Batch 28 — El recap de apertura, con diagramas
+
+Las dos sesiones abren con un ítem `transicion`, que es prosa: dos frases de
+«lo que vimos» y «lo que viene». El docente quiere abrir con **diagramas
+generales** —arquitectura, componentes— que permitan repasar sin entrar en
+detalle.
+
+**Alcance**
+- [ ] Un bloque de recap al abrir cada sesión, después de la asistencia y
+      **antes del caso**
+- [ ] Diagramas de conjunto, no de detalle: se miran y se pasan
+- [ ] En la sesión 1, el recap es del programa: qué módulos trae la clase
+      encima y dónde encaja este taller
+- [ ] En la sesión 2, el recap es de lo construido el sábado
+- [ ] El diagrama de componentes que hoy es el ítem 8 de la sesión 1 se
+      reconsidera: puede que su sitio sea el recap
+
+**Excepción a la §13, deliberada.** Este batch toca dos unidades. La §13 protege
+contra la degradación de contexto al escribir **prosa**; un par de diagramas que
+tienen que compartir lenguaje visual es el caso contrario — partirlos en dos
+conversaciones produce dos dibujos distintos.
+
+**Fuera de alcance**
+- Los diagramas de pasos de cada reto. Es el batch 29.
+
+---
+
+## Batch 29 — Diagrama de pasos al abrir cada reto
+
+Cuatro de los cinco retos empiezan sin ningún mapa de lo que se va a hacer. El
+único diagrama de un reto es el de secuencia del agente corriendo, que explica
+el resultado y no el recorrido.
+
+**Alcance**
+- [ ] Un diagrama al abrir cada uno de los cinco retos, con los pasos que el
+      alumno va a recorrer
+- [ ] Es un mapa del trabajo, no de la solución: dice qué se va a hacer, no cómo
+- [ ] Los cinco comparten lenguaje visual, para que se reconozcan entre sí
+- [ ] Se ubica después del `titulo` del reto y antes de cualquier comando
+
+**Excepción a la §13, deliberada.** Toca los cinco retos, por lo mismo que el
+batch 28: cinco diagramas dibujados en cinco conversaciones son cinco dibujos
+distintos.
+
+**Fuera de alcance**
+- Reescribir el contenido de los retos. Solo se agrega el mapa de entrada.
+
+---
+
+## Batch 30 — El ritmo: preguntas y pausas repartidas
+
+Hay nueve momentos de interacción en ocho horas, uno cada 53 minutos, y el
+agujero está donde más duele: **`s2-reto-4` son 105 minutos y 25 ítems con cero
+preguntas y cero pausas.**
+
+**Alcance**
+- [ ] Repartir preguntas y pausas por las ocho unidades, con un criterio escrito
+      y no a ojo
+- [ ] Ninguna unidad de más de 40 minutos sin al menos dos momentos
+- [ ] Cada pregunta nueva llega con su solución (batch 23)
+- [ ] Las preguntas se ponen donde hay algo que **decidir o predecir**, no como
+      control de lectura
+- [ ] Los minutos siguen sumando lo que cada unidad tiene reservado: lo que
+      entra, saca a algo
+
+**Excepción a la §13, deliberada.** Es un reparto global del ritmo. Decidirlo
+unidad por unidad es exactamente lo que produjo el desbalance actual.
+
+**Tests esperados**
+- [ ] Una comprobación en `validar-contenido` que avise si una unidad larga se
+      queda sin interacción
+
+**Fuera de alcance**
+- Cambiar las preguntas que ya existen, salvo para darles su solución.
+
+---
+
 ## Plantilla de batch
 
 Copiar y completar al agregar un batch nuevo.

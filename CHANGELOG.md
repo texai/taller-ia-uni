@@ -41,6 +41,18 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Auditoría del contenido, y una segunda ronda de ocho batches
+- Revisado el material completo —131 ítems— contra seis requisitos del docente:
+  **cinco no estaban y uno estaba a medias.** Ninguno era un fallo de ejecución
+  de los batches 15 a 22; son cosas que aquellos batches nunca incluyeron.
+- Inventario publicado con la hora de reloj de cada ítem, para usarlo de guion.
+- Abiertos los batches 23 a 30. El hueco mayor es el 25–27: **22 de los 26
+  comandos del curso son `make X` sin abrir**, y hay un solo ítem que muestra
+  una salida, sin anotar.
+- `CONVENTIONS.md` §13 gana su excepción: un batch puede cruzar unidades cuando
+  el trabajo es un conjunto de diagramas con lenguaje visual común, o un reparto
+  global como el del ritmo. Debe justificarlo en su propio texto.
+
 ### Contenido · S2·U4, el cierre (batch 22) — y el curso queda escrito
 - 13 ítems, 50 minutos. **131 ítems y 480 minutos en total, sin un solo
   `Pendiente` en el contenido.**

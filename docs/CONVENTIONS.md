@@ -399,6 +399,21 @@ Reglas para un batch de contenido:
 - **Los identificadores no se reciclan** (§9), porque una unidad reescrita
   después de una clase ya dictada rompería el historial de esa clase.
 
+### La excepción: lo que hay que hacer de una sola vez
+
+La regla protege contra la degradación de contexto al escribir **prosa**. Hay
+trabajo que es lo contrario, y partirlo por unidades lo empeora:
+
+- **Un conjunto de diagramas que comparten lenguaje visual.** Cinco diagramas
+  dibujados en cinco conversaciones son cinco dibujos distintos, y el alumno lo
+  nota antes que nadie.
+- **Un reparto global**, como el del ritmo de preguntas y pausas. Decidirlo
+  unidad por unidad es exactamente lo que produce que una unidad de 105 minutos
+  se quede sin ninguna.
+
+Un batch que cruza unidades por una de estas razones **lo dice y la justifica en
+su propio texto**. Si no puede justificarlo, está mal partido.
+
 ### Sobre las cifras
 
 Este curso tiene números medidos —36,567 unidades, 13.8% a 14.5% de MAPE, los
