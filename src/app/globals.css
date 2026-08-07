@@ -96,3 +96,20 @@ body {
   background: color-mix(in srgb, var(--color-acento) 14%, transparent);
   box-shadow: inset 3px 0 0 var(--color-acento);
 }
+
+/*
+ * La tarjeta de una sesion en la portada.
+ *
+ * El borde se enciende al pasar por encima y al enfocar con el teclado. El
+ * fondo distinto del panel que la contiene es lo que la hace reconocible como
+ * algo que se pulsa incluso sin puntero, que es el caso de la mitad de la
+ * clase mirandolo desde el telefono.
+ */
+.tarjeta-sesion {
+  border-color: var(--borde);
+  background: var(--lienzo);
+}
+.tarjeta-sesion:hover,
+.tarjeta-sesion:focus-visible {
+  border-color: var(--color-acento);
+}

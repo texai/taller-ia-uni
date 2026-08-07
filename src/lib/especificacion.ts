@@ -125,20 +125,27 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 };
 
 /**
- * Campos que jamás salen del servidor hacia el cliente del alumno.
- *
- * `notas` son del docente. `respuesta` es la correcta de una pregunta, y
- * enviarla antes del revelado la convierte en un ejercicio de inspeccionar el
- * HTML. Ver `docs/CONVENTIONS.md` §3.
- */
-/**
  * Lo que nunca viaja al navegador del alumno con la carga de la página.
  *
- * `solucion` está acá por la misma razón que `respuesta`: si viajara con el
- * HTML, cualquiera con las herramientas de desarrollador abiertas leería la
- * explicación antes de contestar. Llega por el canal, dentro del revelado.
+ * Se filtra en el servidor, no se oculta con CSS: esta pantalla se proyecta, y
+ * el HTML es legible con las herramientas de desarrollador abiertas. Ver
+ * `docs/CONVENTIONS.md` §3.
+ *
+ * - `notas` son del docente, escritas para sí mismo.
+ * - `respuesta` es la correcta de una pregunta. Enviarla antes del revelado
+ *   convierte la pregunta en un ejercicio de inspeccionar el HTML.
+ * - `solucion` está acá por lo mismo: llega por el canal, dentro del revelado.
+ * - `minutos` es el presupuesto del docente, no información para la sala. Un
+ *   alumno que ve «4′» en un ítem sabe cuándo el profesor va tarde, y eso
+ *   cambia lo que la sala hace con una explicación que se alarga. El total de
+ *   la sesión sí es suyo, y ya lo tiene: son las horas de inicio y fin.
  */
-export const CAMPOS_PRIVADOS = ["notas", "respuesta", "solucion"] as const;
+export const CAMPOS_PRIVADOS = [
+  "notas",
+  "respuesta",
+  "solucion",
+  "minutos",
+] as const;
 
 /** Campos que apuntan a un archivo bajo `contenido/`. */
 export const CAMPOS_DE_ARCHIVO = ["archivo"] as const;

@@ -324,7 +324,13 @@ export function Dictado({
                       : "var(--tinta-suave)",
                 }}
               >
-                {u.tipo} · {minutosDeUnidad(u)} min
+                {/*
+                  Los minutos son del docente. Al alumno se le filtran en el
+                  servidor, así que acá llegan en cero y la línea se queda con
+                  el tipo de unidad y nada más.
+                */}
+                {u.tipo}
+                {minutosDeUnidad(u) > 0 ? ` · ${minutosDeUnidad(u)} min` : ""}
               </p>
               <p className="px-3 pb-1 text-sm font-medium">{u.titulo}</p>
 

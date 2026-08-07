@@ -776,3 +776,33 @@ test("el número de pasos de una salida anotada incluye sus anotaciones", () => 
     },
   );
 });
+
+test("los minutos de un ítem no llegan a la carga del alumno", () => {
+  // El presupuesto de tiempo es del docente. Un alumno que ve «4′» en cada
+  // ítem sabe cuándo la clase va tarde, y eso cambia lo que la sala hace con
+  // una explicación que se alarga. El total de la sesión sí es suyo: son las
+  // horas de inicio y fin, que van aparte.
+  const items = `
+      - id: i1
+        tipo: titulo
+        titulo: Hola
+        minutos: 7
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const curso = mod.cargarCurso(raiz);
+      assert.equal(curso.sesiones[0]?.unidades[0]?.items[0]?.minutos, 7);
+
+      const publico = JSON.stringify(mod.cursoParaAlumno(curso));
+      assert.doesNotMatch(publico, /"minutos"/);
+    },
+  );
+});
+
+test("el curso real no filtra minutos hacia el alumno", () => {
+  const publico = JSON.stringify(mod.cursoParaAlumno(mod.cargarCurso()));
+  assert.doesNotMatch(publico, /"minutos"/);
+  // Y las horas de la sesión sí viajan: son el total que el alumno puede ver.
+  assert.match(publico, /"horaInicio"/);
+});

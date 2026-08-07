@@ -43,10 +43,20 @@ export default function Inicio() {
           </p>
         )}
 
-        <ul
-          className="mt-7 space-y-1 border-t pt-4"
-          style={{ borderColor: "var(--borde)" }}
+        {/*
+          Cada sesión es una tarjeta con borde y flecha, no una línea de texto
+          con un enlace encima. La versión anterior era cliqueable en toda la
+          fila y no lo parecía: sin borde, sin flecha, y con el único indicio
+          en el `hover` —que en una pantalla táctil no existe—. Nadie tiene por
+          qué adivinar dónde pulsar para entrar a su propia clase.
+        */}
+        <p
+          className="mt-8 text-xs font-semibold uppercase tracking-widest"
+          style={{ color: "var(--tinta-suave)" }}
         >
+          Entra a una sesión
+        </p>
+        <ul className="mt-3 flex flex-col gap-3">
           {curso.sesiones.map((sesion) => {
             const items = recorrer(sesion).length;
             const minutos = sesion.unidades.reduce(
@@ -57,23 +67,35 @@ export default function Inicio() {
               <li key={sesion.id}>
                 <Link
                   href={`/curso/${curso.id}/sesion/${sesion.id}`}
-                  className="-mx-3 flex flex-col gap-1 rounded-lg px-3 py-3 transition-colors hover:bg-black/20 sm:flex-row sm:items-baseline sm:gap-4"
+                  className="tarjeta-sesion group flex items-center gap-4 rounded-xl border px-5 py-4 transition-colors"
                 >
-                  <span
-                    className="text-sm font-medium tabular-nums"
-                    style={{ color: "var(--tinta-suave)" }}
-                  >
-                    Sesión {sesion.numero}
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span
+                      className="text-xs font-semibold uppercase tracking-widest tabular-nums"
+                      style={{ color: "var(--color-acento)" }}
+                    >
+                      Sesión {sesion.numero}
+                      {sesion.horaInicio && sesion.horaFin
+                        ? ` · ${sesion.horaInicio}\u2013${sesion.horaFin}`
+                        : ""}
+                    </span>
+                    <span className="text-lg font-semibold tracking-tight">
+                      {sesion.titulo}
+                    </span>
+                    <span
+                      className="text-sm tabular-nums"
+                      style={{ color: "var(--tinta-suave)" }}
+                    >
+                      {sesion.unidades.length} unidades · {items} ítems ·{" "}
+                      {minutos} min
+                    </span>
                   </span>
-                  <span className="text-base font-medium sm:text-lg">
-                    {sesion.titulo}
-                  </span>
                   <span
-                    className="text-sm tabular-nums sm:ml-auto"
-                    style={{ color: "var(--tinta-suave)" }}
+                    aria-hidden
+                    className="shrink-0 text-xl transition-transform group-hover:translate-x-1"
+                    style={{ color: "var(--color-acento)" }}
                   >
-                    {sesion.unidades.length} unidades · {items} ítems ·{" "}
-                    {minutos} min
+                    &rarr;
                   </span>
                 </Link>
               </li>

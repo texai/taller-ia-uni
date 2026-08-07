@@ -44,7 +44,17 @@ antes de serializar la respuesta. Nunca se envían y se ocultan con CSS.
 Esta es una invariante de seguridad, no una preferencia: la pantalla del
 docente se comparte por Zoom, y un alumno con las herramientas de desarrollador
 abiertas leería en el HTML lo que el docente escribió para sí mismo. Vale lo
-mismo para `respuesta` en los ítems de tipo `pregunta`.
+mismo para `respuesta` y `solucion` en los ítems de tipo `pregunta`.
+
+**Y vale para `minutos`.** No es un secreto, es que no es información suya: el
+presupuesto de tiempo lo escribe el docente para dictar, y un alumno que ve
+«4′» en cada ítem sabe cuándo la clase va tarde. Eso cambia lo que la sala hace
+con una explicación que se alarga — y con el reloj a la vista, una pregunta
+buena a las 18:50 no se hace. Lo que el alumno sí tiene es el total de la
+sesión, que ya está en la cabecera: las horas de inicio y de fin.
+
+La lista completa vive en `CAMPOS_PRIVADOS`, en `especificacion.ts`, y hay un
+test que la comprueba contra el curso real.
 
 ## 4 · El alumno puede mirar atrás, nunca adelante
 
