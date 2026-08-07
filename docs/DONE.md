@@ -1452,3 +1452,79 @@ nombre distinto al que espera una librería es una trampa que no avisa.
 - `npm run humo`: 138 pantallas, 0 con error — incluidos los 14 pasos del
   diagrama de secuencia.
 - Comprobado en el navegador el recorrido del diagrama, mensaje 7 y mensaje 10.
+
+---
+
+## Batch 21 — Contenido · S2·U3 `reto` — De la recomendación a la acción
+**2026-08-07**
+
+Lo que separa a un agente de un informe, y por qué el freno importa más que el
+botón.
+
+**Criterios de aceptación** (todos cumplidos)
+- [ ] El freno está en código y se explica por qué no en el prompt
+- [ ] Se cuenta el error propio: frenar por urgencia estaba mal
+- [ ] La trampa del `feed_caido` se demuestra, no se describe
+- [ ] `objetivos` y `requisitos` escritos
+- [ ] Los minutos suman los 60 de la unidad
+- [ ] `notas` privadas donde lo amerita
+- [ ] La validación de contenido pasa
+
+---
+
+### 18 ítems, 60 minutos
+
+El esqueleto tenía 10. Los ocho nuevos desmenuzan lo que estaba comprimido en
+un solo ítem de política: las dos reglas se explican por separado, el
+interruptor tiene el suyo, y la traducción del objetivo también.
+
+### El error propio, y la lección que sí generaliza
+
+`s2-r5-urgencia` cuenta que la primera versión frenaba por la **urgencia** que
+declaraba el agente, y que estaba mal: la urgencia es opinión editorial suya,
+no una propiedad de seguridad. Reentrenar "esta semana" no es más peligroso
+que reentrenar "ahora"; lo peligroso es reentrenar lo que no se debe.
+
+La nota privada saca la regla general, que vale más que el caso: **no des
+permisos contra un campo que el propio agente redacta.** Si el freno depende de
+algo que el modelo escribe, el modelo puede aflojarlo.
+
+Y de ahí salió un ítem que no estaba planificado —`s2-r5-monitorear`— porque el
+código tiene una excepción que contradice esa regla en apariencia: si el agente
+dice `urgencia: monitorear`, no se ejecuta. La resolución es la asimetría: **se
+acepta lo que el agente diga para frenar, nunca para avanzar.** Sin ese ítem,
+un alumno atento encuentra la contradicción y no tiene respuesta.
+
+### Otros ítems nuevos
+
+- **`s2-r5-apagado`**: `EJECUTAR_ACCIONES` viene apagado. Es el freno más
+  barato y el primero. La nota sugiere preguntar quién lo dejaría encendido por
+  omisión en su empresa.
+- **`s2-r5-quien-decide`**: el permiso no se le pregunta al modelo. La política
+  es código y no hay forma de convencerla — *el agente propone; estas reglas
+  disponen*.
+- **`s2-r5-radio`**: el criterio del radio de daño no es "cuántos" sino **queda
+  algo con qué comparar**. 24 modelos se revierten entrenando de nuevo; 192 no
+  dejan ninguno sano de referencia.
+- **`s2-r5-objetivo`**: el destino se declara en campos, no en prosa. Adivinarlo
+  parseando "los 24 modelos de panadería" sería pedirle a una expresión regular
+  que decida a qué artefacto se le pasa por encima. Y el `return None`: en caso
+  de duda, no se ejecuta.
+- **`s2-r5-api-escribe`** y **`s2-r5-bitacora`**: de toda la API, una sola ruta
+  escribe — y eso es exactamente la superficie que hay que proteger. Cada
+  reentrenamiento deja su motivo, que es lo único del agente que va a la
+  bitácora y lo que responde la pregunta del lunes.
+
+### Una cifra verificada, y un cronómetro descartado
+
+El brief citaba "24 modelos de panadería en 1.5s, 24 de lácteos en 1.4s". Se
+midió llamando a `entrenar` con `solo={"categoria": ...}`:
+
+- **Los 24 son exactos** y son estructurales: una categoría son 24 tiendas.
+- **Los segundos no.** Medido acá: 2.4s y 0.6s. Depende de la máquina, así que
+  el ítem dice "en un par de segundos" y la nota privada advierte de no citar
+  un cronómetro.
+
+**Verificación**
+- `npm run validar-contenido` pasa: 60 ítems en la sesión 2, 240 minutos.
+- `npm run humo`: 146 pantallas, 0 con error.

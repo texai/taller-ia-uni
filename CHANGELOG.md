@@ -41,6 +41,20 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Contenido · S2·U3, de la recomendación a la acción (batch 21)
+- 18 ítems, 60 minutos. Las dos reglas de la política se explican por separado,
+  el interruptor tiene su propio ítem, y la traducción del objetivo también.
+- El error propio —frenar por la urgencia que declara el agente— con la lección
+  que generaliza: **no des permisos contra un campo que el propio agente
+  redacta**.
+- De ahí salió un ítem no planificado: el código respeta `urgencia: monitorear`,
+  que en apariencia contradice esa regla. La resolución es la asimetría — se
+  acepta lo que el agente diga para frenar, nunca para avanzar. Sin ese ítem,
+  un alumno atento encuentra la contradicción y no tiene respuesta.
+- Cifra verificada: los **24 modelos** por categoría son exactos y
+  estructurales; los segundos que citaba el brief (1.5s, 1.4s) no son estables
+  — medido acá dio 2.4s y 0.6s, así que el ítem no cita cronómetro.
+
 ### Contenido · S2·U2, la arquitectura cognitiva (batch 20)
 - 25 ítems, 105 minutos: la unidad más larga del curso. El diagrama de
   secuencia recorrible por fin tiene sus trece explicaciones.

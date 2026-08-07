@@ -236,46 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 21 — Contenido · S2·U3 `reto` — De la recomendación a la acción
-
-**Escribe una sola unidad.** No leas el resto del curso: la estructura
-del batch 3 ya dice qué va dónde (ver [`CONVENTIONS.md`](CONVENTIONS.md) §13).
-
-**Objetivo de la unidad**
-Lo que separa a un agente de un informe, y por qué el freno importa más que el botón.
-
-**Duración** 60 minutos → del orden de 20 ítems.
-
-**Material de origen** — repositorio `texai/taller-ia-uni-lab`
-- `retos/README.md` — Reto 5
-- `agente/accion.py`
-- `plataforma/api.py` — `POST /v1/reentrenar`
-- La corrida real: 24 modelos de panadería en 1.5s, 24 de lácteos en 1.4s
-
-**Tipos de ítem sugeridos**
-- `titulo`: *equivocarse deja de costar una alerta*
-- `codigo` con las dos reglas de la política
-- `demo` con `make actuar` sobre `sesgo_silencioso` y sobre `feed_caido`
-- `comparacion` de los dos resultados
-- `error-comun` con el error de frenar por urgencia en vez de por radio de daño
-- `imagen` del panel de la interfaz
-- `pausa-preguntas`
-
-**Criterios de aceptación**
-- [ ] El freno está en código y se explica por qué no en el prompt
-- [ ] Se cuenta el error propio: la primera versión frenaba por urgencia, y la urgencia es opinión editorial del agente, no una propiedad de seguridad
-- [ ] La trampa del `feed_caido` se demuestra, no se describe
-- [ ] `objetivos` y `requisitos` de la unidad, escritos
-- [ ] Los minutos de los ítems suman los 60 de la unidad
-- [ ] Cada ítem que lo amerite lleva sus `notas` privadas para la segunda pantalla
-- [ ] `npm run validar-contenido` pasa
-
-**Fuera de alcance**
-- Cualquier otra unidad. Un batch que toca dos unidades está mal partido.
-- Inventar cifras. Las de este curso están medidas; si falta una, se pide.
-
----
-
 ## Batch 22 — Contenido · S2·U4 `cierre` — Los errores, y dónde estaban de verdad
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura
