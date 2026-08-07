@@ -19,7 +19,7 @@ cifras:
     nota: 24 tiendas × 8 categorías
   - valor: "14"
     unidad: días de horizonte
-    nota: lo que proyecta cada corrida
+    nota: lo que proyecta cada ejecución
   - valor: "1"
     unidad: job cada madrugada
     nota: carga los 192 y escribe el pronóstico

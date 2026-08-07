@@ -54,6 +54,7 @@ Referencias:
 | 32 | Los cuatro huecos: interfaz, capturas, job, quiebre | ✅ Completado |
 | 33 | Presentación, ficha del docente, un archivo por unidad | ✅ Completado |
 | 34 | El glosario | ✅ Completado |
+| 35 | El vocabulario, y un SQL idempotente | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 

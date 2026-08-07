@@ -74,8 +74,12 @@ items:
         pista: El modelo razona sobre los números; no los calcula.
     notas: |
       La tercera es la que más se discute. Pedirle a un LLM que compute un
-      Kolmogorov-Smirnov es caro y poco confiable, y además irreproducible:
-      la misma pregunta dos veces puede dar dos números.
+      test de Kolmogorov-Smirnov —el que compara la forma de dos
+      distribuciones, y que está dentro de `comparar_periodos`— es caro y poco
+      confiable, y además irreproducible: la misma pregunta dos veces puede dar
+      dos números.
+
+      Está en el glosario, con el detalle. Acá basta con decir qué compara.
 
   - id: s1-r2-firma
     tipo: codigo
@@ -248,9 +252,11 @@ items:
       El test estadístico marca deriva en casi todos los grupos, todo el
       tiempo, incluso con el mundo sano.
     causa: >-
-      Con miles de días-modelo, un Kolmogorov-Smirnov da significativo por
-      diferencias que a nadie le importan. La significancia mide si la
-      diferencia es real, no si vale la pena mirarla.
+      El test que compara las dos ventanas —un Kolmogorov-Smirnov, que mide si
+      dos conjuntos de números vienen de la misma distribución— da
+      significativo por diferencias que a nadie le importan cuando hay miles de
+      días-modelo. La significancia dice si la diferencia es **real**, no si
+      vale la pena mirarla.
     arreglo: >-
       Pedir las dos cosas a la vez: `p < 0.01` **y** que el cambio supere
       un umbral apreciable. Una sola de las dos no alcanza.

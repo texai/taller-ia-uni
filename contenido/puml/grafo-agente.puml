@@ -1,5 +1,5 @@
 @startuml
-' El recorrido de una corrida del agente.
+' El recorrido de una ejecución del agente.
 '
 ' Se escribe en PlantUML porque la imagen se genera al construir y se sirve
 ' estatica -- PlantUML es Java y Vercel no lo ejecuta. La misma fuente se

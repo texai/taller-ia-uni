@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El vocabulario, y un SQL que se puede correr dos veces (batch 35)
+- **Kolmogorov-Smirnov se explica en vez de desaparecer**: está en el código
+  del taller y el alumno lo va a ver ahí igual. Tres entradas nuevas al
+  glosario (test KS, p-valor, percentil) y la explicación pegada a las dos
+  menciones en prosa.
+- **«corrida» → «ejecución»** en todo el contenido, saltando `fecha_corrida` y
+  `"corridas"`: son la salida real del laboratorio y cambiarlas haría que la
+  lámina mienta sobre lo que imprime el comando.
+- **«tubería» → «pipeline»** donde significa un pipeline de datos (tres sitios).
+  Donde no lo significaba se usó la palabra correcta: «el pipe» para el pipe de
+  shell, «cableado» para «todo lo demás de este dibujo es fontanería».
+  `pipeline` entra al glosario.
+- **`supabase/politicas.sql` es idempotente.** Corría una sola vez: la segunda
+  moría con `42710 … already exists`, y moría en la primera política, dejando
+  aplicado a medias lo que hubiera. Los siete `drop policy if exists` subieron
+  al principio del archivo y dejaron de estar comentados.
+
 ### El glosario (batch 34)
 - **35 términos**, de MAPE a «el mundo», en `contenido/glosario.yml`.
 - Se dibuja de dos maneras y las dos hacen falta: **un panel siempre a mano**

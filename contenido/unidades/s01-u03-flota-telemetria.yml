@@ -186,7 +186,7 @@ items:
         otrosValores: ["up", "exec"]
       - texto: "--rm"
         explicacion: >-
-          Borra el contenedor al terminar. Sin esto cada corrida deja uno
+          Borra el contenedor al terminar. Sin esto cada ejecución deja uno
           parado en disco, y a la décima `docker ps -a` es una lista de
           cadáveres. Se puede borrar el contenedor sin perder nada porque
           lo que se produce no vive en él: vive en el volumen `datos`.
@@ -246,7 +246,7 @@ items:
         explicacion: >-
           **Este es el job de madrugada del caso.** Carga los 192, proyecta
           los días que quedaron fuera del entrenamiento y escribe
-          `predicciones.csv`. Cada corrida deja además una fila en su
+          `predicciones.csv`. Cada ejecución deja además una fila en su
           bitácora: si corrió, cuánto tardó, si falló.
       - texto: "4/4 Calculando metricas"
         explicacion: >-
@@ -264,7 +264,7 @@ items:
 
       La anotación del `3/4` es la que engancha con el caso, y la frase que
       rinde en la sesión 2 va acá: el agente también vigila el job. Un
-      modelo puede estar perfectamente sano y la tubería caída desde el
+      modelo puede estar perfectamente sano y el pipeline caído desde el
       martes.
 
       **Lo que tarda no es esto.** El `seed` medido corre en medio minuto;

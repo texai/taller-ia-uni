@@ -61,7 +61,7 @@ items:
       siguiente, y adelantarla le quita el efecto.
 
       Lo único que vale señalar con el dedo son las dos flechas que vuelven
-      hacia atrás. Todo lo demás de este dibujo es una tubería; esas dos
+      hacia atrás. Todo lo demás de este dibujo es cableado; esas dos
       son lo que lo convierte en algo que se puede creer.
 
   - id: s2-glosario-agente
@@ -99,7 +99,7 @@ items:
     notas: |
       Si alguien pregunta por qué no un solo prompt gigante: porque un
       prompt con quince reglas cumple unas y olvida otras, y cuáles olvida
-      cambia en cada corrida. Un grafo no olvida un nodo.
+      cambia en cada ejecución. Un grafo no olvida un nodo.
 
   - id: s2-pregunta-agregar
     tipo: pregunta

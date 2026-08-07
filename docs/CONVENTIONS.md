@@ -674,7 +674,7 @@ de lo que uno quiere proyectando. `Mermaid` lo pisa después de dibujar
 (`ocuparElAncho`, en `components/items/diagrama.tsx`) y le pone un tope de
 altura para que un diagrama alto no se salga de la pantalla.
 
-Queda un caso que ninguna de las dos gramáticas arregla: **una tubería larga es
+Queda un caso que ninguna de las dos gramáticas arregla: **una cadena larga es
 ancha y punto.** `s1-arquitectura` son diez nodos en cadena, y ni el abanico ni
 la columna le sirven — es literalmente el recorrido de un dato. Se queda como
 está, y es la excepción consciente a esta sección.

@@ -49,6 +49,16 @@ terminos:
       Un job puede terminar «ok» y entregar de menos. Es el fallo más común de
       producción y no levanta ninguna excepción.
 
+  - termino: pipeline
+    grupo: El caso
+    definicion: >-
+      La cadena de pasos por la que pasa el dato antes de llegar a la
+      predicción: ingesta, features, modelo, escritura. En este caso el job
+      batch es el pipeline; en otras casas son cinco piezas encadenadas.
+    ojo: >-
+      «El pipeline está roto» casi nunca significa que reventó. Significa que
+      corrió, terminó bien y entregó de menos.
+
   - termino: artefacto
     grupo: El caso
     definicion: >-
@@ -143,6 +153,42 @@ terminos:
       La unidad de la telemetría: un modelo, un día. 192 modelos por 91 días
       evaluados son 17,472.
 
+  - termino: Kolmogorov-Smirnov
+    tambien: test KS
+    grupo: La telemetría
+    definicion: >-
+      Un test que compara **dos conjuntos de números** y dice cuán distintos
+      son. No compara los promedios: compara la forma entera de las dos
+      distribuciones, así que se entera de cambios que a la media se le
+      escapan. Acá compara el error diario de la ventana reciente contra el de
+      la línea base, y es lo que hay dentro de `comparar_periodos`.
+    ojo: >-
+      Dice si la diferencia es **real**, no si **importa**. Con miles de
+      días-modelo marca como significativa casi cualquier diferencia, y por eso
+      hace falta pedirle además que el cambio supere un umbral. Es la trampa 3
+      del reto 2.
+
+  - termino: p-valor
+    grupo: La telemetría
+    definicion: >-
+      Lo que devuelve un test estadístico: la probabilidad de ver una
+      diferencia así de grande si en realidad no hubiera ninguna. Cuanto más
+      pequeño, más difícil de explicar por azar. `p < 0.01` es el corte que usa
+      el laboratorio.
+    ojo: >-
+      Un p-valor pequeño no significa que la diferencia sea grande. Responde
+      «¿pasó algo?», no «¿me importa?».
+
+  - termino: percentil
+    tambien: p90
+    grupo: La telemetría
+    definicion: >-
+      El valor por debajo del cual cae ese porcentaje de los casos. El p90 del
+      sesgo por modelo es el sesgo que solo uno de cada diez modelos supera.
+    ojo: >-
+      Es más informativo que el promedio cuando lo que importa es la cola. El
+      promedio esconde a los diez peores; el p90 los señala.
+
   # ------------------------------------------------------------------ Docker
   - termino: imagen
     grupo: Docker
@@ -206,7 +252,7 @@ terminos:
       el resultado, y vuelve a pensar. Veinte líneas.
     ojo: >-
       Funciona, y ese es el problema. Suena convincente y diverge entre
-      corridas del mismo mundo, que es lo que arma la sesión 2.
+      ejecuciones del mismo mundo, que es lo que arma la sesión 2.
 
   - termino: grafo
     grupo: El agente

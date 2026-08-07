@@ -42,6 +42,26 @@
 -- revelado es exactamente lo que hace que la pregunta deje de medir algo.
 
 -- --------------------------------------------------------------------------
+-- Borrón y cuenta nueva
+-- --------------------------------------------------------------------------
+--
+-- Esto va primero para que el archivo se pueda correr las veces que haga
+-- falta. Sin estos `drop`, una segunda ejecución muere en la primera política
+-- con `42710: policy … already exists` — y muere ahí, dejando aplicado solo lo
+-- que hubiera antes. `if exists` hace que la primera vez tampoco se queje.
+--
+-- Es seguro: son nuestras siete políticas, nombre por nombre. No toca ninguna
+-- otra política de `realtime.messages` que pueda haber puesto otra aplicación.
+
+drop policy if exists "solo el docente publica la pauta"   on realtime.messages;
+drop policy if exists "cualquiera anuncia su presencia"    on realtime.messages;
+drop policy if exists "cualquiera sigue la pauta"          on realtime.messages;
+drop policy if exists "cualquiera pregunta"                on realtime.messages;
+drop policy if exists "solo el docente lee las preguntas"  on realtime.messages;
+drop policy if exists "cualquiera responde"                on realtime.messages;
+drop policy if exists "solo el docente lee las respuestas" on realtime.messages;
+
+-- --------------------------------------------------------------------------
 -- Canal de la pauta
 -- --------------------------------------------------------------------------
 
@@ -159,12 +179,7 @@ create policy "solo el docente lee las respuestas"
 --
 -- Deben salir SIETE.
 --
--- Si hay que volver a empezar:
---
--- drop policy if exists "solo el docente publica la pauta"   on realtime.messages;
--- drop policy if exists "cualquiera anuncia su presencia"    on realtime.messages;
--- drop policy if exists "cualquiera sigue la pauta"          on realtime.messages;
--- drop policy if exists "cualquiera pregunta"                on realtime.messages;
--- drop policy if exists "solo el docente lee las preguntas"  on realtime.messages;
--- drop policy if exists "cualquiera responde"                on realtime.messages;
--- drop policy if exists "solo el docente lee las respuestas" on realtime.messages;
+-- Si hay que volver a empezar, no hay nada especial que hacer: este archivo se
+-- borra a sí mismo antes de crear (arriba), así que correrlo de nuevo, entero,
+-- deja el mismo estado. Si lo que se quiere es dejarlo TODO sin políticas, ese
+-- bloque de `drop` corre solo, sin lo que sigue.

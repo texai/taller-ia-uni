@@ -2453,3 +2453,71 @@ es como hay que compararlas.
 - `npm test` (145 pasan), typecheck, lint y build limpios.
 - `npm run humo`: 231 pantallas, 0 con error.
 - El panel abierto, buscando «sesgo», y las tres láminas vistas en el navegador.
+
+---
+
+## Batch 35 — El vocabulario, y un SQL que se puede correr dos veces
+**2026-08-07**
+
+Dos cosas sin relación entre sí, salvo que las dos aparecieron probando lo que
+ya estaba hecho: tres palabras del material que la sala no va a entender, y un
+archivo de políticas que muere si se corre por segunda vez.
+
+**Alcance** (todo hecho)
+- [x] «Kolmogorov-Smirnov» deja de aparecer sin explicación
+- [x] «corrida» → «ejecución» en todo el contenido
+- [x] «tubería» → «pipeline» donde significa un pipeline de datos
+- [x] `supabase/politicas.sql` se puede correr las veces que haga falta
+
+---
+
+### Cómo quedó, y en qué se desvió de lo planificado
+
+**Kolmogorov-Smirnov no se quitó: se explicó.** Es tentador borrar un nombre
+propio que nadie reconoce, pero está en el código del taller —`stats.ks_2samp`,
+dentro de `comparar_periodos`, `agente/herramientas.py:327`— y el alumno lo va
+a ver ahí igual. Quitarlo de la lámina solo mueve el momento en que no se
+entiende. Entraron tres entradas al glosario en el grupo «La telemetría»
+—`Kolmogorov-Smirnov` (con `tambien: test KS`), `p-valor` y `percentil`— y las
+dos menciones en prosa pasaron a llevar la explicación pegada: «un test de
+Kolmogorov-Smirnov —el que compara la forma de dos distribuciones—».
+
+**«corrida» → «ejecución», con cuatro excepciones que no se tocan.** El reemplazo
+se hizo con un pase sobre `contenido/**/*.yml` y `**/*.puml`, saltando toda
+línea que contuviera `fecha_corrida` o `"corridas"`: esas son la salida JSON
+real del laboratorio, y cambiarlas habría hecho que la lámina mienta sobre lo
+que imprime el comando. 38 líneas en 9 archivos. Lo único que queda con esa
+raíz es el participio «corridos» y esas cuatro líneas de JSON.
+
+**«tubería» → «pipeline», pero solo en tres de los seis sitios.** El pedido era
+un reemplazo y la aplicación literal habría empeorado el texto, así que se
+separó por lo que la palabra significaba en cada sitio:
+
+| Dónde | Qué significaba | Quedó |
+|---|---|---|
+| `s01-u03:267` · `s02-u04:654` · `s02-u04:695` | el pipeline de datos | **pipeline** |
+| `s01-u04:80` | el *pipe* de shell después de `curl -s` | **el pipe** |
+| `s02-u04:89` · `s02-u03:64` | «todo lo demás es fontanería», sobre un diagrama | **cableado** |
+
+En `CONVENTIONS.md` §16 —«una tubería larga es ancha y punto», sobre un
+diagrama de diez nodos en cadena— quedó «una cadena larga», que es lo que ahí
+se estaba diciendo.
+
+Y como «pipeline» pasó a ser vocabulario del taller, entró al glosario con su
+`ojo`: *«el pipeline está roto» casi nunca significa que reventó; significa que
+corrió, terminó bien y entregó de menos*. Es la frase que el reto 4 necesita
+que ya esté dicha.
+
+**El SQL moría en la primera política.** Correrlo por segunda vez daba
+`42710: policy "solo el docente publica la pauta" for table "messages" already
+exists`, y —lo importante— moría **ahí**, dejando aplicado solo lo que hubiera
+de antes. Los siete `drop policy if exists` que estaban comentados al final
+bajo «si hay que volver a empezar» subieron al principio del archivo y se
+descomentaron. Un archivo de configuración que hay que leer hasta el final para
+poder correrlo dos veces no es un archivo de configuración.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 170 ítems, 240 + 240 min, sin avisos.
+- `npm test` (145 pasan), lint y build limpios.
+- `npm run humo`: 231 pantallas, 0 con error.
+- 36 términos en el glosario.

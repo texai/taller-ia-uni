@@ -106,7 +106,7 @@ items:
           El agente **no es un servicio**: se ejecuta, produce un
           diagnóstico y desaparece. Es exactamente el patrón de un job de
           monitoreo — una vez al día, no escuchando en un puerto. Y sin
-          embargo su memoria sobrevive a las corridas, porque vive en el
+          embargo su memoria sobrevive a las ejecuciones, porque vive en el
           volumen `memoria` y no en el contenedor. Eso es el reto 4.
       - texto: -m agente run
         explicacion: >-
@@ -119,7 +119,7 @@ items:
         explicacion: >-
           Añade al final un resumen con las herramientas que llamó, en
           orden. Ojo con lo que **no** hace: las líneas `→ herramienta(...)`
-          que van saliendo durante la corrida se imprimen siempre, con o sin
+          que van saliendo durante la ejecución se imprimen siempre, con o sin
           esta bandera. El otro parámetro es `--fecha`, que fija el día que
           el agente cree que es.
         otrosValores: ["--fecha 2026-08-08"]
@@ -139,7 +139,7 @@ items:
     tipo: pregunta
     titulo: Antes de correrlo tres veces
     pregunta: >-
-      Mismo mundo, misma pregunta, temperatura 0, tres corridas seguidas.
+      Mismo mundo, misma pregunta, temperatura 0, tres ejecuciones seguidas.
       ¿Cuánto se van a parecer los tres diagnósticos?
     visibilidad: publica
     permiteOmitir: false
@@ -154,7 +154,7 @@ items:
       Que aposten antes de mirar. La primera opción es la que la mayoría de
       la sala cree, y es una creencia razonable — por eso duele.
 
-      Revelar **después** de las tres corridas, no antes.
+      Revelar **después** de las tres ejecuciones, no antes.
     solucion:
       explicacion: |
         **Coinciden en el hallazgo y divergen en todo lo demás.** El
@@ -165,7 +165,7 @@ items:
         Y sí, temperatura 0 es determinista **en el muestreo del siguiente
         token**. No lo es el recorrido: basta que una llamada a herramienta
         salga en otro orden para que el contexto de la siguiente sea otro,
-        y a partir de ahí las dos corridas son dos conversaciones distintas.
+        y a partir de ahí las dos ejecuciones son dos conversaciones distintas.
 
         Esa es la diferencia entre un modelo determinista y un **sistema**
         determinista. Un bucle sin arquitectura no tiene sitios donde el
@@ -204,7 +204,7 @@ items:
       le puso. No van a coincidir — y el mundo era exactamente el mismo las
       tres veces.
     respaldo: >-
-      Si las llaves se agotan, basta con dos corridas. Y si nadie tiene
+      Si las llaves se agotan, basta con dos ejecuciones. Y si nadie tiene
       llave, ir a las salidas guardadas del ítem siguiente: lo que hay que
       ver es la divergencia, no correrlo uno mismo.
     notas: |
@@ -220,7 +220,7 @@ items:
     titulo: Qué diverge, exactamente
     minutos: 2
     contenido: |
-      No es que una corrida acierte y otra falle. Las tres son
+      No es que una ejecución acierte y otra falle. Las tres son
       **defendibles**. Lo que cambia es:
 
       - **Por dónde entró.** Quien empieza por `agregado_por("tienda")` ve
@@ -244,10 +244,10 @@ items:
       - ["Concluye con lo primero que encuentra", "Nada le dice cuándo tiene suficiente", "Diagnósticos que no contrastan contra una línea base"]
       - ["Ordena por la señal más ruidosa", "El MAPE tiene los números más grandes", "Reporta primero lo que menos importa"]
       - ["Dramatiza el impacto de negocio", "Ninguna cifra tiene que defenderse", "Números que suenan a plata y no lo son"]
-      - ["Mañana redescubre lo mismo", "No hay memoria entre corridas", "Alerta repetida hasta que se la ignora"]
+      - ["Mañana redescubre lo mismo", "No hay memoria entre ejecuciones", "Alerta repetida hasta que se la ignora"]
     resaltar: [2]
     notas: |
-      Las cuatro salieron de corridas reales, no de una lista de riesgos.
+      Las cuatro salieron de ejecuciones reales, no de una lista de riesgos.
 
       La tercera está resaltada porque es la que la clase menos espera y la
       más peligrosa: un agente que se equivoca en el diagnóstico se corrige;
@@ -268,7 +268,7 @@ items:
       inventario de más. El número era real y la frase era falsa.
     minutos: 3
     notas: |
-      Esto lo escribió el agente, y no en la corrida pelada: lo dijo cuando
+      Esto lo escribió el agente, y no en la ejecución pelada: lo dijo cuando
       se le agregó un nodo que lo obliga a criticarse. Ese nodo es lo
       primero que construimos mañana. Decirlo así, sin adelantar más.
 
@@ -302,15 +302,15 @@ items:
       Se puede probar, y se degrada:
 
       - Un prompt con quince reglas hace que el modelo cumpla unas y olvide
-        otras, y **cuáles olvida cambia en cada corrida**.
+        otras, y **cuáles olvida cambia en cada ejecución**.
       - No hay forma de saber si cumplió. Un prompt no deja rastro: o
         miras la salida entera, o confías.
-      - Y no arregla la memoria. Ninguna instrucción hace que la corrida de
+      - Y no arregla la memoria. Ninguna instrucción hace que la ejecución de
         mañana sepa lo que dijo la de hoy.
 
       El problema no es que el modelo no sepa qué hacer. Es que **no hay
       ningún sitio donde eso pueda pasar**: ni un paso que critique, ni uno
-      que reescriba, ni algo que persista entre corridas.
+      que reescriba, ni algo que persista entre ejecuciones.
     notas: |
       Si alguien insiste con el prompt largo, esta es la pregunta que
       cierra: ¿cómo comprobarías que lo cumplió? En un grafo, el paso o
@@ -344,13 +344,13 @@ items:
         la que casi todo el mundo intenta primero.
 
         Si tuviera que ir una sola: memoria. Es la única que no se puede
-        simular con nada más — ninguna instrucción hace que la corrida de
+        simular con nada más — ninguna instrucción hace que la ejecución de
         mañana sepa lo que dijo la de hoy.
       descartes:
         - opcion: Un prompt más detallado
           razon: >-
             Quince reglas se cumplen a medias y cuáles se olvidan cambia en
-            cada corrida. Y no hay forma de comprobar que las cumplió.
+            cada ejecución. Y no hay forma de comprobar que las cumplió.
         - opcion: Que critique su propio diagnóstico antes de emitirlo
           razon: >-
             Hace falta, y es lo primero que construimos. Pero criticar sin
@@ -379,7 +379,7 @@ items:
     minutos: 3
     disparadores:
       - ¿Alguno tiene hoy un agente en producción? ¿Cómo saben que no divaga?
-      - ¿Qué harían ustedes para que dos corridas del mismo día coincidieran?
+      - ¿Qué harían ustedes para que dos ejecuciones del mismo día coincidieran?
       - ¿Dónde más han visto un número real usado para decir algo falso?
 
   - id: s1-cierre

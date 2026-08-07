@@ -76,8 +76,8 @@ items:
       - texto: "-s"
         explicacion: >-
           Silencioso. Sin esto curl escupe una barra de progreso que se
-          mezcla con el JSON y ensucia todo lo que venga después en la
-          tubería.
+          mezcla con el JSON y ensucia todo lo que venga después en el
+          pipe.
         otrosValores: ["-v", "-i"]
       - texto: "categoria=bebidas"
         explicacion: >-
@@ -323,7 +323,7 @@ items:
       Acá está el taller entero. Darle tiempo.
 
       Sobre las cifras: el MAPE y el sesgo están medidos y se sostienen
-      entre corridas al primer decimal. El conteo de modelos sobre umbral
+      entre ejecuciones al primer decimal. El conteo de modelos sobre umbral
       depende del umbral que se elija y del día en que cada uno generó su
       mundo — lo que se sostiene es que se duplican. Si alguien ve otro par
       de números en su pantalla, esa es la razón, y vale la pena decirlo.
@@ -337,7 +337,7 @@ items:
     tono: malo
     minutos: 2
     notas: |
-      El número exacto varía por corrida: medido en dos mundos generados
+      El número exacto varía por ejecución: medido en dos mundos generados
       con cinco días de diferencia dio 36,338 y 36,981. Por eso está
       redondeado. Si alguien pregunta, la explicación es buena: el mundo se
       genera contra la fecha del día.

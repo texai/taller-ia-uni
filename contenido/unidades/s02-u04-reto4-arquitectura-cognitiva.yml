@@ -77,7 +77,7 @@ items:
 
   - id: s2-r4-secuencia
     tipo: diagrama-secuencia
-    titulo: Una corrida, mensaje a mensaje
+    titulo: Una ejecución, mensaje a mensaje
     archivo: puml/grafo-agente.puml
     minutos: 9
     notas: |
@@ -86,7 +86,7 @@ items:
 
       Los dos que hay que dejar respirar son el 7 —la reflexión mandando de
       vuelta a percepción— y el 10, la crítica que queda en pie. Todo lo
-      demás es tubería.
+      demás es cableado.
     mensajes:
       - texto: "comparar_periodos(14, 45, categoria)"
         explicacion: >-
@@ -169,7 +169,7 @@ items:
           vueltas: int
     notas: |
       Cada campo es la salida de un nodo. Leer el estado es leer el
-      expediente de la corrida: qué vio, qué concluyó, qué se objetó, qué
+      expediente de la ejecución: qué vio, qué concluyó, qué se objetó, qué
       recomendó y qué ejecutó.
 
   - id: s2-r4-estado-por-que
@@ -246,7 +246,7 @@ items:
       vuelve al estado, no existió.
     notas: |
       Es muda: el agente responde, suena razonable, y perdió el encargo.
-      Solo se nota comparando dos corridas con atención.
+      Solo se nota comparando dos ejecuciones con atención.
 
   - id: s2-r4-messages-key
     tipo: error-comun
@@ -510,7 +510,7 @@ items:
     comentario: >-
       El diagnóstico decía "sin hallazgos". La crítica, del mismo modelo y
       con la misma evidencia, decía que sí los había y explicaba por qué.
-      Sin `revision`, esa corrida se emitía con el titular equivocado y la
+      Sin `revision`, esa ejecución se emitía con el titular equivocado y la
       respuesta correcta enterrada en las objeciones.
     minutos: 2
     notas: |
@@ -520,7 +520,7 @@ items:
   - id: s2-r4-revision
     tipo: comparacion
     titulo: Antes y después de la revisión
-    entradilla: Misma corrida, misma evidencia, sin llamar una herramienta más
+    entradilla: Misma ejecución, misma evidencia, sin llamar una herramienta más
     minutos: 3
     izquierda:
       titulo: El diagnóstico que salía
@@ -625,7 +625,7 @@ items:
       Dos cosas más que decir sin lámina: un diagnóstico `sin_hallazgos`
       **no se registra** —una guardia tranquila no ensucia la memoria— y
       `--limpiar` la borra, que es útil para volver a demostrar la primera
-      corrida, la que dice "no hay diagnósticos previos".
+      ejecución, la que dice "no hay diagnósticos previos".
 
       El comando corre en el contenedor del agente porque la memoria es
       suya. La plataforma no la ve, igual que en producción.
@@ -651,7 +651,7 @@ items:
 
   - id: s2-r4-job
     tipo: salida-anotada
-    titulo: La herramienta que mira la tubería
+    titulo: La herramienta que mira el pipeline
     entradilla: estado_del_job — un modelo puede estar sano y el job caído desde el martes
     comando: → estado_del_job()
     minutos: 4
@@ -683,7 +683,7 @@ items:
         explicacion: >-
           La herramienta devuelve las diez últimas y dice cuántas hay. Es
           una decisión de diseño de percepción, la misma del reto 2: se
-          entrega una lectura, no un volcado. Sesenta y seis corridas
+          entrega una lectura, no un volcado. Sesenta y seis ejecuciones
           enteras en el prompt no caben, y no harían falta.
     notas: |
       **Esta lámina paga una promesa que el curso hace tres veces.** Desde
@@ -692,8 +692,8 @@ items:
       herramienta que lo mira.
 
       El punto que la sala tiene que llevarse: **el fallo más común en
-      producción no es un modelo malo, es una tubería rota**, y una tubería
-      rota casi nunca levanta una excepción. Termina bien y entrega de
+      producción no es un modelo malo, es un pipeline roto**, y un pipeline
+      roto casi nunca levanta una excepción. Termina bien y entrega de
       menos.
 
       Conecta directo con el mundo `feed_caido` de la lámina anterior: allá
@@ -781,7 +781,7 @@ items:
         esperado: "anomalia, tienda:arequipa, sin reentrenar"
       - comando: make reparar
     observar: >-
-      Mirar el veredicto de la reflexión en cada corrida. Cuando dice
+      Mirar el veredicto de la reflexión en cada ejecución. Cuando dice
       `insuficiente`, seguir la vuelta: qué pidió mirar y si al volver
       cambió algo. Es la parte del grafo que no se ve en el diagrama.
     respaldo: >-
@@ -795,7 +795,7 @@ items:
 
   - id: s2-r4-salida
     tipo: salida-anotada
-    titulo: Cómo se lee una corrida · lo que hizo
+    titulo: Cómo se lee una ejecución · lo que hizo
     entradilla: La primera mitad de lo que acaba de pasar por la pantalla
     comando: docker compose run --rm agente python -m agente run --verboso
     minutos: 3
@@ -853,7 +853,7 @@ items:
 
   - id: s2-r4-salida-2
     tipo: salida-anotada
-    titulo: Cómo se lee una corrida · lo que concluyó
+    titulo: Cómo se lee una ejecución · lo que concluyó
     entradilla: Y la segunda mitad, que es donde está lo interesante
     comando: docker compose run --rm agente python -m agente run --verboso
     minutos: 3
@@ -909,7 +909,7 @@ items:
         explicacion: >-
           **Lo único que agrega `--verboso`.** Las flechas de la lámina
           anterior salen siempre; la bandera añade este resumen final, que
-          sirve para comparar dos corridas de un vistazo sin releer la
+          sirve para comparar dos ejecuciones de un vistazo sin releer la
           salida entera.
     notas: |
       Cinco anotaciones y tres minutos: ir rápido. La que hay que dejar

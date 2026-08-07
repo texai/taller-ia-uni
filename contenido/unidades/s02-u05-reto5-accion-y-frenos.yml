@@ -290,12 +290,12 @@ items:
       - texto: "--rm"
         explicacion: >-
           Borra el contenedor al terminar. Sin esto queda uno parado por
-          cada corrida, y en una clase de veinte personas eso se nota.
+          cada ejecución, y en una clase de veinte personas eso se nota.
       - texto: "-e EJECUTAR_ACCIONES=1"
         explicacion: >-
           El interruptor. Sin él la política evalúa y no ejecuta. Está en la
           línea de comandos y no en `.env` a propósito: encenderlo es una
-          decisión de esta corrida, no del entorno.
+          decisión de esta ejecución, no del entorno.
       - texto: "--verboso"
         explicacion: >-
           Agrega al final el resumen de herramientas llamadas. Ojo: el
@@ -632,7 +632,7 @@ items:
       - comando: docker compose up -d ui
         esperado: "http://localhost:8501"
     observar: >-
-      La corrida completa: qué herramientas llamó, el diagnóstico, la
+      La ejecución completa: qué herramientas llamó, el diagnóstico, la
       crítica, la corrección si la hubo, las recomendaciones y el veredicto
       de la política. Todo el razonamiento, abierto.
     notas: |
