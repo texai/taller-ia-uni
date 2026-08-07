@@ -790,10 +790,11 @@ unidades:
           dos que hacen que una alerta se lea.
 
       - id: s2-r4-memoria-comando
-        tipo: terminal
+        tipo: salida-anotada
         titulo: Ábranla y miren qué hay dentro
         entradilla: make memoria — la única forma de ver lo que el agente recuerda
         comando: docker compose run --rm agente python -m agente memoria
+        minutos: 4
         salida: |
           [
             {
@@ -810,33 +811,40 @@ unidades:
                 {
                   "accion": "reentrenar",
                   "objetivo": "la flota",
-                  "urgencia": "alta",
-                  "justificacion": "el sesgo es sistematico y no se corrige solo"
+                  "urgencia": "alta"
                 }
               ]
             }
           ]
-        duracion: 5
-        minutos: 4
+        anotaciones:
+          - texto: '"fecha": "2026-08-08"'
+            explicacion: >-
+              **Esto ya tenía contenido antes de empezar hoy.** Lo escribió el
+              agente de ayer, en el reto 3. La memoria deja de ser una promesa
+              del diseño y pasa a ser un archivo que se abre.
+          - texto: '"registrado_en"'
+            explicacion: >-
+              No es lo mismo que `fecha`. Una es cuándo corrió el agente; la
+              otra, de qué día habla el diagnóstico. Confundirlas es lo que hace
+              que un historial deje de servir para comparar.
+          - texto: '"evidencia"'
+            explicacion: >-
+              Se guarda la evidencia, no solo el titular. Sin ella, «esto ya lo
+              reporté» es una afirmación que no se puede comprobar mañana.
+          - texto: '"recomendaciones"'
+            explicacion: >-
+              Lo que pidió hacer. Comparado con lo que pide hoy, es lo que
+              permite decir la segunda de las tres frases que un tablero nunca
+              dice: **esto empeoró desde ayer**.
         notas: |
-          **Esto ya tiene contenido antes de empezar hoy**: lo escribió el
-          agente de ayer, en el reto 3. Vale la pena decirlo y dejar que lo
-          abran — es la prueba de que la memoria no es una promesa del diseño,
-          es un archivo.
+          Un JSON en disco, en el volumen `memoria`. Deliberadamente simple: lo
+          que importa no es el motor de persistencia, sino **que el agente
+          consulte el historial ANTES de diagnosticar y lo escriba DESPUÉS**.
 
-          Tres cosas de la forma del registro:
-
-          - Un JSON en disco, en el volumen `memoria`. Deliberadamente simple.
-            Lo que importa no es el motor de persistencia, sino **que el agente
-            consulte el historial ANTES de diagnosticar y lo escriba DESPUÉS**.
-          - `registrado_en` no es `fecha`. Una es cuándo corrió el agente; la
-            otra, de qué día habla el diagnóstico. Confundirlas es lo que hace
-            que un historial deje de servir para comparar.
-          - **Solo se guarda si hay algo.** Un diagnóstico `sin_hallazgos` no se
-            registra: una guardia tranquila no ensucia la memoria.
-
-          `--limpiar` la borra, y es útil para volver a demostrar la primera
-          corrida — la que dice "no hay diagnósticos previos".
+          Dos cosas más que decir sin lámina: un diagnóstico `sin_hallazgos`
+          **no se registra** —una guardia tranquila no ensucia la memoria— y
+          `--limpiar` la borra, que es útil para volver a demostrar la primera
+          corrida, la que dice "no hay diagnósticos previos".
 
           El comando corre en el contenedor del agente porque la memoria es
           suya. La plataforma no la ve, igual que en producción.
@@ -953,10 +961,11 @@ unidades:
           tres para que los prueben ellos.
 
       - id: s2-r4-salida
-        tipo: terminal
+        tipo: salida-anotada
         titulo: Cómo se lee una corrida · lo que hizo
         entradilla: La primera mitad de lo que acaba de pasar por la pantalla
         comando: docker compose run --rm agente python -m agente run --verboso
+        minutos: 3
         salida: |
           Agente de monitoreo · 2026-08-09
           Diagnosticos previos:
@@ -977,34 +986,44 @@ unidades:
               · arequipa: 0 unidades en los ultimos 9 dias
               · las otras 23 tiendas dentro de su rango habitual
               · ninguna categoria muestra deriva de error ni de sesgo
-        duracion: 45
-        minutos: 3
+        anotaciones:
+          - texto: "Diagnosticos previos:"
+            explicacion: >-
+              **La memoria, y va primero.** Antes de mirar una sola métrica el
+              agente ya sabe qué reportó ayer. Se imprime acá porque es lo
+              primero que entra al prompt.
+          - texto: "dimension=tienda"
+            explicacion: >-
+              `comparar_periodos` aparece **dos veces**, y esta es la segunda:
+              misma herramienta, otra dimensión. Ocurrió después de la
+              reflexión, cuando el agente se dio cuenta de que estaba mirando
+              por el corte equivocado. **Eso es la vuelta atrás del grafo,
+              visible en la consola** en vez de dibujada en un diagrama.
+          - texto: "(reescrito tras la reflexión)"
+            explicacion: >-
+              Solo se imprime cuando el veredicto fue `insuficiente`. Es la
+              diferencia entre un agente que se cuestiona y uno que además
+              puede corregirse — la tesis de la unidad, impresa por el propio
+              programa.
+          - texto: "tipo: anomalia"
+            explicacion: >-
+              El campo del que cuelga todo el reto 5. `anomalia` significa que
+              el problema está en los datos y no en el modelo, y mañana esa
+              palabra será la diferencia entre reentrenar y frenar.
         notas: |
-          **Recorrer la salida señalando.** Es la lámina que convierte "el
-          agente funciona" en "sé qué está haciendo el agente".
-
-          - **La segunda línea es la memoria.** Antes de mirar una sola métrica
-            el agente ya sabe qué reportó ayer. Se imprime primero porque es lo
-            primero que entra al prompt.
-          - **Las flechas son las llamadas a herramienta**, con sus argumentos,
-            en el orden real en que ocurrieron. Fíjense en que
-            `comparar_periodos` aparece **dos veces**: la segunda es después de
-            la reflexión, con otra dimensión. Eso es la vuelta atrás del grafo,
-            visible en la consola.
-          - **El título dice "reescrito tras la reflexión".** Solo aparece
-            cuando el veredicto fue `insuficiente`. Es la diferencia entre un
-            agente que se cuestiona y uno que además puede corregirse — la
-            tesis de la unidad, impresa.
+          Recorrer la salida señalando. Es la lámina que convierte "el agente
+          funciona" en "sé qué está haciendo el agente".
 
           Los acentos que faltan son del laboratorio, no de la lámina: el
           código evita caracteres no ASCII en lo que imprime, para que no se
           rompan en la consola de Windows.
 
       - id: s2-r4-salida-2
-        tipo: terminal
+        tipo: salida-anotada
         titulo: Cómo se lee una corrida · lo que concluyó
         entradilla: Y la segunda mitad, que es donde está lo interesante
         comando: docker compose run --rm agente python -m agente run --verboso
+        minutos: 3
         salida: |
           ──────────────────────────────────────────────────────────
           REFLEXIÓN
@@ -1030,26 +1049,40 @@ unidades:
           ──────────────────────────────────────────────────────────
             resumen_flota, comparar_periodos, detectar_anomalias,
             comparar_periodos
-        minutos: 3
+        anotaciones:
+          - texto: "vueltas: 1"
+            explicacion: >-
+              Cuántas veces volvió a percepción. Si dijera 3, el tope lo habría
+              cortado — y ese tope existe porque un agente que se cuestiona sin
+              límite no termina nunca.
+          - texto: 'el titular decia "deriva del modelo"'
+            explicacion: >-
+              **Las objeciones son suyas.** No las escribió la plataforma ni
+              están en el prompt: son lo que el nodo de reflexión le puso a su
+              propio borrador, y son la razón de que el diagnóstico de arriba
+              esté reescrito.
+          - texto: "[alta] revisar_datos → tienda:arequipa"
+            explicacion: >-
+              Recomienda revisar los datos, **no reentrenar**. Si alguien
+              pregunta por qué, esa es exactamente la conversación del reto 5:
+              es la decisión que separa arreglar algo de romper 24 modelos
+              sanos.
+          - texto: "(diagnóstico guardado en memoria)"
+            explicacion: >-
+              Cierra el bucle que abrió la primera línea de la lámina anterior.
+              Mañana esta frase aparecerá allá arriba, en «Diagnosticos
+              previos».
+          - texto: "HERRAMIENTAS LLAMADAS"
+            explicacion: >-
+              **Lo único que agrega `--verboso`.** Las flechas de la lámina
+              anterior salen siempre; la bandera añade este resumen final, que
+              sirve para comparar dos corridas de un vistazo sin releer la
+              salida entera.
         notas: |
-          - **`vueltas: 1`** es cuántas veces volvió a percepción. Si dijera 3,
-            el tope lo habría cortado — y ese tope existe porque un agente que
-            se cuestiona sin límite no termina nunca.
-          - **Las objeciones son suyas.** No las escribió la plataforma ni
-            están en el prompt: son lo que el nodo de reflexión le puso a su
-            propio borrador.
-          - **`(diagnóstico guardado en memoria)`** cierra el bucle. Mañana esa
-            línea aparecerá arriba del todo, en «Diagnosticos previos».
-          - **`HERRAMIENTAS LLAMADAS` es lo único que agrega `--verboso`.** Las
-            flechas de la lámina anterior salen siempre. La bandera añade este
-            resumen final, que sirve para comparar dos corridas de un vistazo
-            sin releer la salida entera.
+          Cinco anotaciones y tres minutos: ir rápido. La que hay que dejar
+          respirar es la segunda — que las objeciones sean suyas es lo que hace
+          creíble todo lo demás.
 
-          Si alguien pregunta por qué la recomendación es `revisar_datos` y no
-          `reentrenar`: esa es exactamente la conversación del reto 5, y es la
-          que decide si mañana se rompen 24 modelos sanos.
-
-  # ------------------------------------------------------------------ 11:10
   - id: s2-reto-5
     tipo: reto
     titulo: De la recomendación a la acción

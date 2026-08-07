@@ -2174,3 +2174,71 @@ resultados, que es donde la sala tiene algo que preguntar.
 - El propio curso es un test: `reprochesDeRitmo` sobre las doce unidades reales
   tiene que devolver vacío, y falla la suite si alguien mete cuarenta minutos
   de láminas seguidas.
+
+---
+
+## Batch 30 — La salida anotada
+
+El último de la segunda ronda, y va al final a propósito: es el único tipo
+nuevo que pedía el bloque de los comandos, y llega cuando los batches 25 y 26
+ya escribieron el contenido. Así se diseñó contra cinco salidas reales que
+están en el material, y no contra las que uno imagina que hará falta anotar.
+
+### La decisión, y por dónde se decidió
+
+El alcance dejaba abierto si `comando-anotado` crecía con una salida anotable o
+si la salida era su propio tipo. **Ganó el tipo propio**, aunque no por donde
+se esperaba.
+
+Cuatro de las cinco salidas sí quedaron pegadas a su comando, lo que apuntaba a
+lo primero. Lo que zanjó el asunto fue el **alto**: la corrida verbosa del
+agente son cuarenta líneas y en el batch 26 hubo que partirla en dos láminas
+para que entrara proyectada. Un tipo que obligara a llevar el comando encima
+habría producido un ítem que no cabe en la pantalla — y `make memoria` imprime
+algo que vale por sí solo, sin comando que lo justifique.
+
+Así que `comando` queda como campo **opcional**, dibujado arriba en pequeño:
+contexto, no protagonista. El dibujo sí se comparte: `BloqueAnotado` es un solo
+componente y lo usan los dos. Una segunda copia se habría desincronizado a la
+primera corrección de color.
+
+### Lo que cambia en la lámina
+
+Un comando es una línea larga y se encoge hasta caber **a lo ancho**. Una
+salida son veinte líneas cortas y lo que se sale de la pantalla es **por
+abajo**, así que el tamaño se calcula reservando sitio para la explicación. La
+primera versión no lo hacía y el resultado era exactamente lo que el ítem
+existe para evitar: una salida que empuja su propia explicación fuera de cuadro.
+
+### Las cinco salidas, migradas
+
+| Ítem | Anotaciones | La que más rinde |
+|---|---|---|
+| `s1-seed-salida` | 5 | `3/4` es el job de madrugada del caso |
+| `s1-r2-verificar-salida` | 4 | «Regenerando los datos limpios» — la línea que salva la clase |
+| `s2-r4-salida` | 4 | `comparar_periodos` dos veces: la vuelta atrás del grafo, visible |
+| `s2-r4-salida-2` | 5 | las objeciones son suyas, no del prompt |
+| `s2-r4-memoria-comando` | 4 | `registrado_en` no es `fecha` |
+
+Veintidós anotaciones que antes eran notas del docente en un párrafo. La
+diferencia no es cosmética: **antes el docente señalaba con el dedo hacia una
+pantalla compartida por Zoom**, que es exactamente lo que no funciona.
+
+### La validación, y por qué es distinta de la de un comando
+
+Misma regla —la anotación se ancla por texto, y falla si no aparece o si
+aparece dos veces— con un motivo extra. Una salida real se copia y se pega, y
+al pegarla se cuela un espacio de más con una facilidad que un comando escrito
+a mano no tiene. El aviso dice cuál.
+
+Cuatro tests nuevos, y uno de ellos cuida un fallo que no da ninguna señal: si
+`pasosDe` no conociera el tipo, la lámina se quedaría en el paso 0, se
+dibujaría perfecta, y las anotaciones no se verían nunca.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 156 ítems, 240 + 240 min, sin avisos.
+- `npm test` (138 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 214 pantallas, 0 con error — 22 más que antes, que son
+  justamente los pasos nuevos.
+- Las cinco salidas recorridas paso a paso a 1440×900: bloque y explicación
+  caben juntos en todas.

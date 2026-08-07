@@ -96,6 +96,11 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   "comando-anotado": { requeridos: ["comando", "segmentos"] },
 
+  "salida-anotada": {
+    requeridos: ["salida", "anotaciones"],
+    opcionales: ["comando"],
+  },
+
   receso: { requeridos: ["minutos"] },
 
   "pausa-preguntas": { requeridos: [], opcionales: ["disparadores"] },

@@ -3,6 +3,7 @@ import type {
   ItemCodigo,
   ItemComandoAnotado,
   ItemDemo,
+  ItemSalidaAnotada,
   ItemTerminal,
 } from "@/lib/tipos";
 import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
@@ -156,59 +157,14 @@ export function ComandoAnotado({
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
-      <div
-        className="overflow-x-auto rounded-xl border px-5 py-4"
-        style={{ borderColor: "var(--borde)", background: "var(--lienzo-alto)" }}
-      >
-        <pre
-          className="font-mono leading-relaxed"
-          style={{ fontSize: `${tamano.toFixed(1)}px` }}
-        >
-          <code>
-            {/*
-              El comando se recorre por LÍNEAS y no de un tirón, porque la
-              llave tiene que quedar justo debajo de la suya. Cada línea se
-              rearma a partir de los trozos que le tocan.
-            */}
-            {partirEnLineas(trozos).map((linea, iLinea) => (
-              <span key={iLinea}>
-                {linea.map((trozo, iTrozo) => {
-                  const suyo = trozo.segmento === indice;
-                  const anotado = trozo.segmento !== null;
-                  return (
-                    <span
-                      key={iTrozo}
-                      style={{
-                        color:
-                          indice === null
-                            ? anotado
-                              ? "var(--color-acento)"
-                              : "var(--tinta)"
-                            : suyo
-                              ? "var(--color-acento)"
-                              : "var(--tinta-suave)",
-                        fontWeight: suyo ? 700 : 400,
-                        opacity: indice !== null && !suyo ? 0.55 : 1,
-                        background: suyo ? "var(--lienzo)" : undefined,
-                        borderRadius: suyo ? 3 : undefined,
-                      }}
-                    >
-                      {trozo.texto}
-                    </span>
-                  );
-                })}
-                {"\n"}
-                {lineaLlave === iLinea && donde?.ancho != null && (
-                  <span style={{ color: "var(--color-acento)" }}>
-                    {llave(donde.columna, donde.ancho)}
-                    {"\n"}
-                  </span>
-                )}
-              </span>
-            ))}
-          </code>
-        </pre>
-      </div>
+      <BloqueAnotado
+        texto={item.comando}
+        trozos={trozos}
+        indice={indice}
+        llaveEn={lineaLlave}
+        donde={donde}
+        tamano={tamano}
+      />
 
       {/* La explicación de la parte enfocada, grande y sola. */}
       {enfocado && (
@@ -253,6 +209,174 @@ export function ComandoAnotado({
             </div>
           ))}
         </dl>
+      )}
+    </Marco>
+  );
+}
+
+/**
+ * El bloque monoespaciado con una parte enfocada y la llave debajo.
+ *
+ * Lo comparten el comando anotado y la salida anotada porque el dibujo es el
+ * mismo —resaltar sin perder el todo— y solo cambia qué se está mirando. Una
+ * segunda copia de esto se habría desincronizado a la primera corrección de
+ * color.
+ */
+function BloqueAnotado({
+  texto,
+  trozos,
+  indice,
+  llaveEn,
+  donde,
+  tamano,
+}: {
+  texto: string;
+  trozos: Trozo[];
+  indice: number | null;
+  llaveEn: number | null;
+  donde: { columna: number; ancho: number | null } | null;
+  tamano: number;
+}) {
+  return (
+    <div
+      className="overflow-x-auto rounded-xl border px-5 py-4"
+      style={{ borderColor: "var(--borde)", background: "var(--lienzo-alto)" }}
+      data-largo={texto.length}
+    >
+      <pre
+        className="font-mono leading-relaxed"
+        style={{ fontSize: `${tamano.toFixed(1)}px` }}
+      >
+        <code>
+          {/*
+            Se recorre por LÍNEAS y no de un tirón, porque la llave tiene que
+            quedar justo debajo de la suya. Cada línea se rearma a partir de
+            los trozos que le tocan.
+          */}
+          {partirEnLineas(trozos).map((linea, iLinea) => (
+            <span key={iLinea}>
+              {linea.map((trozo, iTrozo) => {
+                const suyo = trozo.segmento === indice;
+                const anotado = trozo.segmento !== null;
+                return (
+                  <span
+                    key={iTrozo}
+                    style={{
+                      color:
+                        indice === null
+                          ? anotado
+                            ? "var(--color-acento)"
+                            : "var(--tinta)"
+                          : suyo
+                            ? "var(--color-acento)"
+                            : "var(--tinta-suave)",
+                      fontWeight: suyo ? 700 : 400,
+                      opacity: indice !== null && !suyo ? 0.55 : 1,
+                      background: suyo ? "var(--lienzo)" : undefined,
+                      borderRadius: suyo ? 3 : undefined,
+                    }}
+                  >
+                    {trozo.texto}
+                  </span>
+                );
+              })}
+              {"\n"}
+              {llaveEn === iLinea && donde?.ancho != null && (
+                <span style={{ color: "var(--color-acento)" }}>
+                  {llave(donde.columna, donde.ancho)}
+                  {"\n"}
+                </span>
+              )}
+            </span>
+          ))}
+        </code>
+      </pre>
+    </div>
+  );
+}
+
+/**
+ * Una salida de terminal, explicada trozo a trozo.
+ *
+ * Misma idea que el comando anotado y misma maquinaria, con dos diferencias
+ * que vienen de lo que es una salida:
+ *
+ *  - **El comando pasa a ser contexto.** Va arriba, en pequeño, y puede no
+ *    estar: `make memoria` imprime algo que vale por sí solo.
+ *  - **El tamaño se calcula contra el alto y no solo contra el ancho.** Un
+ *    comando es una línea larga; una salida son cuarenta cortas, y lo que se
+ *    sale de la pantalla es por abajo.
+ */
+export function SalidaAnotada({
+  item,
+  paso = 0,
+}: {
+  item: ItemSalidaAnotada;
+  paso?: number;
+}) {
+  const indice = paso > 0 ? paso - 1 : null;
+  const enfocada = indice === null ? null : item.anotaciones[indice];
+  const trozos = trocear(item.salida, item.anotaciones);
+  const donde = enfocada ? ubicar(item.salida, enfocada.texto) : null;
+
+  const lineas = item.salida.split("\n");
+  const largo = Math.max(...lineas.map((l) => l.length), 1);
+  // La llave añade una línea a la que la lleva, y el enfoque puede caer en
+  // cualquiera: se reserva su sitio siempre para que la lámina no dé un salto
+  // al avanzar de paso.
+  const alto = lineas.length + 1;
+  // El reparto vertical de la lámina: título y comando arriba, el bloque en el
+  // medio, y sitio garantizado abajo para la explicación. Sin el tope de alto,
+  // una salida de veinte líneas empuja la explicación fuera de la pantalla —
+  // y la explicación es la razón de que el ítem exista.
+  const porAncho = 980 / (0.6 * largo);
+  const porAlto = 410 / (1.6 * alto);
+  const tamano = Math.max(9, Math.min(17, Math.min(porAncho, porAlto)));
+
+  const lineaLlave = donde?.ancho != null ? donde.linea : null;
+
+  return (
+    <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
+      {item.comando && (
+        <p
+          className="mb-2 font-mono text-sm"
+          style={{ color: "var(--tinta-suave)" }}
+        >
+          $ {item.comando}
+        </p>
+      )}
+
+      <BloqueAnotado
+        texto={item.salida}
+        trozos={trozos}
+        indice={indice}
+        llaveEn={lineaLlave}
+        donde={donde}
+        tamano={tamano}
+      />
+
+      {enfocada && (
+        <div
+          className="mt-6 border-l-2 pl-5"
+          style={{ borderColor: "var(--color-acento)" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-widest"
+            style={{ color: "var(--color-acento)" }}
+          >
+            {indice !== null && `${indice + 1} / ${item.anotaciones.length}`}
+          </p>
+          <Prosa className="mt-2" tamano="lg">
+            {enfocada.explicacion}
+          </Prosa>
+        </div>
+      )}
+
+      {!enfocada && (
+        <p className="mt-6 text-base" style={{ color: "var(--tinta-suave)" }}>
+          {item.anotaciones.length} cosas que leer acá. Avanza para verlas una a
+          una.
+        </p>
       )}
     </Marco>
   );

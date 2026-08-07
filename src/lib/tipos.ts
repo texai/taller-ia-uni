@@ -302,6 +302,31 @@ export interface ItemComandoAnotado extends ItemBase {
   }[];
 }
 
+/**
+ * Una salida de terminal, explicada trozo a trozo.
+ *
+ * `terminal` ya muestra una salida, pero la dibuja en bloque: la clase ve
+ * cuarenta líneas y el docente señala con el dedo hacia la pantalla
+ * compartida, que es exactamente lo que no funciona por Zoom.
+ *
+ * Es un tipo aparte y no un campo más de `comando-anotado` por dos razones que
+ * el material de los batches 25 y 26 dejó claras. Una salida larga y su
+ * comando **no caben en la misma lámina** —la corrida verbosa del agente son
+ * cuarenta líneas, y hubo que partirla en dos— y hay salidas que valen solas,
+ * como la de `make memoria`. El `comando` va acá como contexto, en pequeño, y
+ * puede faltar.
+ */
+export interface ItemSalidaAnotada extends ItemBase {
+  tipo: "salida-anotada";
+  /** Qué produjo esta salida. Contexto, no protagonista. */
+  comando?: string;
+  salida: string;
+  anotaciones: {
+    texto: string;
+    explicacion: string;
+  }[];
+}
+
 // --------------------------------------------------------------------------
 // Familia: dictado
 // --------------------------------------------------------------------------
@@ -391,6 +416,7 @@ export type Item =
   | ItemCaso
   | ItemDiagramaSecuencia
   | ItemComandoAnotado
+  | ItemSalidaAnotada
   | ItemReceso
   | ItemPausaPreguntas
   | ItemAsistencia
@@ -419,6 +445,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   "diagrama-secuencia": "contenido",
   caso: "contenido",
   "comando-anotado": "contenido",
+  "salida-anotada": "contenido",
   receso: "dictado",
   "pausa-preguntas": "dictado",
   asistencia: "dictado",

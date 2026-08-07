@@ -5,6 +5,22 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La salida anotada (batch 30)
+- Nuevo tipo **`salida-anotada`**: una salida de terminal explicada trozo a
+  trozo, con el mismo recorrido por pasos que un comando anotado — se resalta
+  una parte, se atenúa el resto, y una llave de caracteres señala la columna.
+- **Es un tipo aparte y no un campo de `comando-anotado`**, y lo decidió el
+  material: la corrida verbosa del agente son cuarenta líneas y hubo que
+  partirla en dos láminas, así que obligar a llevar el comando encima habría
+  producido un ítem que no cabe en pantalla. El `comando` va como contexto
+  opcional, en pequeño. El dibujo sí se comparte.
+- **Las cinco salidas del curso, migradas**: 22 anotaciones que antes eran un
+  párrafo de notas del docente. Antes se señalaban con el dedo hacia una
+  pantalla compartida por Zoom, que es exactamente lo que no funciona.
+- La validación exige que cada anotación exista y sea inequívoca, como los
+  segmentos de un comando — y hace más falta, porque una salida se copia y se
+  pega y un espacio de más se cuela solo.
+
 ### El ritmo: preguntas y pausas repartidas (batch 29)
 - Había **ocho momentos de interacción en ocho horas**, y `s2-reto-4` eran 107
   minutos con cero. Ahora son **veintiuno**, y ningún tramo pasa de 25 minutos.

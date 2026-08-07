@@ -38,6 +38,9 @@ export function pasosDe(item: Item): number {
   if (item.tipo === "comando-anotado" && item.segmentos.length) {
     return item.segmentos.length + 1;
   }
+  if (item.tipo === "salida-anotada" && item.anotaciones.length) {
+    return item.anotaciones.length + 1;
+  }
   return 1;
 }
 

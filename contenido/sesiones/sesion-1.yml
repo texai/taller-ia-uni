@@ -314,9 +314,9 @@ unidades:
           `make`, no al `docker compose`.
 
       - id: s1-seed-salida
-        tipo: terminal
+        tipo: salida-anotada
         titulo: Y esto es lo que imprime
-        entradilla: Cinco minutos de espera, cuatro líneas de salida
+        entradilla: Cinco minutos de espera, cinco líneas de salida, y las cuatro flechas del diagrama
         comando: docker compose run --rm plataforma python -m plataforma seed
         salida: |
           1/4 Generando historico de ventas...
@@ -325,30 +325,45 @@ unidades:
           4/4 Calculando metricas...
 
           Listo. 192 modelos con 17,472 dias-modelo de telemetria.
-        duracion: 300
-        minutos: 3
+        minutos: 4
+        anotaciones:
+          - texto: "1/4 Generando historico"
+            explicacion: >-
+              Escribe `ventas.csv`. Es el mundo — cuatrocientos días de ventas
+              inventados con una semilla fija, para que todos tengan el mismo.
+              En producción esta etapa no existe: el mundo llega solo.
+          - texto: "2/4 Entrenando la flota (192 modelos)"
+            explicacion: >-
+              Deja 192 artefactos en disco, uno por tienda y categoría. Corta
+              91 días antes de hoy a propósito: lo que el modelo no llega a ver
+              es exactamente contra lo que se lo va a evaluar.
+          - texto: "3/4 Corriendo el job batch"
+            explicacion: >-
+              **Este es el job de madrugada del caso.** Carga los 192, proyecta
+              los días que quedaron fuera del entrenamiento y escribe
+              `predicciones.csv`. Cada corrida deja además una fila en su
+              bitácora: si corrió, cuánto tardó, si falló.
+          - texto: "4/4 Calculando metricas"
+            explicacion: >-
+              Cruza predicción contra realidad. Es la **única** etapa que
+              produce telemetría, y sin ella no hay absolutamente nada que
+              monitorear. Todo el taller vive de este cruce.
+          - texto: "17,472"
+            explicacion: >-
+              192 modelos × 91 días evaluados. Un dato por modelo y por día. Si
+              a alguien le sale otro número, casi seguro dejó el mundo roto de
+              una prueba anterior: `make reparar` y listo.
         notas: |
-          Leer las cuatro etapas de a una, señalando el diagrama de
-          arquitectura: **son sus cuatro flechas, en orden**.
+          Recorrer las cuatro etapas señalando el diagrama de arquitectura de
+          hace tres láminas: **son sus cuatro flechas, en el mismo orden**.
 
-          - `1/4 datos` escribe `ventas.csv`. Es el mundo.
-          - `2/4 entrenar` deja 192 artefactos en disco. Corta 91 días antes de
-            hoy: lo que queda sin ver es contra lo que se va a evaluar.
-          - `3/4 pronosticar` es **el job de madrugada**. Carga los 192, proyecta
-            los días que quedaron fuera del entrenamiento y escribe
-            `predicciones.csv`. Cada corrida deja además una fila en su
-            bitácora: si corrió, cuánto tardó, si falló. El agente también
-            vigila eso — un modelo puede estar perfectamente sano y el job
-            caído desde el martes.
-          - `4/4 metricas` cruza predicción contra realidad. Es la única etapa
-            que produce telemetría, y sin ella no hay nada que monitorear.
-
-          **Los 17,472 son 192 × 91.** Un dato por modelo y por día evaluado.
-          Si a alguien le sale otro número, casi seguro dejó el mundo roto de
-          una prueba: `make reparar` y listo.
+          La anotación del `3/4` es la que engancha con el caso, y la frase que
+          rinde en la sesión 2 va acá: el agente también vigila el job. Un
+          modelo puede estar perfectamente sano y la tubería caída desde el
+          martes.
 
           Quien hizo el trabajo previo ya tiene todo esto y solo necesita
-          `make arriba`.
+          `make arriba`. Tarda unos cinco minutos la primera vez.
 
       - id: s1-flota-pausa
         tipo: pausa-preguntas
@@ -726,7 +741,7 @@ unidades:
         titulo: La telemetría, por la API
         entradilla: También está en http://localhost:8000/docs, con la interfaz de Swagger
         comando: curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
-        minutos: 5
+        minutos: 4
         segmentos:
           - texto: "-s"
             explicacion: >-
@@ -1496,9 +1511,11 @@ unidades:
           la misma ceguera que el agente**.
 
       - id: s1-r2-verificar-salida
-        tipo: terminal
+        tipo: salida-anotada
         titulo: Cómo se lee su salida
+        entradilla: Ocho comprobaciones, y las tres primeras son las que más valen
         comando: docker compose run --rm agente python -m retos.verificar --reto 2
+        minutos: 3
         salida: |
           Reto 2 · percepcion
             ✓ la flota sana no enciende ninguna bandera
@@ -1513,26 +1530,37 @@ unidades:
           Regenerando los datos limpios (el mundo sano)...
 
           Las 8 comprobaciones pasaron.
-        duracion: 60
-        minutos: 2
+        anotaciones:
+          - texto: "la flota sana no enciende ninguna bandera"
+            explicacion: >-
+              Las tres primeras comprobaciones son sobre el **mundo sano**, y
+              son las que más valen. Una herramienta que enciende banderas donde
+              no pasa nada hace que el agente de mañana persiga fantasmas. Los
+              falsos positivos se pagan más caros que los falsos negativos,
+              porque nadie desactiva una alarma que no suena — desactivan la
+              que suena siempre.
+          - texto: "la campana promocional se ve, y solo en bebidas"
+            explicacion: >-
+              Cada comprobación **cambia el mundo antes de mirar**: aplica el
+              escenario, mide, aplica el siguiente. Por eso el comando tarda un
+              minuto para ocho líneas.
+          - texto: "y el MAPE casi no se entera (por eso es silencioso)"
+            explicacion: >-
+              El par que resume el reto 1, convertido en comprobación
+              automática: el sesgo enciende las ocho categorías y el MAPE no se
+              entera. Si esta línea falla, la herramienta perdió justo la señal
+              que el taller existe para encontrar.
+          - texto: "Regenerando los datos limpios"
+            explicacion: >-
+              **La línea que salva la clase.** Las comprobaciones dejan el mundo
+              roto a propósito, y la última lo deja en `feed_caido`. Sin esto,
+              el reto siguiente arrancaría con una tienda muda y nadie sabría
+              por qué.
         notas: |
-          Tres cosas que leer en voz alta:
-
-          1. **Las tres primeras son sobre el mundo sano.** Si una herramienta
-             enciende banderas donde no pasa nada, el agente de mañana va a
-             perseguir fantasmas. Los falsos positivos se pagan más caros que
-             los falsos negativos, porque nadie desactiva una alarma que no
-             suena — desactivan la que suena siempre.
-          2. **Cada comprobación cambia el mundo antes de mirar.** El
-             verificador aplica `campana_promocional`, mide, aplica
-             `sesgo_silencioso`, mide, aplica `feed_caido`, mide. Por eso tarda
-             un minuto.
-          3. **La penúltima línea es la que salva la clase.** Deja los datos
-             limpios al terminar, porque la última comprobación los dejó rotos.
-
           Cuando algo falla, la línea sale con `✗` y debajo, en gris, el detalle
           con el número que salió — no "falló", sino "sesgo: 3.4%. Cuidado con
-          promediar porcentajes". El detalle es la pista.
+          promediar porcentajes". **El detalle es la pista**, y es la parte del
+          verificador que más se agradece a las dos de la tarde.
 
           Si alguien ve 17,304 filas en vez de 17,472, es que quedó en
           `feed_caido`: `make reparar` y listo.
@@ -1938,7 +1966,7 @@ unidades:
         viene: >-
           Las capas que convierten ese bucle en algo que se puede creer:
           percepción, diagnóstico, reflexión, revisión, acción y memoria
-        minutos: 4
+        minutos: 3
         notas: |
           Recordar la hora de mañana —09:00— y que no hace falta traer nada
           levantado: se arranca con `make arriba`. Quien no vino hoy puede

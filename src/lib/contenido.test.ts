@@ -17,6 +17,7 @@ import { dirname, join } from "node:path";
 
 import * as mod from "./contenido";
 import { ESPECIFICACION } from "./especificacion";
+import { pasosDe } from "./navegacion";
 import { FAMILIA, TIPOS } from "./tipos";
 import type { Item, Unidad } from "./tipos";
 
@@ -678,4 +679,100 @@ test("las notas SÍ están en la carga del docente", () => {
   const crudo = JSON.stringify(mod.cargarCurso());
   assert.match(crudo, /"notas"/);
   assert.match(crudo, /"solucion"/);
+});
+
+// --------------------------------------------------------------------------
+// Salidas anotadas
+// --------------------------------------------------------------------------
+
+const SALIDA = `1/4 Generando historico...
+2/4 Entrenando la flota (192 modelos)...
+
+Listo. 192 modelos con 17,472 dias-modelo.`;
+
+function salidaCon(anotaciones: string): string {
+  return `
+      - id: sal
+        tipo: salida-anotada
+        titulo: Una salida
+        salida: |
+          ${SALIDA.split("\n").join("\n          ")}
+        anotaciones:
+${anotaciones}
+`;
+}
+
+test("una anotación que no está en la salida falla nombrándola", () => {
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(
+        salidaCon(`          - texto: "5/4 Inventando"\n            explicacion: no existe`),
+      ),
+    },
+    (raiz) => {
+      assert.throws(
+        () => mod.cargarCurso(raiz),
+        /`5\/4 Inventando` no aparece en la salida/,
+      );
+    },
+  );
+});
+
+test("una anotación ambigua falla en vez de señalar la primera", () => {
+  // Es más fácil que en un comando: una salida se copia y se pega, y las
+  // palabras se repiten.
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(
+        salidaCon(`          - texto: "modelos"\n            explicacion: ¿cuál?`),
+      ),
+    },
+    (raiz) => {
+      assert.throws(() => mod.cargarCurso(raiz), /aparece 2 veces .*ambiguo/s);
+    },
+  );
+});
+
+test("una salida anotada válida carga, y sus anotaciones sobreviven", () => {
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(
+        salidaCon(
+          `          - texto: "17,472"\n            explicacion: 192 por 91\n` +
+            `          - texto: "2/4 Entrenando"\n            explicacion: la segunda etapa`,
+        ),
+      ),
+    },
+    (raiz) => {
+      const item = mod.cargarCurso(raiz).sesiones[0]?.unidades[0]?.items[0];
+      assert.equal(item?.tipo, "salida-anotada");
+      assert.equal(
+        item?.tipo === "salida-anotada" ? item.anotaciones.length : 0,
+        2,
+      );
+    },
+  );
+});
+
+test("el número de pasos de una salida anotada incluye sus anotaciones", () => {
+  // Si `pasosDe` no la conociera, la lámina se quedaría en el paso 0 y las
+  // anotaciones no se verían nunca — sin ningún error a la vista.
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(
+        salidaCon(
+          `          - texto: "17,472"\n            explicacion: a\n` +
+            `          - texto: "2/4 Entrenando"\n            explicacion: b`,
+        ),
+      ),
+    },
+    (raiz) => {
+      const item = mod.cargarCurso(raiz).sesiones[0]?.unidades[0]?.items[0];
+      assert.equal(pasosDe(item as Item), 3, "dos anotaciones más el paso 0");
+    },
+  );
 });

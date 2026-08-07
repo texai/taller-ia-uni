@@ -13,7 +13,13 @@ import { FAMILIA } from "@/lib/tipos";
 
 import { Marco } from "./marco";
 import { BloqueMarkdown, CitaAgente, Metrica, Titulo, Transicion } from "./texto";
-import { Codigo, ComandoAnotado, Demo, Terminal } from "./codigo";
+import {
+  Codigo,
+  ComandoAnotado,
+  Demo,
+  SalidaAnotada,
+  Terminal,
+} from "./codigo";
 import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos";
 import { Archivo, Diagrama, Enlace, Imagen } from "./medios";
 import { DiagramaSecuencia } from "./secuencia";
@@ -86,6 +92,8 @@ export function RenderizarItem({
       return <DiagramaSecuencia item={item} paso={paso} />;
     case "comando-anotado":
       return <ComandoAnotado item={item} paso={paso} />;
+    case "salida-anotada":
+      return <SalidaAnotada item={item} paso={paso} />;
     case "modelo-datos":
       return <ModeloDatos item={item} />;
     case "imagen":

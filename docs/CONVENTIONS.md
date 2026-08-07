@@ -138,6 +138,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `transicion` | Qué vimos, qué viene ahora, y dónde estamos | `vimos`, `viene` (el mapa se deriva) |
 | `diagrama-secuencia` | Secuencia PlantUML, recorrible mensaje a mensaje | `fuente`, `mensajes[].explicacion` |
 | `comando-anotado` | Un comando largo, explicado parte por parte | `comando`, `segmentos[]` |
+| `salida-anotada` | Una salida de terminal, explicada trozo a trozo | `salida`, `anotaciones[]`, `comando` |
 | `caso` | El marco de negocio dentro del cual ocurre todo lo demás | `empresa`, `cifras[]`, `bloques[]`, `archivo` |
 
 ### Familia `dictado`
@@ -183,6 +184,13 @@ validación, y se descubre proyectada delante de la clase.
 - **`demo`** — distinto de `terminal`: acá el docente ejecuta delante de todos.
   Lleva los comandos, lo que debería salir, cuánto tarda, y un respaldo por si
   falla en vivo.
+- **`salida-anotada`** — es la mitad que faltaba de enseñar un comando. Saber
+  qué hace `docker compose run --rm` es media clase; la otra media es saber
+  leer lo que imprime, y `terminal` la dibuja en bloque, sin señalar nada. Es
+  un tipo aparte y no un campo de `comando-anotado` porque una salida larga y
+  su comando **no caben en la misma lámina** —la corrida verbosa del agente son
+  cuarenta líneas, y hubo que partirla en dos— y porque hay salidas que valen
+  solas, como la de `make memoria`.
 - **`diagrama-secuencia`** y **`comando-anotado`** — ver §10. Un diagrama
   completo proyectado se lee como una maraña, y un comando de doce palabras se
   lee como una sola cosa opaca. Los dos necesitan poder mirarse de a una parte.
@@ -250,6 +258,20 @@ Consecuencias, y son la razón de que esto sea una convención y no un detalle:
 
 El primer paso de un ítem con pasos muestra siempre el conjunto completo, sin
 nada enfocado: primero el mapa, después el recorrido.
+
+Los usan tres tipos: `diagrama-secuencia`, `comando-anotado` y
+`salida-anotada`. Los dos últimos comparten el dibujo —resaltar una parte,
+atenuar el resto, y una llave de caracteres debajo señalando la columna— y por
+eso comparten componente. Lo que cambia es el reparto de la lámina: en un
+comando la línea es una y larga, y se encoge hasta caber a lo ancho; en una
+salida son veinte cortas, y lo que se sale de la pantalla es por abajo, así que
+el tamaño se calcula **reservando sitio para la explicación**. Una salida que
+empuja su propia explicación fuera de cuadro no explica nada.
+
+**Y los pasos se cuentan en un solo sitio**: `pasosDe`, en `navegacion.ts`. Un
+tipo nuevo con pasos que se olvide de aparecer ahí se queda en el paso 0 para
+siempre — la lámina se dibuja, no falla nada, y las explicaciones no se ven
+nunca. Hay un test que lo cuida.
 
 ### PlantUML se renderiza en construcción, no en clase
 

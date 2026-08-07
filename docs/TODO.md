@@ -48,7 +48,7 @@ Referencias:
 | 27 | El recap de apertura, con diagramas | ✅ Completado |
 | 28 | Diagrama de pasos al abrir cada reto | ✅ Completado |
 | 29 | El ritmo: preguntas y pausas repartidas | ✅ Completado |
-| 30 | La salida anotada | ⬜ Pendiente |
+| 30 | La salida anotada | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
@@ -483,28 +483,31 @@ nada. Un comando sí se puede anotar por segmentos desde el batch 14; su salida,
 que es la mitad de lo que hay que enseñar a leer, no.
 
 **Alcance**
-- [ ] Una salida se puede anotar por segmentos, igual que un comando: señalar
+- [x] Una salida se puede anotar por segmentos, igual que un comando: señalar
       un trozo de lo que imprime y explicar qué significa
-- [ ] Se apoya en los `pasos` del batch 6 y reutiliza la maquinaria de
+- [x] Se apoya en los `pasos` del batch 6 y reutiliza la maquinaria de
       `anotaciones.ts`, que ya sabe ubicar y trocear por texto
-- [ ] Un segmento de salida que no aparece en la salida falla en validación,
+- [x] Un segmento de salida que no aparece en la salida falla en validación,
       igual que uno de comando
-- [ ] Las salidas que los batches 25 y 26 dejaron en `terminal` se migran: la de
+- [x] Las salidas que los batches 25 y 26 dejaron en `terminal` se migran: la de
       `make seed`, la de una corrida verbosa del agente, la de `make verificar`
 
-**Decisión a tomar al implementar**
-Si `comando-anotado` crece con una salida anotable, o si la salida anotada es
-su propio tipo. A favor de lo primero: un comando y su salida se explican
-juntos y se recorrerían en una sola secuencia de pasos. A favor de lo segundo:
-hay salidas que valen por sí solas —la de `make seed`— y forzarlas a colgar de
-un comando las obliga a repetirlo. **El material de los batches 25 y 26 decide
-esto**: si al escribirlo casi todas las salidas quedaron pegadas a su comando,
-gana lo primero.
+**Decisión tomada: tipo propio.** El material de los batches 25 y 26 la
+decidió, aunque no por donde se esperaba. Cuatro de las cinco salidas sí
+quedaron pegadas a su comando —lo que apuntaba a hacer crecer
+`comando-anotado`— pero lo que zanjó el asunto fue el alto: la corrida verbosa
+del agente son cuarenta líneas y **hubo que partirla en dos láminas**. Un tipo
+que obligara a llevar el comando encima habría producido un ítem que no cabe en
+la pantalla. Y `make memoria` imprime algo que vale por sí solo.
+
+El `comando` queda como campo opcional, dibujado arriba en pequeño: contexto,
+no protagonista. El dibujo sí se comparte — `BloqueAnotado`, un solo
+componente para los dos.
 
 **Tests esperados**
-- [ ] Una anotación que no aparece en la salida falla nombrándola
-- [ ] Una anotación ambigua —aparece dos veces— falla como ambigua
-- [ ] El número de pasos incluye los segmentos de la salida
+- [x] Una anotación que no aparece en la salida falla nombrándola
+- [x] Una anotación ambigua —aparece dos veces— falla como ambigua
+- [x] El número de pasos incluye los segmentos de la salida
 
 **Fuera de alcance**
 - Un tipo para las capas de un comando. Se resuelve con dos ítems seguidos.

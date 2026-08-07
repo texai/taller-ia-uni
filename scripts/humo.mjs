@@ -79,7 +79,9 @@ for (const sesion of curso.sesiones) {
           ? (item.secuencia?.mensajes.length ?? 0) + 1
           : item.tipo === "comando-anotado"
             ? item.segmentos.length + 1
-            : 1;
+            : item.tipo === "salida-anotada"
+              ? item.anotaciones.length + 1
+              : 1;
 
       for (let paso = 0; paso < pasos; paso++) {
         const errores = [];

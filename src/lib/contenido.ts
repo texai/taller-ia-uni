@@ -266,6 +266,32 @@ function validacionesExtra(item: Item, donde: string, problemas: string[]) {
     }
   }
 
+  if (item.tipo === "salida-anotada") {
+    // Lo mismo que en un comando anotado, y por lo mismo: la anotación se
+    // ancla por texto. Con una diferencia que importa — una salida real se
+    // copia y se pega, y al pegarla se cuela un espacio de más con una
+    // facilidad que un comando escrito a mano no tiene. El aviso dice cuál.
+    for (const a of item.anotaciones ?? []) {
+      const veces = item.salida.split(a.texto).length - 1;
+      if (veces === 0) {
+        problemas.push(
+          `${donde}: la anotación \`${a.texto}\` no aparece en la salida`,
+        );
+      } else if (veces > 1) {
+        problemas.push(
+          `${donde}: la anotación \`${a.texto}\` aparece ${veces} veces en la ` +
+            `salida; es ambiguo cuál señalar`,
+        );
+      }
+    }
+
+    for (const [a, b] of solapamientos(item.salida, item.anotaciones ?? [])) {
+      problemas.push(
+        `${donde}: las anotaciones \`${a}\` y \`${b}\` se solapan dentro de la salida`,
+      );
+    }
+  }
+
   if (item.tipo === "caso") {
     for (const campo of ["titulo", "empresa"] as const) {
       if (!item[campo]) problemas.push(`${donde}: al caso le falta \`${campo}\``);
