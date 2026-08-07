@@ -1,4 +1,3 @@
-import { codeToHtml } from "shiki";
 
 import type {
   ItemCodigo,
@@ -7,47 +6,22 @@ import type {
   ItemTerminal,
 } from "@/lib/tipos";
 import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
+import { comoTextoPlano, recortar } from "@/lib/resaltado";
 import { Caja, Etiqueta, Marco } from "./marco";
 
 /**
- * Resaltado en el servidor.
+ * Un fragmento de código.
  *
- * Shiki corre al construir y devuelve HTML: al navegador no llega ni una línea
- * de JavaScript para pintar código. En una aplicación que se proyecta desde el
- * portátil del docente sobre el wifi de un aula, cada kilobyte que no se envía
- * es un problema que no puede ocurrir.
+ * SÍNCRONO a propósito. El resaltado lo hizo `resaltarSesion` en el servidor y
+ * viaja dentro del ítem: un componente asíncrono acá revienta al hidratar,
+ * porque `Dictado` es de cliente y arrastra a este al navegador. Ver
+ * `src/lib/resaltado.ts`.
  */
-async function resaltar(codigo: string, lenguaje: string): Promise<string> {
-  try {
-    return await codeToHtml(codigo.trimEnd(), {
-      lang: lenguaje,
-      themes: { light: "github-light", dark: "github-dark" },
-      defaultColor: false,
-    });
-  } catch {
-    // Un lenguaje que Shiki no conoce no puede tumbar la lámina.
-    const escapado = codigo
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-    return `<pre><code>${escapado}</code></pre>`;
-  }
-}
-
-/** Recorta `lineas: "12-34"` sobre el contenido. */
-function recortar(codigo: string, lineas?: string): string {
-  if (!lineas) return codigo;
-  const [desde, hasta] = lineas.split("-").map((n) => Number(n.trim()));
-  if (!desde) return codigo;
-  return codigo
-    .split("\n")
-    .slice(desde - 1, hasta ?? desde)
-    .join("\n");
-}
-
-export async function Codigo({ item }: { item: ItemCodigo }) {
-  const fuente = recortar(item.contenido ?? "", item.lineas);
-  const html = await resaltar(fuente, item.lenguaje);
+export function Codigo({ item }: { item: ItemCodigo }) {
+  // Si falta el resaltado, el código se muestra igual, sin color. Una lámina
+  // sin colores es un contratiempo; una lámina en blanco es una clase parada.
+  const html =
+    item.html ?? comoTextoPlano(recortar(item.contenido ?? "", item.lineas));
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
@@ -79,11 +53,11 @@ export async function Codigo({ item }: { item: ItemCodigo }) {
 }
 
 /** Un comando, con su salida si vale la pena mostrarla. */
-export async function Terminal({ item }: { item: ItemTerminal }) {
-  const html = await resaltar(item.comando, "bash");
-  const htmlWin = item.comandoWindows
-    ? await resaltar(item.comandoWindows, "powershell")
-    : null;
+export function Terminal({ item }: { item: ItemTerminal }) {
+  const html = item.htmlComando ?? comoTextoPlano(item.comando);
+  const htmlWin =
+    item.htmlWindows ??
+    (item.comandoWindows ? comoTextoPlano(item.comandoWindows) : null);
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
@@ -305,13 +279,11 @@ function partirEnLineas(trozos: Trozo[]): Trozo[][] {
  * respaldo por si falla, que es lo que convierte una demo caída en una
  * anécdota en vez de en cinco minutos incómodos.
  */
-export async function Demo({ item }: { item: ItemDemo }) {
-  const pasos = await Promise.all(
-    item.pasos.map(async (p) => ({
-      ...p,
-      html: await resaltar(p.comando, "bash"),
-    })),
-  );
+export function Demo({ item }: { item: ItemDemo }) {
+  const pasos = item.pasos.map((p) => ({
+    ...p,
+    html: p.html ?? comoTextoPlano(p.comando),
+  }));
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">

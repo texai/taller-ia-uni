@@ -72,6 +72,8 @@ export interface ItemCodigo extends ItemBase {
   resaltar?: (number | string)[];
   /** Ruta que se muestra como etiqueta. */
   ruta?: string;
+  /** El resaltado ya hecho. Lo rellena `resaltarSesion`, no el YAML. */
+  html?: string;
 }
 
 /** Un comando de terminal, con su salida si vale la pena mostrarla. */
@@ -83,6 +85,9 @@ export interface ItemTerminal extends ItemBase {
   comandoWindows?: string;
   /** Segundos que tarda de verdad. Evita el silencio incómodo en clase. */
   duracion?: number;
+  /** El resaltado ya hecho. Lo rellena `resaltarSesion`, no el YAML. */
+  htmlComando?: string;
+  htmlWindows?: string;
 }
 
 /** Diagrama Mermaid. Para secuencias con recorrido, usar `diagrama-secuencia`. */
@@ -193,7 +198,7 @@ export interface ItemErrorComun extends ItemBase {
  */
 export interface ItemDemo extends ItemBase {
   tipo: "demo";
-  pasos: { comando: string; esperado?: string }[];
+  pasos: { comando: string; esperado?: string; html?: string }[];
   observar?: string;
   respaldo?: string;
 }

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { cargarCurso } from "@/lib/contenido";
+import { resaltarSesion } from "@/lib/resaltado";
 import { Dictado } from "@/components/Dictado";
 
 /**
@@ -24,5 +25,7 @@ export default async function SesionDocente({
 
   if (!sesion) notFound();
 
-  return <Dictado sesion={sesion} curso={curso.id} modoDocente />;
+  return (
+    <Dictado sesion={await resaltarSesion(sesion)} curso={curso.id} modoDocente />
+  );
 }

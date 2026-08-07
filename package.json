@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "validar-contenido": "tsx scripts/validar-contenido.ts",
-    "test": "node --import tsx --test src/lib/*.test.ts"
+    "test": "node --import tsx --test src/lib/*.test.ts",
+    "humo": "node --import tsx scripts/humo.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

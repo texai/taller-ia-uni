@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { cargarCurso } from "@/lib/contenido";
+import { resaltarSesion } from "@/lib/resaltado";
 import { Mando } from "@/components/Mando";
 
 /**
@@ -25,5 +26,5 @@ export default async function MandoDeSesion({
 
   if (!sesion) notFound();
 
-  return <Mando sesion={sesion} curso={curso.id} />;
+  return <Mando sesion={await resaltarSesion(sesion)} curso={curso.id} />;
 }
