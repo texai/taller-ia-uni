@@ -1953,3 +1953,66 @@ minutos — repartir su ritmo es el batch 29, no este.
 - `npm run humo`: 173 pantallas, 0 con error.
 - Las cuatro láminas nuevas vistas a 1440×900, que es lo que se proyecta: las
   dos de la salida entran enteras sin desplazar.
+
+---
+
+## Batch 27 — El recap de apertura, con diagramas
+
+Las dos sesiones abrían con un ítem `transicion`, que es prosa: dos frases de
+«lo que vimos» y «lo que viene». El docente pedía abrir con diagramas de
+conjunto — algo que se mire y se pase, sin entrar en detalle.
+
+### Una gramática, dos dibujos
+
+Los dos recaps tienen la **misma forma**, y ahí está casi todo el valor:
+
+    cajas de lo que ya existe   →   [(lo que se construyó con ellas)]
+                                          ↓
+                                    {la pregunta incómoda}
+                                       ↙            ⇢ (punteada)
+                          la respuesta de hoy    lo que viene
+
+| | Entradas | Centro | Rombo |
+|---|---|---|---|
+| S1 | Docker · GitHub Actions · Kubernetes · MLflow | la flota de 192 | ¿y ahora, quién los mira? |
+| S2 | 3 herramientas · un LLM · 20 líneas de ReAct | el agente de ayer | ¿y ahora, se puede confiar? |
+
+El sábado la respuesta de hoy es «un Excel los lunes, 5 de las 24 tiendas» y la
+punteada dice «las próximas 8 horas». El domingo la respuesta es «4 patologías,
+ninguna del modelo» y la punteada dice «las próximas 4 horas».
+
+Quien estuvo el sábado reconoce la forma el domingo sin que nadie se la
+explique. Quien no estuvo aprende la gramática con la que se va a dibujar el
+resto del día. Queda escrita en `CONVENTIONS.md` §16, porque el batch 28 —los
+cinco mapas de reto— tiene que seguirla.
+
+### Por qué en abanico y no en cadena
+
+La primera versión del recap del domingo era una cadena de seis nodos:
+herramientas → bucle → diagnóstico → rombo → patologías → capas. Mermaid la
+escaló hasta dejar las cajas del tamaño de una nota al pie; proyectada era
+ilegible. Reordenada en abanico —tres entradas sobre un nodo central— ocupa el
+ancho de la pantalla y se lee de pie desde el fondo del aula.
+
+Es la clase de cosa que solo se ve mirando la lámina. Está en la convención
+para que el batch 28 no la vuelva a descubrir.
+
+### El diagrama de componentes se queda donde está
+
+El alcance dejaba abierto si `s1-arquitectura` —la planta de la plataforma, con
+`ventas.csv` entrando dos veces— debía mudarse al recap. **No.** El recap es
+del programa; aquel es de la máquina, y hace falta para leer la telemetría que
+viene tres ítems después. Son dos dibujos distintos con dos trabajos distintos.
+
+### Los minutos
+
+Cuatro minutos por sesión para el diagrama, y `s1-donde-estamos` /
+`s2-donde-quedamos` bajan de 3 a 2: después del dibujo, la transición es media
+frase más el mapa de unidades que la aplicación dibuja sola. Los otros tres
+minutos de cada sesión salieron de prosa que se repetía. Las dos siguen en 240.
+
+**Verificación**
+- `validar-contenido`: 12 unidades, 139 ítems, 240 + 240 min.
+- `npm test` (125 pasan), lint y build limpios.
+- `npm run humo`: 175 pantallas, 0 con error.
+- Los dos diagramas vistos a 1440×900: mismo tamaño de caja, misma lectura.

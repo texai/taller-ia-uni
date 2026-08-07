@@ -45,7 +45,7 @@ Referencias:
 | 24 | El caso, como contenedor propio | ✅ Completado |
 | 25 | Los comandos, desenvueltos · sesión 1 | ✅ Completado |
 | 26 | Los comandos, desenvueltos · sesión 2 | ✅ Completado |
-| 27 | El recap de apertura, con diagramas | ⬜ Pendiente |
+| 27 | El recap de apertura, con diagramas | ✅ Completado |
 | 28 | Diagrama de pasos al abrir cada reto | ⬜ Pendiente |
 | 29 | El ritmo: preguntas y pausas repartidas | ⬜ Pendiente |
 | 30 | La salida anotada | ⬜ Pendiente |
@@ -396,14 +396,15 @@ generales** —arquitectura, componentes— que permitan repasar sin entrar en
 detalle.
 
 **Alcance**
-- [ ] Un bloque de recap al abrir cada sesión, después de la asistencia y
+- [x] Un bloque de recap al abrir cada sesión, después de la asistencia y
       **antes del caso**
-- [ ] Diagramas de conjunto, no de detalle: se miran y se pasan
-- [ ] En la sesión 1, el recap es del programa: qué módulos trae la clase
+- [x] Diagramas de conjunto, no de detalle: se miran y se pasan
+- [x] En la sesión 1, el recap es del programa: qué módulos trae la clase
       encima y dónde encaja este taller
-- [ ] En la sesión 2, el recap es de lo construido el sábado
-- [ ] El diagrama de componentes que hoy abre `s1-flota` se reconsidera: puede
-      que su sitio sea el recap
+- [x] En la sesión 2, el recap es de lo construido el sábado
+- [x] El diagrama de componentes que hoy abre `s1-flota` se reconsidera: **se
+      queda donde está**. No es un repaso del programa sino la planta de la
+      plataforma, y hace falta para leer la telemetría que viene justo después
 
 **Dónde entra, ahora que el caso es una unidad.** El batch 24 dejó las dos
 sesiones abriendo con `s1-apertura` / `s2-apertura`, unidades cortas de

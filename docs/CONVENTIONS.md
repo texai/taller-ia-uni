@@ -527,3 +527,37 @@ Consecuencias:
   ítems de una sesión no suman lo que dura la sesión según `horaInicio` y
   `horaFin`. Esa comparación es legítima porque las dos cifras miden cosas
   distintas — una es el plan y la otra es el aula.
+
+## 16 · Los diagramas de conjunto comparten una gramática
+
+Los dibujos que abren algo —el recap de cada sesión, el mapa de pasos de cada
+reto— **no son ilustraciones sueltas**. Se leen en veinte segundos porque la
+sala ya reconoce su forma, y eso solo pasa si todos tienen la misma.
+
+La gramática es de cuatro piezas, siempre en `flowchart LR`:
+
+    cajas de lo que ya existe   →   [(lo que se construyó con ellas)]
+                                          ↓
+                                    {la pregunta incómoda}
+                                       ↙            ⇢ (punteada)
+                          la respuesta de hoy    lo que viene
+
+- **Las entradas van en abanico a la izquierda**, no en cadena. Una cadena de
+  seis cajas en fila la escala Mermaid hasta hacerla ilegible proyectada; un
+  abanico de tres o cuatro sobre un nodo central ocupa el ancho y se lee.
+- **El rombo es lo único que se señala con el dedo.** Es la pregunta de la que
+  cuelga la sesión.
+- **La flecha punteada es siempre el futuro**, con el tiempo que falta como
+  etiqueta: `-.->|las proximas 4 horas|`.
+- **Sin acentos en las etiquetas**, como en el resto de los diagramas del
+  curso.
+
+Cuando el sábado abre con "Docker, GitHub Actions, Kubernetes, MLflow → la
+flota → ¿quién los mira?" y el domingo con "herramientas, LLM, bucle → el
+agente de ayer → ¿se puede confiar?", nadie tiene que explicar el segundo
+dibujo: ya se aprendió a leerlo.
+
+Dos cosas de Mermaid que costaron encontrar y conviene no volver a pisar: una
+etiqueta escrita `-.texto.->` se dibuja truncada, así que va como
+`-.->|texto|`; y dos aristas que forman un ciclo reordenan el grafo entero,
+que es cómo `memoria` terminó una vez en el extremo derecho del dibujo.

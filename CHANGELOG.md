@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El recap de apertura, con diagramas (batch 27)
+- Las dos sesiones abren ahora con un **diagrama de conjunto**, después de la
+  asistencia y antes del caso. El sábado repasa el programa —Docker, GitHub
+  Actions, Kubernetes, MLflow → la flota de 192 → ¿y ahora, quién los mira?—;
+  el domingo repasa lo construido —3 herramientas, un LLM, 20 líneas de ReAct →
+  el agente de ayer → ¿y ahora, se puede confiar?
+- **Los dos tienen la misma forma**, y ahí está el valor: entradas en abanico,
+  un nodo central, un rombo con la pregunta de la que cuelga la sesión, y una
+  flecha punteada al futuro con el tiempo que falta como etiqueta. Quien estuvo
+  el sábado reconoce el dibujo del domingo sin que se lo expliquen. La gramática
+  queda escrita en `CONVENTIONS.md` §16.
+- Los recaps en cadena no funcionan: seis nodos en fila los escala Mermaid hasta
+  hacerlos ilegibles proyectados. En abanico ocupan el ancho y se leen desde el
+  fondo del aula.
+- `s1-arquitectura` se queda donde estaba: es la planta de la plataforma, no un
+  repaso del programa, y hace falta para leer la telemetría que viene después.
+
 ### Los comandos, desenvueltos · sesión 2 (batch 26)
 - **La anatomía de una corrida verbosa, en dos láminas** con la salida real del
   agente: lo que hizo —memoria, llamadas a herramienta, diagnóstico— y lo que

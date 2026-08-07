@@ -39,7 +39,35 @@ unidades:
           Antes de empezar: `make arriba`. Nadie necesita haber dejado nada
           levantado de ayer, y quien viene por primera vez arranca igual.
 
-  # ------------------------------------------------------------------ 09:02
+      - id: s2-recap
+        tipo: diagrama
+        titulo: Lo que construimos ayer
+        entradilla: Cuatro horas, y la misma forma de dibujo que abrió el sábado
+        clase: componentes
+        minutos: 4
+        contenido: |
+          flowchart LR
+            H["3 herramientas<br/>de percepcion"] --> B
+            L["un LLM<br/>con temperatura 0"] --> B
+            R["20 lineas<br/>de bucle ReAct"] --> B
+            B[("el agente de ayer:<br/>diagnostica, y<br/>suena convincente")] --> Q{"y ahora,<br/>se puede confiar?"}
+            Q --> NO["hoy: 4 patologias,<br/>ninguna del modelo"]
+            Q -.->|las proximas 4 horas| CAP["reflexion, revision,<br/>memoria, accion"]
+        notas: |
+          **Es el mismo dibujo del sábado con otras cajas**, y decirlo en voz
+          alta ayuda: piezas que ya existen, algo construido con ellas, un
+          rombo con la pregunta incómoda, y una flecha punteada hacia lo que
+          viene. Quien estuvo ayer reconoce la forma; quien no, aprende la
+          gramática con la que se va a dibujar el resto del día.
+
+          El rombo es otra vez lo único que hay que señalar. El sábado la
+          pregunta era **quién los mira**; hoy es **si se puede confiar en el
+          que los mira**. Todo el domingo cuelga de ahí.
+
+          Para quien no vino: no hace falta haber estado. El bucle de ayer está
+          escrito en la rama `reto-3-solucion`, y hoy se parte del reto 4.
+
+  # ------------------------------------------------------------------ 09:06
   # El mismo caso del sábado, leído del mismo archivo. Va antes del repaso y no
   # después: quien no vino necesita el marco para que "dónde quedamos" quiera
   # decir algo.
@@ -77,7 +105,7 @@ unidades:
         viene: >-
           Las capas que lo arreglan, que no son un prompt más largo sino
           sitios donde algo pueda pasar
-        minutos: 3
+        minutos: 2
 
       - id: s2-patologias
         tipo: tabla
@@ -214,7 +242,7 @@ unidades:
       - id: s2-r4-un-nodo
         tipo: markdown
         titulo: Un nodo, un trabajo
-        minutos: 3
+        minutos: 2
         contenido: |
           La diferencia entre el bucle de ayer y esto no es que haya más
           instrucciones. Es que hay **sitios**.
@@ -527,7 +555,7 @@ unidades:
       - id: s2-r4-alcance
         tipo: markdown
         titulo: La forma importa más que el tamaño
-        minutos: 3
+        minutos: 2
         contenido: |
           La regla que el agente lleva en su contexto, y que decide el
           `alcance`:
@@ -1379,7 +1407,7 @@ unidades:
       - id: s2-c-incidencias
         tipo: markdown
         titulo: Y trece incidencias del entorno
-        minutos: 4
+        minutos: 3
         contenido: |
           Aparte de los nueve de diseño, trece cosas se rompieron montando el
           laboratorio. Seis solo en Windows.

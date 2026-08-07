@@ -42,6 +42,37 @@ unidades:
           el rescate va en paralelo durante los próximos quince minutos, sin
           detener la clase.
 
+      - id: s1-recap
+        tipo: diagrama
+        titulo: Lo que ya traen puesto
+        entradilla: Cuatro cosas del programa se juntan hoy, y dejan una pregunta abierta
+        clase: componentes
+        minutos: 4
+        contenido: |
+          flowchart LR
+            D["Docker<br/>empaquetar un modelo"] --> F
+            G["GitHub Actions<br/>desplegarlo solo"] --> F
+            K["Kubernetes<br/>operarlo"] --> F
+            ML["MLflow<br/>registrar sus versiones"] --> F
+            F[("la flota<br/>192 modelos<br/>en produccion")] --> Q{"y ahora,<br/>quien los mira?"}
+            Q --> HOY["hoy: un Excel los lunes,<br/>5 de las 24 tiendas"]
+            Q -.->|las proximas 8 horas| AG["un agente<br/>que los vigila"]
+        notas: |
+          **Es el repaso del programa, no del taller.** Cuatro módulos dejaron
+          cada uno una pieza, y hoy están todas puestas a la vez. Nombrar cada
+          caja y dejar que la sala reconozca lo suyo: casi todos hicieron el
+          taller de Docker, GitHub Actions y Kubernetes, donde el último bloque
+          fue "monitoreo básico y operación". **Esto empieza justo donde lo
+          básico deja de alcanzar.** Y el registro de modelos que van a ver hoy
+          es MLflow, el mismo del Módulo 2.
+
+          Lo que importa del dibujo es el rombo. Todo lo de la izquierda es
+          construir y desplegar; a la derecha no hay nada equivalente. La
+          flecha punteada es el taller entero.
+
+          No detenerse en las cajas: se miran y se pasan. La caja del Excel es
+          la que engancha con el caso, que viene enseguida.
+
       - id: s1-donde-estamos
         tipo: transicion
         titulo: Dónde estamos
@@ -51,12 +82,11 @@ unidades:
         viene: >-
           Los 192 modelos que ya están desplegados, y el problema de que nadie
           los mire
-        minutos: 3
+        minutos: 2
         notas: |
-          Enganchar con el taller de Docker, GitHub Actions y Kubernetes: ahí el
-          último bloque fue "monitoreo básico y operación". Esto empieza justo
-          donde lo básico deja de alcanzar. Y el registro de modelos que van a
-          ver acá es MLflow, el mismo del Módulo 2.
+          Después del diagrama esto es media frase y el mapa de la sesión, que
+          la aplicación dibuja sola: qué unidades quedan por delante y cuál
+          viene ahora.
 
   # ------------------------------------------------------------------ 15:05
   # El caso es una unidad propia y no un ítem hundido dentro del repaso: es el
@@ -583,7 +613,7 @@ unidades:
       - id: s1-r1-encargo
         tipo: markdown
         titulo: El encargo
-        minutos: 3
+        minutos: 2
         contenido: |
           Uno de los 192 modelos —o muchos— se está portando mal. Encuéntralo
           con las herramientas de siempre.
@@ -938,7 +968,7 @@ unidades:
       - id: s1-r2-tres-reglas
         tipo: criterios
         titulo: Las tres reglas de una herramienta de percepción
-        minutos: 3
+        minutos: 2
         criterios:
           - texto: Devuelve agregados, no filas.
             pista: Decenas de números, no miles.
@@ -1433,7 +1463,7 @@ unidades:
       - id: s1-r3-divergencia
         tipo: markdown
         titulo: Qué diverge, exactamente
-        minutos: 4
+        minutos: 3
         contenido: |
           No es que una corrida acierte y otra falle. Las tres son
           **defendibles**. Lo que cambia es:
