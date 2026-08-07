@@ -23,6 +23,7 @@ import {
   CAMPOS_PRIVADOS,
   ESPECIFICACION,
 } from "./especificacion";
+import { leerSecuencia } from "./plantuml";
 import { FAMILIA, SOLO_DOCENTE, TIPOS } from "./tipos";
 import type { Curso, Item, Sesion, TipoItem, Unidad } from "./tipos";
 
@@ -183,6 +184,44 @@ function resolverArchivo(
 // --------------------------------------------------------------------------
 
 function validacionesExtra(item: Item, donde: string, problemas: string[]) {
+  if (item.tipo === "diagrama-secuencia") {
+    // La fuente se lee ACÁ, al cargar, y no en el navegador. Un diagrama que
+    // el lector no entiende tiene que romper la construcción, no aparecer
+    // vacío proyectado — que es exactamente el momento en que no hay arreglo.
+    const fuente = item.fuente;
+    if (!fuente) {
+      problemas.push(`${donde}: falta \`fuente\` o \`archivo\``);
+    } else {
+      try {
+        const secuencia = leerSecuencia(fuente);
+        item.secuencia = secuencia;
+
+        const escritas = item.mensajes ?? [];
+        if (escritas.length && escritas.length !== secuencia.mensajes.length) {
+          problemas.push(
+            `${donde}: la fuente tiene ${secuencia.mensajes.length} mensajes y ` +
+              `hay ${escritas.length} explicaciones. Van por índice, así que ` +
+              `insertar una flecha en medio descoloca todas las de abajo.`,
+          );
+        }
+
+        // `texto` es opcional, pero si está tiene que coincidir: es el ancla
+        // que avisa cuando el orden se corrió sin que cambie la cuenta.
+        escritas.forEach((m, i) => {
+          const suyo = secuencia.mensajes[i]?.texto;
+          if (m.texto && suyo && m.texto !== suyo) {
+            problemas.push(
+              `${donde}: la explicación ${i + 1} dice ser de \`${m.texto}\` y ` +
+                `el mensaje ${i + 1} de la fuente es \`${suyo}\``,
+            );
+          }
+        });
+      } catch (e) {
+        problemas.push(`${donde}: ${(e as Error).message}`);
+      }
+    }
+  }
+
   if (item.tipo === "comando-anotado") {
     // Los segmentos se declaran por texto, no por índice: un índice se rompe
     // en cuanto alguien corrige un espacio. El costo es que hay que

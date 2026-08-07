@@ -15,7 +15,8 @@ import { Marco } from "./marco";
 import { BloqueMarkdown, CitaAgente, Metrica, Titulo, Transicion } from "./texto";
 import { Codigo, ComandoAnotado, Demo, Terminal } from "./codigo";
 import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos";
-import { Archivo, Diagrama, DiagramaSecuencia, Enlace, Imagen } from "./medios";
+import { Archivo, Diagrama, Enlace, Imagen } from "./medios";
+import { DiagramaSecuencia } from "./secuencia";
 import { Asistencia, PausaPreguntas, Receso } from "./dictado";
 import { Pregunta } from "./pregunta";
 

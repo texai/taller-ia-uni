@@ -19,6 +19,8 @@
 // Base
 // --------------------------------------------------------------------------
 
+import type { Secuencia } from "./plantuml";
+
 export type FamiliaItem = "contenido" | "dictado";
 
 export interface ItemBase {
@@ -221,8 +223,26 @@ export interface ItemDiagramaSecuencia extends ItemBase {
   fuente?: string;
   /** O en su propio archivo: `puml/grafo.puml`. */
   archivo?: string;
-  /** Explicación por mensaje, en el orden en que aparecen en la fuente. */
-  mensajes?: { explicacion: string }[];
+  /**
+   * Explicación por mensaje, en el orden en que aparecen en la fuente.
+   *
+   * Van por índice y no por texto —al revés que los segmentos de
+   * `comando-anotado`— porque dos mensajes de un diagrama pueden decir
+   * exactamente lo mismo y el texto no los distinguiría. El precio de un
+   * índice es que se descoloca en cuanto alguien inserta una flecha en medio,
+   * así que el cargador **exige** que la cuenta coincida con la de la fuente,
+   * y `texto` permite anclar la explicación a lo que dice el mensaje.
+   */
+  mensajes?: { explicacion: string; texto?: string }[];
+  /**
+   * La fuente ya leída. La rellena el cargador, no el YAML.
+   *
+   * Vive en el ítem para que el navegador no tenga que volver a parsear en
+   * cada render y, sobre todo, para que `pasosDe` cuente los mensajes DE LA
+   * FUENTE: contarlos por las explicaciones haría que olvidar una escondiera
+   * un mensaje del recorrido.
+   */
+  secuencia?: Secuencia;
 }
 
 /**

@@ -236,47 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 13 — Diagramas de secuencia PlantUML, recorribles
-
-Un diagrama de secuencia proyectado entero es una maraña. Nadie sigue nueve
-flechas a la vez, y el que se pierde en la tercera ya no vuelve. Hace falta
-poder recorrerlo mensaje por mensaje, viendo de dónde sale cada uno, a dónde
-llega y qué lleva.
-
-**Alcance**
-- [ ] Tipo `diagrama-secuencia` con la fuente en PlantUML
-- [ ] Render a imagen **en tiempo de construcción**, servida estática: PlantUML
-      es Java y Vercel no lo ejecuta, y depender de un servicio externo en
-      mitad de una clase es una forma innecesaria de quedarse sin material
-- [ ] Parser de la fuente PlantUML para el subconjunto que usamos:
-      participantes, mensajes, activaciones, notas
-- [ ] Modo enfocado que dibuja el recorrido por su cuenta, resaltando un
-      mensaje a la vez y atenuando el resto
-- [ ] Cada mensaje puede llevar su `explicacion`, que aparece al enfocarlo
-- [ ] El primer paso muestra el diagrama completo, sin nada enfocado: primero
-      el mapa, después el recorrido
-- [ ] Se apoya en los `pasos` del batch 6, no inventa su propia navegación
-- [ ] `npm run diagramas` regenera las imágenes; el resultado se versiona
-
-**Decisión a tomar al implementar**
-Cómo se genera la imagen en construcción. Las opciones son un `plantuml.jar`
-local, un contenedor, o un servicio tipo Kroki. Lo que no es negociable es que
-la salida quede en disco antes de la clase.
-
-**Tests esperados**
-- [ ] El parser extrae los mensajes esperados de una fuente de ejemplo
-- [ ] Una fuente PlantUML que el parser no entiende falla en validación, no en
-      clase
-- [ ] El número de pasos coincide con el número de mensajes más uno
-
-**Fuera de alcance**
-- Todo PlantUML. Solo el subconjunto de diagramas de secuencia que este curso
-  usa; cualquier otra cosa debe fallar diciendo qué no entendió.
-- Diagramas de clase, de componentes o de estados en PlantUML: para eso está
-  `diagrama` con Mermaid.
-
----
-
 ## Batch 14 — Comandos anotados parte por parte
 
 `docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso`

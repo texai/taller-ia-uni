@@ -226,6 +226,33 @@ el recorrido se dibuja aparte, porque el SVG que produce PlantUML no expone sus
 mensajes de forma que se puedan resaltar con confianza. Una sola fuente de
 verdad, dos salidas.
 
+### El dibujo es nuestro, la fuente es PlantUML
+
+`diagrama-secuencia` se escribe en PlantUML y se **dibuja en SVG desde la
+fuente parseada**. No se genera ninguna imagen, ni en construcción ni en
+tiempo de ejecución.
+
+La razón es el paso 0. Si el diagrama completo lo dibujara PlantUML y el
+recorrido enfocado lo dibujáramos nosotros, habría dos dibujantes para la
+misma figura y el cambio de uno al otro ocurriría a mitad del ítem, delante de
+la clase. De paso se evita depender de Java —que Vercel no ejecuta—, de un
+servicio externo en mitad de una clase, y de una carpeta de imágenes
+versionadas que puede quedar desfasada de su fuente sin que nadie lo note
+hasta proyectarla.
+
+El lector cubre solo lo que el curso usa: participantes, mensajes, notas y
+activaciones. **Cualquier otra construcción de PlantUML falla al cargar el
+contenido, nombrando la línea.** Ignorarla en silencio dibujaría un diagrama al
+que le faltan flechas.
+
+Las explicaciones de los mensajes van **por índice**, al revés que los
+segmentos de `comando-anotado`, porque dos flechas pueden decir lo mismo y el
+texto no las distinguiría. El precio es que se descolocan si alguien inserta
+una flecha en medio, así que el cargador exige que la cuenta coincida con la
+fuente y admite un `texto` de ancla. Y los pasos se cuentan sobre los mensajes
+de la fuente, nunca sobre las explicaciones escritas: contarlos al revés haría
+que olvidar una explicación escondiera un mensaje entero del recorrido.
+
 ## 11 · No creamos tablas. Ninguna
 
 Supabase se usa para **dos cosas y nada más**: Auth, para que el docente entre

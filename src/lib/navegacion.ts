@@ -29,8 +29,11 @@ export const INICIO: Posicion = { unidad: 0, item: 0, paso: 0 };
  * mapa, después el recorrido. De ahí el `+ 1`.
  */
 export function pasosDe(item: Item): number {
-  if (item.tipo === "diagrama-secuencia" && item.mensajes?.length) {
-    return item.mensajes.length + 1;
+  // Los pasos salen de la FUENTE, no de las explicaciones escritas. Si se
+  // contaran las explicaciones, olvidar una escondería un mensaje entero del
+  // recorrido — y nadie repara en el mensaje que nunca se mostró.
+  if (item.tipo === "diagrama-secuencia" && item.secuencia?.mensajes.length) {
+    return item.secuencia.mensajes.length + 1;
   }
   if (item.tipo === "comando-anotado" && item.segmentos.length) {
     return item.segmentos.length + 1;

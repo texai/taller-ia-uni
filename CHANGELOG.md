@@ -41,6 +41,27 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Diagramas de secuencia recorribles (batch 13)
+- `src/lib/plantuml.ts`: lector del subconjunto de PlantUML que este curso usa
+  —participantes, mensajes, notas y activaciones— con 16 tests. Lo que no
+  entiende **falla nombrando la línea**, al cargar el contenido y no en clase.
+- **No se genera ninguna imagen.** El plan era `plantuml.jar` en construcción
+  para el diagrama completo y un dibujo propio para el recorrido enfocado; son
+  dos dibujantes para la misma figura, y el cambio ocurre en medio del ítem
+  delante de la clase. Ahora se dibuja todo en SVG desde la fuente parseada:
+  sin Java, sin imágenes versionadas que puedan desfasarse, sin servicio
+  externo. PlantUML queda como formato de escritura, que es para lo que sirve.
+- El paso 0 muestra el diagrama entero; del 1 en adelante se enfoca un mensaje
+  y se atenúa el resto, con su explicación debajo.
+- `Secuencia.notas` se llama `anotaciones`: chocaba con las `notas` privadas del
+  docente, y en este proyecto esa palabra significa "lo que no se proyecta".
+- El cargador **exige** que haya tantas explicaciones como mensajes, y admite
+  `texto` como ancla. El esqueleto tenía 12 para 13 y nadie lo había notado:
+  como van por índice, una de menos explica cada mensaje con el texto del
+  siguiente.
+- `pasosDe` cuenta los mensajes de la fuente y no las explicaciones escritas.
+  Antes, olvidar una escondía un mensaje entero del recorrido.
+
 ### Políticas de Realtime, corregidas antes de aplicarlas
 - Fuera el `alter table realtime.messages enable row level security`: esa tabla
   es de Supabase y el editor SQL responde `42501: must be owner of table

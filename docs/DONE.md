@@ -821,3 +821,94 @@ ordenadas por lo que cuestan.
 - `npm test` (74 pasan), `npm run typecheck`, `npm run lint` y `npm run build`
   limpios.
 - Falta verlo en clase, que es donde se sabe si los umbrales están bien puestos.
+
+---
+
+## Batch 13 — Diagramas de secuencia PlantUML, recorribles
+**2026-08-07**
+
+Un diagrama de secuencia proyectado entero es una maraña. Nadie sigue nueve
+flechas a la vez, y el que se pierde en la tercera ya no vuelve.
+
+**Alcance** (todo hecho, salvo una desviación grande — ver abajo)
+- [ ] Tipo `diagrama-secuencia` con la fuente en PlantUML
+- [ ] ~~Render a imagen en tiempo de construcción~~ → se dibuja en SVG
+- [ ] Parser del subconjunto: participantes, mensajes, activaciones, notas
+- [ ] Modo enfocado, un mensaje a la vez, el resto atenuado
+- [ ] `explicacion` por mensaje, visible al enfocarlo
+- [ ] El primer paso muestra el diagrama completo
+- [ ] Se apoya en los pasos del batch 6
+- [ ] ~~`npm run diagramas`~~ → no hace falta
+
+---
+
+### La desviación: no se genera ninguna imagen
+
+El plan era `plantuml.jar` en construcción para el diagrama completo, y un
+dibujo propio solo para el recorrido enfocado. **Son dos dibujantes distintos
+para la misma figura, y el cambio de uno al otro ocurre EN MEDIO del ítem,
+delante de la clase**: se pulsa la flecha y el diagrama cambia de tipografía,
+de colores y de proporciones. Eso solo se ve al montarlo, y no hay forma de
+arreglarlo manteniendo los dos.
+
+Así que el dibujo es todo nuestro, en SVG, desde lo que leyó el parser. Lo que
+se gana además de la coherencia:
+
+- Sin `plantuml.jar`, sin contenedor y sin Kroki. Java existe en este
+  contenedor de desarrollo, pero no en Vercel.
+- Sin carpeta de imágenes versionadas que pueda quedar desfasada de su fuente.
+  Ese desfase es invisible hasta que se proyecta.
+- Sin servicio externo en mitad de una clase, que era la condición no
+  negociable del batch.
+
+PlantUML sigue siendo el formato de escritura, que es para lo que sirve:
+escribir trece flechas en texto es mucho mejor que maquetarlas.
+
+### El parser
+
+`src/lib/plantuml.ts`, puro, 16 tests. Participantes (con y sin alias,
+declarados o inferidos de una flecha), mensajes (`->` y `-->`, y de alguien a
+sí mismo), notas (de una línea y de varias, ancladas al mensaje que las
+precede) y activaciones como rangos de mensajes.
+
+**Lo que no entiende, falla nombrando la línea** — y falla al cargar el
+contenido, no en clase. `loop`, `alt`, `group`, `par` y todo lo demás de
+PlantUML producen un error con el número de línea y su texto. Un parser que
+ignora en silencio lo que no comprende dibuja un diagrama al que le faltan
+flechas, y eso se descubre proyectado. Reporta todas las líneas malas juntas,
+como el resto del cargador.
+
+### Tres cosas que aparecieron al hacerlo
+
+- **`Secuencia.notas` chocaba con `notas`.** El test de privacidad —el que
+  comprueba que las notas del docente no llegan al alumno— falló porque busca
+  la cadena `"notas"` en la carga y encontró las notas de PlantUML. Se
+  renombró a `anotaciones`. La colisión no era solo del test: en este proyecto
+  "notas" significa *lo que no se proyecta*, y usar la misma palabra para algo
+  que sí se proyecta es pedir el error.
+
+- **El esqueleto tenía 12 explicaciones para 13 mensajes**, y nadie lo había
+  notado. Las explicaciones van por índice, así que una de menos no deja un
+  hueco: corre todas las demás un lugar y cada mensaje queda explicado con el
+  texto del siguiente. El cargador ahora **exige** que la cuenta coincida, y
+  cada explicación puede llevar `texto` como ancla — que es lo que detecta el
+  caso que la cuenta no ve: dos flechas reordenadas.
+
+- **`pasosDe` contaba las explicaciones, no los mensajes.** Con eso, olvidar
+  una explicación escondía un mensaje entero del recorrido, y nadie repara en
+  el mensaje que nunca se mostró. Ahora cuenta los mensajes de la fuente.
+
+### Y dos que solo se vieron mirándolo en el navegador
+
+- El lazo de `Accion -> Accion` sale hacia la derecha con su etiqueta, y como
+  `Accion` es el último participante, el texto quedaba **cortado por el borde
+  del lienzo**. El ancho ahora cuenta ese desborde.
+- Con trece mensajes, el diagrama a tamaño natural dejaba la explicación
+  debajo del pliegue: en clase eso significa desplazar la página con la sala
+  mirando. El SVG tiene tope de altura, y es mayor en el paso 0 —donde no hay
+  texto debajo— que en los pasos enfocados.
+
+**Verificación**
+- `npm test` (95 pasan), typecheck, lint y build limpios.
+- Comprobado en el navegador, con capturas del paso 0 y del paso 8 sobre el
+  diagrama real del curso.

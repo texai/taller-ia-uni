@@ -428,6 +428,79 @@ test("declarar minutos en la unidad es un error de contenido", () => {
   );
 });
 
+test("una fuente PlantUML que no se entiende falla al cargar, no en clase", () => {
+  const items = `
+      - id: diagrama
+        tipo: diagrama-secuencia
+        titulo: Roto
+        fuente: |
+          @startuml
+          A -> B : uno
+          loop mientras haya evidencia
+          end
+          @enduml
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /loop mientras haya evidencia/);
+    },
+  );
+});
+
+test("las explicaciones tienen que ser tantas como los mensajes", () => {
+  // Van por índice: una de menos no deja una explicación vacía, corre todas
+  // las demás un lugar y cada mensaje queda explicado con el texto del
+  // siguiente. Eso no se nota leyendo el YAML; se nota proyectando.
+  const items = `
+      - id: diagrama
+        tipo: diagrama-secuencia
+        titulo: Descuadrado
+        fuente: |
+          @startuml
+          A -> B : uno
+          B -> C : dos
+          @enduml
+        mensajes:
+          - explicacion: solo una
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /2 mensajes y hay 1 explicaciones/);
+    },
+  );
+});
+
+test("una explicación anclada a un texto que no es el suyo falla", () => {
+  // El ancla existe para el caso que la cuenta no detecta: alguien reordena
+  // dos flechas y las explicaciones quedan cruzadas.
+  const items = `
+      - id: diagrama
+        tipo: diagrama-secuencia
+        titulo: Cruzado
+        fuente: |
+          @startuml
+          A -> B : uno
+          B -> C : dos
+          @enduml
+        mensajes:
+          - texto: dos
+            explicacion: la del segundo, puesta primero
+          - texto: uno
+            explicacion: y al revés
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /dice ser de `dos`/);
+    },
+  );
+});
+
 // --------------------------------------------------------------------------
 // La invariante, sobre el contenido REAL del curso
 // --------------------------------------------------------------------------

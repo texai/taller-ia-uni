@@ -157,6 +157,28 @@ test("comparar ordena por unidad, ítem y paso", () => {
   );
 });
 
+test("un diagrama de secuencia tiene un paso por mensaje, más el mapa", () => {
+  // El paso 0 es el diagrama entero, sin nada enfocado.
+  const diagrama = {
+    id: "d",
+    tipo: "diagrama-secuencia",
+    secuencia: {
+      participantes: [],
+      mensajes: [{}, {}, {}],
+      anotaciones: [],
+      activaciones: [],
+    },
+  } as unknown as Item;
+  assert.equal(pasosDe(diagrama), 4);
+});
+
+test("un diagrama sin fuente leída no inventa pasos", () => {
+  // Llegar acá sin `secuencia` significa que el cargador no lo procesó. Un
+  // solo paso muestra el aviso, en vez de un recorrido por la nada.
+  const suelto = { id: "d", tipo: "diagrama-secuencia" } as unknown as Item;
+  assert.equal(pasosDe(suelto), 1);
+});
+
 // -------------------------------------------------------------- el reloj
 
 const CON_MINUTOS: Sesion = {
