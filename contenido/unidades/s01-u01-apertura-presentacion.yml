@@ -26,7 +26,7 @@ items:
     tipo: criterios
     titulo: Ocho horas, y qué sale de ellas
     entradilla: Lo que vamos a hacer, dicho antes de empezar a hacerlo
-    minutos: 3
+    minutos: 2
     criterios:
       - texto: Cinco retos, todos sobre el mismo caso y el mismo laboratorio
         pista: Nada de ejemplos de juguete que cambian entre lámina y lámina

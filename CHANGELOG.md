@@ -5,6 +5,29 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El glosario (batch 34)
+- **35 términos**, de MAPE a «el mundo», en `contenido/glosario.yml`.
+- Se dibuja de dos maneras y las dos hacen falta: **un panel siempre a mano**
+  en las dos vistas, con buscador, que se abre sin tocar la posición de la
+  clase; y **tres láminas** donde el vocabulario es la clase. Un término
+  explicado a las 15:40 no sirve a las 18:20.
+- Una lámina **nombra** los términos, no los copia: dos láminas que definan
+  «sesgo» con palabras distintas es lo que el tipo existe para impedir. Un
+  término que no está falla con la lista de los que sí están.
+- El campo `ojo` es la mitad útil de varias entradas: no es un matiz, es la
+  corrección de lo que la sala cree que significa el término.
+- Sí es un atributo del curso, y el caso deliberadamente no: es referencia y no
+  contenido, no ocupa minutos, hay uno, y está disponible siempre.
+
+### Un archivo por unidad, y la ficha del docente (batch 33)
+- Cada unidad pasa a su archivo bajo `contenido/unidades/`, con prefijo
+  `sNN-uNN` y una palabra que diga de qué trata: el listado alfabético es el
+  orden del dictado. El archivo de sesión queda como cabecera y orden.
+- El corte se hizo por texto y no parseando el YAML, para no perder los
+  comentarios. La prueba de que no se perdió nada es un diff del curso cargado
+  antes y después: **cero líneas de diferencia**.
+- Ficha del docente entre la presentación del taller y el trabajo previo.
+
 ### Los cuatro huecos de la auditoría (batch 32)
 - **`imagen` y `archivo` no funcionaban.** Llevaban dos meses sin usarse y el
   camino nunca se había terminado: el componente pedía `/contenido/…` y el

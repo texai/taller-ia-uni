@@ -81,6 +81,21 @@ items:
       degrada en abstracto sino contra la realidad— y el agente todavía no
       existe. Lo construimos nosotros.
 
+  - id: s1-glosario-docker
+    tipo: glosario
+    titulo: Cuatro palabras de Docker, antes de teclear
+    entradilla: Las que hacen falta para leer los comandos que vienen
+    minutos: 3
+    terminos: [imagen, contenedor, volumen, up contra run]
+    notas: |
+      Va justo antes de la tabla de comandos porque todo lo que viene usa estas
+      cuatro palabras. Quien hizo el taller anterior las tiene; quien no, se
+      pierde en la primera línea.
+
+      La cuarta es la que se confunde el resto del día, y por eso está acá y no
+      dentro de un comando anotado: **`up` deja algo vivo, `run` ejecuta y
+      desaparece**.
+
   - id: s1-make
     tipo: tabla
     titulo: Todos los comandos del taller son atajos
@@ -215,7 +230,7 @@ items:
       4/4 Calculando metricas...
 
       Listo. 192 modelos con 17,472 dias-modelo de telemetria.
-    minutos: 4
+    minutos: 3
     anotaciones:
       - texto: "1/4 Generando historico"
         explicacion: >-
@@ -464,6 +479,27 @@ items:
       Preguntar qué creen que mide antes de decirlo. La confusión con "días
       con predicción disponible" es tan común que vale la pena que salga de
       ellos.
+
+  - id: s1-glosario-senales
+    tipo: glosario
+    titulo: Las tres señales, y lo que cada una no dice
+    entradilla: Las tres se leen mal de tres maneras distintas
+    minutos: 2
+    terminos: [MAPE, sesgo, cobertura]
+    notas: |
+      **Es la lámina de referencia de las ocho horas**, y va después de las
+      tres y no antes: cada una trae su fórmula y sus confusiones propias, y
+      esta las pone juntas, que es como hay que compararlas.
+
+      Lo que la lámina agrega son los tres «ojo»: son las
+      tres formas de leer mal la telemetría, y las tres aparecen en algún reto:
+      el MAPE que no se entera es el reto 1, el sesgo promediado es la trampa 1
+      del reto 2, y la cobertura al revés es la pregunta de hace un minuto.
+
+      Y decir en voz alta que **el glosario está siempre disponible**, con el
+      botón de abajo a la derecha. Es la primera vez que aparece y conviene
+      señalarlo: de acá al domingo nadie va a levantar la mano para preguntar
+      qué era la cobertura.
 
   - id: s1-demo-ui
     tipo: demo

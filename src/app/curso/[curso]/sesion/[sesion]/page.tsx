@@ -34,5 +34,11 @@ export default async function SesionPublica({
 
   if (!sesion) notFound();
 
-  return <Dictado sesion={await resaltarSesion(sesion)} curso={curso.id} />;
+  return (
+    <Dictado
+      sesion={await resaltarSesion(sesion)}
+      curso={curso.id}
+      glosario={curso.glosario ?? []}
+    />
+  );
 }

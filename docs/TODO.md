@@ -52,7 +52,8 @@ Referencias:
 | | **Tercera ronda — la auditoría del inventario** | |
 | 31 | Los minutos son del docente · la portada cliqueable | ✅ Completado |
 | 32 | Los cuatro huecos: interfaz, capturas, job, quiebre | ✅ Completado |
-| 33 | Presentación del taller y ficha del docente | 🔵 En curso |
+| 33 | Presentación, ficha del docente, un archivo por unidad | ✅ Completado |
+| 34 | El glosario | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 

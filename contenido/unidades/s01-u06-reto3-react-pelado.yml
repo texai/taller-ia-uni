@@ -192,7 +192,7 @@ items:
     tipo: demo
     titulo: El mismo escenario, tres veces
     entradilla: Mismo mundo, misma pregunta, temperatura cero
-    minutos: 9
+    minutos: 8
     pasos:
       - comando: make romper ESCENARIO=sesgo_silencioso
       - comando: make agente ARGS="--verboso"
@@ -324,7 +324,7 @@ items:
       diagnóstico?
     visibilidad: publica
     permiteOmitir: true
-    minutos: 4
+    minutos: 3
     opciones:
       - Un prompt más detallado
       - Que critique su propio diagnóstico antes de emitirlo

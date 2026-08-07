@@ -63,7 +63,7 @@ export function Preguntar({
       <button
         type="button"
         onClick={abrir}
-        className="fixed bottom-20 right-6 z-30 rounded-full border px-5 py-3 text-sm font-medium shadow-lg"
+        className="fixed bottom-36 right-6 z-30 rounded-full border px-5 py-3 text-sm font-medium shadow-lg"
         style={{
           borderColor: enviada ? "var(--color-acento)" : "var(--borde)",
           background: "var(--lienzo-alto)",

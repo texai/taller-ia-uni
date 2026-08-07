@@ -24,6 +24,7 @@ import { Comparacion, Criterios, ErrorComun, ModeloDatos, Tabla } from "./datos"
 import { Archivo, Diagrama, Enlace, Imagen } from "./medios";
 import { DiagramaSecuencia } from "./secuencia";
 import { Caso } from "./caso";
+import { Glosario } from "./glosario";
 import { Asistencia, PausaPreguntas, Receso } from "./dictado";
 import { Pregunta } from "./pregunta";
 
@@ -94,6 +95,8 @@ export function RenderizarItem({
       return <ComandoAnotado item={item} paso={paso} />;
     case "salida-anotada":
       return <SalidaAnotada item={item} paso={paso} />;
+    case "glosario":
+      return <Glosario item={item} />;
     case "modelo-datos":
       return <ModeloDatos item={item} />;
     case "imagen":

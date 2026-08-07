@@ -1,0 +1,309 @@
+# El glosario del taller.
+#
+# Está acá y no repartido por el material por una razón: un término que se
+# explica una vez, a las 15:40, no sirve a las 18:20. El alumno lo tiene a mano
+# durante las ocho horas, se abra o no en clase.
+#
+# Regla para escribir una entrada: la definición se lee sin haber leído las
+# otras. Un glosario donde entender «deriva» exige haber entendido «sesgo»
+# antes es un glosario que solo sirve leído en orden, y nadie lo lee en orden.
+#
+# El campo `ojo` es la trampa: lo que la gente cree que significa y no
+# significa. Es la mitad más útil de varias de estas entradas.
+
+terminos:
+  # ---------------------------------------------------------------- el caso
+  - termino: flota
+    grupo: El caso
+    definicion: >-
+      Los 192 modelos de pronóstico que la cadena tiene corriendo. Uno por cada
+      combinación de tienda y categoría: 24 × 8. Se habla de «la flota» y no de
+      «los modelos» porque el problema del taller aparece justo cuando son
+      demasiados para mirarlos de a uno.
+
+  - termino: el mundo
+    grupo: El caso
+    definicion: >-
+      El histórico de ventas contra el que se entrena y se mide todo:
+      `ventas.csv`. Es lo único que el laboratorio inventa, y es lo que se
+      cambia para provocar cada fallo.
+    ojo: >-
+      «Romper el mundo» no rompe nada del software. Reescribe el histórico y
+      vuelve a medir; los 192 modelos siguen siendo los mismos de antes, que es
+      exactamente lo que pasa en producción.
+
+  - termino: escenario
+    grupo: El caso
+    definicion: >-
+      Una forma concreta de degradar el mundo. Hay cuatro —
+      `campana_promocional`, `sesgo_silencioso`, `feed_caido` y
+      `quiebre_stock`— y cada una deja una huella distinta en la telemetría.
+
+  - termino: job batch
+    grupo: El caso
+    definicion: >-
+      El proceso que corre de madrugada, carga los 192 artefactos, proyecta los
+      próximos 14 días y escribe las predicciones. No es un servicio: no
+      escucha nada, corre una vez y termina.
+    ojo: >-
+      Un job puede terminar «ok» y entregar de menos. Es el fallo más común de
+      producción y no levanta ninguna excepción.
+
+  - termino: artefacto
+    grupo: El caso
+    definicion: >-
+      El archivo que queda de entrenar un modelo: los coeficientes, en disco.
+      Cuando se dice «los 192 modelos» se habla de 192 de estos.
+
+  # ---------------------------------------------------------- la telemetría
+  - termino: telemetría
+    grupo: La telemetría
+    definicion: >-
+      Lo que la flota emite todos los días sobre sí misma: por cada modelo y
+      cada día, cuánto se equivocó y hacia qué lado. Son 17,472 filas, y es
+      todo lo que hay para saber si algo va mal.
+
+  - termino: MAPE
+    expansion: Mean Absolute Percentage Error
+    grupo: La telemetría
+    definicion: >-
+      **Cuánto** se equivoca un modelo, en porcentaje y **sin signo**. Si
+      pronosticó 100 y se vendieron 120, el error es del 20% — y sale igual de
+      20% si pronosticó 120 y se vendieron 100.
+    ojo: >-
+      Es la métrica que está en todos los tableros y la que no se entera del
+      problema más caro del taller. Al no tener signo, cientos de errores que
+      empujan todos hacia el mismo lado se ven igual que cientos de errores que
+      se cancelan entre sí.
+
+  - termino: sesgo
+    grupo: La telemetría
+    definicion: >-
+      **Hacia qué lado** se equivoca, con signo. Positivo es pronosticar de
+      más; negativo, de menos. Se calcula como la diferencia de los totales
+      dividida por el total real.
+    ojo: >-
+      **No se promedia.** El sesgo de un grupo no es el promedio de los sesgos
+      de sus partes: es la diferencia de sus totales. Promediar porcentajes le
+      da el mismo peso a una tienda de Lima que a una de provincia con la
+      décima parte del volumen.
+
+  - termino: cobertura
+    grupo: La telemetría
+    definicion: >-
+      De todas las veces que el modelo publicó un intervalo, en cuántas la
+      realidad cayó dentro. Si el intervalo es del 90%, la cobertura debería
+      rondar el 90%.
+    ojo: >-
+      Alejarse **hacia arriba** también es un síntoma, y es el que nadie mira
+      porque suena a buena noticia. Un 97% de cobertura en un intervalo del 90%
+      significa que el modelo abrió el intervalo más de lo necesario, y un
+      intervalo que casi nunca falla es un intervalo que no sirve para decidir.
+
+  - termino: deriva
+    tambien: drift
+    grupo: La telemetría
+    definicion: >-
+      Que el modelo empeore porque el mundo cambió, no porque el modelo se haya
+      roto. Se detecta comparando una ventana reciente contra una línea base
+      anterior.
+
+  - termino: anomalía
+    grupo: La telemetría
+    definicion: >-
+      Algo raro en los **datos**, no en el modelo: una tienda que deja de
+      reportar, un feed que no llega, una serie que se corta.
+    ojo: >-
+      Distinguirla de la deriva es la decisión más cara del taller. Sobre
+      deriva se reentrena; sobre anomalía, reentrenar rompe un modelo que
+      estaba sano.
+
+  - termino: ventana y línea base
+    grupo: La telemetría
+    definicion: >-
+      Los dos períodos que se comparan: la ventana es lo reciente —14 días— y
+      la línea base es el período anterior contra el que se mide —45 días—.
+    ojo: >-
+      Si la línea base incluye los días que estás auditando, estás midiendo lo
+      anormal contra sí mismo y no encuentras nada.
+
+  - termino: significativo y relevante
+    grupo: La telemetría
+    definicion: >-
+      Significativo es que la diferencia difícilmente sea casualidad. Relevante
+      es que a alguien le importe.
+    ojo: >-
+      Con miles de observaciones, un test estadístico marca como significativa
+      casi cualquier diferencia. Toda la flota pierde precisión al alejarse de
+      su fecha de entrenamiento, y eso es envejecimiento, no una alarma.
+
+  - termino: días-modelo
+    grupo: La telemetría
+    definicion: >-
+      La unidad de la telemetría: un modelo, un día. 192 modelos por 91 días
+      evaluados son 17,472.
+
+  # ------------------------------------------------------------------ Docker
+  - termino: imagen
+    grupo: Docker
+    definicion: >-
+      La receta congelada de un entorno: el sistema, las librerías y el código.
+      Se construye una vez y no cambia.
+
+  - termino: contenedor
+    grupo: Docker
+    definicion: >-
+      Una ejecución de una imagen. De una imagen salen todos los contenedores
+      que quieras, y cada uno es desechable.
+    ojo: >-
+      Un modelo no es un contenedor. Acá una sola imagen carga los 192
+      artefactos.
+
+  - termino: volumen
+    grupo: Docker
+    definicion: >-
+      Disco que sobrevive al contenedor. Es la respuesta a «si borras el
+      contenedor, ¿dónde quedan los 192 modelos?»: en el volumen `datos`.
+
+  - termino: servicio
+    grupo: Docker
+    definicion: >-
+      Cada bloque declarado en `docker-compose.yml` — `plataforma`, `agente`,
+      `ui`—, con su imagen, sus volúmenes y sus variables. El nombre del
+      servicio es lo que se escribe en la línea de comandos.
+
+  - termino: up contra run
+    grupo: Docker
+    definicion: >-
+      `up -d` levanta un servicio y lo deja vivo escuchando; `run --rm` arranca
+      un contenedor, ejecuta una tarea y lo borra al terminar.
+    ojo: >-
+      Es la distinción que más se confunde del taller. `make ui` usa `up`;
+      `make seed`, `make agente` y `make verificar` usan `run --rm` — de esos
+      no queda ni rastro en `make estado`.
+
+  # ------------------------------------------------------------------ agente
+  - termino: LLM
+    expansion: Large Language Model
+    grupo: El agente
+    definicion: >-
+      El modelo de lenguaje que razona dentro del agente. Acá es la pieza
+      **menos** interesante: de los nueve errores de diseño que salieron
+      construyendo el laboratorio, ninguno estaba en él.
+
+  - termino: herramienta
+    tambien: tool
+    grupo: El agente
+    definicion: >-
+      Una función que el LLM puede pedir que se ejecute. Una herramienta de
+      percepción **agrega y devuelve una lectura**, no datos crudos: un modelo
+      de lenguaje no puede leer 17,472 filas, y aunque pudiera, no debe.
+
+  - termino: ReAct
+    grupo: El agente
+    definicion: >-
+      El bucle más simple que hay: el modelo piensa, pide una herramienta, lee
+      el resultado, y vuelve a pensar. Veinte líneas.
+    ojo: >-
+      Funciona, y ese es el problema. Suena convincente y diverge entre
+      corridas del mismo mundo, que es lo que arma la sesión 2.
+
+  - termino: grafo
+    grupo: El agente
+    definicion: >-
+      La arquitectura del agente: nodos con un trabajo cada uno y aristas que
+      deciden a dónde se va después. Reemplaza al bucle plano de ReAct.
+
+  - termino: nodo
+    grupo: El agente
+    definicion: >-
+      Un paso del grafo con **un solo trabajo**, que corre o no corre y deja
+      rastro. Los seis son percepción, diagnóstico, reflexión, revisión,
+      recomendación y acción.
+    ojo: >-
+      Una capa no es un prompt más largo. Es un sitio donde algo puede pasar, y
+      donde se puede ver si pasó.
+
+  - termino: estado
+    grupo: El agente
+    definicion: >-
+      Lo que viaja entre los nodos del grafo: los mensajes, la hipótesis, la
+      crítica, las recomendaciones, las vueltas dadas. Un nodo lee del estado y
+      escribe en él.
+
+  - termino: arquitectura cognitiva
+    grupo: El agente
+    definicion: >-
+      Darle al agente sitios donde percibir, recordar, cuestionarse y
+      corregirse, en lugar de pedirle todo eso en una instrucción. Es el título
+      de la sesión 2 y el argumento del taller.
+
+  - termino: reflexión y revisión
+    grupo: El agente
+    definicion: >-
+      Reflexión es el nodo que intenta refutar su propio diagnóstico. Revisión
+      es el que lo reescribe haciéndose cargo de las objeciones.
+    ojo: >-
+      Son dos y no una a propósito: **cuestionarse sin poder corregirse no
+      sirve de nada**. Sin revisión, el agente emite el diagnóstico demolido
+      con sus propias objeciones impresas debajo.
+
+  - termino: memoria
+    grupo: El agente
+    definicion: >-
+      El historial de diagnósticos que el agente consulta **antes** de
+      diagnosticar y escribe **después**. Permite decir tres cosas que un
+      tablero nunca dice: esto ya lo reporté, esto empeoró desde ayer, esto es
+      nuevo.
+
+  - termino: alcance
+    grupo: El agente
+    definicion: >-
+      A qué se refiere un diagnóstico: la flota entera, una categoría, una
+      tienda, o un modelo puntual. Es lo que decide a cuántos modelos tocaría
+      una acción.
+
+  - termino: severidad y urgencia
+    grupo: El agente
+    definicion: >-
+      Severidad es cuán grave es el hallazgo; urgencia, cuán rápido hay que
+      hacer algo. Son distintas: algo grave puede no ser urgente, y algo
+      urgente puede no ser grave.
+
+  - termino: política
+    grupo: El agente
+    definicion: >-
+      Las reglas de código —no de prompt— que deciden qué acciones puede
+      disparar el agente por su cuenta. Doce líneas de Python.
+    ojo: >-
+      El freno no vive en el prompt a propósito. Un agente muy seguro de algo
+      equivocado es exactamente el caso que hay que frenar.
+
+  - termino: radio de daño
+    grupo: El agente
+    definicion: >-
+      Cuánto se rompe si la acción estaba mal, y cuánto cuesta deshacerlo.
+      Reentrenar una categoría toca 24 modelos y se revierte; la flota entera
+      son 192 a la vez, y si el diagnóstico estaba mal no queda ninguno sano
+      con que comparar.
+
+  # ------------------------------------------------------------ herramientas
+  - termino: MLflow
+    grupo: Herramientas
+    definicion: >-
+      El registro de modelos del Módulo 2: guarda cada versión entrenada con
+      sus métricas y sus parámetros. Acá aparece en el diagrama de arquitectura
+      y no se usa en ningún reto.
+
+  - termino: LangGraph
+    grupo: Herramientas
+    definicion: >-
+      La librería con la que se construye el grafo del agente en el reto 4.
+      Aporta el estado compartido, los nodos y las aristas condicionales.
+
+  - termino: Streamlit
+    grupo: Herramientas
+    definicion: >-
+      La librería con la que está escrita la interfaz del agente: 286 líneas de
+      Python que dibujan cuatro pestañas. Viene dada; en el taller se lee, no
+      se escribe.

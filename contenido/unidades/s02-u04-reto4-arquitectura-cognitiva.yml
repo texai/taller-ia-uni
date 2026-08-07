@@ -79,7 +79,7 @@ items:
     tipo: diagrama-secuencia
     titulo: Una corrida, mensaje a mensaje
     archivo: puml/grafo-agente.puml
-    minutos: 10
+    minutos: 9
     notas: |
       Recorrerlo de a un mensaje. Proyectarlo entero de una vez es
       exactamente lo que este tipo de ítem existe para evitar.

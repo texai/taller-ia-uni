@@ -10,7 +10,7 @@ import {
 } from "react";
 import Link from "next/link";
 
-import type { ItemPregunta, Sesion } from "@/lib/tipos";
+import type { ItemPregunta, Sesion, Termino } from "@/lib/tipos";
 import { FAMILIA } from "@/lib/tipos";
 import {
   acotar,
@@ -29,6 +29,7 @@ import { RenderizarItem } from "@/components/items";
 import { Pregunta } from "@/components/items/pregunta";
 import { useSincronia } from "@/components/useSincronia";
 import { PanelPreguntas, Preguntar } from "@/components/Preguntar";
+import { PanelGlosario } from "@/components/items/glosario";
 import { comparar } from "@/lib/navegacion";
 
 /**
@@ -61,11 +62,19 @@ function suscribirseALaUrl(alCambiar: () => void) {
 export function Dictado({
   sesion,
   curso,
+  glosario = [],
   modoDocente = false,
 }: {
   sesion: Sesion;
   /** Para el nombre del canal en vivo. */
   curso: string;
+  /**
+   * El glosario del curso, para el panel que está siempre a mano.
+   *
+   * Llega entero y no filtrado: es referencia pública, y lo mismo ve el
+   * docente que el alumno.
+   */
+  glosario?: Termino[];
   /**
    * En modo docente la sesión llega completa, con notas y respuestas. El
    * filtrado lo hace la ruta, no este componente: una vista que decide en el
@@ -607,6 +616,11 @@ export function Dictado({
           </div>
         </div>
       )}
+
+      {/* El glosario, en las dos vistas y en todo momento. Un término
+          explicado a las 15:40 no sirve a las 18:20, y en clase nadie levanta
+          la mano para preguntar qué era la cobertura. */}
+      <PanelGlosario terminos={glosario} />
 
       {/* El alumno puede preguntar desde cualquier ítem. Sin sincronía no hay
           a quién preguntarle, así que el botón no aparece. */}

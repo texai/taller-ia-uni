@@ -303,6 +303,43 @@ export interface ItemComandoAnotado extends ItemBase {
 }
 
 /**
+ * Una entrada del glosario del curso.
+ *
+ * `ojo` es el campo que más rinde: lo que la gente cree que significa el
+ * término y no significa. La mitad de las entradas útiles de un glosario
+ * técnico son una corrección, no una definición.
+ */
+export interface Termino {
+  termino: string;
+  /** Qué significan las siglas, si las hay. */
+  expansion?: string;
+  /** Cómo se dice también, normalmente en inglés. */
+  tambien?: string;
+  /** Para agrupar en el panel. */
+  grupo?: string;
+  definicion: string;
+  ojo?: string;
+}
+
+/**
+ * Una selección del glosario, como lámina.
+ *
+ * Los términos se nombran, no se copian: la definición vive en
+ * `contenido/glosario.yml` y acá solo se elige cuáles mostrar y cuándo. Dos
+ * láminas que definan «sesgo» con palabras distintas es exactamente lo que
+ * este tipo existe para impedir.
+ */
+export interface ItemGlosario extends ItemBase {
+  tipo: "glosario";
+  /** Nombres de los términos, en el orden en que se quieren mostrar. */
+  terminos?: string[];
+  /** O un grupo entero, por su nombre. */
+  grupo?: string;
+  /** Lo rellena el cargador desde `glosario.yml`. */
+  entradas?: Termino[];
+}
+
+/**
  * Una salida de terminal, explicada trozo a trozo.
  *
  * `terminal` ya muestra una salida, pero la dibuja en bloque: la clase ve
@@ -417,6 +454,7 @@ export type Item =
   | ItemDiagramaSecuencia
   | ItemComandoAnotado
   | ItemSalidaAnotada
+  | ItemGlosario
   | ItemReceso
   | ItemPausaPreguntas
   | ItemAsistencia
@@ -446,6 +484,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   caso: "contenido",
   "comando-anotado": "contenido",
   "salida-anotada": "contenido",
+  glosario: "contenido",
   receso: "dictado",
   "pausa-preguntas": "dictado",
   asistencia: "dictado",
@@ -510,5 +549,15 @@ export interface Curso {
   institucion?: string;
   docente?: string;
   descripcion?: string;
+  /**
+   * El glosario, entero.
+   *
+   * Sí es un atributo del curso, y la diferencia con el caso —que
+   * deliberadamente no lo es (§8)— vale la pena decirla: un caso es contenido
+   * que ocupa tiempo y tiene un sitio en la escaleta, y puede haber varios o
+   * ninguno. El glosario es **referencia**: hay uno, no ocupa minutos, y tiene
+   * que estar disponible en todo momento y no en un punto del recorrido.
+   */
+  glosario?: Termino[];
   sesiones: Sesion[];
 }

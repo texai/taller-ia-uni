@@ -45,7 +45,7 @@ items:
     titulo: El grafo completo
     entradilla: Sin explicar todavía. Solo para que lo vean entero una vez.
     clase: flujo
-    minutos: 5
+    minutos: 4
     contenido: |
       flowchart LR
         P["percepcion"] --> D["diagnostico"]
@@ -63,6 +63,24 @@ items:
       Lo único que vale señalar con el dedo son las dos flechas que vuelven
       hacia atrás. Todo lo demás de este dibujo es una tubería; esas dos
       son lo que lo convierte en algo que se puede creer.
+
+  - id: s2-glosario-agente
+    tipo: glosario
+    titulo: El vocabulario del domingo
+    entradilla: Seis palabras que se van a usar todo el día
+    minutos: 3
+    terminos: [grafo, nodo, estado, herramienta, reflexión y revisión, memoria]
+    notas: |
+      **Cuatro minutos bien gastados.** El domingo entero se dicta con estas
+      seis palabras, y la mitad de la sala llega sin haber tocado un grafo de
+      agentes nunca.
+
+      La entrada de `reflexión y revisión` adelanta la tesis de la unidad —
+      cuestionarse sin poder corregirse no sirve de nada— y eso está bien acá:
+      se enuncia ahora y se demuestra en el reto 4.
+
+      Quien llegó hoy por primera vez tiene el glosario entero en el botón de
+      abajo, incluidas las palabras del sábado.
 
   - id: s2-que-no-es
     tipo: markdown

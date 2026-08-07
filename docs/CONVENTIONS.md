@@ -179,6 +179,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `diagrama-secuencia` | Secuencia PlantUML, recorrible mensaje a mensaje | `fuente`, `mensajes[].explicacion` |
 | `comando-anotado` | Un comando largo, explicado parte por parte | `comando`, `segmentos[]` |
 | `salida-anotada` | Una salida de terminal, explicada trozo a trozo | `salida`, `anotaciones[]`, `comando` |
+| `glosario` | Una selección del glosario, como lámina | `terminos[]` \| `grupo` |
 | `caso` | El marco de negocio dentro del cual ocurre todo lo demás | `empresa`, `cifras[]`, `bloques[]`, `archivo` |
 
 ### Familia `dictado`
@@ -243,6 +244,34 @@ validación, y se descubre proyectada delante de la clase.
   información que el programa ya tiene, y que quedaría desactualizada la
   primera vez que se reordene una unidad.
 - **`caso`** — ver abajo.
+
+### El glosario sí es un atributo del curso
+
+Y conviene decir por qué, porque el caso deliberadamente **no** lo es y la
+distinción no es caprichosa:
+
+| | El caso | El glosario |
+|---|---|---|
+| Qué es | Contenido | Referencia |
+| Ocupa minutos | Sí | No |
+| Cuántos puede haber | Cero, uno o varios | Uno |
+| Cuándo está disponible | En su sitio de la escaleta | Siempre |
+
+El glosario vive en `contenido/glosario.yml` y llega entero a `Curso.glosario`.
+Se dibuja de dos maneras, y las dos hacen falta:
+
+- **Como lámina**, con el tipo `glosario`, que **nombra** términos en vez de
+  copiarlos. Dos láminas que definan «sesgo» con palabras distintas es
+  exactamente lo que ese tipo existe para impedir, y un término que no está en
+  el archivo falla en validación con la lista de los que sí están.
+- **Como panel**, siempre a mano en las dos vistas. Es la mitad que importa: un
+  término explicado a las 15:40 no sirve a las 18:20, y en clase nadie levanta
+  la mano para preguntar qué era la cobertura. Se abre y se cierra sin tocar la
+  posición de la clase.
+
+Cada entrada admite un campo `ojo`, y en varias es la mitad útil: no es un
+matiz de la definición, es la corrección de lo que la sala **cree** que
+significa el término. Va en su propia caja por eso.
 
 ### El caso es contenido, no un atributo del curso
 

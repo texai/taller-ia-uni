@@ -2383,3 +2383,73 @@ de instrumentación.
 - `npm test` (140 pasan), typecheck, lint y build limpios.
 - `npm run humo`: 226 pantallas, 0 con error.
 - Los assets responden 200 en `/contenido/img/…` y `/contenido/archivos/…`.
+
+---
+
+## Batch 34 — El glosario
+
+MAPE, sesgo, cobertura, «el mundo», deriva, artefacto, `up` contra `run`. El
+taller usa unas cuarenta palabras que un alumno no tiene por qué traer puestas,
+y las explicaba cada una en su sitio y una sola vez.
+
+**Ese es el problema, y no la falta de definiciones.** Un término explicado a
+las 15:40 no sirve a las 18:20, y en clase nadie levanta la mano para preguntar
+qué era la cobertura. Así que el glosario se dibuja de dos maneras:
+
+- **Como panel**, siempre a mano en las dos vistas, con buscador y agrupado por
+  área. Se abre y se cierra sin tocar la posición de la clase — buscar una
+  palabra no debería costar el sitio donde uno estaba.
+- **Como lámina**, con el tipo nuevo `glosario`, en tres momentos donde el
+  vocabulario es la clase: las tres señales, las cuatro palabras de Docker
+  antes de la tabla de comandos, y las seis del domingo.
+
+### Los términos se nombran, no se copian
+
+Una lámina de glosario declara `terminos: [MAPE, sesgo, cobertura]` y el
+cargador resuelve las entradas desde `contenido/glosario.yml`. Dos láminas que
+definan «sesgo» con palabras distintas es exactamente lo que esto impide, y un
+término que no está falla en validación **con la lista de los que sí están** —
+escribir `Sesgo` cuando el archivo dice `sesgo` es el error de dedo más
+probable acá, y sin el aviso la lámina saldría con un hueco.
+
+### El campo `ojo`
+
+Cada entrada admite un `ojo`, y en varias es la mitad útil. No es un matiz de
+la definición: es la corrección de lo que la sala **cree** que significa el
+término.
+
+| Término | El «ojo» |
+|---|---|
+| MAPE | Al no tener signo, no se entera del problema más caro del taller |
+| sesgo | **No se promedia**: es la diferencia de los totales |
+| cobertura | Alejarse hacia arriba también es un síntoma, y es el que nadie mira |
+| el mundo | «Romper el mundo» no rompe nada del software |
+| job batch | Puede terminar `ok` y entregar de menos |
+| `up` contra `run` | La distinción que más se confunde del taller |
+
+Va en su propia caja y con su etiqueta, porque mezclado con la definición se
+lee como una coletilla.
+
+### Sí es un atributo del curso, y el caso no
+
+El batch 24 sacó el caso de `Curso` con un argumento que sigue en pie: hay
+cursos sin ninguno y cursos con varios. El glosario es lo contrario en las
+cuatro dimensiones que importan — es referencia y no contenido, no ocupa
+minutos, hay uno, y tiene que estar disponible siempre y no en un punto del
+recorrido. Queda escrito en `CONVENTIONS.md` §8 para que la próxima vez la
+pregunta se resuelva mirando la tabla.
+
+### Los minutos
+
+Diez minutos de láminas, pagados donde había holgura de verdad y no recortando
+seis explicaciones a un minuto cada una — un ítem de un minuto no es un ítem.
+La lámina de las tres señales acabó **después** de las tres y no antes: cada
+una trae su fórmula y sus confusiones propias, y la lámina las pone juntas, que
+es como hay que compararlas.
+
+**Verificación**
+- 35 términos, en siete grupos.
+- `validar-contenido`: 12 unidades, 170 ítems, 240 + 240 min, sin avisos.
+- `npm test` (145 pasan), typecheck, lint y build limpios.
+- `npm run humo`: 231 pantallas, 0 con error.
+- El panel abierto, buscando «sesgo», y las tres láminas vistas en el navegador.

@@ -284,7 +284,7 @@ items:
   - id: s2-c-preguntas
     tipo: pausa-preguntas
     titulo: Lo que quede
-    minutos: 4
+    minutos: 3
     disparadores:
       - ¿Qué de esto se llevarían a lo que están construyendo ahora?
       - ¿Dónde creen que estaría el primer error de su propio agente?

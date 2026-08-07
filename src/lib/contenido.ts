@@ -26,7 +26,7 @@ import {
 import { solapamientos } from "./anotaciones";
 import { leerSecuencia } from "./plantuml";
 import { FAMILIA, SOLO_DOCENTE, TIPOS } from "./tipos";
-import type { Curso, Item, Sesion, TipoItem, Unidad } from "./tipos";
+import type { Curso, Item, Sesion, Termino, TipoItem, Unidad } from "./tipos";
 
 /**
  * Dónde vive el contenido.
@@ -219,6 +219,56 @@ function resolverArchivo(
   }
 }
 
+/**
+ * Cambia los nombres de términos de un ítem `glosario` por sus entradas.
+ *
+ * Un término que no existe falla nombrándolo, y con la lista de los que sí
+ * existen: escribir `Sesgo` cuando el glosario dice `sesgo` es el error de
+ * dedo más probable acá, y sin el aviso la lámina saldría con un hueco.
+ */
+function resolverGlosario(
+  item: Item,
+  glosario: Termino[],
+  donde: string,
+  problemas: string[],
+): void {
+  if (item.tipo !== "glosario") return;
+
+  const porNombre = new Map(glosario.map((t) => [t.termino, t]));
+  const entradas: Termino[] = [];
+
+  for (const nombre of item.terminos ?? []) {
+    const entrada = porNombre.get(nombre);
+    if (!entrada) {
+      problemas.push(
+        `${donde}: el término \`${nombre}\` no está en glosario.yml. ` +
+          `Los que hay: ${glosario.map((t) => t.termino).join(", ")}`,
+      );
+      continue;
+    }
+    entradas.push(entrada);
+  }
+
+  if (item.grupo) {
+    const delGrupo = glosario.filter((t) => t.grupo === item.grupo);
+    if (!delGrupo.length) {
+      problemas.push(
+        `${donde}: ningún término del glosario está en el grupo ` +
+          `\`${item.grupo}\``,
+      );
+    }
+    for (const t of delGrupo) {
+      if (!entradas.includes(t)) entradas.push(t);
+    }
+  }
+
+  if (!entradas.length) {
+    problemas.push(`${donde}: no selecciona ningún término`);
+  }
+
+  item.entradas = entradas;
+}
+
 // --------------------------------------------------------------------------
 // Validación específica de algunos tipos
 // --------------------------------------------------------------------------
@@ -373,6 +423,7 @@ function cargarUnidad(
   bruto: Bruto,
   archivo: string,
   raiz: string,
+  glosario: Termino[],
   problemas: string[],
   vistos: Set<string>,
 ): Unidad | null {
@@ -436,6 +487,7 @@ function cargarUnidad(
     const item = validarItem(b, donde, problemas, vistos);
     if (!item) return;
     resolverArchivo(item, raiz, `${donde} \`${item.id}\``, problemas);
+    resolverGlosario(item, glosario, `${donde} \`${item.id}\``, problemas);
     validacionesExtra(item, `${donde} \`${item.id}\``, problemas);
     items.push(item);
   });
@@ -457,6 +509,7 @@ function cargarUnidad(
 function cargarSesion(
   archivo: string,
   raiz: string,
+  glosario: Termino[],
   problemas: string[],
 ): Sesion | null {
   const bruto = leerYaml(join(raiz, "sesiones", archivo), raiz, problemas);
@@ -484,7 +537,8 @@ function cargarSesion(
       // como lo que es —cabecera y orden— y cada unidad se edita sin abrir
       // ochocientas líneas ajenas. Ver `CONVENTIONS.md` §1.
       const desde = typeof u.archivo === "string" ? u.archivo : null;
-      if (!desde) return cargarUnidad(u, archivo, raiz, problemas, vistos);
+      if (!desde)
+        return cargarUnidad(u, archivo, raiz, glosario, problemas, vistos);
 
       const claves = Object.keys(u).filter((k) => k !== "archivo");
       if (claves.length) {
@@ -498,7 +552,7 @@ function cargarSesion(
 
       const contenido = leerYaml(join(raiz, desde), raiz, problemas);
       if (!contenido) return null;
-      return cargarUnidad(contenido, desde, raiz, problemas, vistos);
+      return cargarUnidad(contenido, desde, raiz, glosario, problemas, vistos);
     })
     .filter((u): u is Unidad => u !== null);
 
@@ -515,12 +569,54 @@ function cargarSesion(
   };
 }
 
+/**
+ * El glosario del curso, si lo hay.
+ *
+ * Se lee una vez y se pasa hacia abajo, porque los ítems de tipo `glosario`
+ * nombran términos en vez de copiarlos: la definición vive en un solo sitio y
+ * dos láminas no pueden definir «sesgo» con palabras distintas.
+ */
+function cargarGlosario(raiz: string, problemas: string[]): Termino[] {
+  const ruta = join(raiz, "glosario.yml");
+  if (!existsSync(ruta)) return [];
+
+  const bruto = leerYaml(ruta, raiz, problemas);
+  const lista = bruto?.terminos;
+  if (!Array.isArray(lista)) {
+    if (bruto) problemas.push("glosario.yml: falta la lista `terminos`");
+    return [];
+  }
+
+  const vistos = new Set<string>();
+  const terminos: Termino[] = [];
+  lista.forEach((b, i) => {
+    const t = b as Record<string, unknown>;
+    const nombre = typeof t.termino === "string" ? t.termino : null;
+    if (!nombre) {
+      problemas.push(`glosario.yml · término ${i + 1}: falta \`termino\``);
+      return;
+    }
+    if (typeof t.definicion !== "string" || !t.definicion.trim()) {
+      problemas.push(`glosario.yml · \`${nombre}\`: falta \`definicion\``);
+      return;
+    }
+    if (vistos.has(nombre)) {
+      problemas.push(`glosario.yml: el término \`${nombre}\` está dos veces`);
+    }
+    vistos.add(nombre);
+    terminos.push(t as unknown as Termino);
+  });
+  return terminos;
+}
+
 /** Carga el curso completo. Lanza `ErrorDeContenido` si algo no cierra. */
 export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
   const problemas: string[] = [];
   const bruto = leerYaml(join(raiz, "curso.yml"), raiz, problemas);
 
   if (!bruto) throw new ErrorDeContenido(problemas);
+
+  const glosario = cargarGlosario(raiz, problemas);
 
   const dirSesiones = join(raiz, "sesiones");
   const archivos = existsSync(dirSesiones)
@@ -532,7 +628,7 @@ export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
   if (!archivos.length) problemas.push("No hay archivos en contenido/sesiones/");
 
   const sesiones = archivos
-    .map((a) => cargarSesion(a, raiz, problemas))
+    .map((a) => cargarSesion(a, raiz, glosario, problemas))
     .filter((s): s is Sesion => s !== null)
     .sort((a, b) => a.numero - b.numero);
 
@@ -546,6 +642,7 @@ export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
     institucion: bruto.institucion ? String(bruto.institucion) : undefined,
     docente: bruto.docente ? String(bruto.docente) : undefined,
     descripcion: bruto.descripcion ? String(bruto.descripcion) : undefined,
+    glosario: glosario.length ? glosario : undefined,
     sesiones,
   };
 }

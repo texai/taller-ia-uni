@@ -26,6 +26,11 @@ export default async function SesionDocente({
   if (!sesion) notFound();
 
   return (
-    <Dictado sesion={await resaltarSesion(sesion)} curso={curso.id} modoDocente />
+    <Dictado
+      sesion={await resaltarSesion(sesion)}
+      curso={curso.id}
+      glosario={curso.glosario ?? []}
+      modoDocente
+    />
   );
 }
