@@ -274,7 +274,7 @@ items:
     entradilla: La receta de make romper, tal cual está en el Makefile
     lenguaje: makefile
     ruta: Makefile
-    numeros: ["93-96"]
+    numeros: ["100-103"]
     minutos: 2
     resaltar: ["2-4"]
     contenido: |2
@@ -360,31 +360,40 @@ items:
 
   - id: s1-r1-groupby
     tipo: codigo
-    titulo: Ocho líneas de pandas
-    entradilla: El agregado que responde las tres preguntas
+    titulo: Diez líneas de pandas
+    entradilla: El agregado que responde las tres preguntas. Se pega en `make consola`.
     lenguaje: python
     minutos: 3
-    resaltar: ["7-10"]
+    resaltar: ["7-11"]
     contenido: |
       import pandas as pd
 
-      m = pd.read_csv("datos/metricas.csv", parse_dates=["fecha"])
+      m = pd.read_csv("/datos/metricas.csv", parse_dates=["fecha"])
       u = m[m["fecha"] >= m["fecha"].max() - pd.Timedelta(days=13)]
 
-      u.groupby("categoria").apply(lambda g: pd.Series({
-          "mape": g["mape"].mean().round(1),
-          "sesgo_pct": round(
-              (g["unidades_pronosticadas"].sum() - g["unidades_reales"].sum())
-              / g["unidades_reales"].sum() * 100, 1),
-      })).sort_values("mape", ascending=False)
+      por = u.groupby("categoria").agg(
+          mape=("mape", "mean"),
+          pronosticado=("unidades_pronosticadas", "sum"),
+          real=("unidades_reales", "sum"),
+      )
+      por["sesgo_pct"] = (por.pronosticado - por.real) / por.real * 100
+
+      por[["mape", "sesgo_pct"]].round(1).sort_values("mape", ascending=False)
     notas: |
       **Las líneas resaltadas son el reto 2 entero, adelantado.** El MAPE se
       promedia porque es una distancia por día; el sesgo **no**, y por eso es
       una resta de totales y no un `.mean()`. Escribirlo bien acá cuesta lo
       mismo que escribirlo mal, y mañana la diferencia se paga.
 
-      No hace falta que lo copien: está para leerlo. Quien prefiera la interfaz
-      de :8501 ordena por MAPE con un clic y llega al mismo sitio.
+      **Dónde se pega esto**: `make consola` abre un Python dentro del
+      contenedor de la plataforma, con pandas puesto y `/datos` montado. Por
+      eso la ruta es absoluta y empieza en la raíz — `metricas.csv` vive en un
+      volumen de Docker, no en el disco de nadie, y un `pd.read_csv` desde el
+      portátil no encuentra nada. Es el error que más tiempo cuesta de este
+      reto.
+
+      Quien prefiera la interfaz de :8501 ordena por MAPE con un clic y llega
+      al mismo sitio.
 
       Si alguien pregunta por `days=13`: catorce días contando el último. Es el
       error de dedo más común de esta lámina.
@@ -431,8 +440,13 @@ items:
     titulo: Encontrarlo con pandas
     minutos: 4
     pasos:
-      - comando: python -c "…" o un cuaderno, con el código de arriba
-      - comando: "# y para la peor: groupby('tienda') sobre esa categoría"
+      - comando: make consola
+        esperado: |
+          Python 3.12 · pandas puesto · /datos montado
+          >>> (se pega el bloque de la lámina anterior)
+      - comando: "# y para la peor tienda, dentro de esa categoría:"
+      - comando: 'b = u[u.categoria == "bebidas"]'
+      - comando: 'b.groupby("tienda")["mape"].mean().round(1).sort_values().tail()'
     observar: >-
       Bebidas se despega del resto y no hay ninguna duda de cuál es. Está
       mal en las 24 tiendas a la vez, así que no es una tienda: es la
@@ -443,6 +457,9 @@ items:
       Si alguien se traba con pandas, la interfaz de :8501 ordena por MAPE
       con un clic. El objetivo es la lectura, no el groupby. Y la salida real
       está en la lámina siguiente.
+
+      `make consola` es un intérprete corriente: se pega el bloque entero y se
+      pulsa Enter dos veces. Se sale con `exit()`.
     notas: |
       Medido acá: el MAPE de la flota sube de 13.8% a 16.0%, el de bebidas
       pasa de 12.9% a 30.8% —más del doble de la flota— y 18 de las 24

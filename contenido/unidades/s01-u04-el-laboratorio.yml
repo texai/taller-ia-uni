@@ -170,6 +170,7 @@ items:
         arriba         Levanta la plataforma y la interfaz
         seed           Pipeline completo: datos, entrenamiento, pronostico y metricas
         entrenar       Entrena los 192 modelos
+        consola        Un Python con pandas y /datos montado. Es el reto 1
         agente         Una ejecucion del agente. ARGS="--verboso --fecha 2026-08-08"
         plano          El bucle ReAct del reto 3: un LLM con herramientas y nada mas
         senales        Como esta la flota, en cuatro numeros. Correr antes y despues de romper
@@ -184,6 +185,12 @@ items:
           **Léanla dos veces.** Es el único atajo del repositorio cuya ayuda
           trae una advertencia, y no es una broma: con eso el agente reentrena
           modelos de verdad. Es el reto 5, mañana.
+      - texto: "consola        Un Python con pandas y /datos montado"
+        explicacion: >-
+          **Con esto se hace el reto 1.** Los datos viven en un volumen de
+          Docker, no en el disco de nadie: un `pd.read_csv` desde el portátil
+          no encuentra nada. Esto abre un Python que sí los ve, y no obliga a
+          instalar Python ni pandas en la máquina de cada uno.
       - texto: "senales        Como esta la flota, en cuatro numeros"
         explicacion: >-
           La sonda del taller, y la que más van a usar: **antes y después de
@@ -202,7 +209,7 @@ items:
       solo al teclear `make` es un repositorio en el que se entra sin
       preguntarle a nadie.
 
-      La lámina está recortada: son 22 atajos y acá salen once. Los otros son
+      La lámina está recortada: son 23 atajos y acá salen doce. Los otros son
       los pasos sueltos del `seed` y los servicios opcionales.
 
       Y decir lo que hay que teclear en cualquier repositorio ajeno, en este

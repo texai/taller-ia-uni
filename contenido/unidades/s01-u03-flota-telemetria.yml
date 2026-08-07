@@ -224,7 +224,7 @@ items:
     entradilla: seed lo crea, romper lo degrada, reparar lo devuelve. Tal cual están en el Makefile.
     lenguaje: makefile
     ruta: Makefile
-    numeros: ["53-55", "93-101"]
+    numeros: ["53-55", "100-108"]
     resaltar: ["5", "10"]
     minutos: 4
     contenido: |2

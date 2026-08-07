@@ -262,6 +262,47 @@ make senales
 # deja el mundo: campana_promocional
 
 
+# ── S1·U5 · el reto a mano · pandas dentro del contenedor ───────────────────
+# id: s1-r1-a-mano
+# estado de partida: campana_promocional
+#
+# Es el unico bloque de la pauta que abre un interprete en vez de correr un
+# comando y volver. Conviene ensayarlo: se sale con exit(), y si se olvida, la
+# terminal se queda dentro y el siguiente comando de la pauta no hace nada.
+
+make consola
+#   → Python 3.12 · pandas puesto · /datos montado
+
+# Y dentro, el bloque de la lamina. Se pega entero y se pulsa Enter dos veces:
+#
+#   import pandas as pd
+#   m = pd.read_csv("/datos/metricas.csv", parse_dates=["fecha"])
+#   u = m[m["fecha"] >= m["fecha"].max() - pd.Timedelta(days=13)]
+#   por = u.groupby("categoria").agg(
+#       mape=("mape", "mean"),
+#       pronosticado=("unidades_pronosticadas", "sum"),
+#       real=("unidades_reales", "sum"),
+#   )
+#   por["sesgo_pct"] = (por.pronosticado - por.real) / por.real * 100
+#   por[["mape", "sesgo_pct"]].round(1).sort_values("mape", ascending=False)
+#
+#   → bebidas 30.8 / −32.4, y las otras siete entre 12 y 15
+#
+# Y la segunda pregunta, la peor tienda dentro de bebidas:
+
+b = u[u.categoria == "bebidas"]
+b.groupby("tienda")["mape"].mean().round(1).sort_values().tail()
+#   → chorrillos 55.3 · san-miguel 51.8 · jesus-maria 46.8 · magdalena 45.7
+#   → 18 de las 24 tiendas de bebidas cruzan el 20%
+#
+#   OJO: esta linea se teclea DENTRO del interprete, no en la terminal. Si la
+#   pauta se corriera de un tirón, el shell la leeria como un comando y no lo
+#   es -- es la razon de que el guardia de arriba aborte la ejecucion completa.
+
+# exit()
+# deja el mundo: campana_promocional
+
+
 # ── S1·U5 · repararlo y romperlo otra vez · el silencioso ────────────────────
 # id: s1-r1-silencioso · ES EL COMANDO MÁS IMPORTANTE DEL TALLER
 # estado de partida: campana_promocional

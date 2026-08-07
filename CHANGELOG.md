@@ -5,6 +5,32 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El reto 1 ya dice dónde corre pandas
+- «Sin agente, sin LLM. Tú, la API y pandas» — y el material **nunca decía
+  dónde**. El paso de la demo era un marcador de posición (`python -c "…" o un
+  cuaderno`), y la lámina leía `datos/metricas.csv`, una ruta relativa que **no
+  existe en ninguna parte**: los datos viven en un volumen de Docker, no en el
+  disco de nadie. En la práctica el reto solo se podía hacer por la interfaz de
+  :8501, que estaba escrita como respaldo y no como camino.
+- Nuevo **`make consola`** / `.\taller.ps1 consola`: abre un Python dentro del
+  contenedor de la plataforma, con pandas puesto y `/datos` montado. No pide
+  instalar Python ni pandas en la máquina de nadie, que es la premisa del
+  laboratorio.
+- La lámina usa la ruta buena, `/datos/metricas.csv`, y la demo trae los
+  comandos de verdad, incluida la segunda pregunta —la peor tienda dentro de la
+  categoría— que antes era un comentario.
+- Y **ya no imprime un `FutureWarning`**. El `groupby().apply()` lo emite en la
+  pandas que el laboratorio fija, y eso son cuatro líneas de ruido proyectadas.
+  Reescrito con `.agg()`, que además hace más visible lo que la lámina enseña:
+  el MAPE se promedia, el sesgo se saca de dos sumas.
+- Todo medido, no supuesto: mundo sembrado, `campana_promocional` aplicado y el
+  bloque ejecutado. Da bebidas 30.8 / −32.4 y 18 de 24 tiendas sobre el 20%,
+  que son exactamente los números que ya estaban en las notas.
+- `make consola` entra también en la lista de `make ayuda`, en la pauta del
+  docente y en `retos/README.md`. El validador de Windows lo pidió solo en
+  cuanto apareció en el contenido.
+
+
 ### Ningún comando deja fuera a Windows
 - El laboratorio traía `taller.ps1` desde el principio y **el curso no lo
   usaba**: de los 103 `make` del material, uno solo llevaba su equivalente

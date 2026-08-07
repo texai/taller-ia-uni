@@ -51,6 +51,7 @@ export const CONOCIDOS = new Set([
   "memoria",
   "senales",
   "actuar",
+  "consola",
   "verificar",
   "ui",
   "romper",
