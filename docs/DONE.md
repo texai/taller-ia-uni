@@ -2952,3 +2952,64 @@ los batches 45 a 48 añaden ítems. §15 gana una sección que lo dice.
 - `npm run numerar`: 19 numerados · 0 sin numerar, después de tocar el
   comentario del laboratorio que un fragmento cita literal.
 - 165 pruebas, lint, typecheck, `validar-contenido` y build limpios.
+
+---
+
+## Batch 45 — El caso, recorrido y no contado
+**2026-08-07**
+
+El caso se contaba muy bien y no se recorría. La sala oía «24 tiendas en cinco
+regiones» y no veía la lista; oía «`ventas.csv`, 76,800 filas» y no veía una
+fila; oía «192 artefactos en disco» y no veía ninguno.
+
+**Alcance** (todo hecho)
+- [x] `plataforma/config.py`, el caso en código, en S1·U2
+- [x] Las 24 tiendas, nombradas antes de aparecer dentro de una salida
+- [x] Una fila cruda de `ventas.csv`, con `quiebre_stock` sembrado
+- [x] Los `.joblib` en disco
+- [x] El cierre del reto 5, citando de vuelta la columna
+
+### Las tres láminas
+
+**`s1-caso-codigo`** va entre el caso y su medición, y es el archivo real, con
+sus números de línea. Lo que enseña no es la lista sino **los dos números de
+cada renglón**: el factor de tamaño de la tienda —`miraflores` 1.35,
+`juliaca` 0.75— que es de donde sale que promediar porcentajes esté mal, y la
+amplitud estacional de la categoría —bebidas 0.34 contra abarrotes 0.12— que
+es por qué la campaña promocional del reto 1 se hace justo sobre bebidas.
+
+**`s1-artefactos`** convierte «artefacto» en algo que se lista. Los dos
+números: 1 KB cada modelo y 856 KB la flota entera. Ochocientos cincuenta y
+seis kilobytes deciden qué se repone en 24 tiendas y no los mira nadie.
+
+**`s1-mundo-crudo`** es la que justifica el batch. Seis días de miraflores /
+lácteos, y el del 6 de agosto dice `271.42, 396.01, 0, 1`: se vendieron 271 y
+se querían 396. La venta observada no es la demanda, está topada por el
+almacén, y **el mundo lo sabe** — `quiebre_stock` está en la fila.
+
+### La corrección que salió de comprobarlo
+
+La primera versión de la nota del reto 5 decía que el dato «se pierde entre el
+mundo y la telemetría» y que ninguna de las siete herramientas lo devuelve.
+**Es falso, y se descubrió leyendo `herramientas.py` antes de darlo por bueno.**
+`resumen_flota` sí devuelve `dias_con_quiebre` — dentro de la ficha de cada
+modelo de `peores_por_mape` y `peores_por_sesgo`.
+
+La versión correcta es mejor lección: el dato **le llega al agente y no lo
+mira**, porque no está en el resumen global, no es una bandera y nada en su
+contexto dice qué significa. Igual que el humano del lunes con su Excel. Lo que
+falta no es el dato, es la instrumentación — y arreglarlo es subir un campo al
+`global`, una línea.
+
+---
+
+**Verificación**
+- Las seis filas de `ventas.csv`, el listado de `/datos/modelos` y las cifras
+  del registro salen de **un mundo sembrado y consultado**, no de memoria.
+- `npm run numerar`: 20 numerados · 0 sin numerar, con `config.py` cuadrando en
+  `21-24 · 37-59`.
+- El validador rechazó dos anotaciones ambiguas —un `1025` que aparecía tres
+  veces y un `0,1` que se solapaba con la fila entera— y las dos se anclaron
+  de nuevo. Es exactamente para lo que está.
+- 165 pruebas, lint, typecheck y build limpios. 202 ítems · 332 + 268 min.
+- `npm run humo`: **297 pantallas abiertas, 0 con error**.

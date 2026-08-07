@@ -5,6 +5,26 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El caso, recorrido y no contado
+- **La cadena, en código.** `plataforma/config.py` entra en la unidad del caso:
+  las 24 tiendas con su región y su factor de tamaño, y las 8 categorías con su
+  demanda base. Hasta ahora 16 de las 24 tiendas no se nombraban nunca y las
+  otras 8 aparecían por primera vez **dentro de un JSON**.
+- Lo que enseña no es la lista, son los dos números de cada renglón:
+  `miraflores` vende 1.35 veces la tienda media y `juliaca` 0.75 —de ahí sale
+  que promediar porcentajes esté mal—, y bebidas oscila 0.34 contra 0.12 de
+  abarrotes, que es **por qué la campaña del reto 1 se hace justo sobre
+  bebidas**.
+- **Los 192 artefactos, listados.** 1 KB cada uno, 856 KB la flota entera. La
+  palabra «artefacto» se usaba las ocho horas y no tenía imagen.
+- **`ventas.csv`, por dentro.** Seis días de una tienda, y el del 6 de agosto
+  dice `271.42, 396.01, 0, 1`: se vendieron 271 y se querían 396. La venta
+  observada no es la demanda — está topada por el almacén.
+- Con eso, **el cierre del reto 5 deja de ser una queja**. La señal del quiebre
+  existe desde el sábado, y de hecho le llega al agente dentro de las fichas de
+  los peores modelos: lo que falta no es el dato, es que esté en el resumen y
+  que alguien le diga qué significa.
+
 ### Lo que no cuadraba
 - **El ancla del caso, unificada.** El mundo sano decía `+0.8%` y `8 / 192` en
   la lámina del caso y `+0.7%` y `7 / 192` en la tabla del reto 1 — dos de los

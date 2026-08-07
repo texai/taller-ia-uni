@@ -66,7 +66,7 @@ Referencias:
 | 43 | Las seis guías, descargables desde la clase | ✅ Completado |
 | | **Quinta ronda — cerrar el hilo conductor** | |
 | 44 | Lo que no cuadra | ✅ Completado |
-| 45 | El caso, recorrido y no contado | ⬜ Pendiente |
+| 45 | El caso, recorrido y no contado | ✅ Completado |
 | 46 | Con qué se fabrica un modelo | ⬜ Pendiente |
 | 47 | Ninguna palabra se usa antes de abrirse | ⬜ Pendiente |
 | 48 | Cada reto cierra su círculo | ⬜ Pendiente |
@@ -720,56 +720,6 @@ concretas, y están todas enumeradas.
 El orden no es negociable. El 44 son correcciones de dato y cuesta minutos; del
 45 al 48 son contenido y van **uno por conversación** (§13); el 49 se hace al
 final porque necesita que todos los comandos estén ya escritos.
-
----
-
-## Batch 45 — El caso, recorrido y no contado
-
-El caso se cuenta muy bien y **no se recorre**. La sala oye «24 tiendas en
-cinco regiones» y no ve nunca la lista; oye «`ventas.csv` es el mundo, 76,800
-filas» y no ve nunca una fila; oye «192 artefactos en disco» y no ve ninguno.
-De los cinco archivos de `/datos` que `s1-caso-estado` enumera, el curso solo
-abre `metricas.csv`.
-
-Y hay una consecuencia narrativa concreta, que es la razón de fondo de este
-batch: el **cierre del reto 5** —el mejor momento del domingo— dice que la
-política tiene un agujero porque *«la telemetría no tiene la señal de si hubo
-stock»*. Esa señal **existe**: `ventas.csv` trae una columna `quiebre_stock`
-que se pierde por el camino. Enseñar la fila cruda el sábado convierte ese
-cierre de limitación abstracta en decisión de instrumentación, que es lo que
-de verdad es.
-
-**Alcance**
-- [ ] **`plataforma/config.py`, el caso escrito en código** — ítem `codigo` en
-      S1·U2, después de `s1-el-caso` y antes de `s1-caso-estado`: las 24
-      tiendas con su región y su factor de tamaño, y las 8 categorías con su
-      demanda base y su amplitud estacional. Es el archivo que convierte «una
-      cadena de retail» en esta cadena.
-- [ ] Con eso se paga otra deuda: **16 de las 24 tiendas no se nombran jamás**
-      en el curso, y las 8 que sí aparecen lo hacen **dentro de una salida**,
-      sin presentación — la primera vez que la sala lee «arequipa» es como un
-      `modelo_id` en un JSON. Las categorías y las regiones sí están
-      enumeradas; las tiendas, no.
-- [ ] **Una fila de `ventas.csv`**, en S1·U3, cerca de `s1-telemetria`: ítem
-      `salida-anotada` con la cabecera y dos o tres filas de verdad, anotando
-      `unidades` contra `unidades_demandadas` —que no son lo mismo, y ahí está
-      el quiebre— y **`quiebre_stock`**, sembrado explícitamente hacia el reto 5.
-- [ ] **El artefacto, en disco** — `ls -la /datos/modelos | head` dentro de
-      `s1-caso-estado` o en un ítem propio: que se vea un `.joblib` con su
-      tamaño. La palabra «artefacto» se usa todo el taller y no tiene imagen.
-- [ ] Revisar que el sembrado del reto 5 (`s2-r5-quiebre-politica`) **cite de
-      vuelta** la columna: hoy dice «una señal que la telemetría no tiene», y
-      tras este batch tiene que decir dónde sí está y dónde se pierde.
-
-**Tests esperados**
-- [ ] `npm run numerar` numera el fragmento de `config.py` contra el
-      laboratorio
-- [ ] `validar-contenido` limpio y `npm run humo` sin errores
-
-**Fuera de alcance**
-- Enseñar `plataforma/datos.py` entero. Cómo se **inventa** el mundo no es del
-  taller; qué **forma** tiene, sí.
-- Tocar el laboratorio. Este batch solo lee de él.
 
 ---
 

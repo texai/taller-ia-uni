@@ -423,6 +423,62 @@ items:
       Quien hizo el trabajo previo ya tiene todo esto y solo necesita
       `make arriba`.
 
+  - id: s1-artefactos
+    tipo: salida-anotada
+    titulo: Los 192, en disco
+    entradilla: Un archivo por modelo. Esto es lo que el job carga cada madrugada.
+    comando: docker compose run --rm plataforma ls -la /datos/modelos | head
+    minutos: 3
+    salida: |
+      total 860
+      -rw-r--r--  1 root root  1025  dem-abarrotes-arequipa.joblib
+      -rw-r--r--  1 root root  1025  dem-abarrotes-ate.joblib
+      -rw-r--r--  1 root root  1025  dem-abarrotes-callao.joblib
+      ...
+      -rw-r--r--  1 root root 45123  registro.json
+
+      $ ls /datos/modelos | wc -l
+      193
+      $ du -sh /datos/modelos
+      856K
+    anotaciones:
+      - texto: "dem-abarrotes-arequipa.joblib"
+        explicacion: >-
+          **Un archivo por modelo**, y el nombre es el `modelo_id`:
+          `dem-<categoria>-<tienda>`. Es el mismo identificador que va a
+          aparecer en la telemetría, en la API y en todo lo que diga el agente.
+      - texto: "1025  dem-abarrotes-ate.joblib"
+        explicacion: >-
+          Mil veinticinco bytes. Un modelo de pronóstico en producción son doce
+          coeficientes y un intercepto — cabe en un tuit. La palabra
+          «artefacto» suena a mucho más de lo que es.
+      - texto: "registro.json"
+        explicacion: >-
+          El único que no es un modelo. Trae, por cada uno, su `version`, hasta
+          qué día se entrenó y con qué `mape_validacion` quedó. **De acá sale
+          el 10.4% que vamos a comparar contra el 13.8%** dentro de un rato.
+      - texto: "193"
+        explicacion: >-
+          192 modelos más el registro. Si a alguien le sale 1, el entrenamiento
+          se quedó a medias: `make seed` otra vez.
+      - texto: "856K"
+        explicacion: >-
+          La flota entera. **Ochocientos cincuenta y seis kilobytes deciden qué
+          se repone en 24 tiendas**, y no los mira nadie. Ese contraste es el
+          taller.
+    notas: |
+      **Es la lámina que convierte «artefacto» en una cosa que se puede
+      listar.** La palabra se usa las ocho horas y hasta acá no tenía imagen.
+
+      Los dos números que valen: **1 KB cada uno** y **856 KB la flota**. Un
+      modelo de pronóstico no es un modelo de lenguaje, y quien viene del taller
+      de Docker esperando gigabytes necesita oírlo.
+
+      Si alguien pregunta qué hay dentro de un `.joblib`: los coeficientes de la
+      Ridge, serializados. Se abre con `joblib.load` y es un objeto de
+      scikit-learn, nada más. **No hace falta abrirlo hoy** — lo que importa es
+      que existen, que son 192 y que nadie los va a tocar en toda la tarde.
+
   - id: s1-flota-pausa
     tipo: pausa-preguntas
     titulo: Pausa · ¿a alguien no le levantó?
@@ -509,6 +565,67 @@ items:
       la respuesta a casi todo lo que va a pasar hoy. Quien se quede atascado
       en cualquier momento de las ocho horas: esta hoja primero, la mano
       levantada después.
+
+  - id: s1-mundo-crudo
+    tipo: salida-anotada
+    titulo: El mundo, por dentro
+    entradilla: ventas.csv. Seis días de una tienda y una categoría, tal cual están en disco.
+    comando: docker compose run --rm plataforma head -1 /datos/ventas.csv  ·  y seis filas de agosto
+    minutos: 4
+    salida: |
+      fecha,tienda,region,categoria,unidades,unidades_demandadas,en_promocion,quiebre_stock
+      2026-08-02,miraflores,LIMA,lacteos,659.17,659.17,0,0
+      2026-08-03,miraflores,LIMA,lacteos,606.0,606.0,0,0
+      2026-08-04,miraflores,LIMA,lacteos,581.89,581.89,0,0
+      2026-08-05,miraflores,LIMA,lacteos,494.94,494.94,0,0
+      2026-08-06,miraflores,LIMA,lacteos,271.42,396.01,0,1
+      2026-08-07,miraflores,LIMA,lacteos,571.04,571.04,0,0
+    anotaciones:
+      - texto: "2026-08-02,miraflores,LIMA,lacteos,659.17,659.17,0,0"
+        explicacion: >-
+          Una fila por tienda, categoría y día. 24 × 8 × 400 días = **76,800
+          filas**, y son dos años de historia. Este archivo es *el mundo*: lo
+          único que el laboratorio inventa, y lo único que se toca para provocar
+          cada fallo de esta tarde.
+      - texto: "unidades,unidades_demandadas"
+        explicacion: >-
+          **Dos columnas y no una, y esa es la lámina.** `unidades` es lo que se
+          vendió; `unidades_demandadas` es lo que se habría vendido con
+          estantería llena. Casi siempre son el mismo número.
+      - texto: "2026-08-06,miraflores,LIMA,lacteos,271.42,396.01,0,1"
+        explicacion: >-
+          **Salvo este día.** Se vendieron 271 y se querían 396: faltó producto.
+          La venta observada no es la demanda, está **topada por el almacén**, y
+          esa diferencia de 125 unidades no la sabe nadie aguas abajo.
+      - texto: "quiebre_stock"
+        explicacion: >-
+          Y sin embargo el mundo **sí lo sabe**: la última columna lo dice, en
+          crudo, con un 1. Guárdenla. El domingo, a las 12:30, va a ser la
+          señal que decide si el agente hace daño o no — y para entonces
+          seguirá ahí, sin que nadie la haya mirado.
+      - texto: "en_promocion"
+        explicacion: >-
+          La otra bandera del día, y es la que el modelo **sí** usa: es una de
+          las doce features. Compárenla con la de al lado — las dos están acá,
+          y solo una llega hasta el modelo.
+    notas: |
+      **Es el archivo del que sale todo lo demás, y hasta ahora solo se había
+      nombrado.** Cinco veces se dijo «`ventas.csv`, 76,800 filas» sin enseñar
+      una sola.
+
+      La lámina existe por la cuarta anotación y conviene dictarla despacio,
+      sin adelantar el final: la columna `quiebre_stock` **está en el mundo**.
+      No es que el dato no exista; es que se pierde entre acá y la telemetría
+      que el agente mira, y por eso el domingo la política tiene un agujero que
+      no se puede tapar razonando mejor. Sembrarla ahora hace que el cierre del
+      reto 5 sea una decisión de instrumentación y no una queja.
+
+      Si alguien pregunta cuántos días hay con quiebre: 861 filas de 76,800, un
+      1.1%. Poco, y suficiente para arruinar un reentrenamiento.
+
+      La otra frase, para quien venga de ingeniería de datos: acá se ve por qué
+      **la venta observada no es la demanda**. Es de los sesgos más caros que
+      hay en pronóstico de retail, y no es del modelo: es del dato.
 
   - id: s1-telemetria
     tipo: modelo-datos

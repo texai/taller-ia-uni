@@ -23,6 +23,73 @@ items:
       Este mismo caso vuelve a abrir el domingo, desde el mismo archivo,
       para quien no vino.
 
+  - id: s1-caso-codigo
+    tipo: codigo
+    titulo: Y esta es la cadena, en código
+    entradilla: Un archivo, 24 tiendas y 8 categorías. De acá salen los 192.
+    lenguaje: python
+    ruta: plataforma/config.py
+    numeros: ["21-24", "37-59"]
+    minutos: 5
+    contenido: |2
+      # (nombre, region, factor de tamano de la tienda)
+      TIENDAS: list[tuple[str, str, float]] = [
+          ("miraflores", "LIMA", 1.35),
+          ("san-isidro", "LIMA", 1.30),
+          ("trujillo", "NORTE", 1.10),
+          ("chiclayo", "NORTE", 1.00),
+          ("piura", "NORTE", 0.95),
+          ("chimbote", "NORTE", 0.80),
+          ("arequipa", "SUR", 1.15),
+          ("tacna", "SUR", 0.85),
+          ("juliaca", "SUR", 0.75),
+          ("cusco", "SUR", 0.90),
+          ("huancayo", "CENTRO", 0.90),
+          ("iquitos", "ORIENTE", 0.80),
+      ]
+
+      # (nombre, demanda base diaria, amplitud de estacionalidad semanal)
+      CATEGORIAS: list[tuple[str, float, float]] = [
+          ("lacteos", 320, 0.18),
+          ("bebidas", 410, 0.34),
+          ("abarrotes", 500, 0.12),
+          ("panaderia", 280, 0.22),
+          ("carnes", 190, 0.30),
+          ("limpieza", 150, 0.10),
+          ("cuidado-personal", 130, 0.14),
+          ("congelados", 160, 0.26),
+      ]
+    notas: |
+      **La cadena deja de ser «24 tiendas en cinco regiones» y pasa a tener
+      nombres.** Vale la pena leer unos cuantos en voz alta: la sala peruana
+      reconoce Miraflores, Chimbote y Juliaca, y a partir de acá cuando salga
+      `dem-bebidas-arequipa` en un JSON ya sabe qué es.
+
+      El fragmento se salta la mitad de Lima —el separador punteado lo dice—
+      porque son catorce tiendas seguidas y no aportan nada de a una. Lo que
+      importa es lo de los bordes.
+
+      **Los dos números de cada línea son el caso entero.** El de la tienda es
+      un factor de tamaño: `miraflores` vende 1.35 veces la tienda media y
+      `juliaca` 0.75. De ahí sale que promediar porcentajes esté mal —una
+      tienda no pesa lo que otra— y de ahí sale, sin decirlo todavía, la
+      trampa 1 del reto 2.
+
+      El de la categoría es la amplitud de la estacionalidad semanal: bebidas
+      0.34 contra abarrotes 0.12. Bebidas oscila tres veces más de una semana
+      a otra, y **por eso es la categoría que se elige para la campaña
+      promocional del reto 1**: donde ya hay movimiento, un pico extra se
+      esconde mejor.
+
+      Y el reparto por región tampoco es un descuido: 14 tiendas en LIMA, una
+      en CENTRO, una en ORIENTE. Guardarlo — en el reto 2 esa desigualdad
+      decide un umbral.
+
+      Si alguien pregunta si esto es real: es un mundo generado, y está escrito
+      en un archivo que se lee en una pantalla. **Que sea inventado no lo hace
+      arbitrario**; cada número de acá tiene una consecuencia que se va a ver
+      esta tarde.
+
   - id: s1-caso-estado
     tipo: salida-anotada
     titulo: Y así está la flota hoy

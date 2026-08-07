@@ -484,20 +484,38 @@ items:
 
       **La espiral se retroalimenta, y cada vuelta parece más justificada
       que la anterior.**
+
+      Y lo peor es que **el dato existía**. En `ventas.csv` cada fila trae una
+      columna `quiebre_stock`, y el día del faltante decía `1` con la demanda
+      real al lado: 271 vendidas, 396 pedidas. Nada de eso llega hasta acá.
     notas: |
       El cierre honesto de la unidad, y hay que decirlo con todas las
       letras: **la política que construyeron tiene un agujero, y lo acaban
       de ver.**
 
-      No lo arreglamos hoy. Arreglarlo necesita una señal que la telemetría
-      no tiene —si hubo stock o no—, y esa es la conversación que vale:
-      **un agente no puede decidir mejor que los datos que le llegan.** La
-      regla que faltaría no es de razonamiento, es de instrumentación.
+      **Volver a la lámina del sábado**, `El mundo, por dentro` — la fila del 6
+      de agosto, `271.42, 396.01, 0, 1`. Ahí estaba la señal, en crudo, desde el
+      primer día.
 
-      Si alguien pregunta qué haría falta: cruzar el pronóstico contra el
-      inventario, o marcar los días con quiebre para que no entren al
-      reentrenamiento. Las dos son cambios en la plataforma, no en el
-      agente.
+      Y acá está el matiz que hace buena la lección, porque **el dato sí le
+      llega al agente**: `metricas.csv` trae `dias_con_quiebre`, y
+      `resumen_flota` lo devuelve — pero solo dentro de la ficha de cada modelo
+      de las listas `peores_por_mape` y `peores_por_sesgo`. **No está en el
+      resumen global, no es una bandera, y nada en el contexto le dice qué
+      significa.** El agente lo tiene delante y no lo mira, igual que el humano
+      del lunes con su Excel.
+
+      Eso convierte la conversación de queja en diagnóstico: **un agente no
+      puede decidir mejor que los datos que le llegan — ni mejor de lo que le
+      dijeron que significan.** Lo que falta no es razonamiento, es
+      instrumentación: la diferencia entre «este agente no sirve para esto» y
+      «a este agente le falta un campo en el resumen y una frase en su
+      contexto».
+
+      Si alguien pregunta qué haría falta, hay tres respuestas y las tres son
+      de la plataforma, no del modelo: subir `dias_con_quiebre` al `global` de
+      `resumen_flota`, excluir esos días del reentrenamiento, o cruzar el
+      pronóstico contra el inventario. La primera es una línea.
 
       Es también la respuesta a «¿entonces el agente sirve?». Sirve, y
       tiene un borde. Saber dónde está el borde es lo que separa a alguien
