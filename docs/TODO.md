@@ -65,7 +65,7 @@ Referencias:
 | 42 | Los conceptos que se usan sin nombrarse | ✅ Completado |
 | 43 | Las seis guías, descargables desde la clase | ✅ Completado |
 | | **Quinta ronda — cerrar el hilo conductor** | |
-| 44 | Lo que no cuadra | ⬜ Pendiente |
+| 44 | Lo que no cuadra | ✅ Completado |
 | 45 | El caso, recorrido y no contado | ⬜ Pendiente |
 | 46 | Con qué se fabrica un modelo | ⬜ Pendiente |
 | 47 | Ninguna palabra se usa antes de abrirse | ⬜ Pendiente |
@@ -720,53 +720,6 @@ concretas, y están todas enumeradas.
 El orden no es negociable. El 44 son correcciones de dato y cuesta minutos; del
 45 al 48 son contenido y van **uno por conversación** (§13); el 49 se hace al
 final porque necesita que todos los comandos estén ya escritos.
-
----
-
-## Batch 44 — Lo que no cuadra
-
-Tres cosas que el material dice mal. Ninguna es de criterio: son datos que se
-contradicen entre láminas, un archivo mal citado y unas horas corridas. Van
-juntas porque las tres se arreglan mirando la fuente, no discutiendo.
-
-**Alcance**
-- [ ] **El ancla se contradice.** `s1-caso-estado` mide `sesgo_pct: 0.801` y
-      `modelos_con_mape_sobre_25: 8`; `s1-r1-tabla` dice **+0.7%** y **7 / 192**
-      para el mismo mundo sano. Son dos de los cuatro números que la sala anota
-      en el minuto diez. Arreglar **midiendo**, no eligiendo: correr `datos`,
-      `pronosticar` y `metricas` y poner lo que salga.
-- [ ] Esa misma cifra vive también en `plataforma/escenario.py` del
-      laboratorio, en el comentario de `CAIDA_SESGO_SILENCIOSO`, y de ahí la
-      cita `s1-r2-calibrado` **literalmente** (§8: un fragmento numerado es
-      literal). Así que el arreglo **toca los dos repositorios**, y el del
-      laboratorio va primero — si no, `npm run numerar` deja el fragmento sin
-      números y la validación lo canta.
-- [ ] El propio comentario del laboratorio ya avisa de que el conteo de modelos
-      se mueve entre ejecuciones y dice `8 → 16`. La fila de `s1-r1-tabla` debe
-      quedar consistente con eso, y su nota decir que lo que se sostiene es que
-      se duplican.
-- [ ] **Un archivo mal citado, en el peor sitio.** `s2-apertura` dice en notas
-      que el bucle de ayer está en `agente/__main__.py`. Está en
-      `agente/plano.py`; `__main__.py` solo registra el subcomando. Es la frase
-      dirigida a quien no vino el sábado, sobre el único archivo que se le pide
-      abrir.
-- [ ] **Las cabeceras de hora.** `s02-u02` marca 09:06 y `s02-u03` marca 09:05,
-      en ese orden; `s02-u05` y `s02-u06` no tienen ninguna. Recalcularlas
-      todas contra los minutos reales de cada unidad, y dejar dicho en el
-      comentario que son orientativas —el reloj real lo dibuja la aplicación—
-      para que nadie las vuelva a tratar como contrato.
-
-**Tests esperados**
-- [ ] `npm run numerar` sigue dando 19 numerados · 0 sin numerar después de
-      tocar el laboratorio
-- [ ] `validar-contenido` limpio
-
-**Fuera de alcance**
-- Volver a medir todas las cifras del curso. Solo las que se contradicen.
-
-**Requisitos externos**
-- El laboratorio corriendo en local para medir: `RUTA_DATOS=<dir> PYTHONPATH=.
-  python3 -m plataforma seed` y después `metricas`.
 
 ---
 

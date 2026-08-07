@@ -2,7 +2,7 @@
   "name": "taller-ia-uni",
   "version": "0.1.0",
   "private": true,
-  "description": "Plataforma de dictado en vivo · Taller 02 de caso aplicado de IA en industria · UNI",
+  "description": "Plataforma de dictado en vivo \u00b7 Taller 02 de caso aplicado de IA en industria \u00b7 UNI",
   "scripts": {
     "dev": "next dev",
     "build": "npm run validar-contenido && next build",
@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "validar-contenido": "tsx scripts/validar-contenido.ts",
+    "escaleta": "tsx scripts/validar-contenido.ts --escaleta",
     "test": "node --import tsx --test src/lib/*.test.ts",
     "humo": "node --import tsx scripts/humo.mjs",
     "qr": "node --import tsx scripts/generar-qr.mjs",

@@ -1,4 +1,3 @@
-# ------------------------------------------------------------------ 09:00
 id: s2-apertura
 tipo: repaso
 titulo: Segunda sesión
@@ -47,8 +46,9 @@ items:
       que los mira**. Todo el domingo cuelga de ahí.
 
       Para quien no vino: no hace falta haber estado. El bucle de ayer está
-      en `agente/__main__.py`, en el subcomando `plano`, y se corre con
-      `make plano`. Hoy se parte del grafo, que es otro camino.
+      en `agente/plano.py` —ochenta líneas, con una docstring que explica por
+      qué existe como archivo aparte— y se corre con `make plano`. Hoy se
+      parte del grafo, que es otro camino.
 
   - id: s2-guias
     tipo: descargas

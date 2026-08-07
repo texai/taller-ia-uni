@@ -1,5 +1,3 @@
-
-# ------------------------------------------------------------------ 16:00
 id: s1-reto-1
 tipo: reto
 titulo: Encontrar el problema a mano
@@ -466,7 +464,7 @@ items:
         todos los errores empujan en la misma dirección y se suman.
 
         Medido acá: el MAPE de la flota pasa de 13.8% a 14.5% —menos de lo
-        que se mueve entre dos semanas cualesquiera— y el sesgo de +0.7% a
+        que se mueve entre dos semanas cualesquiera— y el sesgo de +0.8% a
         +4.7%. Son más de 36,000 unidades de más en almacén en catorce días.
 
         Un tablero con umbral sobre el MAPE no suena. Nunca.
@@ -611,11 +609,15 @@ items:
     columnas: [Señal, Antes, Después, Lectura]
     filas:
       - ["MAPE de la flota", "13.8%", "14.5%", "Se mueve menos que entre dos semanas cualesquiera"]
-      - ["Modelos sobre el umbral", "7 / 192", "14 / 192", "Se duplican, y aun así nadie levanta el teléfono"]
-      - ["Sesgo de la flota", "+0.7%", "+4.7%", "Seis veces. Y el signo dice hacia dónde"]
+      - ["Modelos sobre el umbral", "8 / 192", "16 / 192", "Se duplican, y aun así nadie levanta el teléfono"]
+      - ["Sesgo de la flota", "+0.8%", "+4.7%", "Seis veces. Y el signo dice hacia dónde"]
     resaltar: [2]
     notas: |
       Acá está el taller entero. Darle tiempo.
+
+      **El +0.8% es el mismo de la lámina del caso**, el que se pidió anotar
+      hace una hora. Vale la pena decirlo señalando: la columna «antes» de esta
+      tabla no es un número nuevo, es el de las 15:05 vuelto a medir.
 
       Sobre las cifras: el MAPE y el sesgo están medidos y se sostienen
       entre ejecuciones al primer decimal. El conteo de modelos sobre umbral

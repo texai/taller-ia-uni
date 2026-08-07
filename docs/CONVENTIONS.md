@@ -718,6 +718,27 @@ Consecuencias:
   `horaFin`. Esa comparación es legítima porque las dos cifras miden cosas
   distintas — una es el plan y la otra es el aula.
 
+### La hora de una unidad tampoco se escribe
+
+Es el mismo principio una vuelta más abajo, y costó descubrirlo. Cada archivo
+de unidad abría con un comentario que decía a qué hora empezaba —`# ---- 16:55`—
+y esa hora es **la suma de todo lo anterior**: cualquier ítem que entre en
+cualquier unidad previa la invalida, y hay que corregir las de abajo a mano.
+
+Envejeció exactamente como se esperaría. La auditoría del 7 de agosto encontró
+dos unidades del domingo declarando 09:06 y 09:05 **en ese orden**, dos sin
+ninguna hora, y todas las del sábado corridas entre veinte minutos y hora y
+media respecto de lo que sumaban sus ítems.
+
+Así que no se escriben. Se calculan:
+
+    npm run escaleta
+
+que imprime, por sesión, a qué hora empieza cada unidad al ritmo escrito y
+dónde termina. Es **orientativa a propósito** — la hora de verdad la lleva el
+reloj de la aplicación, que sabe cuándo empezó la clase de verdad y cuánto se
+ha ido alargando. La escaleta sirve para preparar, no para dictar.
+
 ## 16 · Los diagramas que abren algo comparten una gramática
 
 Los dibujos que abren algo —el recap de cada sesión, el mapa de pasos de cada

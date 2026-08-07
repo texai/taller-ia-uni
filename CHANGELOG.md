@@ -5,6 +5,25 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Lo que no cuadraba
+- **El ancla del caso, unificada.** El mundo sano decía `+0.8%` y `8 / 192` en
+  la lámina del caso y `+0.7%` y `7 / 192` en la tabla del reto 1 — dos de los
+  cuatro números que la sala anota y que vuelven seis veces. Se resolvió
+  **midiendo**: sembrar, medir, romper, medir, reparar. Salen 13.782 / 0.801 /
+  8, y tras `sesgo_silencioso` 14.468 / 4.733 / 16.
+- La misma cifra estaba en el comentario de `escenario.py` del laboratorio, que
+  una lámina cita **literal**, así que el arreglo cruzó los dos repositorios —
+  y en su `README.md` y en `retos/README.md`.
+- **Las horas de las unidades se calculan, no se escriben.** Cada archivo abría
+  con la hora en un comentario, y esa hora es la suma de todo lo anterior:
+  envejecía con cada ítem nuevo. Había dos unidades del domingo declarando
+  09:06 y 09:05 *en ese orden*, dos sin ninguna, y las del sábado corridas
+  hasta hora y media. Se quitaron las trece y ahora salen de `npm run
+  escaleta`.
+- El bucle de ayer está en `agente/plano.py`, no en `agente/__main__.py`. Era
+  la frase dirigida a quien no vino el sábado, sobre el único archivo que se le
+  pide abrir.
+
 ### Las seis guías, descargables desde la clase
 - Las guías del laboratorio —seis hojas de dos caras— se bajan ahora **desde la
   propia lámina**, sin salir a la intranet ni al repositorio con la clase

@@ -11,8 +11,12 @@ import { join } from "node:path";
 import { cargarCurso, ErrorDeContenido, recorrer } from "../src/lib/contenido";
 import { rutaDeLab } from "../src/lib/sitio";
 import { ubicarBloques } from "../src/lib/bloques";
-import { minutosDeSesion, reprochesDeRitmo } from "../src/lib/navegacion";
-import { minutosEntre } from "../src/lib/reloj";
+import {
+  minutosDeSesion,
+  minutosDeUnidad,
+  reprochesDeRitmo,
+} from "../src/lib/navegacion";
+import { aHora, aMinutos, minutosEntre } from "../src/lib/reloj";
 
 const VERDE = "\x1b[32m";
 const ROJO = "\x1b[31m";
@@ -58,6 +62,40 @@ try {
     );
   }
   console.log(`${GRIS}${unidades} unidades · ${items} ítems${FIN}`);
+
+  // La escaleta: a qué hora empieza cada unidad si el dictado va al ritmo
+  // escrito.
+  //
+  // Se calcula acá y no se escribe en el YAML, y esa es la decisión. Los
+  // archivos de unidad llevaban la hora en un comentario de cabecera, y esa
+  // hora envejece con cada ítem que entra en cualquier unidad anterior: en la
+  // auditoría del 7 de agosto había dos unidades del domingo declarando 09:06
+  // y 09:05 **en ese orden**, y dos sin nada. Un dato que se corrige a mano
+  // cada vez que se toca el contenido es un dato que va a estar mal.
+  //
+  // Es orientativa a propósito: la hora de verdad la lleva el reloj de la
+  // aplicación, que sabe cuándo empezó la clase de verdad.
+  if (process.argv.includes("--escaleta")) {
+    console.log(`\n${GRIS}Escaleta, al ritmo escrito:${FIN}`);
+    for (const sesion of curso.sesiones) {
+      // Una sesión sin hora de inicio no tiene escaleta que calcular: se
+      // salta en vez de contar desde medianoche, que sería un horario falso
+      // con toda la pinta de ser el bueno.
+      const arranque = sesion.horaInicio ? aMinutos(sesion.horaInicio) : null;
+      if (arranque === null) continue;
+      let reloj = arranque;
+      console.log(`  ${GRIS}sesión ${sesion.numero}${FIN}`);
+      for (const unidad of sesion.unidades) {
+        const min = minutosDeUnidad(unidad);
+        console.log(
+          `    ${aHora(reloj)}  ${unidad.titulo.padEnd(38)} ` +
+            `${GRIS}${String(min).padStart(3)} min${FIN}`,
+        );
+        reloj += min;
+      }
+      console.log(`    ${GRIS}${aHora(reloj)}  (fin, sobre ${sesion.horaFin})${FIN}`);
+    }
+  }
 
   if (descuadres.length) {
     console.log(`\n${AMARILLO}Minutos que no caben en la hora:${FIN}`);

@@ -1,5 +1,3 @@
-
-# ------------------------------------------------------------------ 16:55
 id: s1-reto-2
 tipo: reto
 titulo: La herramienta de percepción
@@ -358,7 +356,7 @@ items:
       # misma cantidad de puntos; lo que los separa es de donde parten. Con este
       # valor el MAPE de la flota va de 13.8 a 14.5 -- ruido -- y los modelos sobre
       # el umbral de alerta se duplican, un movimiento por el que nadie levanta el
-      # telefono. El sesgo, en cambio, va de +0.7% a +4.7%: seis veces, y unas 36 mil
+      # telefono. El sesgo, en cambio, va de +0.8% a +4.7%: seis veces, y unas 36 mil
       # unidades de sobre-stock.
       #
       # A 0.18, que es donde estaba, 57 de 192 modelos cruzaban el umbral. Eso ya no

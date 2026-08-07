@@ -512,8 +512,6 @@ items:
       - ¿Cómo sabrían que una acción es reversible antes de ejecutarla?
       - ¿Qué campo de los que escribe su agente usarían como freno? ¿Y por qué no?
 
-# ------------------------------------------------------------------ 12:10
-
   - id: s2-r5-api-escribe
     tipo: markdown
     titulo: La única ruta que escribe

@@ -2889,3 +2889,66 @@ anuncia después de la tabla de las dos degradaciones.
 - Los seis PDF pedidos al servidor construido: 200, `application/pdf`, y el
   tamaño exacto de cada uno.
 - 320 + 268 minutos sobre 240 + 240, ocho minutos más que antes.
+
+---
+
+## Batch 44 — Lo que no cuadra
+**2026-08-07**
+
+Tres cosas que el material decía mal. Ninguna de criterio: datos que se
+contradicen entre láminas, un archivo mal citado y unas horas corridas.
+
+**Alcance** (todo hecho)
+- [x] El ancla del caso, unificada contra una medición
+- [x] La misma cifra en el laboratorio, que el curso cita literal
+- [x] `agente/plano.py` en vez de `agente/__main__.py`
+- [x] Las cabeceras de hora
+
+### El ancla, medida en vez de elegida
+
+`s1-caso-estado` decía `sesgo_pct: 0.801` y `8` modelos sobre umbral;
+`s1-r1-tabla` decía **+0.7%** y **7 / 192** para el mismo mundo sano. Son dos de
+los cuatro números que la sala anota en el minuto diez y que vuelven seis veces.
+
+Se resolvió corriendo el laboratorio, no eligiendo. Sembrado un mundo, medido,
+roto con `sesgo_silencioso`, medido otra vez, y reparado:
+
+| | sano | roto | reparado |
+|---|---|---|---|
+| `mape_medio` | 13.782 | 14.468 | 13.782 |
+| `sesgo_pct` | **0.801** | **4.733** | 0.801 |
+| `unidades_de_mas` | 6,532 | 36,981 | 6,532 |
+| `modelos_con_mape_sobre_25` | **8** | **16** | 8 |
+
+Así que `+0.8%` y `8 → 16`, y de paso quedó comprobado que `reparar` devuelve
+el mundo al valor exacto: sirve como sonda, que es lo que el batch 49 necesita.
+
+La cifra vivía además en el comentario de `CAIDA_SESGO_SILENCIOSO` de
+`plataforma/escenario.py`, que `s1-r2-calibrado` **cita literalmente** (§8). El
+arreglo tocó los dos repositorios y el del laboratorio fue primero; después
+`npm run numerar` confirmó que el fragmento sigue cuadrando, 19 · 0. En el
+laboratorio estaba también en su `README.md` y en `retos/README.md`. El `+0.7%`
+de `retos/incidencias.md` **se dejó**: es otro número —el delta en pp de
+panadería—, no el sesgo de la flota.
+
+### Las horas: se calculan, no se escriben
+
+Cada archivo de unidad abría con `# ---- 16:55`, que es la suma de todo lo
+anterior. Un dato que hay que recalcular a mano cada vez que entra un ítem en
+cualquier unidad previa, y que envejeció exactamente como se esperaría: dos
+unidades del domingo declarando 09:06 y 09:05 **en ese orden**, dos sin
+ninguna, y todas las del sábado corridas entre veinte minutos y hora y media.
+
+En vez de recalcularlas —que era el alcance planificado— se **quitaron las
+trece**, y la escaleta pasa a salir de `npm run escaleta`. La desviación es
+deliberada: recalcular deja el mismo problema armado para el batch siguiente, y
+los batches 45 a 48 añaden ítems. §15 gana una sección que lo dice.
+
+---
+
+**Verificación**
+- Las cuatro cifras, **medidas** corriendo el laboratorio nativo con la API
+  local y `resumen_flota`, no recordadas.
+- `npm run numerar`: 19 numerados · 0 sin numerar, después de tocar el
+  comentario del laboratorio que un fragmento cita literal.
+- 165 pruebas, lint, typecheck, `validar-contenido` y build limpios.
