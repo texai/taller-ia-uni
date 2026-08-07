@@ -12,7 +12,7 @@
     "validar-contenido": "tsx scripts/validar-contenido.ts",
     "escaleta": "tsx scripts/validar-contenido.ts --escaleta",
     "validar-pauta": "tsx scripts/validar-pauta.ts",
-    "test": "node --import tsx --test src/lib/*.test.ts",
+    "test": "node --import tsx --test src/lib/*.test.ts src/components/items/*.test.ts",
     "humo": "node --import tsx scripts/humo.mjs",
     "qr": "node --import tsx scripts/generar-qr.mjs",
     "qr:leer": "node --import tsx scripts/verificar-qr.mjs",

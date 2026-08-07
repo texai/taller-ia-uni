@@ -297,21 +297,31 @@ export function Pregunta({
           {item.pregunta}
         </Prosa>
 
+        {/*
+          Las opciones, todas iguales. **Acá NO se marca la correcta.**
+
+          Esta rama es la pantalla que se proyecta —`Dictado` con
+          `modoDocente`—, y el curso se dicta compartiendo pantalla. Pintaba la
+          respuesta en verde y con un ✓ **antes de enviar la pregunta**, así que
+          la clase la leía a la vez que el enunciado y preguntar dejaba de medir
+          nada.
+
+          Quien sí necesita verla es el docente, y la tiene en el mando: ahí
+          sale «Respuesta correcta: …», junto a las notas privadas. Es
+          exactamente el reparto de §14 — lo que no puede proyectarse vive en la
+          pantalla que nadie más ve.
+
+          El ✓ vuelve en el revelado, arriba, cuando ya respondieron.
+        */}
         {item.opciones?.length ? (
           <ul className="mt-8 space-y-2">
             {item.opciones.map((o) => (
               <li
                 key={o}
                 className="text-xl"
-                style={{
-                  color:
-                    item.respuesta === o
-                      ? "var(--color-acento)"
-                      : "var(--tinta-suave)",
-                }}
+                style={{ color: "var(--tinta-suave)" }}
               >
                 · {o}
-                {item.respuesta === o && " ✓"}
               </li>
             ))}
           </ul>

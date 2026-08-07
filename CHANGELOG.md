@@ -5,6 +5,22 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La respuesta correcta ya no se proyecta antes de preguntar
+- La pantalla del docente **se comparte por Zoom**, y en la lámina de pregunta
+  pintaba la opción correcta en verde y con un ✓ **antes de enviarla**. La
+  clase la leía a la vez que el enunciado, así que preguntar dejaba de medir
+  nada.
+- Ahora las cuatro opciones se ven iguales hasta el revelado. Quien sí necesita
+  saberla es el docente, y la tiene **en el mando**, junto a las notas
+  privadas: es el reparto de §14 — lo que no puede proyectarse vive en la
+  pantalla que nadie más ve.
+- Con **prueba**, porque esto se rompe con un cambio de estilo de tres
+  caracteres y no se descubre hasta tenerlo delante de veinte personas. Se
+  comprobó rompiéndola a propósito.
+- Y de paso: **revelar desde el mando dejaba fuera el «Por qué»**. El proyector
+  pasaba `solucion` al revelar y el mando no, así que según desde dónde se
+  cerrara la pregunta la clase veía el razonamiento o solo el conteo.
+
 ### El indicador ya no parpadea cada segundo
 - Con el dictado activo, la esquina alternaba **«En vivo»** y **«Sin conexión»**
   a intervalos exactos de un segundo. No era la red: **el bucle se lo hacía a

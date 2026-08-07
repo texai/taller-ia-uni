@@ -342,7 +342,11 @@ export function Mando({ sesion, curso }: { sesion: Sesion; curso: string }) {
             {conectados > 0 && ` / ${conectados}`} han respondido
             <button
               type="button"
-              onClick={() => revelar(item.id, item.respuesta)}
+              // Con `solucion`, igual que el revelado del proyector. Sin ella,
+              // revelar desde acá dejaba el bloque de «Por qué» fuera: la clase
+              // veía el conteo y la respuesta correcta, y no el razonamiento —
+              // que es la mitad que enseña.
+              onClick={() => revelar(item.id, item.respuesta, item.solucion)}
               className="ml-3 rounded-md border px-3 py-1 text-xs"
               style={{ borderColor: "var(--color-acento)", color: "var(--color-acento)" }}
             >
