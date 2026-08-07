@@ -95,7 +95,12 @@ export function Glosario({ item }: { item: ItemGlosario }) {
   const nuevos = item.nuevos?.length ? new Set(item.nuevos) : null;
 
   return (
-    <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
+    <Marco
+      titulo={item.titulo}
+      entradilla={item.entradilla}
+      etiqueta="Glosario"
+      ancho="ancho"
+    >
       {/* En dos columnas desde tres términos: cuatro definiciones apiladas en
           una columna dejan media lámina vacía y obligan a desplazar. */}
       <div

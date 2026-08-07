@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La lámina de glosario dice que es un glosario
+- Proyectada, una lámina de glosario **se ve como cuatro párrafos con un
+  borde**: nada la distingue de prosa cualquiera, y la sala no sabe que lo que
+  tiene delante es vocabulario que va a hacer falta después.
+- Ahora lleva una ceja **«GLOSARIO»** encima del título, con el mismo estilo
+  que la de la lámina de pregunta: pequeña, en versalitas y en el color de
+  acento.
+- `Marco` gana una `etiqueta` opcional para eso. **Casi ninguna lámina la
+  lleva, y es a propósito**: un `markdown` o una `tabla` se reconocen solos, y
+  anunciar «Tabla» encima de una tabla es ruido. Vale la pena solo donde la
+  lámina no dice sola lo que es.
+
+### Una frase
+- «Pausa · ¿a alguien no le levantó?» pasa a **«Pausa · ¿alguien se quedó
+  bloqueado?»**. La pausa es para quien está atascado, sea por lo que sea; la
+  anterior solo recogía un fallo concreto y dejaba fuera al resto.
+
 ### El mando, en el orden de la mano
 - Al cambiar de lámina lo primero que hace falta es **qué decir**. Las notas
   privadas suben a lo más alto de la columna; debajo va **el atraso**, y los

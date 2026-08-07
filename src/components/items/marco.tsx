@@ -12,11 +12,24 @@ import type { ReactNode } from "react";
 export function Marco({
   titulo,
   entradilla,
+  etiqueta,
   children,
   ancho = "normal",
 }: {
   titulo?: string;
   entradilla?: string;
+  /**
+   * El nombre del tipo de lámina, encima del título.
+   *
+   * No lo lleva casi ninguna, y es a propósito: un `markdown` o una `tabla` se
+   * reconocen solos, y anunciar «Tabla» encima de una tabla es ruido. Vale la
+   * pena cuando la lámina **no dice sola lo que es** — un glosario se ve como
+   * cuatro párrafos con un borde, y sin la palabra puesta pasa por prosa.
+   *
+   * Mismo estilo que el de la lámina de pregunta, que es la otra que lo lleva:
+   * pequeño, en versalitas y en el color de acento. Es una ceja, no un título.
+   */
+  etiqueta?: string;
   children: ReactNode;
   /** `ancho` para tablas y código; `estrecho` para prosa. */
   ancho?: "normal" | "ancho" | "estrecho";
@@ -30,6 +43,14 @@ export function Marco({
 
   return (
     <section className={`mx-auto w-full ${maximo} px-6`}>
+      {etiqueta && (
+        <p
+          className="mb-3 text-xs font-semibold uppercase tracking-[0.2em]"
+          style={{ color: "var(--color-acento)" }}
+        >
+          {etiqueta}
+        </p>
+      )}
       {titulo && (
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           {titulo}

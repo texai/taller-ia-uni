@@ -540,7 +540,7 @@ items:
 
   - id: s1-flota-pausa
     tipo: pausa-preguntas
-    titulo: Pausa · ¿a alguien no le levantó?
+    titulo: Pausa · ¿alguien se quedó bloqueado?
     minutos: 2
     disparadores:
       - ¿Alguien vio un número distinto de 17,472?
