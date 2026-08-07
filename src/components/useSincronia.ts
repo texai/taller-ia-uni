@@ -59,6 +59,19 @@ const MINIMO_ENTRE_ENVIOS = 250;
  */
 const MINIMO_ENTRE_PRESENCIAS = 2000;
 
+/**
+ * Cuánto tiene que aguantar una conexión para contarla como recuperada.
+ *
+ * La escalera de esperas entre reintentos se reiniciaba en cuanto llegaba
+ * `SUBSCRIBED`, y eso la deja clavada en el primer escalón para siempre: un
+ * canal que conecta y se cae en bucle reintenta cada segundo indefinidamente,
+ * porque cada conexión —aunque dure un instante— borra la cuenta.
+ *
+ * Cinco segundos. Una reconexión de verdad se sostiene mucho más que eso, y
+ * una que no llega ahí no era una reconexión.
+ */
+const MINIMO_PARA_DARLA_POR_BUENA = 5000;
+
 export function useSincronia({
   curso,
   sesion,
@@ -129,6 +142,8 @@ export function useSincronia({
   const reconexiones = useRef(0);
   const reintento = useRef<ReturnType<typeof setTimeout> | null>(null);
   const conectar = useRef<(() => void) | null>(null);
+  /** Ver `MINIMO_PARA_DARLA_POR_BUENA`. */
+  const estable = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const supabase = clienteNavegador();
@@ -163,6 +178,10 @@ export function useSincronia({
         ref.current = null;
       }
       suscrito.current = false;
+      if (estable.current) {
+        clearTimeout(estable.current);
+        estable.current = null;
+      }
     };
 
     const programarReintento = () => {
@@ -181,8 +200,27 @@ export function useSincronia({
 
     const abrir = () => {
       if (!vivo) return;
+      // **El orden importa, y al revés produce un parpadeo de un segundo.**
+      //
+      // `limpiar()` llama a `removeChannel`, y eso hace que el canal viejo
+      // emita `CLOSED` por su propio callback. Si la generación se incrementa
+      // DESPUÉS, ese `CLOSED` todavía pasa el filtro de `deOtra()` y se lee
+      // como una caída: pinta «Sin conexión» y programa un reintento. Un
+      // segundo más tarde el reintento vuelve a abrir, vuelve a limpiar,
+      // vuelve a emitir `CLOSED`… y así indefinidamente, alternando «En vivo»
+      // y «Sin conexión» a intervalos exactos.
+      //
+      // Que el estado alternara entre esos dos y nunca pasara por
+      // «Reconectando» era la pista: `reconectando` sale de un error o un
+      // tiempo agotado, y `sin-conexion` solo de un `CLOSED` — es decir, de un
+      // cierre que pedimos nosotros.
+      //
+      // Subiendo la generación primero, todo lo que emita un canal que estamos
+      // desmontando queda fuera por construcción. Es lo que el desmontaje del
+      // efecto ya hacía bien.
+      generacion++;
       limpiar();
-      const mia = ++generacion;
+      const mia = generacion;
       const deOtra = () => !vivo || mia !== generacion;
 
       const c = supabase.channel(nombreCanal(curso, sesion), {
@@ -248,7 +286,14 @@ export function useSincronia({
         if (situacion === "SUBSCRIBED") {
           setEstado("en-vivo");
           suscrito.current = true;
-          reconexiones.current = 0;
+          // La escalera de esperas se reinicia solo si el canal aguanta. Ver
+          // `estable`: ponerla a cero acá mismo dejaba el reintento clavado en
+          // un segundo por muy mal que fuera la red.
+          if (estable.current) clearTimeout(estable.current);
+          estable.current = setTimeout(() => {
+            estable.current = null;
+            reconexiones.current = 0;
+          }, MINIMO_PARA_DARLA_POR_BUENA);
 
           // **Lo que hace que reconectar sirva de algo.** Al volver, el canal
           // está vacío: nadie recuerda dónde iba la clase. El docente reemite
@@ -345,13 +390,23 @@ export function useSincronia({
     window.addEventListener("online", despertar);
     document.addEventListener("visibilitychange", alVolverAlFrente);
 
+    let tokenPuesto: string | undefined;
     const { data: escuchaAuth } = supabase.auth.onAuthStateChange(
       (_evento, sesionNueva) => {
         if (!vivo) return;
         // El token del socket no se renueva solo. Sin esto, a la hora de clase
         // el canal del docente empieza a devolver error de autorización y la
         // sala deja de moverse — que es exactamente el síntoma que se vio.
-        supabase.realtime.setAuth(sesionNueva?.access_token);
+        //
+        // Pero solo cuando **cambia de verdad**. `onAuthStateChange` dispara
+        // un `INITIAL_SESSION` al montar y algún evento más con el mismo
+        // token, y cada `setAuth` empuja el token a los canales ya unidos:
+        // repetirlo con el mismo valor es pedir una reunión que no hacía
+        // falta, justo mientras el canal se está suscribiendo.
+        const token = sesionNueva?.access_token;
+        if (token === tokenPuesto) return;
+        tokenPuesto = token;
+        supabase.realtime.setAuth(token);
       },
     );
 
@@ -373,7 +428,7 @@ export function useSincronia({
       if (presencia.current) clearTimeout(presencia.current);
       temporizador.current = null;
       presencia.current = null;
-      limpiar();
+      limpiar(); // se lleva también el temporizador de `estable`
     };
   }, [curso, sesion, esDocente, yo]);
 

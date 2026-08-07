@@ -5,6 +5,26 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El indicador ya no parpadea cada segundo
+- Con el dictado activo, la esquina alternaba **«En vivo»** y **«Sin conexión»**
+  a intervalos exactos de un segundo. No era la red: **el bucle se lo hacía a
+  sí mismo**.
+- `limpiar()` corría **antes** de subir la generación, así que el `CLOSED` que
+  emite un canal al desmontarlo pasaba el filtro y se leía como una caída:
+  pintaba «Sin conexión» y programaba un reintento. Un segundo después el
+  reintento volvía a abrir, a limpiar, a emitir `CLOSED`… indefinidamente.
+- La pista fue que **nunca pasaba por «Reconectando»**: ese estado sale de un
+  error o de un tiempo agotado, y «Sin conexión» solo de un `CLOSED` — es
+  decir, de un cierre que pedimos nosotros.
+- Y la espera entre reintentos **no crecía nunca**, porque el contador se
+  ponía a cero con cada `SUBSCRIBED`. Ahora una conexión cuenta como
+  recuperada solo si **se sostiene cinco segundos**: un canal que conecta y se
+  cae en bucle ya sube por la escalera hasta los diez segundos.
+- `setAuth` solo se llama cuando el token **cambia de verdad**. Se disparaba
+  también con el `INITIAL_SESSION` del montaje, y cada llamada empuja el token
+  a los canales ya unidos — pedir una reunión justo mientras el canal se está
+  suscribiendo es un buen candidato a haber encendido la mecha.
+
 ### El laboratorio, entero y de una vez
 - **Unidad nueva en la sesión 1**, entre la flota y el reto 1. Hasta ahora el
   repositorio se enseñaba en trozos y nunca completo: al empezar el reto 1 la
