@@ -336,7 +336,7 @@ test("una lectura no se recorre: es un paso, con la lista entera a la vista", ()
     tipo: "lectura",
     titulo: "Lean",
     minutos: 8,
-    comandos: ["make pelado"],
+    comandos: ["make plano"],
   } as unknown as Parameters<typeof pasosDe>[0];
   assert.equal(pasosDe(lectura), 1);
 });
@@ -347,7 +347,7 @@ test("una lectura corta el tramo: durante ese rato el docente no habla", () => {
     tipo: "lectura",
     titulo: "Lean",
     minutos: 8,
-    comandos: ["make pelado"],
+    comandos: ["make plano"],
   } as unknown as Parameters<typeof pasosDe>[0];
   const u = unidadCon([lamina(20), lectura, lamina(20)]);
   // Sin el corte, el tramo mayor serían los 48 minutos enteros.

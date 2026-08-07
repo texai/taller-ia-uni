@@ -984,7 +984,7 @@ test("una lectura solo con comandos vale, y solo con archivos también", () => {
         tipo: lectura
         titulo: Corran
         minutos: 5
-        comandos: ["make pelado"]
+        comandos: ["make plano"]
       - id: solo-archivos
         tipo: lectura
         titulo: Lean
@@ -1016,7 +1016,7 @@ test("el alumno no ve los minutos, salvo en una ventana de lectura", () => {
         tipo: lectura
         titulo: Lean
         minutos: 8
-        comandos: ["make pelado"]
+        comandos: ["make plano"]
 `;
   conContenido(
     { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },

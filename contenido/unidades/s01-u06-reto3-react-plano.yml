@@ -4,7 +4,7 @@ id: s1-reto-3
 tipo: reto
 titulo: El primer agente, sin arquitectura
 objetivos:
-  - Ver funcionar un ReAct pelado, y verlo divagar
+  - Ver funcionar un ReAct plano, y verlo divagar
   - Nombrar las cuatro patologías de un bucle sin arquitectura
   - Llegar al domingo con una pregunta abierta, no con una respuesta
   - "Conceptos: ReAct, y determinismo del muestreo contra determinismo del sistema"
@@ -47,7 +47,7 @@ items:
     titulo: El bucle entero
     entradilla: Es corto a propósito, y es un archivo de verdad
     lenguaje: python
-    ruta: agente/pelado.py
+    ruta: agente/plano.py
     numeros: ["43-44", "47-52", "56-59"]
     minutos: 3
     contenido: |2
@@ -67,6 +67,12 @@ items:
     notas: |
       Esto es ReAct entero: pensar, actuar, observar, repetir. No hay más.
 
+      **Plano** es la palabra, y conviene decirla mirando el archivo: esto es
+      una línea de ejecución, un bucle y nada más. Mañana lo mismo se dibuja
+      como un grafo —nodos con un trabajo cada uno y aristas que deciden—, y la
+      diferencia entre las dos formas es el domingo entero. Plano contra grafo,
+      una línea contra una red.
+
       `bind_tools` es lo único no obvio: le pasa al modelo el esquema de
       cada herramienta —nombre, argumentos y docstring— para que pueda
       pedirlas. La docstring que leyeron hace un rato es lo que el modelo ve
@@ -84,7 +90,7 @@ items:
     entradilla: Veinte líneas, y lo que importa es lo que no tienen
     minutos: 8
     archivos:
-      - ruta: agente/pelado.py
+      - ruta: agente/plano.py
         porque: >-
           El bucle entero de la lámina anterior, con su docstring. Leerla
           completa: dice para qué existe este archivo y por qué no se usa el
@@ -96,7 +102,7 @@ items:
           prompt**: es lo único que el modelo sabe sobre qué puede pedir.
     comandos:
       - make romper ESCENARIO=sesgo_silencioso
-      - make pelado ARGS="--verboso"
+      - make plano ARGS="--verboso"
     observar: >-
       En el archivo, lo que **no** hay: ni un paso que critique el
       diagnóstico, ni uno que lo reescriba, ni nada que sobreviva a la
@@ -139,8 +145,8 @@ items:
   - id: s1-r3-correr
     tipo: comando-anotado
     titulo: Correrlo
-    entradilla: make pelado ARGS="--verboso", abierto. Y acá el atajo esconde algo que importa.
-    comando: docker compose run --rm agente python -m agente pelado --verboso
+    entradilla: make plano ARGS="--verboso", abierto. Y acá el atajo esconde algo que importa.
+    comando: docker compose run --rm agente python -m agente plano --verboso
     minutos: 3
     segmentos:
       - texto: compose run
@@ -155,10 +161,10 @@ items:
           monitoreo — una vez al día, no escuchando en un puerto. Y sin
           embargo su memoria sobrevive a las ejecuciones, porque vive en el
           volumen `memoria` y no en el contenedor. Eso es el reto 4.
-      - texto: -m agente pelado
+      - texto: -m agente plano
         explicacion: >-
           Acá está la frontera: **Docker dijo `run`, el agente dice
-          `pelado`**, y el nombre del servicio los separa. Todo lo que va
+          `plano`**, y el nombre del servicio los separa. Todo lo que va
           después de `python` lo interpreta el programa de dentro; Docker no
           sabe qué significa. Los otros subcomandos son `run` —el grafo
           completo, que es mañana— y `memoria`.
@@ -172,11 +178,11 @@ items:
           el agente cree que es.
         otrosValores: ["--fecha 2026-08-08"]
     notas: |
-      **`pelado` y no `run`, y esto no es un detalle.** `python -m agente run`
+      **`plano` y no `run`, y esto no es un detalle.** `python -m agente run`
       levanta el grafo entero de mañana: la sala vería al agente criticarse y
       corregirse, que es la revelación del domingo, y ninguna de las cuatro
       patologías de esta unidad aparecería — porque la arquitectura ya las
-      corrige. Hoy se corre el bucle, y el bucle vive en `agente/pelado.py`.
+      corrige. Hoy se corre el bucle, y el bucle vive en `agente/plano.py`.
 
       Si alguien no tiene llave, `PROVEEDOR_LLM=mock` recorre el bucle
       igual. No razona, pero nadie se queda mirando la pantalla.
@@ -245,9 +251,9 @@ items:
     minutos: 8
     pasos:
       - comando: make romper ESCENARIO=sesgo_silencioso
-      - comando: make pelado ARGS="--verboso"
-      - comando: make pelado ARGS="--verboso"
-      - comando: make pelado ARGS="--verboso"
+      - comando: make plano ARGS="--verboso"
+      - comando: make plano ARGS="--verboso"
+      - comando: make plano ARGS="--verboso"
     observar: >-
       Comparar las tres salidas lado a lado. Qué herramientas llamó cada
       una y en qué orden, qué categorías nombró, y sobre todo qué severidad

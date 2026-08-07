@@ -10,7 +10,7 @@ objetivos:
   - "Conceptos: grafo de estado, y anomalía de datos contra deriva de modelo"
 requisitos:
   - Herramientas de percepción funcionando
-  - Haber visto divagar al ReAct pelado
+  - Haber visto divagar al ReAct plano
 items:
   - id: s2-r4-titulo
     tipo: titulo
