@@ -40,11 +40,18 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 - `minutosEntre` no da la vuelta al reloj: antes de la hora de inicio devuelve
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
-- `minutosDe` se movió a `navegacion.ts` como `minutosDeUnidad` y `contenido.ts`
-  la reexporta. Los minutos se declaran dos veces —presupuesto en la unidad,
-  estimación en cada ítem— y hacían falta dos módulos con la misma regla, no
-  dos reglas: el mando y el índice del docente tienen que anunciar el mismo
-  total para la misma sesión.
+
+### El tiempo se cuenta de abajo hacia arriba (`CONVENTIONS.md` §15)
+- **Los minutos los declara solo el ítem.** La unidad vale la suma de sus
+  ítems, la sesión la de sus unidades. Ningún total se escribe a mano.
+- `Unidad` pierde el campo `minutos` y el cargador **rechaza** un YAML que lo
+  declare, diciendo dónde van. Los ocho `minutos:` de nivel unidad salieron de
+  los dos archivos de sesión; cuadraban exactamente con sus ítems, así que los
+  240 minutos por sesión siguen intactos.
+- `minutosDeUnidad`, `minutosDeSesion` y `minutosHasta` viven en
+  `navegacion.ts`; `contenido.ts` reexporta la primera como `minutosDe`.
+- `npm run build` ya no vigila el descuadre entre dos cifras del YAML —no hay
+  dos— sino la suma de los ítems contra lo que dura la sesión según sus horas.
 
 ## 2026-08-06
 

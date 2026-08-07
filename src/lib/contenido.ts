@@ -272,6 +272,16 @@ function cargarUnidad(
     });
   }
 
+  // Los minutos son de los ítems. Que una unidad declare los suyos no se
+  // ignora en silencio: se rechaza, porque una cifra escrita que el programa
+  // descarta es peor que una cifra ausente — se lee como si valiera.
+  if (bruto.minutos !== undefined) {
+    problemas.push(
+      `${archivo} · unidad \`${id}\`: los minutos no se declaran en la unidad. ` +
+        `Van en cada ítem, y la unidad suma los suyos (ver CONVENTIONS.md §15).`,
+    );
+  }
+
   const brutos = Array.isArray(bruto.items) ? (bruto.items as Bruto[]) : [];
   if (!brutos.length) {
     problemas.push(`${archivo} · unidad \`${id}\`: no tiene ítems`);
@@ -297,7 +307,6 @@ function cargarUnidad(
     requisitos: Array.isArray(bruto.requisitos)
       ? (bruto.requisitos as string[])
       : undefined,
-    minutos: typeof bruto.minutos === "number" ? bruto.minutos : undefined,
     items,
   };
 }

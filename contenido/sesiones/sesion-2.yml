@@ -1,7 +1,11 @@
 # Sesión 2 · La arquitectura cognitiva
 #
 # Estructura, no contenido definitivo. El contenido de cada ítem lo escriben
-# los batches 19 a 22, uno por unidad. La suma de minutos da 240.
+# los batches 19 a 22, uno por unidad.
+#
+# Los minutos van SOLO en cada ítem: la unidad suma los suyos y la sesión suma
+# las unidades, de abajo hacia arriba, para que ningún total pueda contradecir
+# a sus partes (CONVENTIONS.md §15). La suma da 240.
 
 id: sesion-2
 numero: 2
@@ -16,7 +20,6 @@ unidades:
   - id: s2-repaso
     tipo: repaso
     titulo: Qué le faltaba al bucle de ayer
-    minutos: 25
     objetivos:
       - Recuperar el hilo tras una noche
       - Emparejar cada patología de ayer con la capa que la resuelve
@@ -70,7 +73,6 @@ unidades:
   - id: s2-reto-4
     tipo: reto
     titulo: La arquitectura cognitiva
-    minutos: 105
     objetivos:
       - Construir un grafo donde cada nodo hace un trabajo y solo uno
       - Entender por qué una reflexión que no puede corregir es decorativa
@@ -213,7 +215,6 @@ unidades:
   - id: s2-reto-5
     tipo: reto
     titulo: De la recomendación a la acción
-    minutos: 60
     objetivos:
       - "Cerrar el ciclo: que el agente ejecute lo que recomienda"
       - Entender por qué el freno va en código y no en el prompt
@@ -314,7 +315,6 @@ unidades:
   - id: s2-cierre
     tipo: cierre
     titulo: Los errores, y dónde estaban de verdad
-    minutos: 50
     objetivos:
       - Llevarse la tesis del taller
       - Saber qué hacer con esto en el trabajo del lunes

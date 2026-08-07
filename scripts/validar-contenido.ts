@@ -5,7 +5,9 @@
  * mucho menos descubrirse proyectado delante de veinte personas.
  */
 
-import { cargarCurso, ErrorDeContenido, recorrer, minutosDe } from "../src/lib/contenido";
+import { cargarCurso, ErrorDeContenido, recorrer } from "../src/lib/contenido";
+import { minutosDeSesion } from "../src/lib/navegacion";
+import { minutosEntre } from "../src/lib/reloj";
 
 const VERDE = "\x1b[32m";
 const ROJO = "\x1b[31m";
@@ -21,27 +23,29 @@ try {
   );
   const unidades = curso.sesiones.reduce((t, s) => t + s.unidades.length, 0);
 
-  // Los minutos declarados de la unidad contra la suma de sus items. No es un
-  // error de estructura -- el YAML es valido igual -- pero un desajuste
-  // significa que la unidad no dura lo que dice, y el reloj de la segunda
-  // pantalla se apoya en ese numero.
+  // Los minutos de los items contra las horas de la sesion.
+  //
+  // El tiempo se cuenta de abajo hacia arriba (CONVENTIONS.md §15), asi que no
+  // hay dos cifras que puedan discrepar dentro del YAML. Lo que si puede
+  // discrepar es la suma contra el mundo: cuatro horas de aula son cuatro
+  // horas, y una sesion cuyos items suman 260 minutos no cabe. No es un error
+  // de estructura -- el YAML es valido igual -- pero se avisa.
   const descuadres: string[] = [];
   for (const sesion of curso.sesiones) {
-    for (const unidad of sesion.unidades) {
-      if (typeof unidad.minutos !== "number") continue;
-      const suma = unidad.items.reduce((t, i) => t + (i.minutos ?? 0), 0);
-      if (suma !== unidad.minutos) {
-        descuadres.push(
-          `${sesion.id} · ${unidad.id}: declara ${unidad.minutos} min y sus ` +
-            `ítems suman ${suma}`,
-        );
-      }
+    const ventana = minutosEntre(sesion.horaInicio, sesion.horaFin);
+    if (ventana === null) continue;
+    const suma = minutosDeSesion(sesion);
+    if (suma !== ventana) {
+      descuadres.push(
+        `${sesion.id}: sus ítems suman ${suma} min y la sesión dura ` +
+          `${ventana} (${sesion.horaInicio}–${sesion.horaFin})`,
+      );
     }
   }
 
   console.log(`${VERDE}✓${FIN} ${curso.titulo}`);
   for (const sesion of curso.sesiones) {
-    const minutos = sesion.unidades.reduce((t, u) => t + minutosDe(u), 0);
+    const minutos = minutosDeSesion(sesion);
     console.log(
       `  ${GRIS}sesión ${sesion.numero}${FIN} ${sesion.titulo} — ` +
         `${sesion.unidades.length} unidades, ${recorrer(sesion).length} ítems, ` +
@@ -51,7 +55,7 @@ try {
   console.log(`${GRIS}${unidades} unidades · ${items} ítems${FIN}`);
 
   if (descuadres.length) {
-    console.log(`\n${AMARILLO}Minutos que no cuadran:${FIN}`);
+    console.log(`\n${AMARILLO}Minutos que no caben en la hora:${FIN}`);
     for (const d of descuadres) console.log(`  ${AMARILLO}·${FIN} ${d}`);
   }
 } catch (e) {

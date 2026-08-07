@@ -390,3 +390,39 @@ descubren rompiéndolas:
   interruptor de dictado) se resuelve **por marca de tiempo: gana el más
   reciente**, y las marcas tienen que salir del mismo reloj. Por eso `publicar`
   devuelve la pauta que emitió en vez de que cada pantalla se invente la suya.
+
+## 15 · El tiempo se cuenta de abajo hacia arriba
+
+**Los minutos los declara el ítem. Nada más.** La unidad vale la suma de sus
+ítems, la sesión vale la suma de sus unidades, y el curso vale la suma de sus
+sesiones. Ningún total se escribe a mano: todos se calculan.
+
+La razón es que el ítem es la pieza más pequeña y la única que alguien puede
+estimar de verdad — "esto se explica en cuatro minutos" es una frase que se
+puede sostener; "esta unidad dura sesenta" es un presupuesto, y un presupuesto
+no es una medida.
+
+Y la razón práctica: **dos cifras sobre lo mismo terminan siempre en
+desacuerdo.** Durante un tiempo la unidad declaró sus minutos *y* sus ítems los
+suyos. Cuadraban el día que se escribieron, y el reloj del mando se escribió
+sumando ítems mientras el índice del docente prefería el presupuesto de la
+unidad — dos pantallas del mismo curso a punto de anunciar totales distintos.
+Había hasta un script que vigilaba el descuadre, que es la señal de que el
+modelo estaba mal: cuando hace falta un vigilante para que dos números no se
+contradigan, sobra uno de los dos números.
+
+Consecuencias:
+
+- `Unidad` **no tiene** campo `minutos`, y el cargador **rechaza** un YAML que
+  lo declare, con un mensaje que dice dónde van. Ignorarlo en silencio sería
+  peor: una cifra escrita que el programa descarta se lee como si valiera.
+- `minutosDeUnidad`, `minutosDeSesion` y `minutosHasta` viven en
+  `navegacion.ts` —puras, sin `node:fs`, usables en el navegador— y
+  `contenido.ts` reexporta la primera como `minutosDe`. Una sola regla, un solo
+  sitio.
+- Un ítem sin `minutos` suma cero. Es el caso normal de un título o una
+  transición, y no hay que inventarle una duración.
+- Lo que sí se compara es la suma contra el mundo: `npm run build` avisa si los
+  ítems de una sesión no suman lo que dura la sesión según `horaInicio` y
+  `horaFin`. Esa comparación es legítima porque las dos cifras miden cosas
+  distintas — una es el plan y la otra es el aula.

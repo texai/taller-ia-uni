@@ -9,6 +9,7 @@ import type {
   ItemTransicion,
   Sesion,
 } from "@/lib/tipos";
+import { minutosDeUnidad } from "@/lib/navegacion";
 import { Caja, Etiqueta, Marco } from "./marco";
 
 /** Un corte de sección. Una idea sola, centrada, sin nada que la acompañe. */
@@ -159,12 +160,12 @@ export function Transicion({
                 <span className={estado === "actual" ? "font-medium" : ""}>
                   {u.titulo}
                 </span>
-                {u.minutos && (
+                {minutosDeUnidad(u) > 0 && (
                   <span
                     className="ml-auto text-sm tabular-nums"
                     style={{ color: "var(--tinta-suave)" }}
                   >
-                    {u.minutos} min
+                    {minutosDeUnidad(u)} min
                   </span>
                 )}
               </li>

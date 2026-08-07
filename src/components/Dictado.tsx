@@ -18,6 +18,7 @@ import {
   buscarPorId,
   indiceDeItem,
   itemEn,
+  minutosDeUnidad,
   pasosDe,
   retroceder,
   totalItems,
@@ -323,7 +324,7 @@ export function Dictado({
                       : "var(--tinta-suave)",
                 }}
               >
-                {u.tipo} · {u.minutos ?? 0} min
+                {u.tipo} · {minutosDeUnidad(u)} min
               </p>
               <p className="px-3 pb-1 text-sm font-medium">{u.titulo}</p>
 

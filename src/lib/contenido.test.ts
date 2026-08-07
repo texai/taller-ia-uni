@@ -397,11 +397,35 @@ test("recorrer numera los ítems de forma continua entre unidades", () => {
   );
 });
 
-test("minutosDe usa los de la unidad, o suma los de sus ítems", () => {
+test("minutosDe suma los de sus ítems, y nada más", () => {
   const { minutosDe } = mod;
   const items = [{ minutos: 10 }, { minutos: 5 }] as unknown as Item[];
-  assert.equal(minutosDe({ minutos: 60, items } as Unidad), 60);
   assert.equal(minutosDe({ items } as Unidad), 15);
+});
+
+test("declarar minutos en la unidad es un error de contenido", () => {
+  // No se ignora en silencio: una cifra escrita que el programa descarta es
+  // peor que una cifra ausente, porque se lee como si valiera. El tiempo se
+  // cuenta de abajo hacia arriba (CONVENTIONS.md §15).
+  const items = `
+      - id: i1
+        tipo: titulo
+        titulo: Hola
+        minutos: 10
+`;
+  conContenido(
+    {
+      "curso.yml": CURSO_MINIMO,
+      "sesiones/s1.yml": sesionCon(items, "    minutos: 60\n"),
+    },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(
+        () => cargarCurso(raiz),
+        /los minutos no se declaran en la unidad/,
+      );
+    },
+  );
 });
 
 // --------------------------------------------------------------------------

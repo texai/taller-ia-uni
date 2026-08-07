@@ -720,20 +720,26 @@ sí mismo —notas, preguntas que llegan, el reloj— no puede estar ahí.
   - Una sesión sin `horaInicio` u `horaFin` legibles muestra "—" en vez de un
     reloj inventado, igual que `horaDeRegreso`.
 
-- **Los minutos se declaraban dos veces y nadie lo había notado.** La unidad
-  lleva su presupuesto —el del reparto de las ocho horas— y cada ítem lleva su
-  estimación, y las dos cifras casi nunca cuadran porque los ítems se escriben
-  después. `minutosDe` en `contenido.ts` ya prefería el presupuesto de la
-  unidad; el reloj recién escrito sumaba ítems. Con eso, el mando y el índice
-  del docente habrían anunciado totales distintos para la misma sesión — y una
-  discrepancia de cinco minutos entre dos pantallas del mismo curso se lee como
-  un error en las dos.
-  - La función se movió a `navegacion.ts` como `minutosDeUnidad` (el mando la
-    necesita en el navegador, y `contenido.ts` importa `node:fs`) y
-    `contenido.ts` la reexporta con su nombre de siempre. Una sola regla.
-  - Dentro de la unidad en curso mandan los minutos de los ítems, acotados al
-    presupuesto; al llegar a su último ítem se devuelve el presupuesto exacto.
-    Así el reloj termina la sesión en el mismo número que el índice.
+- **Los minutos se declaraban dos veces, y eso resultó ser el error.** La
+  unidad llevaba su presupuesto —el del reparto de las ocho horas— y cada ítem
+  su estimación. `minutosDe` prefería el presupuesto; el reloj recién escrito
+  sumaba ítems. Dos pantallas del mismo curso a punto de anunciar totales
+  distintos.
+  - El primer arreglo fue reconciliar las dos cifras: presupuesto para las
+    unidades cerradas, ítems acotados dentro de la que está en curso. Funciona,
+    pero mantiene vivas dos fuentes para el mismo número.
+  - **El arreglo definitivo fue quitar una.** Los minutos los declara solo el
+    ítem y todo lo que lo contiene suma (`CONVENTIONS.md` §15). `Unidad` perdió
+    el campo, el cargador rechaza un YAML que lo declare, y los ocho `minutos:`
+    de nivel unidad salieron de los dos YAML — cuadraban exactamente con sus
+    ítems, así que no se perdió nada.
+  - `minutosDeUnidad`, `minutosDeSesion` y `minutosHasta` viven en
+    `navegacion.ts` (puras, sin `node:fs`, usables en el navegador) y
+    `contenido.ts` reexporta la primera como `minutosDe`.
+  - `scripts/validar-contenido.ts` vigilaba el descuadre entre las dos cifras.
+    Que hiciera falta un vigilante era la señal de que sobraba una: ahora
+    compara la suma de los ítems contra lo que dura la sesión según su
+    `horaInicio` y `horaFin`, que sí son dos cosas distintas.
 
 **Verificación**
 - `npm test` (61 pasan), `npm run typecheck`, `npm run lint` y `npm run build`

@@ -364,7 +364,15 @@ export interface Unidad {
   objetivos?: string[];
   /** Qué hay que saber de antes. */
   requisitos?: string[];
-  minutos?: number;
+  /**
+   * Los minutos NO se declaran acá, y por eso no hay campo.
+   *
+   * El tiempo se cuenta de abajo hacia arriba: lo declara el ítem —la unidad
+   * más pequeña, y la única que alguien puede estimar de verdad— y todo lo que
+   * lo contiene suma. Un presupuesto declarado en la unidad sería una segunda
+   * cifra sobre lo mismo, y dos cifras sobre lo mismo terminan siempre en
+   * desacuerdo. Ver `CONVENTIONS.md` §15.
+   */
   items: Item[];
 }
 

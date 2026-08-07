@@ -4,8 +4,10 @@
 # su título y sus minutos; el contenido de cada uno lo escriben los batches 15
 # a 18, uno por unidad.
 #
-# Los minutos salen del reparto del batch 3, cuadrado contra los cinco retos
-# que ya existen en `texai/taller-ia-uni-lab`. La suma da 240.
+# Los minutos van SOLO en cada ítem: la unidad suma los suyos y la sesión suma
+# las unidades, de abajo hacia arriba, para que ningún total pueda contradecir
+# a sus partes (CONVENTIONS.md §15). El reparto sale del batch 3, cuadrado
+# contra los cinco retos de `texai/taller-ia-uni-lab`. La suma da 240.
 
 id: sesion-1
 numero: 1
@@ -20,7 +22,6 @@ unidades:
   - id: s1-repaso
     tipo: repaso
     titulo: Dónde encaja esto, y la flota de 192 modelos
-    minutos: 60
     objetivos:
       - Situar el taller dentro del programa y ver qué se junta acá
       - Entender qué es una flota de modelos desplegados y quién la vigila hoy
@@ -140,7 +141,6 @@ unidades:
   - id: s1-reto-1
     tipo: reto
     titulo: Encontrar el problema a mano
-    minutos: 55
     objetivos:
       - Sentir que revisar 192 modelos a mano no escala
       - Descubrir que la métrica que estaban mirando no era la que hablaba de plata
@@ -245,7 +245,6 @@ unidades:
   - id: s1-reto-2
     tipo: reto
     titulo: La herramienta de percepción
-    minutos: 60
     objetivos:
       - Entender que la calidad de un agente se decide antes del LLM
       - Escribir una herramienta que agregue y no vuelque filas
@@ -358,7 +357,6 @@ unidades:
   - id: s1-reto-3
     tipo: reto
     titulo: El primer agente, sin arquitectura
-    minutos: 65
     objetivos:
       - Ver funcionar un ReAct pelado, y verlo divagar
       - Nombrar las cuatro patologías de un bucle sin arquitectura
