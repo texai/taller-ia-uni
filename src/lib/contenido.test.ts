@@ -501,6 +501,67 @@ test("una explicación anclada a un texto que no es el suyo falla", () => {
   );
 });
 
+test("un segmento que no está en el comando falla nombrándolo", () => {
+  const items = `
+      - id: cmd
+        tipo: comando-anotado
+        titulo: Un comando
+        comando: docker compose up -d
+        segmentos:
+          - texto: "--force"
+            explicacion: no existe acá
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /`--force` no aparece en el comando/);
+    },
+  );
+});
+
+test("un segmento que aparece dos veces falla como ambiguo", () => {
+  // Elegir uno en silencio deja la llave señalando la ocurrencia equivocada, y
+  // eso solo se nota proyectado.
+  const items = `
+      - id: cmd
+        tipo: comando-anotado
+        titulo: Un comando
+        comando: docker compose run --rm agente run
+        segmentos:
+          - texto: "run"
+            explicacion: ¿cuál de los dos?
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /aparece 2 veces .*ambiguo/s);
+    },
+  );
+});
+
+test("dos segmentos que se pisan fallan al cargar", () => {
+  const items = `
+      - id: cmd
+        tipo: comando-anotado
+        titulo: Un comando
+        comando: docker compose up -d
+        segmentos:
+          - texto: "compose up"
+            explicacion: uno
+          - texto: "up -d"
+            explicacion: y el otro se lo traga
+`;
+  conContenido(
+    { "curso.yml": CURSO_MINIMO, "sesiones/s1.yml": sesionCon(items) },
+    (raiz) => {
+      const { cargarCurso } = mod;
+      assert.throws(() => cargarCurso(raiz), /se solapan/);
+    },
+  );
+});
+
 // --------------------------------------------------------------------------
 // La invariante, sobre el contenido REAL del curso
 // --------------------------------------------------------------------------

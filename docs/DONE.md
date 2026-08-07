@@ -912,3 +912,69 @@ como el resto del cargador.
 - `npm test` (95 pasan), typecheck, lint y build limpios.
 - Comprobado en el navegador, con capturas del paso 0 y del paso 8 sobre el
   diagrama real del curso.
+
+---
+
+## Batch 14 — Comandos anotados parte por parte
+**2026-08-07**
+
+`docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run
+--verboso` son doce palabras que un alumno lee como un bloque opaco. Cada una
+está ahí por una razón, y esa razón es justamente lo que hay que enseñar.
+
+**Alcance** (todo hecho)
+- [ ] Tipo `comando-anotado`: el comando completo, más una lista de segmentos
+- [ ] Cada segmento con su explicación y qué otros valores admite
+- [ ] Modo enfocado, con una llave señalando la parte, al estilo ASCII
+- [ ] El resto queda visible pero atenuado: la parte **sin perder el todo**
+- [ ] Los segmentos se declaran por texto, no por índice de caracteres
+- [ ] Un segmento que no aparece falla en validación
+- [ ] Se apoya en los pasos del batch 6
+- [ ] Funciona con comandos de más de una línea
+
+---
+
+### Cómo quedó
+
+- **`src/lib/anotaciones.ts`, puro, 14 tests.** `ubicar` dice dónde cae un
+  texto —desplazamiento, línea y columna—, `trocear` parte el comando en
+  trozos marcando cuáles son segmentos, `llave` dibuja el señalador y
+  `solapamientos` detecta dos partes que se pisan.
+
+- **La llave se dibuja con caracteres, no con CSS.** El comando va en
+  monoespaciada, así que contar columnas alinea exacto — y una llave que no
+  queda debajo de su parte es peor que ninguna llave. De paso es como se anota
+  en un terminal, que es donde el alumno va a ver estos comandos.
+
+- **`trocear` devuelve los trozos en el orden del COMANDO**, no en el que están
+  escritos en el YAML. Quien escribe el material anota primero lo que le parece
+  más importante, y eso no tiene por qué ser la primera palabra.
+
+- **Un segmento inexistente se ignora al trocear**, no rompe. El cargador ya
+  falló por él con un mensaje mejor; que la lámina reviente además solo empeora
+  el momento en que se descubre.
+
+- El paso 0 lista todas las anotaciones —el mapa antes del recorrido, igual que
+  en el diagrama de secuencia— y del 1 en adelante queda solo la de la parte
+  enfocada, grande.
+
+### Dos cosas que se agregaron sobre lo planificado
+
+- **Segmentos que se solapan ahora fallan al cargar.** El alcance pedía
+  detectar el que no aparece y el ambiguo; faltaba el tercer caso, que es peor
+  porque no da ninguna señal: si un segmento se traga a otro, esa explicación
+  nunca llega a enfocarse y lo único que se ve es un paso que parece repetido.
+
+- **El comando se encoge para caber, en vez de desplazarse.** Noventa
+  caracteres no entran a 17px, y una barra horizontal es la peor salida
+  proyectando: hay que arrastrar con el ratón delante de la clase, y media
+  instrucción queda fuera justo cuando se explica la otra media. Envolver
+  rompería la alineación de la llave; encoger no, porque la llave usa la misma
+  tipografía y se encoge con él. El tamaño sale del largo de la línea más
+  larga, acotado entre 11 y 19 px.
+
+**Verificación**
+- `npm test` (112 pasan), typecheck, lint y build limpios.
+- Comprobado en el navegador sobre el comando real del curso, y **también con
+  una versión temporal del mismo comando partida en tres líneas con `\`**,
+  para ver que la llave cae bajo la línea que le toca y respeta la sangría.

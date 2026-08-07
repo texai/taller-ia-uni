@@ -41,6 +41,21 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   negativo, porque un número negativo es información y "23 h 30 min" es un
   error escondido.
 
+### Comandos anotados parte por parte (batch 14)
+- `src/lib/anotaciones.ts`, puro y con 14 tests: ubicar un segmento dentro del
+  comando, partir el comando en trozos, dibujar la llave y detectar
+  solapamientos.
+- El modo enfocado resalta una parte con una **llave debajo, dibujada con
+  caracteres** —el comando va en monoespaciada, así que contar columnas alinea
+  exacto— y deja el resto visible pero atenuado. Funciona con comandos de
+  varias líneas: la llave cae bajo la suya, con la sangría respetada.
+- **Segmentos que se solapan ahora fallan al cargar.** Era el caso que faltaba
+  y el peor de los tres: si uno se traga a otro, esa explicación nunca llega a
+  enfocarse y lo único que se ve es un paso que parece repetido.
+- El comando **se encoge para caber** en vez de desplazarse. Una barra
+  horizontal proyectando obliga a arrastrar con el ratón delante de la clase;
+  envolver rompería la alineación de la llave.
+
 ### Diagramas de secuencia recorribles (batch 13)
 - `src/lib/plantuml.ts`: lector del subconjunto de PlantUML que este curso usa
   —participantes, mensajes, notas y activaciones— con 16 tests. Lo que no

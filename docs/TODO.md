@@ -236,34 +236,6 @@ validan dictando. Lo escrito está en [`DONE.md`](DONE.md).
 
 ---
 
-## Batch 14 — Comandos anotados parte por parte
-
-`docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso`
-son doce palabras que un alumno lee como un bloque opaco. Cada una está ahí por
-una razón, y esa razón es justamente lo que hay que enseñar.
-
-**Alcance**
-- [ ] Tipo `comando-anotado`: el comando completo, más una lista de segmentos
-- [ ] Cada segmento con su explicación, y opcionalmente qué otros valores
-      admite
-- [ ] Modo enfocado: el segmento activo resaltado dentro del comando, con una
-      llave o flecha señalándolo, al estilo de las anotaciones en ASCII
-- [ ] El resto del comando queda visible pero atenuado: el punto es ver la
-      parte **sin perder el todo**
-- [ ] Los segmentos se declaran por texto, no por índice de caracteres — un
-      índice se rompe en cuanto alguien corrige un espacio
-- [ ] Un segmento que no aparece en el comando falla en validación
-- [ ] Se apoya en los `pasos` del batch 6
-- [ ] Funciona con comandos que ocupan más de una línea
-
-**Tests esperados**
-- [ ] Los segmentos se localizan correctamente dentro del comando
-- [ ] Un segmento inexistente falla nombrando el ítem y el texto que no encontró
-- [ ] Un segmento que aparece dos veces en el comando falla como ambiguo, en
-      vez de elegir uno en silencio
-
----
-
 ## Batch 15 — Contenido · S1·U1 `repaso` — Dónde encaja esto, y la flota de 192 modelos
 
 **Escribe una sola unidad.** No leas el resto del curso: la estructura

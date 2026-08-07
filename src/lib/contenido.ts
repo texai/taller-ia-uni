@@ -23,6 +23,7 @@ import {
   CAMPOS_PRIVADOS,
   ESPECIFICACION,
 } from "./especificacion";
+import { solapamientos } from "./anotaciones";
 import { leerSecuencia } from "./plantuml";
 import { FAMILIA, SOLO_DOCENTE, TIPOS } from "./tipos";
 import type { Curso, Item, Sesion, TipoItem, Unidad } from "./tipos";
@@ -238,6 +239,15 @@ function validacionesExtra(item: Item, donde: string, problemas: string[]) {
             `el comando; es ambiguo cuál anotar`,
         );
       }
+    }
+
+    // Dos segmentos que se pisan producen un recorrido en el que uno se traga
+    // al otro: esa explicación nunca llega a enfocarse, y la única señal es un
+    // paso que parece repetido.
+    for (const [a, b] of solapamientos(item.comando, item.segmentos ?? [])) {
+      problemas.push(
+        `${donde}: los segmentos \`${a}\` y \`${b}\` se solapan dentro del comando`,
+      );
     }
   }
 

@@ -253,6 +253,25 @@ fuente y admite un `texto` de ancla. Y los pasos se cuentan sobre los mensajes
 de la fuente, nunca sobre las explicaciones escritas: contarlos al revés haría
 que olvidar una explicación escondiera un mensaje entero del recorrido.
 
+### Un comando anotado se declara por texto, y se ve entero
+
+`comando-anotado` declara sus partes **por texto**, nunca por índice de
+caracteres: un índice se rompe en cuanto alguien corrige un espacio, y se rompe
+en silencio. El precio es que hay tres formas de equivocarse, y el cargador
+falla con las tres — un segmento que no aparece, uno que aparece dos veces (es
+ambiguo cuál anotar) y dos que se solapan (uno se traga al otro, y esa
+explicación nunca llega a enfocarse).
+
+Al enfocar una parte, **el resto del comando sigue en pantalla**, atenuado. El
+punto es ver la parte sin perder el todo; citar el trozo suelto en una viñeta
+es exactamente lo que no enseña dónde va.
+
+La llave que señala la parte se dibuja **con caracteres**, contando columnas,
+porque el comando va en monoespaciada y una llave desalineada es peor que
+ninguna. Por lo mismo el comando se encoge para caber en vez de desplazarse
+horizontalmente: envolverlo rompería la alineación, y una barra horizontal
+obliga a arrastrar con el ratón delante de la clase.
+
 ## 11 · No creamos tablas. Ninguna
 
 Supabase se usa para **dos cosas y nada más**: Auth, para que el docente entre
