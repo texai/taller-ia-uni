@@ -7,7 +7,7 @@ objetivos:
   - Llevarse una forma de mirar, no una arquitectura para copiar
   - Saber qué hacer con esto el lunes
 requisitos:
-  - Haber construido el agente, o al menos haberlo visto correr
+  - Haber construido el agente, o al menos haberlo visto ejecutar
 items:
   - id: s2-c-titulo
     tipo: titulo

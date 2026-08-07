@@ -66,7 +66,7 @@ items:
           cuesta más código que hacerlos funcionar.
       - texto: "retos/                  285 lineas"
         explicacion: >-
-          El verificador que van a correr cinco veces, y un archivo que nadie
+          El verificador que van a ejecutar cinco veces, y un archivo que nadie
           ha nombrado: `incidencias.md`, la bitácora de todo lo que se rompió
           construyendo esto. Es la unidad con la que cierra el domingo.
       - texto: ".env.example"
@@ -193,7 +193,7 @@ items:
       - texto: "reset          Boton de panico"
         explicacion: >-
           Borra los volúmenes, y con ellos los 192 modelos. Después hay que
-          volver a correr `seed`, que son unos minutos. `abajo` apaga sin
+          volver a ejecutar `seed`, que son unos minutos. `abajo` apaga sin
           borrar, que es lo que uno quiere casi siempre.
     notas: |
       **La lista sale del propio `Makefile`**: cada receta lleva su comentario

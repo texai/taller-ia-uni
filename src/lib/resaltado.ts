@@ -22,6 +22,7 @@
 import { codeToHtml } from "shiki";
 
 import type { Item, Sesion } from "./tipos";
+import { aPowerShell } from "./windows";
 
 /** Recorta `lineas: "12-34"` sobre el contenido. */
 export function recortar(codigo: string, lineas?: string): string {
@@ -175,12 +176,14 @@ async function resaltarItem(item: Item): Promise<Item> {
   }
 
   if (item.tipo === "terminal") {
+    // Lo escrito a mano manda; si no hay, se deriva. Un `comandoWindows` en el
+    // YAML solo existe donde la equivalencia **no** es mecánica, y ahí la
+    // traducción automática estorbaría.
+    const win = item.comandoWindows ?? aPowerShell(item.comando);
     return {
       ...item,
       htmlComando: await resaltar(item.comando, "bash"),
-      htmlWindows: item.comandoWindows
-        ? await resaltar(item.comandoWindows, "powershell")
-        : undefined,
+      htmlWindows: win ? await resaltar(win, "powershell") : undefined,
     };
   }
 
@@ -188,10 +191,14 @@ async function resaltarItem(item: Item): Promise<Item> {
     return {
       ...item,
       pasos: await Promise.all(
-        item.pasos.map(async (p) => ({
-          ...p,
-          html: await resaltar(p.comando, "bash"),
-        })),
+        item.pasos.map(async (p) => {
+          const win = aPowerShell(p.comando);
+          return {
+            ...p,
+            html: await resaltar(p.comando, "bash"),
+            htmlWindows: win ? await resaltar(win, "powershell") : undefined,
+          };
+        }),
       ),
     };
   }

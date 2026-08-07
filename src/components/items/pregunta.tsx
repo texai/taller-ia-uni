@@ -332,7 +332,16 @@ export function Pregunta({
           enunciado y el plazo que se le va a dar. Es el mismo momento que
           vive la clase, y por eso el botón dice «enviar» y no «empezar».
         */}
+        {/*
+          Sin `onAbrir` no se dibujan los controles. `onAbrir?.()` no falla
+          cuando falta: la llamada se evapora y el botón queda vivo por fuera y
+          muerto por dentro, que es como estuvo la pregunta improvisada — el
+          docente pulsaba «Enviar» delante de la clase y no pasaba nada, sin
+          error en ninguna consola. Un control que no puede hacer su trabajo no
+          se pinta.
+        */}
         {!suya ? (
+          onAbrir && (
           <div className="mt-12">
             <p
               className="text-xs font-semibold uppercase tracking-widest"
@@ -364,7 +373,7 @@ export function Pregunta({
 
             <button
               type="button"
-              onClick={() => onAbrir?.(segundos)}
+              onClick={() => onAbrir(segundos)}
               className="mt-8 rounded-lg border px-6 py-3 text-lg font-medium"
               style={{
                 borderColor: "var(--color-acento)",
@@ -374,6 +383,7 @@ export function Pregunta({
               Enviar pregunta a la clase
             </button>
           </div>
+          )
         ) : (
           <>
             {restan !== null && restan > 0 && (

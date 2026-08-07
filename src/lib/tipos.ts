@@ -95,7 +95,13 @@ export interface ItemTerminal extends ItemBase {
   tipo: "terminal";
   comando: string;
   salida?: string;
-  /** Windows escribe otra cosa. Si está, la interfaz ofrece las dos. */
+  /**
+   * Windows escribe otra cosa.
+   *
+   * Casi nunca hace falta: la traducción de un `make` se deriva sola (ver
+   * `lib/windows.ts`). Se escribe a mano cuando la equivalencia **no es
+   * mecánica** y el derivado saldría mal.
+   */
   comandoWindows?: string;
   /** Segundos que tarda de verdad. Evita el silencio incómodo en clase. */
   duracion?: number;
@@ -226,7 +232,17 @@ export interface ItemErrorComun extends ItemBase {
  */
 export interface ItemDemo extends ItemBase {
   tipo: "demo";
-  pasos: { comando: string; esperado?: string; html?: string }[];
+  /**
+   * `html` y `htmlWindows` no se escriben en el YAML: los rellena
+   * `resaltarSesion`. El segundo sale de traducir `comando` cuando es un
+   * `make` — ver `lib/windows.ts`.
+   */
+  pasos: {
+    comando: string;
+    esperado?: string;
+    html?: string;
+    htmlWindows?: string;
+  }[];
   observar?: string;
   respaldo?: string;
 }

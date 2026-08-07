@@ -247,7 +247,7 @@ items:
       histórico limpio desde la semilla. Las otras dos son idénticas.
 
       Y lo que importa es **lo que no está en ninguna de las dos**: no hay
-      `entrenar`. El mundo cambia, se vuelve a correr el job con los modelos
+      `entrenar`. El mundo cambia, se vuelve a ejecutar el job con los modelos
       viejos, y se mide. Los 192 artefactos son los mismos toda la tarde — que
       es literalmente lo que pasa en producción, donde reentrenar es semanal o
       mensual y el mundo cambia cuando le da la gana.
@@ -286,7 +286,7 @@ items:
     solucion:
       explicacion: |
         **Solo `seed`, y solo la primera vez.** Las otras dos regeneran el
-        histórico, vuelven a correr el job con los modelos que ya estaban, y
+        histórico, vuelven a ejecutar el job con los modelos que ya estaban, y
         miden. Ni una línea de `entrenar`.
 
         Eso no es una simplificación del laboratorio: es lo que pasa en
@@ -460,7 +460,7 @@ items:
 
   - id: s1-glosario-pipeline
     tipo: glosario
-    titulo: Y cuatro más, de lo que acaba de correr
+    titulo: Y cuatro más, de lo que acaba de ejecutarse
     entradilla: Salieron en la pantalla de recién y se van a usar el resto del día
     minutos: 3
     terminos: [pipeline, telemetría, días-modelo, percentil]
@@ -1135,7 +1135,7 @@ items:
       acá solo se había visto escondido dentro de `seed`, como la barra de
       progreso `2/4`.
 
-      Correrlo suelto sirve para dos cosas. Una, ver cuánto tarda de verdad: es
+      Ejecutarlo suelto sirve para dos cosas. Una, ver cuánto tarda de verdad: es
       el único paso lento del laboratorio, y explica por qué ninguna de las
       recetas de `romper` y `reparar` lo incluye. Y dos, ver el efecto en el
       registro — **la `version` sube de 1 a 2**, que es la lámina anterior
@@ -1353,7 +1353,7 @@ items:
       La pregunta que suele salir: «¿y esto no debería ser el registro de
       producción?». Sí, y en una cadena de verdad lo sería —con etapas, con
       promoción a producción, con quién aprobó qué. Acá el registro que manda
-      es `registro.json`, porque el job tiene que poder correr sin MLflow
+      es `registro.json`, porque el job tiene que poder ejecutar sin MLflow
       arriba. Es una simplificación consciente y vale la pena decirlo.
 
   - id: s1-glosario-herramientas

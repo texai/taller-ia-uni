@@ -162,7 +162,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 | `titulo` | Un corte de sección. Una idea sola | `destacado` |
 | `markdown` | Prosa renderizada | `contenido` \| `archivo` |
 | `codigo` | Fragmento con resaltado | `lenguaje`, `contenido` \| `archivo`, `lineas`, `resaltar`, `ruta` |
-| `terminal` | Un comando, con su salida | `comando`, `salida`, `comandoWindows`, `duracion` |
+| `terminal` | Un comando, con su salida | `comando`, `salida`, `comandoWindows` (rara vez: §19), `duracion` |
 | `diagrama` | Mermaid: secuencia, flujo, ER, componentes | `contenido` \| `archivo`, `clase` |
 | `modelo-datos` | Tablas con sus columnas | `tablas[]` |
 | `imagen` | Captura o figura | `archivo`, `pie`, `destacar` |
@@ -896,3 +896,51 @@ repetir el **estreno**.
 Y `nuevos` tiene que ser un subconjunto de lo que la lámina muestra. Marcar
 como novedad algo que no está en pantalla es una promesa que la lámina no
 cumple, y no se descubre hasta tenerla proyectada.
+
+---
+
+## 19 · Ningún comando deja fuera a Windows
+
+El laboratorio tiene dos puertas a lo mismo: `make` en macOS y Linux, y
+`taller.ps1` en PowerShell. Corren los mismos contenedores y dan el mismo
+resultado — `make arriba` y `.\taller.ps1 arriba` **son el mismo comando**.
+
+Windows no trae `make`, y montar WSL2 en clase cuesta la primera hora del
+taller. Así que **toda lámina que mande ejecutar un `make` enseña también su
+equivalente**, debajo y en pequeño.
+
+### No se escribe: se deriva
+
+Son más de cien apariciones. Escritas a mano se desincronizan el primer día
+que alguien renombre un `target`, y una línea de Windows que no existe es peor
+que ninguna: la sala la teclea y no corre. La forma es mecánica, así que la
+traducción vive en `src/lib/windows.ts` y en el YAML no se escribe nada.
+
+| Se escribe | Se proyecta además |
+|---|---|
+| `make arriba` | `.\taller.ps1 arriba` |
+| `make verificar ARGS="--reto 1"` | `.\taller.ps1 verificar --reto 1` |
+| `make romper ESCENARIO=feed_caido` | `.\taller.ps1 romper feed_caido` |
+| `make reparar && make romper ESCENARIO=x` | `.\taller.ps1 reparar; .\taller.ps1 romper x` |
+| `make ayuda` | `.\taller.ps1` |
+| `docker compose …`, `curl …` | nada: se teclean igual |
+
+`comandoWindows` en un `terminal` sigue existiendo, pero es la excepción: se
+escribe **solo** donde la equivalencia no es mecánica, y entonces manda sobre
+lo derivado.
+
+### Dónde aparece, y dónde no
+
+Aparece en los tres tipos que **piden ejecutar**: `lectura`, `demo` y
+`terminal`. No aparece en `salida-anotada` —ahí el comando es contexto, dice
+qué produjo lo que se ve, no qué teclear— ni en la prosa de `notas` u
+`observar`, donde una segunda forma cada vez que se nombra un comando es
+ruido.
+
+### El validador es la mitad de la regla
+
+`validar-contenido` **falla el build** si un `make` de esos tres campos no
+sabe traducirse, y si la lista de `windows.ts` promete comandos que
+`taller.ps1` no tiene. Sin eso la regla dura hasta el primer `target` nuevo:
+`plano` y `senales` llevaban semanas en el `Makefile` sin estar en el script, y
+en Windows contestaban «No conozco el comando».

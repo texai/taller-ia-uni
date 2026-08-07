@@ -7,7 +7,7 @@ import type {
   ItemPausaPreguntas,
   ItemReceso,
 } from "@/lib/tipos";
-import { ahora, comoCuentaRegresiva, horaDeRegreso } from "@/lib/reloj";
+import { comoCuentaRegresiva } from "@/lib/reloj";
 
 
 /**
@@ -43,32 +43,32 @@ function Interrupcion({
 }
 
 /**
- * Receso, con cuenta regresiva y la hora de regreso.
+ * Receso, con cuenta regresiva.
  *
- * El reloj arranca al montar y no al construir: la hora de regreso depende de
- * cuándo se llegó al ítem, no de cuándo se desplegó la aplicación. Por eso
- * también empieza vacío y se rellena tras la hidratación — pintar una hora en
- * el servidor y otra en el cliente es una discrepancia de hidratación, y la
- * hora del servidor no significa nada acá.
+ * El reloj arranca al montar y no al construir: lo que cuenta es cuándo se
+ * llegó al ítem, no cuándo se desplegó la aplicación. Por eso también empieza
+ * vacío y se rellena tras la hidratación — pintar un reloj en el servidor y
+ * otro en el cliente es una discrepancia de hidratación.
+ *
+ * **No dice a qué hora se vuelve, y es deliberado.** Lo decía, calculado sobre
+ * el reloj de la máquina que proyecta. En una clase en vivo esa hora no es la
+ * que va a pasar: el receso empieza cuando el docente lo abre, se alarga
+ * mientras alguien termina de preguntar, y la sala vuelve cuando vuelve. Un
+ * «volvemos a las 18:06» proyectado es una promesa que nadie hizo, y en cuanto
+ * se incumple —siempre se incumple— la pantalla pasa a ser la cosa del aula
+ * que miente. La cuenta regresiva dice lo mismo sin comprometer una hora:
+ * cuánto queda de los minutos que se anunciaron.
  */
 export function Receso({ item }: { item: ItemReceso }) {
   // Un solo estado, y lo escribe unicamente el intervalo. Poner el valor
-  // inicial en el cuerpo del efecto encadena renders, y ademas obligaria a
-  // calcular la hora dos veces: una al montar y otra en cada tic.
-  const [reloj, setReloj] = useState<{
-    regreso: string | null;
-    restante: number;
-  } | null>(null);
+  // inicial en el cuerpo del efecto encadena renders.
+  const [restante, setRestante] = useState<number | null>(null);
 
   useEffect(() => {
     const inicio = Date.now();
-    const regreso = horaDeRegreso(ahora(new Date()), item.minutos);
 
     const tic = () =>
-      setReloj({
-        regreso,
-        restante: item.minutos * 60 - (Date.now() - inicio) / 1000,
-      });
+      setRestante(item.minutos * 60 - (Date.now() - inicio) / 1000);
 
     // El primer tic va en el siguiente turno del bucle de eventos: durante ese
     // instante no se pinta reloj, que es preferible a pintar la hora del
@@ -82,8 +82,6 @@ export function Receso({ item }: { item: ItemReceso }) {
     };
   }, [item.minutos]);
 
-  const regreso = reloj?.regreso ?? null;
-  const restante = reloj?.restante ?? null;
   const terminado = restante !== null && restante <= 0;
 
   return (
@@ -91,18 +89,6 @@ export function Receso({ item }: { item: ItemReceso }) {
       <h2 className="mt-4 text-5xl font-semibold tracking-tight sm:text-7xl">
         {item.minutos} minutos
       </h2>
-
-      {regreso && (
-        <p className="mt-6 text-2xl sm:text-3xl">
-          Volvemos a las{" "}
-          <span
-            className="font-semibold tabular-nums"
-            style={{ color: "var(--color-aviso)" }}
-          >
-            {regreso}
-          </span>
-        </p>
-      )}
 
       {restante !== null && (
         <p

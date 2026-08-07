@@ -31,7 +31,7 @@ items:
         pista: Nada de ejemplos de juguete que cambian entre lámina y lámina
       - texto: El laboratorio viene completo. Se lee, se ejecuta, y se rompe a propósito
         pista: En cuatro horas no hay tiempo de depurar código; sí de entender qué hace cada pieza y por qué
-      - texto: En cada reto hay un rato para abrir archivos concretos y correr comandos
+      - texto: En cada reto hay un rato para abrir archivos concretos y ejecutar comandos
         pista: Con la lista en pantalla y el reloj a la vista. Nadie tiene que adivinar qué mirar
       - texto: Al final tienes un agente con arquitectura cognitiva vigilando 192 modelos
         pista: Percibe, recuerda, razona, se cuestiona a sí mismo, y actúa
@@ -54,7 +54,7 @@ items:
       laboratorio trae las herramientas y el grafo ya escritos, y es una
       decisión: en cuatro horas con veinte personas, un error de sintaxis de
       alguien se lleva el reto entero. Lo que sí da tiempo es a abrir el
-      archivo, entender por qué está así, correrlo y romperlo. Si alguien
+      archivo, entender por qué está así, ejecutarlo y romperlo. Si alguien
       llega esperando teclear cuatro horas seguidas, mejor corregirlo en el
       minuto tres que en el reto 2.
 

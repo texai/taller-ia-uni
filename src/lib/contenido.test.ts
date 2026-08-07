@@ -822,7 +822,7 @@ test("los minutos de un ítem no llegan a la carga del alumno", () => {
   );
 });
 
-test("el curso real no filtra minutos hacia el alumno, salvo las lecturas", () => {
+test("el curso real filtra los minutos, salvo donde son la instrucción", () => {
   const publico = mod.cursoParaAlumno(mod.cargarCurso());
   const items = publico.sesiones.flatMap((s) =>
     s.unidades.flatMap((u) => u.items),
@@ -830,13 +830,39 @@ test("el curso real no filtra minutos hacia el alumno, salvo las lecturas", () =
   const conMinutos = items.filter(
     (i) => (i as { minutos?: number }).minutos !== undefined,
   );
-  // La única excepción de §3, y hay que verla explícita: en una ventana de
-  // lectura los minutos son la instrucción a la clase, no el plan del docente.
-  assert.ok(conMinutos.length > 0, "las lecturas conservan sus minutos");
-  assert.deepEqual([...new Set(conMinutos.map((i) => i.tipo))], ["lectura"]);
+  // Las excepciones de §3, explícitas: en una ventana de lectura y en un
+  // receso los minutos son la instrucción a la clase, no el plan del docente.
+  assert.ok(conMinutos.length > 0);
+  assert.deepEqual([...new Set(conMinutos.map((i) => i.tipo))].sort(), [
+    "lectura",
+    "receso",
+  ]);
 
   // Y las horas de la sesión sí viajan: son el total que el alumno puede ver.
   assert.match(JSON.stringify(publico), /"horaInicio"/);
+});
+
+test("ningún receso llega al alumno sin su número", () => {
+  // Se coló en producción: la lámina de receso se dibuja **entera** a partir
+  // de `minutos` —el titular y la cuenta regresiva— así que sin él decía
+  // «minutos» sin cifra y contaba `NaN:NaN`.
+  //
+  // Y no se veía dictando, que es lo que lo hizo durar: la pantalla que el
+  // docente proyecta no pasa por este filtro. El fallo existía solo en el
+  // navegador de cada alumno.
+  const publico = mod.cursoParaAlumno(mod.cargarCurso());
+  const recesos = publico.sesiones
+    .flatMap((s) => s.unidades.flatMap((u) => u.items))
+    .filter((i) => i.tipo === "receso");
+
+  assert.ok(recesos.length > 0, "el curso ya no tiene recesos que comprobar");
+  for (const r of recesos) {
+    assert.equal(
+      typeof (r as { minutos?: number }).minutos,
+      "number",
+      `${r.id} llega sin minutos`,
+    );
+  }
 });
 
 // --------------------------------------------------------------------------

@@ -347,7 +347,7 @@ items:
 
   - id: s2-r5-comando
     tipo: comando-anotado
-    titulo: Correrlo con permiso para actuar
+    titulo: Ejecutarlo con permiso para actuar
     comando: docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso
     minutos: 2
     segmentos:

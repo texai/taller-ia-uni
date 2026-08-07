@@ -18,6 +18,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -87,4 +88,70 @@ test("y con el revelado sí la marca, que es el momento de enseñarla", () => {
 
   assert.ok(html.includes("✓"), "el revelado no marca la correcta");
   assert.ok(html.includes("Por qué"), "el revelado no trae la explicación");
+});
+
+/**
+ * El botón que no era un botón.
+ *
+ * Una pregunta lanzada al vuelo se dibujaba en la pantalla proyectada con su
+ * enunciado, sus alternativas y un «Enviar pregunta a la clase» que **no hacía
+ * nada al pulsarlo**: `Dictado` no le pasaba `onAbrir`, y la llamada opcional
+ * se evaporaba sin error. Las pauteadas sí lo traían, así que el fallo solo
+ * aparecía improvisando — delante de la sala, esperando una pregunta que nunca
+ * se abría.
+ *
+ * Dos defensas, y las dos se prueban: el control no se pinta si no puede
+ * funcionar, y las dos llamadas de `Dictado` pasan lo que hace falta.
+ */
+
+test("sin `onAbrir` no se pinta el control de enviar", () => {
+  const html = renderToStaticMarkup(
+    createElement(Pregunta, { item: PREGUNTA, modoDocente: true }),
+  );
+  assert.ok(
+    !html.includes("Enviar pregunta a la clase"),
+    "se dibuja un botón que no puede abrir la pregunta",
+  );
+  assert.ok(!html.includes("Tiempo para responder"));
+});
+
+test("con `onAbrir` sí, que es el caso normal", () => {
+  const html = renderToStaticMarkup(
+    createElement(Pregunta, {
+      item: PREGUNTA,
+      modoDocente: true,
+      onAbrir: () => {},
+    }),
+  );
+  assert.ok(html.includes("Enviar pregunta a la clase"));
+  assert.ok(html.includes("Tiempo para responder"));
+});
+
+test("las dos preguntas de `Dictado` se pueden abrir", () => {
+  // Se lee el archivo porque el fallo estaba en el cableado y no en el
+  // componente: montar `Dictado` acá pediría Supabase.
+  //
+  // Las dos rutas no se parecen. La pauteada se dibuja dentro de `Item`, que
+  // recibe un objeto `vivo`; la improvisada monta `<Pregunta>` directamente.
+  // Esa asimetría es justo la razón de que una llevara `onAbrir` y la otra no.
+  const fuente = readFileSync(
+    new URL("../Dictado.tsx", import.meta.url),
+    "utf8",
+  );
+
+  const directos = fuente.split(/<Pregunta\s/).slice(1);
+  assert.equal(directos.length, 1, "cambió el número de <Pregunta> directos");
+  for (const uso of directos) {
+    const props = uso.slice(0, uso.indexOf("/>"));
+    assert.match(props, /onAbrir/, "el <Pregunta> improvisado no puede abrirse");
+    assert.match(props, /apertura/, "el <Pregunta> improvisado no ve la apertura");
+  }
+
+  const vivos = fuente.split(/vivo=\{\{/).slice(1);
+  assert.equal(vivos.length, 1, "cambió el número de `vivo={{...}}`");
+  for (const uso of vivos) {
+    const props = uso.slice(0, uso.indexOf("}}"));
+    assert.match(props, /onAbrir/, "la pregunta pauteada no puede abrirse");
+    assert.match(props, /apertura/, "la pregunta pauteada no ve la apertura");
+  }
 });

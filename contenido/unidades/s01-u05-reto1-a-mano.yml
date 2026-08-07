@@ -286,7 +286,7 @@ items:
       Tres líneas, tres contenedores, en orden. Y lo que importa es **lo
       que NO está en la lista**: no hay `entrenar`.
 
-      El mundo cambió, se volvió a correr el job con los modelos viejos, y
+      El mundo cambió, se volvió a ejecutar el job con los modelos viejos, y
       se midió. Los 192 modelos siguen siendo exactamente los mismos de
       hace un minuto. Eso no es una simplificación del laboratorio: es
       literalmente lo que pasa en producción, donde el reentrenamiento es
@@ -515,7 +515,7 @@ items:
 
   - id: s1-r1-prediccion
     tipo: pregunta
-    titulo: Antes de correrlo, apuesten
+    titulo: Antes de ejecutarlo, apuesten
     pregunta: >-
       El segundo escenario es una caída lenta y pareja de la demanda en
       TODA la cadena, sin nada específico que buscar. ¿Qué señal se va a
@@ -817,4 +817,4 @@ items:
   - id: s1-receso
     tipo: receso
     titulo: Receso
-    minutos: 15
+    minutos: 20

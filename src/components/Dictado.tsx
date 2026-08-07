@@ -670,6 +670,15 @@ export function Dictado({
           style={{ background: "var(--lienzo)" }}
         >
           <div className="flex flex-1 flex-col justify-center py-12">
+            {/*
+              `apertura` y `onAbrir` van acá por lo mismo que en la lámina
+              pauteada, y faltaban: sin ellos la pregunta improvisada se
+              quedaba para siempre en su primer estado y el botón «Enviar
+              pregunta a la clase» **no hacía nada al pulsarlo** — `onAbrir` es
+              opcional, así que la llamada se evaporaba sin error. Se dibujaba
+              un botón que no era un botón, en la pantalla proyectada, delante
+              de la sala esperando la pregunta.
+            */}
             <Pregunta
               key={improvisada.id}
               item={improvisada}
@@ -679,6 +688,8 @@ export function Dictado({
               respondieron={cuantosRespondieron(improvisada.id)}
               onResponder={(v) => responder(improvisada.id, v)}
               onRevelar={() => revelar(improvisada.id)}
+              apertura={apertura}
+              onAbrir={(segundos) => abrir(improvisada.id, segundos)}
             />
           </div>
         </div>

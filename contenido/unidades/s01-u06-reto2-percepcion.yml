@@ -347,7 +347,7 @@ items:
       aumento de MAPE suena a mucho" no es una medición: es una intuición
       sobre una escala que nadie miró.
     arreglo: >-
-      Calibrar contra la flota SANA. Correr la comparación sobre un mundo
+      Calibrar contra la flota SANA. Ejecutar la comparación sobre un mundo
       intacto, ver cuánto se mueve solo, y poner el umbral por encima de
       eso. Es el único número que dice qué es normal acá.
     notas: |
@@ -558,7 +558,7 @@ items:
     notas: |
       Es la herramienta que produjo la tabla de umbrales de hace dos láminas, y
       decirlo cierra el círculo: los números no salieron de la intuición de
-      nadie, salieron de correr esto contra un mundo intacto.
+      nadie, salieron de ejecutar esto contra un mundo intacto.
 
       La misma llamada con `dimension="categoria"` o `"tienda"` es la que
       revela la **forma** de un problema. Si la degradación se concentra en una
@@ -632,7 +632,7 @@ items:
         pista: Si aparece en una sola, el problema es de la agregación
       - texto: La tienda muda se detecta como anomalía, no como deriva
     notas: |
-      El primero se comprueba solo: `make reparar` y correr. No hace falta
+      El primero se comprueba solo: `make reparar` y ejecutar. No hace falta
       preguntar si está bien.
 
   - id: s1-r2-taller

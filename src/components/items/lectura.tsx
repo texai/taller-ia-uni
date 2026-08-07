@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ItemLectura } from "@/lib/tipos";
 import { comoCuentaRegresiva } from "@/lib/reloj";
 import { enlaceALab } from "@/lib/sitio";
+import { aPowerShell } from "@/lib/windows";
 import { Prosa } from "./texto";
 
 /** Cuánto mueve cada pulsación de más/menos tiempo. */
@@ -221,19 +222,43 @@ export function Lectura({ item }: { item: ItemLectura }) {
                 Y corran esto
               </p>
               <ul className="mt-3 flex flex-col gap-2">
-                {comandos.map((c) => (
-                  <li
-                    key={c}
-                    className="rounded-lg border px-4 py-2.5 font-mono text-sm"
-                    style={{
-                      borderColor: "var(--borde)",
-                      background: "var(--lienzo-alto)",
-                    }}
-                  >
-                    <span style={{ color: "var(--tinta-suave)" }}>$ </span>
-                    {c}
-                  </li>
-                ))}
+                {comandos.map((c) => {
+                  // La ventana de lectura es donde la sala teclea de verdad,
+                  // cada uno en su máquina: si acá falta la línea de Windows,
+                  // media clase se queda mirando. Ver `lib/windows.ts`.
+                  const win = aPowerShell(c);
+                  return (
+                    <li
+                      key={c}
+                      className="rounded-lg border px-4 py-2.5 font-mono text-sm"
+                      style={{
+                        borderColor: "var(--borde)",
+                        background: "var(--lienzo-alto)",
+                      }}
+                    >
+                      <div>
+                        <span style={{ color: "var(--tinta-suave)" }}>$ </span>
+                        {c}
+                      </div>
+                      {win && (
+                        <div className="mt-1.5 flex items-baseline gap-2.5">
+                          <span
+                            className="shrink-0 font-sans text-[10px] font-semibold uppercase tracking-widest"
+                            style={{ color: "var(--tinta-suave)" }}
+                          >
+                            Windows
+                          </span>
+                          <span
+                            className="min-w-0"
+                            style={{ color: "var(--tinta-suave)" }}
+                          >
+                            {win}
+                          </span>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}

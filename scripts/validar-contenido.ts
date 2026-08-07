@@ -17,6 +17,7 @@ import {
   reprochesDeRitmo,
 } from "../src/lib/navegacion";
 import { aHora, aMinutos, minutosEntre } from "../src/lib/reloj";
+import { aPowerShell, CONOCIDOS, esComandoMake } from "../src/lib/windows";
 
 const VERDE = "\x1b[32m";
 const ROJO = "\x1b[31m";
@@ -150,6 +151,39 @@ try {
     console.log(`  ${AMARILLO}·${FIN} ${sinAbrir.join(", ")}`);
   }
 
+  // Ningún comando deja fuera a Windows.
+  //
+  // Todo `make` que el curso **mande ejecutar** tiene que saber traducirse a
+  // `taller.ps1`. Es error y no aviso por lo mismo que las rutas rotas: la
+  // consecuencia no es una lámina fea, es media sala que no puede teclear lo
+  // que está proyectado, y no se descubre hasta ese momento.
+  //
+  // Lo que caza en la práctica es un `target` nuevo del `Makefile` que nadie
+  // agregó al `.ps1` — que es exactamente lo que pasaba con `plano` y
+  // `senales`, los dos comandos del reto 3 y de la sonda.
+  const sinWindows: string[] = [];
+  for (const sesion of curso.sesiones) {
+    for (const { item } of recorrer(sesion)) {
+      const suyos: string[] = [];
+      if (item.tipo === "terminal") suyos.push(item.comando);
+      if (item.tipo === "lectura") suyos.push(...(item.comandos ?? []));
+      if (item.tipo === "demo") suyos.push(...item.pasos.map((p) => p.comando));
+      for (const c of suyos) {
+        if (!esComandoMake(c)) continue;
+        if (aPowerShell(c) === null) sinWindows.push(`${item.id}: ${c}`);
+      }
+    }
+  }
+  if (sinWindows.length) {
+    console.error(
+      `\n${ROJO}Comandos que en Windows no se pueden teclear${FIN}` +
+        `${GRIS} (falta el equivalente en taller.ps1, o la lista de ` +
+        `src/lib/windows.ts se quedó corta):${FIN}`,
+    );
+    for (const c of sinWindows) console.error(`  ${ROJO}·${FIN} ${c}`);
+    process.exit(1);
+  }
+
   // Las rutas al laboratorio.
   //
   // Es un error y no un aviso: una ventana de lectura que manda abrir un
@@ -197,6 +231,28 @@ try {
               `${ahora?.join(" · ") ?? "que el fragmento no es literal"})`,
           );
         }
+      }
+    }
+
+    // Y la lista de `src/lib/windows.ts` contra el `taller.ps1` de verdad.
+    //
+    // Esa lista es una copia a mano —el script vive en el otro repositorio y
+    // no se puede importar— y una copia a mano es una copia que se desfasa.
+    // Acá, cuando el laboratorio está al lado, deja de ser a ciegas.
+    const ps1 = join(LAB, "taller.ps1");
+    if (existsSync(ps1)) {
+      const texto = readFileSync(ps1, "utf8");
+      // Los `case` del `switch`: `'arriba' {` o `'arriba' = '…'` en la tabla
+      // de ayuda. Con cualquiera de las dos formas el comando existe.
+      const suyos = new Set(
+        [...texto.matchAll(/^\s*'([a-z-]+)'\s*[{=]/gm)].map((m) => m[1]!),
+      );
+      const inventados = [...CONOCIDOS].filter((c) => !suyos.has(c));
+      if (inventados.length) {
+        rotas.push(
+          `src/lib/windows.ts promete comandos que taller.ps1 no tiene: ` +
+            inventados.join(", "),
+        );
       }
     }
 

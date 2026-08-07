@@ -30,7 +30,7 @@ items:
         A["1 · el estado<br/>y los seis nodos"] --> B["2 · cablear el grafo<br/>y sus dos vueltas"]
         B --> C["3 · reflexion<br/>y revision"]
         C --> D["4 · memoria<br/>leer antes, escribir despues"]
-        D --> E["5 · correrlo contra<br/>los cuatro mundos"]
+        D --> E["5 · ejecutarlo contra<br/>los cuatro mundos"]
         E --> F{{"criterio: cuatro mundos,<br/>cuatro lecturas distintas"}}
     notas: |
       El reto más largo del taller, y el único con cinco pasos. Decir dónde
@@ -450,7 +450,7 @@ items:
   - id: s2-receso
     tipo: receso
     titulo: Receso
-    minutos: 15
+    minutos: 20
     notas: |
       A mitad de la unidad a propósito: la segunda parte es la difícil, y
       **90 min** seguidos de grafo no los aguanta nadie.
@@ -907,9 +907,9 @@ items:
       - texto: "feed_caido → anomalia, tienda:arequipa, y NO reentrenar"
         pista: Esta es la trampa. La flota se ve impecable.
 
-  - id: s2-r4-correr
+  - id: s2-r4-ejecutar
     tipo: demo
-    titulo: Correrlo contra los cuatro mundos
+    titulo: Ejecutarlo contra los cuatro mundos
     minutos: 2
     pasos:
       - comando: make romper ESCENARIO=feed_caido
@@ -927,7 +927,7 @@ items:
       completa, anotada.
     notas: |
       **4 min** alcanzan para uno o dos mundos, no para los cuatro.
-      Correr `feed_caido` en clase —que es el que enseña— y dejar los otros
+      Ejecutar `feed_caido` en clase —que es el que enseña— y dejar los otros
       tres para que los prueben ellos.
 
   - id: s2-r4-salida

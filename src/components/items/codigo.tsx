@@ -9,8 +9,39 @@ import type {
 import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
 import { comoTextoPlano, recortar } from "@/lib/resaltado";
 import { enlaceALab, rutaDeLab } from "@/lib/sitio";
+import { aPowerShell } from "@/lib/windows";
 import { Caja, Etiqueta, Marco } from "./marco";
 import { Prosa } from "./texto";
+
+/**
+ * La misma orden, para quien está en PowerShell.
+ *
+ * Va **debajo** y en pequeño, no al lado ni en una pestaña. Dos comandos con
+ * el mismo peso obligan a la sala a elegir antes de leer, y una pestaña
+ * esconde la mitad de la clase detrás de un clic que nadie da mientras el
+ * docente sigue hablando. Subordinada y siempre visible es lo que deja
+ * teclear sin preguntar.
+ *
+ * Solo aparece donde hay algo distinto que teclear: `docker compose` y `curl`
+ * se escriben igual en las dos, y repetirlos sería ruido (ver
+ * `lib/windows.ts`).
+ */
+function EnWindows({ html }: { html: string }) {
+  return (
+    <div className="mt-1.5 flex items-baseline gap-2.5">
+      <span
+        className="shrink-0 text-[10px] font-semibold uppercase tracking-widest"
+        style={{ color: "var(--tinta-suave)" }}
+      >
+        Windows
+      </span>
+      <div
+        className="min-w-0 overflow-x-auto text-[15px] opacity-75 [&_pre]:!bg-transparent"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </div>
+  );
+}
 
 /**
  * Un fragmento de código.
@@ -80,9 +111,8 @@ export function Codigo({ item }: { item: ItemCodigo }) {
 /** Un comando, con su salida si vale la pena mostrarla. */
 export function Terminal({ item }: { item: ItemTerminal }) {
   const html = item.htmlComando ?? comoTextoPlano(item.comando);
-  const htmlWin =
-    item.htmlWindows ??
-    (item.comandoWindows ? comoTextoPlano(item.comandoWindows) : null);
+  const win = item.comandoWindows ?? aPowerShell(item.comando);
+  const htmlWin = item.htmlWindows ?? (win ? comoTextoPlano(win) : null);
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
@@ -432,10 +462,17 @@ function partirEnLineas(trozos: Trozo[]): Trozo[][] {
  * anécdota en vez de en cinco minutos incómodos.
  */
 export function Demo({ item }: { item: ItemDemo }) {
-  const pasos = item.pasos.map((p) => ({
-    ...p,
-    html: p.html ?? comoTextoPlano(p.comando),
-  }));
+  const pasos = item.pasos.map((p) => {
+    // El resaltado llega ya hecho desde el servidor; acá solo se recalcula la
+    // traducción si no vino, que es el caso de las pruebas y del render sin
+    // Shiki.
+    const win = aPowerShell(p.comando);
+    return {
+      ...p,
+      html: p.html ?? comoTextoPlano(p.comando),
+      htmlWindows: p.htmlWindows ?? (win ? comoTextoPlano(win) : null),
+    };
+  });
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
@@ -448,6 +485,7 @@ export function Demo({ item }: { item: ItemDemo }) {
                 className="overflow-x-auto text-[15px] [&_pre]:!bg-transparent"
                 dangerouslySetInnerHTML={{ __html: paso.html }}
               />
+              {paso.htmlWindows && <EnWindows html={paso.htmlWindows} />}
               {paso.esperado && (
                 <pre
                   className="mt-1.5 overflow-x-auto whitespace-pre-wrap font-mono text-sm"

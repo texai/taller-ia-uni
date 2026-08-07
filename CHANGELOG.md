@@ -5,6 +5,65 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Ningún comando deja fuera a Windows
+- El laboratorio traía `taller.ps1` desde el principio y **el curso no lo
+  usaba**: de los 103 `make` del material, uno solo llevaba su equivalente
+  escrito a mano. Proyectar `make verificar ARGS="--reto 1"` deja fuera a media
+  sala — Windows no trae `make`, y montar WSL2 en clase cuesta la primera hora.
+- Ahora toda lámina que **manda ejecutar** un `make` enseña las dos formas:
+  `lectura`, `demo` y `terminal`. La de Windows va debajo y en pequeño, no al
+  lado ni tras una pestaña: dos comandos con el mismo peso obligan a elegir
+  antes de leer, y una pestaña esconde media clase detrás de un clic que nadie
+  da mientras el docente habla.
+- **No se escribe: se deriva.** Ciento tres líneas a mano se desincronizan el
+  primer día que alguien renombre un `target`, y una línea de Windows que no
+  existe es peor que ninguna — la sala la teclea y no corre.
+- Y había un agujero de verdad: **`taller.ps1` no tenía `plano` ni `senales`**,
+  que son el reto 3 y la sonda de la pauta. En Windows contestaban «No conozco
+  el comando». Agregados.
+- El validador cierra el círculo por los dos lados: falla el build si un `make`
+  del material no sabe traducirse, y si la lista de `windows.ts` promete
+  comandos que el `.ps1` no tiene. Comprobado rompiendo cada uno.
+- `docker compose` y `curl` no llevan segunda línea: se teclean igual. (`curl
+  … | head` **sí** rompe en PowerShell, pero eso es contenido, no traducción, y
+  va aparte.)
+
+### El botón de lanzar una pregunta improvisada no hacía nada
+- Una pregunta lanzada al vuelo se dibujaba en la pantalla proyectada con su
+  enunciado, sus alternativas y un «Enviar pregunta a la clase» **muerto**:
+  `Dictado` no le pasaba `onAbrir`, y `onAbrir?.()` se evapora sin error. Las
+  pauteadas sí lo traían, así que el fallo solo aparecía improvisando — delante
+  de la sala, esperando una pregunta que no se abría nunca.
+- Las dos rutas no se parecían y por eso divergieron: la pauteada se dibuja
+  dentro de `Item` con un objeto `vivo`, la improvisada monta `<Pregunta>`
+  directa. Ahora las dos llevan `apertura` y `onAbrir`, y hay prueba de que
+  **ninguna de las dos** se queda sin ellos.
+- Y la defensa de fondo: **un control que no puede hacer su trabajo ya no se
+  pinta**. Sin `onAbrir` no hay botón, en vez de un botón que miente.
+
+### El receso, sin hora de regreso y de veinte minutos
+- Decía «Volvemos a las 18:06», calculado sobre el reloj de la máquina que
+  proyecta. En una clase en vivo esa hora no es la que va a pasar: el receso
+  empieza cuando el docente lo abre y la sala vuelve cuando vuelve. Un anuncio
+  que se incumple —siempre se incumple— convierte la pantalla en la cosa del
+  aula que miente. Queda la cuenta regresiva, que dice lo mismo sin
+  comprometer una hora.
+- Los dos recesos pasan de 15 a **20 minutos**.
+- Y de paso, un fallo que solo existía **en el navegador de los alumnos**: el
+  filtro de §3 les quitaba `minutos`, y la lámina de receso se dibuja entera a
+  partir de ese número. En sus pantallas decía «minutos» sin cifra y contaba
+  `NaN:NaN`. No se veía dictando porque la pantalla proyectada no pasa por el
+  filtro. Ahora es una excepción declarada, como la ventana de lectura: ahí el
+  número es la instrucción a la clase, no el plan del docente.
+
+### Dos verbos y una entradilla
+- «Antes de correrlo» pasa a **«Antes de ejecutarlo»**, en las dos láminas que
+  lo decían.
+- La ventana de lectura del laboratorio ya no dice que «se mira por mirar»:
+  dice para qué sirve — reconocer la forma del repositorio antes de trabajar
+  dentro de él.
+
+
 ### El plazo de la pregunta ya cuenta lo mismo en las dos pantallas
 - Al enviar una pregunta, **la clase veía quince segundos menos** que el
   docente: el contador del alumno se cerraba mientras el del profesor todavía

@@ -3375,3 +3375,75 @@ insertar una unidad en medio cuesta un renombrado y ninguna prueba.
 - 167 pruebas, lint, typecheck y build limpios.
 - `npm run humo`: **342 pantallas abiertas, 0 con error**.
 - 234 ítems · 429 + 275 min · 13 unidades.
+
+---
+
+## Batch 51 — Ningún comando deja fuera a Windows
+
+El laboratorio trae `taller.ps1`, que hace lo mismo que el `Makefile` desde
+PowerShell. El curso no lo usa: de los 103 `make` que aparecen en el material,
+**uno solo** trae su equivalente escrito a mano. Quien dicta proyecta `make
+verificar ARGS="--reto 1"` y la mitad de la sala no puede teclearlo — Windows
+no trae `make`, y montar WSL2 en clase cuesta la primera hora.
+
+Escribir el equivalente a mano ciento tres veces no es la solución: se
+desincroniza el primer día. La traducción es mecánica —`make X ARGS="…"` es
+`.\taller.ps1 X …`— así que se deriva, y lo que se valida es que **exista**.
+
+Y hay un agujero de verdad: `taller.ps1` **no tiene `plano` ni `senales`**.
+Son el reto 3 y la sonda de la pauta, y en Windows contestan «No conozco el
+comando».
+
+**Alcance**
+- [x] `taller.ps1` (repo del lab): agregar `plano` y `senales`, en el `switch`
+      y en la tabla de ayuda. Sin esto la traducción produce comandos que
+      fallan.
+- [x] `src/lib/windows.ts`: `aPowerShell(comando)` → la línea equivalente, o
+      `null` si el comando no es `make`. Traduce `ARGS="…"`, `ESCENARIO=x`,
+      `SERVICIO=x` y las cadenas con `&&`.
+- [x] La lista de comandos conocidos se declara en un solo sitio y refleja
+      `taller.ps1`.
+- [x] `validar-contenido`: **error** si un `make X` de un campo de comando no
+      traduce. Es lo que hace que agregar un `target` al `Makefile` sin
+      agregarlo al `.ps1` rompa el build en vez de romper la clase.
+- [x] Renderizado en los tres tipos que **piden ejecutar**: `lectura`
+      (`comandos[]`), `demo` (`pasos[].comando`) y `terminal` (`comando`).
+- [x] `terminal.comandoWindows` sigue mandando cuando está escrito a mano: la
+      traducción solo rellena lo que falta.
+- [x] Resaltado PowerShell para las líneas nuevas, como ya lo tiene `terminal`.
+- [x] `CONVENTIONS.md`: la regla, y en qué tipos aplica.
+
+**Tests esperados**
+- [x] `make ayuda` → `.\taller.ps1` (sin argumento: es el comando por defecto)
+- [x] `make romper ESCENARIO=sesgo_silencioso` → `.\taller.ps1 romper sesgo_silencioso`
+- [x] `make verificar ARGS="--reto 1"` → `.\taller.ps1 verificar --reto 1`
+- [x] `make reparar && make romper ESCENARIO=feed_caido` → las dos, con `;`
+- [x] `docker compose …`, `curl …` y los comentarios → `null`, no se tocan
+- [x] Un `target` inventado → `null`, y el validador lo convierte en error
+
+**Fuera de alcance**
+- `salida-anotada.comando` y las menciones en prosa (`notas`, `observar`,
+  markdown). La regla es «cuando se **pide** ejecutar», y una salida anotada
+  dice qué produjo lo que se ve, no qué teclear. En prosa, una segunda forma
+  cada vez que se nombra un comando es ruido.
+- `comando-anotado`: sus ocho comandos son `docker compose` y `curl`, que en
+  PowerShell se teclean igual. No hay nada que traducir.
+- `curl … | head`, que en PowerShell **sí** rompe (`curl` es un alias de
+  `Invoke-WebRequest` y `head` no existe). Es un problema real y distinto, de
+  contenido y no de traducción. Va aparte.
+
+**Requisitos externos**
+- Ninguno.
+
+---
+
+**Cerrado.** `taller.ps1` gana `plano` y `senales`; la traducción vive en
+`src/lib/windows.ts` con diez pruebas; el validador falla el build por los dos
+lados —un `make` que no traduce, y una lista que promete comandos que el `.ps1`
+no tiene— y las dos comprobaciones se verificaron rompiéndolas a propósito. La
+regla queda escrita en `CONVENTIONS.md` §19.
+
+Lo que quedó **fuera a propósito** y sigue abierto: `curl … | head` rompe en
+PowerShell —`curl` es un alias de `Invoke-WebRequest` y `head` no existe— y eso
+es contenido, no traducción.
+

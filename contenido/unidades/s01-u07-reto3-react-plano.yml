@@ -28,14 +28,14 @@ items:
     minutos: 2
     contenido: |
       flowchart TD
-        A["1 · leer el bucle<br/>veinte lineas de ReAct"] --> B["2 · correrlo<br/>una vez"]
-        B --> C["3 · correrlo dos veces mas<br/>mismo mundo, temperatura 0"]
+        A["1 · leer el bucle<br/>veinte lineas de ReAct"] --> B["2 · ejecutarlo<br/>una vez"]
+        B --> C["3 · ejecutarlo dos veces mas<br/>mismo mundo, temperatura 0"]
         C --> D["4 · comparar las tres<br/>salidas lado a lado"]
         D --> E{{"lo que te llevas:<br/>cuatro patologias, y ninguna<br/>se arregla con un prompt"}}
     notas: |
       **El único reto del taller en el que no se escribe una línea.** Vale
-      la pena que se vea en el mapa: los cuatro pasos son leer, correr,
-      correr y comparar.
+      la pena que se vea en el mapa: los cuatro pasos son leer, ejecutar,
+      ejecutar y comparar.
 
       El paso 3 parece un desperdicio de tiempo hasta que la clase ve las
       tres salidas juntas. Con temperatura 0 y el mismo mundo, deberían ser
@@ -213,7 +213,7 @@ items:
       hace falta para comparar contra las dos ejecuciones siguientes.
     notas: |
       **8 min**, y es la única ventana del sábado sobre el agente.
-      Alcanza para leer un archivo de ochenta líneas y correrlo una vez.
+      Alcanza para leer un archivo de ochenta líneas y ejecutarlo una vez.
 
       La pregunta que rinde mientras se pasea por los puestos: «¿en qué línea
       de este archivo decidirías que ya tiene suficiente evidencia?». No hay
@@ -245,9 +245,9 @@ items:
       llevó la lección equivocada: ReAct es un piso muy alto por muy poco
       código. El problema aparece cuando hay que confiar en él sin mirar.
 
-  - id: s1-r3-correr
+  - id: s1-r3-ejecutar
     tipo: comando-anotado
-    titulo: Correrlo
+    titulo: Ejecutarlo
     entradilla: make plano ARGS="--verboso", abierto. Y acá el atajo esconde algo que importa.
     comando: docker compose run --rm agente python -m agente plano --verboso
     minutos: 3
@@ -295,7 +295,7 @@ items:
 
   - id: s1-r3-prediccion
     tipo: pregunta
-    titulo: Antes de correrlo tres veces
+    titulo: Antes de ejecutarlo tres veces
     pregunta: >-
       Mismo mundo, misma pregunta, temperatura 0, tres ejecuciones seguidas.
       ¿Cuánto se van a parecer los tres diagnósticos?
@@ -344,7 +344,7 @@ items:
             problema está una capa más arriba.
         - opcion: No se puede saber
           razon: >-
-            Se puede, y es exactamente lo que vamos a hacer: correrlo tres
+            Se puede, y es exactamente lo que vamos a hacer: ejecutarlo tres
             veces y mirar. Doce minutos.
 
   - id: s1-r3-tres-veces

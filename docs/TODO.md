@@ -72,6 +72,7 @@ Referencias:
 | 48 | Cada reto cierra su círculo | ✅ Completado |
 | 49 | La pauta de comandos del docente | ✅ Completado |
 | 50 | El laboratorio, entero y de una vez | ✅ Completado |
+| 51 | Ningún comando deja fuera a Windows | ✅ Completado |
 
 Estados: ⬜ Pendiente · 🔵 En curso · ✅ Completado · ⬛ No usado
 
