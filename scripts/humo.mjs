@@ -17,7 +17,41 @@
  *     npm run humo -- 3150    # contra otro puerto
  */
 
-import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
+/**
+ * Playwright no es dependencia del proyecto y se busca en tres sitios.
+ *
+ * No está en `package.json` a propósito: son ~300 MB de navegadores que no
+ * hacen falta para dictar, ni para construir, ni en Vercel. Quien corre esta
+ * comprobación lo instala aparte, y puede tenerlo instalado global —que es lo
+ * normal en la máquina de uno— o local en `node_modules`.
+ *
+ * La ruta de `/opt` es la del contenedor donde se escribió el script. Estaba
+ * cableada como único camino, y eso hacía que el `humo` solo corriera ahí:
+ * en cualquier otra máquina moría con `ERR_MODULE_NOT_FOUND` señalando una
+ * carpeta que no existe, que es la peor manera de decir «instala Playwright».
+ */
+async function traerChromium() {
+  const rutas = [
+    "playwright",
+    process.env.PLAYWRIGHT_MODULO,
+    "/opt/node22/lib/node_modules/playwright/index.mjs",
+  ].filter(Boolean);
+  for (const ruta of rutas) {
+    try {
+      return (await import(ruta)).chromium;
+    } catch (e) {
+      if (e?.code !== "ERR_MODULE_NOT_FOUND") throw e;
+    }
+  }
+  console.error(
+    "No encuentro Playwright. Instálalo con:\n" +
+      "\n    npm i -D playwright && npx playwright install chromium\n" +
+      "\no apunta PLAYWRIGHT_MODULO a un Playwright ya instalado.",
+  );
+  process.exit(2);
+}
+
+const chromium = await traerChromium();
 
 const PUERTO = process.argv[2] ?? "3000";
 const BASE = `http://localhost:${PUERTO}`;

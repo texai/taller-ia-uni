@@ -17,6 +17,11 @@ vive en [`docs/DONE.md`](docs/DONE.md).
   Donde no lo significaba se usó la palabra correcta: «el pipe» para el pipe de
   shell, «cableado» para «todo lo demás de este dibujo es fontanería».
   `pipeline` entra al glosario.
+- **`npm run humo` corre fuera del contenedor.** Traía cableada la ruta de
+  Playwright de la máquina donde se escribió, así que en cualquier otra moría
+  con `ERR_MODULE_NOT_FOUND` apuntando a una carpeta inexistente. Ahora lo
+  busca local, luego en `PLAYWRIGHT_MODULO`, luego ahí; y si no está, dice el
+  comando para instalarlo. El README explica las cuatro comprobaciones.
 - **`supabase/politicas.sql` es idempotente.** Corría una sola vez: la segunda
   moría con `42710 … already exists`, y moría en la primera política, dejando
   aplicado a medias lo que hubiera. Los siete `drop policy if exists` subieron

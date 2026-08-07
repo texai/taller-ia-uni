@@ -2516,8 +2516,25 @@ bajo «si hay que volver a empezar» subieron al principio del archivo y se
 descomentaron. Un archivo de configuración que hay que leer hasta el final para
 poder correrlo dos veces no es un archivo de configuración.
 
+**El `humo` solo corría en una máquina.** Salió al probar todo esto fuera del
+contenedor: `scripts/humo.mjs` importaba Playwright por la ruta absoluta de la
+máquina donde se escribió, así que en cualquier otra moría con
+`ERR_MODULE_NOT_FOUND` señalando una carpeta que no existe — la peor manera
+posible de decir «instala Playwright». Ahora lo busca en tres sitios (local,
+`PLAYWRIGHT_MODULO`, la ruta del contenedor) y, si no está en ninguno, imprime
+el comando de instalación. Playwright sigue **sin** ser dependencia del
+proyecto: son ~300 MB de navegadores que no hacen falta ni para dictar ni para
+desplegar en Vercel.
+
+El README ganó las dos secciones que faltaban y que este día dejó claro que
+hacían falta: las cuatro comprobaciones —con por qué `humo` se corre antes de
+dictar y no después— y cómo se aplican las políticas de Supabase, con las siete
+que tienen que salir al final.
+
 **Verificación**
 - `validar-contenido`: 12 unidades, 170 ítems, 240 + 240 min, sin avisos.
 - `npm test` (145 pasan), lint y build limpios.
-- `npm run humo`: 231 pantallas, 0 con error.
+- `npm run humo`: 231 pantallas, 0 con error, por el camino de respaldo.
+- Las siete políticas aplicadas en el proyecto real, comprobadas con
+  `pg_policies`.
 - 36 términos en el glosario.

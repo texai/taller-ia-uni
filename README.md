@@ -72,6 +72,39 @@ npm run dev
 
 Variables de entorno en `.env.example`.
 
+### Las comprobaciones
+
+```bash
+npm test          # unitarias, sin navegador
+npm run lint
+npm run build     # incluye la validación del contenido
+npm run humo      # abre TODOS los ítems en un navegador de verdad
+```
+
+`humo` es la única que ve los fallos de hidratación —una lámina que se
+construye bien, responde 200 y sale en blanco al llegar al navegador— y por eso
+se corre **antes de dictar**, contra el servidor levantado (`npm start`, o
+`npm run dev`). Tarda un par de minutos.
+
+Necesita Playwright, que **no** es dependencia del proyecto: son unos 300 MB de
+navegadores que no hacen falta para dictar ni para desplegar. La primera vez, en
+la máquina de uno:
+
+```bash
+npm i -D playwright && npx playwright install chromium
+```
+
+Lo busca instalado localmente, luego en `PLAYWRIGHT_MODULO` si esa variable
+apunta a uno ya instalado, y si no lo encuentra lo dice con el comando de
+arriba en vez de reventar.
+
+### Las políticas de Supabase
+
+[`supabase/politicas.sql`](supabase/politicas.sql) se corre entero en el editor
+SQL del proyecto, las veces que haga falta: se borra a sí mismo antes de crear.
+Al terminar tienen que salir **siete** políticas con la consulta que está al
+final del archivo. Sin ellas los canales no dejan pasar nada.
+
 Supabase se usa para dos cosas y nada más: **Auth**, para que el docente entre
 por `/profe`, y **Realtime**, para el canal en vivo. **No hay tablas.** Todo el
 material del curso vive versionado en `contenido/`, y lo que ocurre durante una
