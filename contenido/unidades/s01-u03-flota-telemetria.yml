@@ -224,7 +224,7 @@ items:
     entradilla: seed lo crea, romper lo degrada, reparar lo devuelve. Tal cual están en el Makefile.
     lenguaje: makefile
     ruta: Makefile
-    numeros: ["53-55", "87-95"]
+    numeros: ["53-55", "93-101"]
     resaltar: ["5", "10"]
     minutos: 4
     contenido: |2
@@ -1079,6 +1079,7 @@ items:
     entradilla: Una línea. Lo demás de esta lámina es el registro, que es lo que se vuelve caro.
     lenguaje: python
     ruta: plataforma/entrenar.py
+    numeros: ["121-123", "140-148"]
     resaltar: ["4"]
     minutos: 4
     contenido: |2
@@ -1244,6 +1245,7 @@ items:
     entradilla: Ocho parámetros y una métrica, por modelo. Esto es MLflow, el del Módulo 2.
     lenguaje: python
     ruta: plataforma/entrenar.py
+    numeros: ["124-138"]
     minutos: 3
     contenido: |2
               if mlflow is not None:
@@ -1284,6 +1286,7 @@ items:
     entradilla: El servicio de MLflow en docker-compose.yml. Es la primera vez que abrimos este archivo.
     lenguaje: yaml
     ruta: docker-compose.yml
+    numeros: ["62-72"]
     resaltar: ["4", "5"]
     minutos: 3
     contenido: |2
@@ -1413,6 +1416,7 @@ items:
     entradilla: Cargar los 192 y predecir. Tres líneas, y una de ellas es la que abre los artefactos.
     lenguaje: python
     ruta: plataforma/pronosticar.py
+    numeros: ["62-69"]
     resaltar: ["4-6"]
     minutos: 3
     contenido: |2

@@ -3231,3 +3231,74 @@ así que se arregló allá.
 - `validar-contenido` sin errores y sin reproches de ritmo.
 - `npm run humo`: **326 pantallas abiertas, 0 con error**.
 - 167 pruebas, lint, typecheck y build limpios. 225 ítems · 397 + 275 min.
+
+---
+
+## Batch 49 — La pauta de comandos del docente
+**2026-08-07**
+
+Antes de repasar el contenido a mano, el docente necesitaba **probar que todos
+los comandos del curso funcionan**, uno por uno, mirando la evidencia de cada
+uno antes de pasar al siguiente. Estaban repartidos entre 225 ítems y no
+existía ninguna lista.
+
+**Alcance** (todo hecho)
+- [x] `make senales` en el laboratorio, la única sonda que había que construir
+- [x] `docs/pauta-de-comandos.sh`, con guardián, sondas y estado del mundo
+- [x] `npm run validar-pauta`, con sus dos comprobaciones, dentro de `build`
+- [x] `make senales` promovido a contenido, en el reto 1
+
+### La sonda que no existía
+
+El catálogo del batch documentaba `curl :8000/v1/resumen` como sonda del
+comando más importante del taller. **Ese endpoint no existe**: la API tiene
+`/salud` —que devuelve justo lo que no cambia—, `/v1/metricas` con filas
+crudas, y ninguna ruta agregada. Quien calcula los cuatro números es
+`resumen_flota`, y llamarla a mano es una línea impresentable.
+
+De ahí `make senales`, un subcomando de trece líneas sobre esa herramienta.
+Medido: mundo sano **13.8 / +0.8 / 8 de 192 / 6,532 unidades**; tras
+`sesgo_silencioso`, **14.5 / +4.7 / 16 / 36,981**; y `reparar` devuelve el
+valor exacto, que es lo que lo hace útil como sonda.
+
+Y se promovió a contenido, que era la excepción prevista: una sonda entra en el
+curso cuando enseña algo por sí sola. *Mira los cuatro números, rompe el mundo,
+míralos otra vez* **es** el reto 1 en dos comandos. Entra sin lámina nueva —en
+los `comandos` de la ventana de lectura y en los pasos de la segunda demo—
+porque el reto ya tiene sus láminas.
+
+### La pauta
+
+25 bloques en orden de escaleta, del `make arriba` de preparación al
+`docker builder prune` del final. Cada uno declara **de qué estado del mundo
+parte y en cuál lo deja**, que es el riesgo real de un ensayo largo: dos
+`romper` sin `reparar` en medio se apilan, y `make verificar` deja el mundo en
+`feed_caido`.
+
+Y **no se ejecuta entera**: el guardián aborta con un mensaje que dice por qué.
+Comprobado corriéndola.
+
+### Las dos comprobaciones, probadas rompiéndolas
+
+`validar-pauta` no se creyó a sí mismo. Se comprobó cambiando `--reto 3` por
+`--reto 9` —cazó el comando huérfano nombrando su ítem— y borrando un
+`# sonda · antes` de un bloque que corre `make romper` —cazó el bloque—. Está
+en `npm run build`, así que una pauta desincronizada no llega a producción.
+
+### Y el validador de contenido cobró de rebote
+
+Añadir `senales:` al Makefile corrió las líneas de `romper` y `reparar`, y dos
+fragmentos del curso los citan con sus números. `validar-contenido` lo dijo
+antes de que nadie lo proyectara; `npm run numerar -- -w` los recalculó.
+
+---
+
+**Verificación**
+- Los treinta y un comandos del curso, cubiertos: `✓ La pauta cubre los 31
+  comandos del curso, en 25 bloques`.
+- `make senales` **corrido de verdad** sobre el mundo sano y sobre el
+  degradado, y contra el reparado.
+- Las dos comprobaciones de `validar-pauta`, probadas rompiéndolas a propósito.
+- El guardián, probado ejecutando la pauta entera.
+- `npm run humo`: **326 pantallas abiertas, 0 con error**.
+- 167 pruebas, lint, typecheck y build limpios.

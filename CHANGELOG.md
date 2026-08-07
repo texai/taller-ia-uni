@@ -5,6 +5,24 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La pauta de comandos del docente
+- **`docs/pauta-de-comandos.sh`**: los 31 comandos del curso en 25 bloques, en
+  orden de escaleta, para ensayar el taller entero antes de dictarlo. **No se
+  ejecuta entera** — un guardián aborta con el motivo.
+- Cada comando va **envuelto en sondas**: el estado antes, el comando, y **la
+  misma línea** después. Porque casi ninguno crea archivos — reescriben un CSV
+  y mueven un número dentro, y `ls` da idéntico las dos veces.
+- **`make senales`** en el laboratorio: los cuatro números de la flota. Era la
+  única sonda que había que construir, porque la API no tiene ninguna ruta
+  agregada. Antes de romper 13.8 / +0.8 / 8; después 14.5 / **+4.7** / 16.
+- Y sube a contenido, en el reto 1: *mira los cuatro números, rompe el mundo,
+  míralos otra vez* es el reto entero en dos comandos.
+- Cada bloque declara **de qué estado del mundo parte y en cuál lo deja**. Dos
+  `romper` sin `reparar` se apilan, y `make verificar` deja `feed_caido`.
+- **`npm run validar-pauta`**, dentro de `build`: falla si el contenido gana un
+  comando que la pauta no tiene, y si un comando que mueve el mundo no tiene
+  sonda a los dos lados.
+
 ### Cada reto cierra su círculo
 - **El reto 1 tiene criterios**, y el cuarto es el que cambia la media hora:
   *«y en el segundo, no encontraste nada — eso no es fallar el reto, es

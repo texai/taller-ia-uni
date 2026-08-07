@@ -1,0 +1,481 @@
+#!/usr/bin/env zsh
+# =============================================================================
+#  PAUTA DE COMANDOS · Taller 02 de caso aplicado de IA en industria
+#  Ernesto Anaya · UNI · sábado 8 y domingo 9 de agosto de 2026
+# =============================================================================
+#
+#  ESTO NO SE EJECUTA ENTERO.
+#
+#  Es una pauta, no un script: se lee de arriba abajo y se copia un bloque a la
+#  vez. Correrlo de una sentada levantaría y rompería el mundo cinco veces
+#  seguidas y no probaría nada — la mitad del valor está en mirar la salida
+#  entre comando y comando.
+#
+#  Sirve para dos cosas:
+#    · ENSAYAR, antes del sábado, que los treinta comandos del curso funcionan.
+#    · DICTAR, con la escaleta al lado, sabiendo qué viene y qué tiene que salir.
+#
+#  ---------------------------------------------------------------------------
+#  CÓMO SE LEE
+#
+#  Cada bloque tiene tres clases de línea y se distinguen a la vista:
+#
+#      # sonda · antes        el estado ANTES, para poder comparar
+#      <comando>              lo que el curso dicta
+#      # sonda · despues      LA MISMA LÍNEA, para ver qué cambió
+#
+#  La sonda de después es la misma de antes, literal. Si una lista archivos y
+#  la otra cuenta filas, hay dos hechos y ninguna comparación.
+#
+#  Y la evidencia casi nunca es que aparezcan archivos. La mayoría de estos
+#  comandos no crean nada: reescriben un CSV que ya estaba y mueven un número
+#  dentro. `ls` no distingue un `metricas.csv` sano de uno degradado — mismo
+#  nombre, mismas 17,472 filas, 301 bytes de diferencia sobre 1.7 MB. Por eso
+#  la sonda del taller es `make senales`, que imprime lo que sí cambia.
+#
+#  Marcas:      ⏱  tarda       🔑 gasta llave de LLM
+#  Referencias: el `id` del ítem del curso del que sale cada comando.
+#
+#  ---------------------------------------------------------------------------
+#  DESDE DÓNDE SE CORRE
+#
+#      cd ~/ruta/a/taller-ia-uni-lab
+#
+#  En Windows no hay `make`: los atajos son `.\taller.ps1 <tarea>`, con el
+#  mismo nombre detrás. Van anotados al lado donde cambian.
+#
+#  ---------------------------------------------------------------------------
+#  ESTADO DEL MUNDO
+#
+#  Es el riesgo real de un ensayo largo. Dos `make romper` sin `make reparar`
+#  en medio se apilan y las lecturas dejan de significar nada, y
+#  `make verificar` DEJA EL MUNDO EN feed_caido. Cada bloque dice de qué estado
+#  parte y en cuál lo deja. Respetar ese orden es la mitad de que el ensayo
+#  valga.
+# =============================================================================
+
+if [[ "${ZSH_EVAL_CONTEXT:-}" == *:file:* || "${BASH_SOURCE[0]:-}" == "$0" ]]; then
+  cat >&2 <<'FIN'
+
+  Esta pauta no se ejecuta entera.
+
+  Levantaría y rompería el mundo cinco veces seguidas sin que nadie mire nada,
+  que es exactamente lo contrario de para lo que existe. Ábrela y copia un
+  bloque a la vez, mirando la salida entre uno y otro.
+
+FIN
+  exit 1
+fi
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  ANTES DE LA CLASE · no se teclea delante de la sala
+# ═════════════════════════════════════════════════════════════════════════════
+
+# ── preparación · construir e instalar ───────────────────────────────────────
+# estado de partida: nada, o un `make reset` recién hecho
+
+# sonda · antes
+docker compose ps
+#   → vacío
+
+make arriba                                        # ⏱ ~5 min la primera vez
+
+# sonda · despues
+docker compose ps
+#   → plataforma y ui, en pie. El agente NO aparece: no es un servicio
+
+# deja el mundo: entorno levantado, sin datos
+
+
+# ── preparación · el mundo, desde cero ───────────────────────────────────────
+# id: s1-caso-estado · s1-seed
+# estado de partida: entorno levantado, `/datos` vacío
+
+# sonda · antes
+docker compose run --rm plataforma sh -c 'ls /datos; ls /datos/modelos 2>/dev/null | wc -l'
+#   → vacío · 0
+
+make seed                                          # ⏱ ~30 s
+
+# sonda · despues
+docker compose run --rm plataforma sh -c 'ls /datos; ls /datos/modelos 2>/dev/null | wc -l'
+#   → ventas.csv modelos predicciones.csv metricas.csv ejecuciones_job.csv · 193
+#     (192 modelos + registro.json)
+
+# deja el mundo: SANO
+
+
+# ── preparación · los cinco retos, comprobados ───────────────────────────────
+# ⏱ ~2 min · 🔑 con --con-llm
+# estado de partida: mundo SANO
+
+# sonda · antes
+make senales
+#   → 13.8 / +0.8 / 8 de 192
+
+make verificar
+#   → "Las 24 comprobaciones pasaron."
+
+# sonda · despues                     ⚠️ verificar DEJA EL MUNDO EN feed_caido
+make reparar && make senales
+#   → 13.8 / +0.8 / 8 de 192 · si sale distinto, el `reparar` no corrió
+
+# deja el mundo: SANO
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  SESIÓN 1 · sábado, 15:00
+# ═════════════════════════════════════════════════════════════════════════════
+
+# ── S1·U3 · levantar el entorno, desenvuelto ─────────────────────────────────
+# id: s1-levantar · el `make arriba` sin el atajo
+# estado de partida: mundo sano
+
+# sonda · antes
+docker compose ps
+
+docker compose up -d plataforma ui
+
+# sonda · despues
+docker compose ps
+#   → los mismos dos. Si ya estaban, no pasa nada: `up` es idempotente
+
+
+# ── S1·U3 · poblar el mundo, desenvuelto ─────────────────────────────────────
+# id: s1-seed · en clase NO se corre; se lee. Acá se ensaya que funciona
+# ⏱ ~30 s
+
+docker compose run --rm plataforma python -m plataforma seed
+#   → 1/4 … 4/4 · "192 modelos con 17,472 dias-modelo de telemetria."
+
+
+# ── S1·U3 · los 192 en disco ─────────────────────────────────────────────────
+# id: s1-artefactos
+
+docker compose run --rm plataforma ls -la /datos/modelos | head
+#   → dem-abarrotes-arequipa.joblib … 1025 bytes cada uno
+docker compose run --rm plataforma sh -c 'ls /datos/modelos | wc -l; du -sh /datos/modelos'
+#   → 193 · 856K
+
+
+# ── S1·U3 · el mundo por dentro ──────────────────────────────────────────────
+# id: s1-mundo-crudo
+
+docker compose run --rm plataforma head -1 /datos/ventas.csv
+#   → fecha,tienda,region,categoria,unidades,unidades_demandadas,en_promocion,quiebre_stock
+docker compose run --rm plataforma sh -c "awk -F, '\$8+0==1' /datos/ventas.csv | head -3"
+#   → tres días con quiebre: `unidades` por debajo de `unidades_demandadas`
+#     Es la señal que el domingo a las 12:30 explica el agujero de la política
+
+
+# ── S1·U3 · reentrenar, y solo eso ───────────────────────────────────────────
+# id: s1-entrenar · el único comando del taller que reescribe un modelo
+# ⏱ ~30 s
+
+# sonda · antes
+docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/modelos/registro.json | head -1"
+#   → "version": 1
+
+docker compose run --rm plataforma python -m plataforma entrenar
+
+# sonda · despues
+docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/modelos/registro.json | head -1"
+#   → "version": 2   ← lo único que cambió. La fecha sigue en 2026-05-08
+
+
+# ── S1·U3 · MLflow ───────────────────────────────────────────────────────────
+# id: s1-mlflow-ui
+
+# sonda · antes
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5000
+#   → 000 (no está levantado: tiene `profiles`, y `make arriba` no lo toca)
+
+make mlflow                                        # ⏱ ~20 s la primera vez
+
+# sonda · despues
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5000
+#   → 200 · abrir y añadir la columna mape_validacion en «Columns»
+
+
+# ── S1·U3 · la interfaz ──────────────────────────────────────────────────────
+# id: s1-demo-ui
+
+# sonda · antes
+docker compose ps
+
+docker compose up -d ui
+
+# sonda · despues
+docker compose ps
+#   → ui en pie. Y de los `run --rm` que llevamos, ni rastro: esa es la lámina
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8501
+#   → 200
+
+
+# ── S1·U4 · ¿estoy en condiciones de empezar? ────────────────────────────────
+# id: s1-r1-listo · estado de partida: mundo SANO
+
+make verificar ARGS="--reto 1"
+#   → ✓ 192 modelos en produccion · ✓ hay telemetria suficiente
+
+
+# ── S1·U4 · la telemetría por la API ─────────────────────────────────────────
+# id: s1-r1-api · s1-r1-lectura · se evidencian solos
+
+curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"
+#   → 912 filas de JSON. Con `| head` para no llenar la terminal
+curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head
+#   → una fila por modelo y día, con unidades además de porcentajes
+
+
+# ── S1·U4 · romper el mundo · campaña promocional ────────────────────────────
+# id: s1-r1-romper · s1-r1-lectura
+# estado de partida: mundo SANO
+
+# sonda · antes
+make senales
+#   → 13.8 / +0.8 / 8 de 192 · 6,532 unidades de más
+
+docker compose run --rm plataforma python -m plataforma escenario --nombre campana_promocional
+make romper ESCENARIO=campana_promocional          # ⏱ ~40 s
+#   (la primera línea es la etapa 1 de las tres de `romper`; el atajo las corre
+#    las tres. En el ensayo vale correr solo el atajo)
+
+# sonda · despues
+make senales
+#   → 16.0 / −10.6 · bebidas se despega sola. El sesgo se fue HACIA ABAJO
+
+# deja el mundo: campana_promocional
+
+
+# ── S1·U4 · repararlo y romperlo otra vez · el silencioso ────────────────────
+# id: s1-r1-silencioso · ES EL COMANDO MÁS IMPORTANTE DEL TALLER
+# estado de partida: campana_promocional
+
+# sonda · antes
+make senales
+#   → 16.0 / −10.6
+
+make reparar && make romper ESCENARIO=sesgo_silencioso    # ⏱ ~80 s
+# Windows:  .\taller.ps1 reparar; .\taller.ps1 romper sesgo_silencioso
+
+# sonda · despues
+make senales
+#   → 14.5 / +4.7 / 16 de 192 · 36,981 unidades de más
+#
+#     ACÁ ESTÁ EL TALLER. El MAPE se movió siete décimas —ruido— y el sesgo se
+#     multiplicó por seis. Un `ls` sobre metricas.csv da idéntico antes y
+#     después: mismo nombre, 17,472 filas, 301 bytes de diferencia.
+
+# deja el mundo: sesgo_silencioso
+
+
+# ── S1·U5 · el reto 2, comprobado ────────────────────────────────────────────
+# id: s1-r2-taller · s1-r2-verificar
+# estado de partida: sesgo_silencioso
+
+# sonda · antes
+make senales
+#   → 14.5 / +4.7
+
+make reparar                                       # ⏱ ~40 s
+
+# sonda · despues
+make senales
+#   → 13.8 / +0.8 / 8 · vuelve EXACTO. Por eso sirve de sonda
+
+make verificar ARGS="--reto 2"                     # ⏱ ~60 s
+docker compose run --rm agente python -m retos.verificar --reto 2
+#   → las 8 comprobaciones, y al final "Regenerando los datos limpios"
+
+# sonda · despues                     ⚠️ el verificador deja el mundo roto
+make reparar && make senales
+#   → 13.8 / +0.8
+
+# deja el mundo: SANO
+
+
+# ── S1·U6 · ¿responde mi llave? ──────────────────────────────────────────────
+# id: s1-r3-llave · 🔑
+
+make verificar ARGS="--reto 3"
+#   → ✓ 7 herramientas expuestas · ✓ <proveedor> responde y sabe llamar herramientas
+#   → sin llave: "· proveedor mock: no se comprueba el razonamiento"
+
+
+# ── S1·U6 · el bucle plano, tres veces ───────────────────────────────────────
+# id: s1-r3-lectura · s1-r3-correr · 🔑 tres ejecuciones · ⏱ ~1 min cada una
+# estado de partida: mundo SANO
+
+make romper ESCENARIO=sesgo_silencioso             # ⏱ ~40 s
+
+# sonda · antes
+make memoria
+#   → [] o lo que hubiera de antes
+
+make plano ARGS="--verboso"
+docker compose run --rm agente python -m agente plano --verboso
+make plano ARGS="--verboso"
+#   → tres diagnósticos. Comparar qué herramientas llamó cada uno, en qué
+#     orden, y qué severidad puso. Con temperatura 0, y no coinciden
+
+# sonda · despues
+make memoria
+#   → SIN CAMBIOS. El bucle plano NO tiene memoria: esa es media unidad
+
+# deja el mundo: sesgo_silencioso
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  SESIÓN 2 · domingo, 09:00
+# ═════════════════════════════════════════════════════════════════════════════
+
+# ── S2 · arranque ────────────────────────────────────────────────────────────
+# estado de partida: lo que quedara del sábado, roto o apagado
+
+# sonda · antes
+docker compose ps
+#   → probablemente vacío, si se apagó anoche
+
+make arriba
+make reparar                                       # ⏱ ~40 s
+
+# sonda · despues
+docker compose ps
+make senales
+#   → plataforma y ui en pie · 13.8 / +0.8 / 8
+#     Los 192 modelos siguen siendo los de ayer: nadie los ha tocado
+
+# deja el mundo: SANO
+
+
+# ── S2·U4 · el grafo, contra el mundo sano ───────────────────────────────────
+# id: s2-r4-lectura · s2-r4-salida · 🔑 · ⏱ ~1 min
+
+# sonda · antes
+make memoria
+#   → lo que dejó ayer el reto 3
+
+make agente ARGS="--verboso"
+docker compose run --rm agente python -m agente run --verboso
+#   → percepción, diagnóstico, REFLEXIÓN con su veredicto, recomendaciones
+
+# sonda · despues
+make memoria
+#   → una entrada más. El grafo SÍ escribe: esa es la diferencia con ayer
+docker compose run --rm agente python -m agente memoria
+#   → lo mismo, sin el atajo
+
+
+# ── S2·U4 · la trampa · la tienda muda ───────────────────────────────────────
+# id: s2-r4-correr · 🔑 · estado de partida: mundo SANO
+
+# sonda · antes
+docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'
+#   → 17473 (17,472 + cabecera)
+
+make romper ESCENARIO=feed_caido                   # ⏱ ~40 s
+
+# sonda · despues
+docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'
+#   → 17305 · faltan 168 filas: 8 categorías × 21 días de arequipa
+make senales
+#   → 13.7 / +0.8 · LA FLOTA SE VE SANA. Ese es el punto del escenario
+
+make agente ARGS="--verboso"
+#   → tipo: anomalia · alcance: tienda:arequipa · y NO recomienda reentrenar
+
+# deja el mundo: feed_caido
+
+
+# ── S2·U5 · sobre deriva, reentrena ──────────────────────────────────────────
+# id: s2-r5-lectura · s2-r5-comando · 🔑 · ⏱ ~2 min
+# estado de partida: feed_caido
+
+make reparar && make romper ESCENARIO=sesgo_silencioso     # ⏱ ~80 s
+
+# sonda · antes
+curl -s http://localhost:8000/v1/reentrenamientos
+#   → [] o lo que hubiera
+docker compose run --rm plataforma sh -c 'ls -l --time-style=+%H:%M /datos/modelos | head -3'
+#   → la hora de los artefactos
+
+make actuar ARGS="--verboso"
+docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso
+#   → ✓ reentrenar → categoria:bebidas · 24 modelos
+
+# sonda · despues
+curl -s http://localhost:8000/v1/reentrenamientos
+#   → una entrada nueva, con su motivo escrito por el agente
+docker compose run --rm plataforma sh -c 'ls -l --time-style=+%H:%M /datos/modelos | head -3'
+#   → 24 artefactos con hora nueva. Los otros 168, intactos
+
+# deja el mundo: sesgo_silencioso, con bebidas reentrenada
+
+
+# ── S2·U5 · sobre anomalía, se frena ─────────────────────────────────────────
+# id: s2-r5-lectura · 🔑 · EL CRITERIO DE ACEPTACIÓN DEL RETO
+
+make reparar && make romper ESCENARIO=feed_caido    # ⏱ ~80 s
+
+# sonda · antes
+curl -s http://localhost:8000/v1/reentrenamientos | tail -c 200
+#   → la última entrada, la de bebidas
+
+make actuar ARGS="--verboso"
+#   → ✗ no se ejecutó: el diagnostico es una anomalia de datos: reentrenar
+#     aqui contaminaria modelos sanos
+#     ESE TEXTO NO LO ESCRIBIÓ EL LLM. Está en agente/accion.py, literal
+
+# sonda · despues
+curl -s http://localhost:8000/v1/reentrenamientos | tail -c 200
+#   → LA MISMA. Ninguna entrada nueva: el agente quería actuar y no pudo
+
+# deja el mundo: feed_caido
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  DESPUÉS DE LA CLASE
+# ═════════════════════════════════════════════════════════════════════════════
+
+# ── cerrar sin perder nada ───────────────────────────────────────────────────
+
+make reparar                                       # dejarlo sano para la próxima
+
+# sonda · antes
+docker compose ps
+
+make abajo
+#   → apaga. SIN la -v: los volúmenes se quedan
+
+# sonda · despues
+docker compose ps
+#   → vacío
+docker compose run --rm plataforma ls /datos
+#   → los cinco archivos siguen ahí. Esa es la diferencia con `make reset`
+
+
+# ── el botón de pánico · solo si hace falta ──────────────────────────────────
+# ⚠️ borra los 192 modelos. Después hay que volver a hacer `make seed`
+
+# sonda · antes
+docker compose run --rm plataforma ls /datos
+
+# make reset
+
+# sonda · despues
+# docker compose run --rm plataforma ls /datos
+#   → vacío
+
+
+# ── espacio en disco, si la construcción falla ───────────────────────────────
+
+# sonda · antes
+docker system df
+
+docker builder prune -f
+
+# sonda · despues
+docker system df
+#   → la caché de construcción, liberada. Dejar 12 GB libres antes de empezar

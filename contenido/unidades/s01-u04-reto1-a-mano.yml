@@ -274,7 +274,7 @@ items:
     entradilla: La receta de make romper, tal cual está en el Makefile
     lenguaje: makefile
     ruta: Makefile
-    numeros: ["87-90"]
+    numeros: ["93-96"]
     minutos: 2
     resaltar: ["2-4"]
     contenido: |2
@@ -337,11 +337,15 @@ items:
           `sesgo_pct`: es la resta de la lámina de hace media hora, en código.
     comandos:
       - 'curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head'
+      - make senales
       - make romper ESCENARIO=campana_promocional
+      - make senales
     observar: >-
       Que el JSON trae `unidades_reales` y `unidades_pronosticadas` además de
       los porcentajes. Guardarlo: en el reto 2 esa aparente redundancia es la
-      diferencia entre agregar bien y agregar mal.
+      diferencia entre agregar bien y agregar mal. Y **el mismo `make senales`
+      antes y después de romper**: es la lectura de la flota en cuatro números,
+      y la diferencia entre las dos salidas es lo que el escenario hizo.
     notas: |
       **10 min** con la API abierta antes de tocar pandas. Quien entiende
       los filtros hace el ejercicio en cinco minutos; quien no, pelea con el
@@ -593,6 +597,8 @@ items:
     entradilla: El mismo código, sin cambiar una línea. Diez minutos.
     minutos: 4
     pasos:
+      - comando: make senales
+        esperado: "MAPE 14.5 · sesgo +4.7 · 16 de 192. Compararlo con el de antes de romper"
       - comando: "# el mismo groupby de hace un rato, tal cual"
       - comando: "# y por región, y por tienda"
     observar: >-
