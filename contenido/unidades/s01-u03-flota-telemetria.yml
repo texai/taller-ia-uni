@@ -102,24 +102,39 @@ items:
     titulo: La solución completa, por componentes
     clase: componentes
     minutos: 3
+    entradilla: Cada caja gris es un comando. Las cuatro de la izquierda son `make seed`.
     contenido: |
       flowchart LR
-        V[("ventas.csv<br/>el mundo")] --> E["entrenar<br/>192 Ridge"]
-        E --> M[("modelos/<br/>192 artefactos")]
-        E -.->|registro| ML[("MLflow")]
-        M --> J["job batch<br/>de madrugada"]
-        V --> J
-        J --> P[("predicciones.csv")]
-        P -->|cruce contra lo vendido| TM[("metricas.csv<br/>la telemetria")]
-        V --> TM
-        TM --> API["API :8000"]
-        API --> UI["interfaz :8501"]
-        API -.->|mañana| AG["el agente"]
+        subgraph SEED["make seed · encadena estos cuatro"]
+          direction LR
+          D["make datos"] --> V[("ventas.csv<br/>el mundo")]
+          V --> E["make entrenar<br/>192 Ridge"]
+          E --> M[("modelos/<br/>192 artefactos")]
+          E -.->|registro| ML[("MLflow")]
+          M --> J["make pronosticar<br/>el job de madrugada"]
+          V --> J
+          J --> P[("predicciones.csv")]
+          P --> C["make metricas<br/>cruce contra lo vendido"]
+          V --> C
+          C --> TM[("metricas.csv<br/>la telemetria")]
+        end
+        ML -.->|make mlflow| MLUI["registro :5000"]
+        TM --> API["API :8000<br/>make arriba"]
+        API --> UI["interfaz :8501<br/>make ui"]
+        API -.->|mañana| AG["el agente<br/>make agente"]
     notas: |
       El mapa al que se vuelve toda la clase. **Anclarlo bien.**
       - **Señalar dos cosas**: `ventas.csv` entra DOS veces (entrenar y medir —
         un modelo no se degrada en abstracto sino contra la realidad), y **el
         agente todavía no existe**. Lo construimos nosotros.
+      - **Cada caja gris es un comando que van a teclear hoy.** Decirlo: el
+        dibujo no es una arquitectura de referencia, es la lista de comandos de
+        la tarde.
+      - **El recuadro es `make seed`**: los cuatro de una vez. Por eso la
+        primera vez tarda y las siguientes no.
+      - **Lo que NO tiene comando propio**: `romper` y `reparar` son
+        `pronosticar` + `metricas` otra vez, con el mundo cambiado. Ninguno
+        vuelve a pasar por `entrenar`.
 
   - id: s1-glosario-docker
     tipo: glosario

@@ -5,6 +5,22 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El diagrama de arquitectura lleva los comandos
+- Era un mapa de componentes: decía qué había, no **cómo se hace**. Cada caja
+  de proceso lleva ahora el comando que la ejecuta —`make datos`,
+  `make entrenar`, `make pronosticar`, `make metricas`, `make arriba`,
+  `make ui`, `make agente`— así que el dibujo deja de ser una arquitectura de
+  referencia y pasa a ser **la lista de comandos de la tarde**.
+- Los cuatro de la izquierda van dentro de un recuadro rotulado **`make seed`**:
+  se ve de un vistazo qué encadena, y por qué la primera vez tarda.
+- MLflow entra en el recuadro, junto a `make entrenar`, que es donde se
+  escribe. Fuera queda el servidor `:5000` con su propio `make mlflow` — que
+  es la distinción que la lámina no hacía.
+- Y las notas señalan lo que **no** tiene comando propio: `romper` y `reparar`
+  son `pronosticar` + `metricas` otra vez con el mundo cambiado, y ninguno
+  vuelve a pasar por `entrenar`.
+
+
 ### El mapa de la transición ya no enseña minutos
 - Las dos pantallas **no coincidían**: el docente veía «128 min» en una unidad
   donde el alumno veía «33». No era un fallo del cálculo — era el filtro de §3
