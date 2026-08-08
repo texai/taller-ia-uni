@@ -9,7 +9,6 @@ import type {
   ItemTransicion,
   Sesion,
 } from "@/lib/tipos";
-import { minutosDeUnidad } from "@/lib/navegacion";
 import { Caja, Etiqueta, Marco } from "./marco";
 
 /** Un corte de sección. Una idea sola, centrada, sin nada que la acompañe. */
@@ -206,6 +205,19 @@ export function Transicion({
         </Caja>
       </div>
 
+      {/*
+        El mapa NO lleva minutos, y esto no es una omisión.
+
+        Los llevaba, y no cuadraban entre las dos pantallas: el docente veía
+        «128 min» donde el alumno veía «33». No era un fallo del cálculo —era
+        el filtro de §3 haciendo su trabajo. Al alumno se le quita `minutos` de
+        cada ítem salvo en lecturas y recesos, así que la suma de su unidad es
+        **parcial**, y una suma parcial con pinta de total es peor que ninguna.
+
+        Podría mostrarse solo en modo docente, como en la barra lateral. No se
+        hace porque esta lámina **se proyecta**: el reparto del tiempo es del
+        docente, y una sala que lee «128 min» sabe cuánto se va retrasando.
+      */}
       {sesion && indice >= 0 && (
         <ol className="mt-8 space-y-2">
           {sesion.unidades.map((u, i) => {
@@ -239,14 +251,6 @@ export function Transicion({
                 <span className={estado === "actual" ? "font-medium" : ""}>
                   {u.titulo}
                 </span>
-                {minutosDeUnidad(u) > 0 && (
-                  <span
-                    className="ml-auto text-sm tabular-nums"
-                    style={{ color: "var(--tinta-suave)" }}
-                  >
-                    {minutosDeUnidad(u)} min
-                  </span>
-                )}
               </li>
             );
           })}

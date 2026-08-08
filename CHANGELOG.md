@@ -5,6 +5,23 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El mapa de la transición ya no enseña minutos
+- Las dos pantallas **no coincidían**: el docente veía «128 min» en una unidad
+  donde el alumno veía «33». No era un fallo del cálculo — era el filtro de §3
+  funcionando: al alumno se le quita `minutos` de cada ítem salvo en lecturas
+  y recesos, así que la suma de su unidad es **parcial**, y una suma parcial
+  con pinta de total es peor que ninguna.
+- Se podría enseñar solo en modo docente, como en la barra lateral. **No se
+  hace, porque esta lámina se proyecta**: el reparto del tiempo es del
+  docente, y una sala que lee «128 min» sabe cuánto se va retrasando.
+- Los otros sitios se quedan como estaban: el receso y la ventana de lectura
+  sí dicen su tiempo, porque ahí el número **es la instrucción a la clase**.
+
+### La lista de archivos del caso, en bullets
+- Cinco archivos con sus cifras venían como un párrafo corrido. Proyectados,
+  eso obliga a leerlo entero para encontrar el que interesa.
+
+
 ### La barra lateral deja ver la estructura del curso
 - Eran **236 líneas casi iguales**: el árbol del curso estaba ahí y no se veía.
   Ahora cada unidad es un bloque —cabecera separada del cuerpo, y sus ítems
