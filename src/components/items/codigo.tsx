@@ -10,7 +10,7 @@ import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
 import { comoTextoPlano, recortar } from "@/lib/resaltado";
 import { enlaceALab, rutaDeLab } from "@/lib/sitio";
 import { aPowerShell } from "@/lib/windows";
-import { Caja, Etiqueta, Marco } from "./marco";
+import { Caja, Etiqueta, Marco, QuéSignifica } from "./marco";
 import { Prosa } from "./texto";
 
 /**
@@ -163,6 +163,7 @@ export function Terminal({ item }: { item: ItemTerminal }) {
           Tarda unos {item.duracion} segundos.
         </p>
       )}
+      {item.significa && <QuéSignifica significa={item.significa} />}
     </Marco>
   );
 }
@@ -263,6 +264,7 @@ export function ComandoAnotado({
           ))}
         </dl>
       )}
+      {item.significa && <QuéSignifica significa={item.significa} />}
     </Marco>
   );
 }
@@ -431,6 +433,7 @@ export function SalidaAnotada({
           una.
         </p>
       )}
+      {item.significa && <QuéSignifica significa={item.significa} />}
     </Marco>
   );
 }
@@ -516,6 +519,7 @@ export function Demo({ item }: { item: ItemDemo }) {
           </Prosa>
         </div>
       )}
+      {item.significa && <QuéSignifica significa={item.significa} />}
     </Marco>
   );
 }

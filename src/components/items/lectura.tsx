@@ -6,6 +6,7 @@ import type { ItemLectura } from "@/lib/tipos";
 import { comoCuentaRegresiva } from "@/lib/reloj";
 import { enlaceALab } from "@/lib/sitio";
 import { aPowerShell } from "@/lib/windows";
+import { QuéSignifica } from "./marco";
 import { Prosa } from "./texto";
 
 /** Cuánto mueve cada pulsación de más/menos tiempo. */
@@ -274,6 +275,7 @@ export function Lectura({ item }: { item: ItemLectura }) {
               <Prosa className="mt-2" tamano="lg">
                 {item.observar}
               </Prosa>
+              {item.significa && <QuéSignifica significa={item.significa} />}
             </div>
           )}
         </div>

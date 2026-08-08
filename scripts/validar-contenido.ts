@@ -228,6 +228,54 @@ try {
     }
   }
 
+  // Todo comando significativo de un reto dice qué significa.
+  //
+  // Un comando produce números, y los números no dicen nada solos: «sesgo
+  // +4.7%» es una cifra hasta que alguien la traduce a 36,981 unidades de más
+  // en almacén. La sala hace esa traducción sola las primeras veces y deja de
+  // hacerla a media tarde, que es justo cuando llegan los retos que importan.
+  //
+  // **Error y no aviso**, y solo dentro de las unidades de tipo `reto`: es
+  // donde la sala ejecuta y mira un resultado. Fuera de ahí un comando puede
+  // ser contexto y no exige lectura.
+  //
+  // «Significativo» es el que mueve el mundo o hace pensar al agente. Los de
+  // comprobación —`verificar`, `ayuda`, `senales`— quedan fuera: su resultado
+  // es que salió verde.
+  const COMPROBACION = /verificar|ayuda|senales|estado|logs/;
+  const sinSignificado: string[] = [];
+  for (const sesion of curso.sesiones) {
+    for (const unidad of sesion.unidades) {
+      if (unidad.tipo !== "reto") continue;
+      for (const item of unidad.items) {
+        const i = item as unknown as Record<string, unknown>;
+        const cmds: string[] = [];
+        if (typeof i.comando === "string") cmds.push(i.comando);
+        for (const p of (i.pasos as { comando?: string }[] | undefined) ?? []) {
+          if (p.comando) cmds.push(p.comando);
+        }
+        for (const c of (i.comandos as string[] | undefined) ?? []) cmds.push(c);
+
+        const significativos = cmds.filter(
+          (c) => /^(make|docker compose run)/.test(c) && !COMPROBACION.test(c),
+        );
+        if (!significativos.length) continue;
+        if (!i.significa) {
+          sinSignificado.push(`${item.id}: ${significativos[0]}`);
+        }
+      }
+    }
+  }
+  if (sinSignificado.length) {
+    console.error(
+      `\n${ROJO}Comandos de un reto que no dicen qué significa su resultado` +
+        `${FIN}${GRIS} (falta el campo significa, con negocio y modelo; ver ` +
+        `CONVENTIONS.md §21):${FIN}`,
+    );
+    for (const c of sinSignificado) console.error(`  ${ROJO}·${FIN} ${c}`);
+    process.exit(1);
+  }
+
   // Ningún comando deja fuera a Windows.
   //
   // Todo `make` que el curso **mande ejecutar** tiene que saber traducirse a

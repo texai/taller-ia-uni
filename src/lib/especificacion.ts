@@ -56,7 +56,7 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   terminal: {
     requeridos: ["comando"],
-    opcionales: ["salida", "comandoWindows", "duracion"],
+    opcionales: ["salida", "comandoWindows", "duracion", "significa"],
   },
 
   diagrama: {
@@ -93,7 +93,10 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   "error-comun": { requeridos: ["sintoma", "causa", "arreglo"] },
 
-  demo: { requeridos: ["pasos"], opcionales: ["observar", "respaldo"] },
+  demo: {
+    requeridos: ["pasos"],
+    opcionales: ["observar", "respaldo", "significa"],
+  },
 
   // `minutos` es común, pero acá es obligatorio: una ventana de trabajo sin
   // tiempo propuesto es un «trabajen un rato», que es lo que esta lámina
@@ -102,7 +105,7 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
   lectura: {
     requeridos: ["minutos"],
     alMenosUno: [["archivos", "comandos"]],
-    opcionales: ["archivos", "comandos", "observar"],
+    opcionales: ["archivos", "comandos", "observar", "significa"],
   },
 
   diff: {
@@ -118,7 +121,10 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
     opcionales: ["fuente", "archivo", "mensajes"],
   },
 
-  "comando-anotado": { requeridos: ["comando", "segmentos"] },
+  "comando-anotado": {
+    requeridos: ["comando", "segmentos"],
+    opcionales: ["significa"],
+  },
 
   glosario: {
     requeridos: [],
@@ -127,7 +133,7 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   "salida-anotada": {
     requeridos: ["salida", "anotaciones"],
-    opcionales: ["comando"],
+    opcionales: ["comando", "significa"],
   },
 
   receso: { requeridos: ["minutos"] },

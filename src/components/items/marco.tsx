@@ -9,6 +9,8 @@
 
 import type { ReactNode } from "react";
 
+import type { Significado } from "@/lib/tipos";
+
 export function Marco({
   titulo,
   entradilla,
@@ -106,6 +108,53 @@ export function Caja({
       style={{ borderColor: color, background: "var(--lienzo-alto)" }}
     >
       {children}
+    </div>
+  );
+}
+
+/**
+ * Qué significa lo que acaba de salir en pantalla.
+ *
+ * Va **debajo del resultado y en la lámina**, no en las notas: la traducción
+ * de «sesgo +4.7%» a «36,981 unidades de más en almacén» es justo lo que la
+ * sala deja de hacer sola a media tarde, y es la mitad de para qué existe el
+ * taller.
+ *
+ * Dos columnas y no un párrafo, porque son dos preguntas distintas y la
+ * primera es la que se olvida: **qué le cuesta esto a la cadena** y **qué le
+ * pasó al modelo**. Puestas al lado, la ausencia de una se ve.
+ */
+export function QuéSignifica({ significa }: { significa: Significado }) {
+  return (
+    <div className="mt-6">
+      <p
+        className="text-xs font-semibold uppercase tracking-widest"
+        style={{ color: "var(--color-acento)" }}
+      >
+        Qué significa esto
+      </p>
+      <div className="mt-3 grid gap-4 sm:grid-cols-2">
+        {(
+          [
+            ["Para el negocio", significa.negocio],
+            ["Para el modelo", significa.modelo],
+          ] as const
+        ).map(([nombre, texto]) => (
+          <div
+            key={nombre}
+            className="border-l-2 pl-4"
+            style={{ borderColor: "var(--borde)" }}
+          >
+            <p
+              className="text-[10px] font-semibold uppercase tracking-widest"
+              style={{ color: "var(--tinta-suave)" }}
+            >
+              {nombre}
+            </p>
+            <p className="mt-1 text-lg leading-relaxed">{texto}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -90,11 +90,38 @@ export interface ItemCodigo extends ItemBase {
   html?: string;
 }
 
+/**
+ * Qué significa lo que acaba de salir en pantalla.
+ *
+ * Un comando de un reto produce números, y los números no dicen nada solos:
+ * «sesgo +4.7%» es una cifra hasta que alguien la traduce a **36,981 unidades
+ * de más en almacén**. La sala hace esa traducción sola las primeras veces y
+ * deja de hacerla en cuanto se cansa, que es a media tarde.
+ *
+ * Van los dos lados, siempre, y por eso son dos campos y no un párrafo:
+ *
+ * - **`negocio`** — qué le cuesta a la cadena. Plata, stock, decisiones que
+ *   alguien toma el lunes. Es el que se olvida.
+ * - **`modelo`** — qué le pasó al modelo, o qué **no** le pasó. La mitad de
+ *   las veces la respuesta correcta es «nada, y ese es el punto».
+ *
+ * Es público: va en la lámina, no en las notas. Las notas llevan además cómo
+ * decirlo (`CONVENTIONS.md` §21).
+ */
+export interface Significado {
+  /** Qué le cuesta a la cadena. En unidades, plata o decisiones. */
+  negocio: string;
+  /** Qué le pasó —o no— al modelo. */
+  modelo: string;
+}
+
 /** Un comando de terminal, con su salida si vale la pena mostrarla. */
 export interface ItemTerminal extends ItemBase {
   tipo: "terminal";
   comando: string;
   salida?: string;
+  /** Qué significa el resultado. Obligatorio en los retos (§21). */
+  significa?: Significado;
   /**
    * Windows escribe otra cosa.
    *
@@ -245,6 +272,8 @@ export interface ItemDemo extends ItemBase {
   }[];
   observar?: string;
   respaldo?: string;
+  /** Qué significa el resultado. Obligatorio en los retos (§21). */
+  significa?: Significado;
 }
 
 /**
@@ -338,6 +367,8 @@ export interface ItemDiagramaSecuencia extends ItemBase {
 export interface ItemComandoAnotado extends ItemBase {
   tipo: "comando-anotado";
   comando: string;
+  /** Qué significa el resultado. Obligatorio en los retos (§21). */
+  significa?: Significado;
   segmentos: {
     texto: string;
     explicacion: string;
@@ -419,6 +450,8 @@ export interface ItemSalidaAnotada extends ItemBase {
     texto: string;
     explicacion: string;
   }[];
+  /** Qué significa el resultado. Obligatorio en los retos (§21). */
+  significa?: Significado;
 }
 
 /**
@@ -486,6 +519,8 @@ export interface ItemLectura extends ItemBase {
   comandos?: string[];
   /** En qué fijarse. Lo que convierte leer en entender. */
   observar?: string;
+  /** Qué significa el resultado. Obligatorio en los retos (§21). */
+  significa?: Significado;
 }
 
 /** Receso. La interfaz avisa según la hora y cuenta el tiempo. */

@@ -230,12 +230,18 @@ items:
           en bebidas, mucho más agresiva que cualquiera del entrenamiento,
           en las últimas cuatro semanas.
         otrosValores: ["sesgo_silencioso", "feed_caido", "quiebre_stock"]
+    significa:
+      negocio: >-
+        Una promoción disparó la venta real de bebidas y nadie avisó al pronóstico. Se compró de menos: quiebre de stock en la categoría que más rota.
+      modelo: >-
+        Ninguno de los 192 se tocó. El modelo sigue siendo el mismo de esta mañana — lo que cambió es el mundo contra el que se mide.
     notas: |
       - **Nombrar los parámetros que hoy no usamos**: `--categoria` y
         `--tienda` acotan el daño, `--desde` mueve la fecha. Sirven para
         armarse escenarios propios el lunes.
       - El comando termina diciendo `ahora corre: make pronosticar &&
         make metricas`. Es la pista del ítem siguiente.
+      - **Leer «qué significa» en voz alta.** El punto: no se tocó ni un modelo.
 
   - id: s1-r1-romper-receta
     tipo: codigo
@@ -301,6 +307,11 @@ items:
       diferencia entre agregar bien y agregar mal. Y **el mismo `make senales`
       antes y después de romper**: es la lectura de la flota en cuatro números,
       y la diferencia entre las dos salidas es lo que el escenario hizo.
+    significa:
+      negocio: >-
+        El MAPE de la flota pasa de 13.8% a 16.0%, y bebidas de 12.9% a 30.8%. Traducido: 18 de las 24 tiendas de bebidas pronosticando mal a la vez.
+      modelo: >-
+        Los modelos de bebidas no se rompieron: dejaron de servir. Fueron entrenados contra un mundo sin promociones, y el mundo ahora tiene una.
     notas: |
       **10 min con la API abierta antes de tocar pandas.** Quien entiende los
       filtros hace el ejercicio en cinco; quien no, pelea con el groupby por
@@ -309,6 +320,7 @@ items:
         para explorar; el archivo, para entender.
       - **El segundo comando deja el mundo roto.** Si alguien lo ejecuta tarde,
         mira una flota sana y no encuentra nada.
+      - **Al cerrar, leer «qué significa»**: 18 de 24 tiendas a la vez.
 
   - id: s1-r1-groupby
     tipo: codigo
@@ -395,12 +407,18 @@ items:
 
       `make consola` es un intérprete corriente: se pega el bloque entero y se
       pulsa Enter dos veces. Se sale con `exit()`.
+    significa:
+      negocio: >-
+        Bebidas se despega sola y el sesgo es fuertemente negativo: se pronosticó de MENOS. Es venta perdida, no sobre-stock.
+      modelo: >-
+        Está mal en las 24 tiendas a la vez, así que la causa no es una tienda: es la categoría. Esa distinción es la que decide qué se reentrena.
     notas: |
       **Medido**: MAPE de la flota 13.8 → 16.0. Bebidas 12.9 → **30.8**, más
       del doble de la flota.
       - **18 de las 24 tiendas de bebidas cruzan el 20%.**
       - Se mueven según el día. **Lo que no se mueve es que bebidas se despega
         sola.**
+      - **Señalar el signo del sesgo antes de leerlo**: negativo = se pronosticó de MENOS. Es venta perdida, no sobre-stock.
 
   - id: s1-r1-salida-visible
     tipo: salida-anotada
@@ -522,6 +540,11 @@ items:
     comandoWindows: .\taller.ps1 reparar; .\taller.ps1 romper sesgo_silencioso
     duracion: 40
     minutos: 2
+    significa:
+      negocio: >-
+        +4.7% de sesgo son 36,981 unidades de más en almacén en catorce días. Plata inmovilizada que nadie pidió.
+      modelo: >-
+        El MAPE apenas se mueve —13.8% a 14.5%— así que un umbral sobre el MAPE no suena. El modelo se degradó y el tablero no se enteró.
     notas: |
       Acá sí conviene el atajo: seis contenedores seguidos, teclearlos no
       enseña nada nuevo.
@@ -531,6 +554,7 @@ items:
         de significar nada.
       - Este segundo escenario es una caída lenta y pareja en TODA la cadena.
         **Nada específico que buscar.**
+      - **El «qué significa» es el golpe**: 36,981 unidades y el MAPE quieto.
 
   - id: s1-r1-a-mano-2
     tipo: demo

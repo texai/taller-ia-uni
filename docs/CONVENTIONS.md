@@ -994,3 +994,50 @@ Es aviso y no error, pero hoy **no lo dispara ninguna de las 223**. Antes de
 esta regla eran 16,256 palabras con media de 73; ahora son 10,700 con media de
 48, y ni una sola nota de prosa.
 
+---
+
+## 21 · Un comando de un reto dice qué significa su resultado
+
+Un comando produce números, y los números no dicen nada solos. «Sesgo +4.7%»
+es una cifra hasta que alguien la traduce a **36,981 unidades de más en
+almacén en catorce días**. La sala hace esa traducción sola las primeras
+veces y deja de hacerla en cuanto se cansa — que es a media tarde, justo
+cuando llegan los retos que importan.
+
+Así que la traducción **va escrita y va en la lámina**, no en las notas:
+
+    significa:
+      negocio: >-
+        Qué le cuesta esto a la cadena. Unidades, plata, o la decisión que
+        alguien toma el lunes.
+      modelo: >-
+        Qué le pasó al modelo — o qué NO le pasó.
+
+Dos campos y no un párrafo, porque son dos preguntas distintas y **la primera
+es la que se olvida**. Puestas al lado, la ausencia de una se ve.
+
+La respuesta de `modelo` es **«nada, y ese es el punto»** con más frecuencia
+de la que parece: en el reto 1 los 192 no se tocan, en `feed_caido` los
+modelos de arequipa están sanos. Escribirlo es lo que evita que la sala
+concluya que hay que reentrenar cada vez que un número se mueve.
+
+### Qué cuenta como significativo
+
+El comando que **mueve el mundo o hace pensar al agente**: `romper`,
+`reparar`, `agente`, `plano`, `actuar`, `consola`. Quedan fuera los de
+comprobación —`verificar`, `ayuda`, `senales`, `estado`— porque su resultado
+es que salió verde.
+
+### La nota privada lleva otra cosa
+
+La lámina dice **qué significa**; la nota dice **cómo decirlo**: «leerlo en voz
+alta», «señalar el signo antes de leer la cifra», «el denominador, 184 y no
+192». No repetir el contenido de la lámina en la nota — el docente lo tiene
+delante en pantalla.
+
+### El guardia
+
+`validar-contenido` **falla el build** si un ítem de una unidad de tipo `reto`
+lleva un comando significativo y no trae `significa`. Solo dentro de los
+retos: fuera de ahí un comando puede ser contexto y no exige lectura.
+

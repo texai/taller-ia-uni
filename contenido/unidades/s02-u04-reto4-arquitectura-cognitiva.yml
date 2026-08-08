@@ -374,6 +374,11 @@ items:
       Que ningún nodo hace dos cosas. Y en `_tras_reflexion`, que la decisión
       no la toma el LLM: la toman un `if` y un contador de vueltas sobre un
       campo que el LLM escribió. Esa distinción es el reto entero.
+    significa:
+      negocio: >-
+        Sobre un mundo sano el agente debería decir «no hay nada». Un vigilante que alarma cuando todo está bien cuesta más que no tenerlo.
+      modelo: >-
+        Es la línea base del grafo: siete nodos corriendo sin que ninguna señal esté degradada. Si acá inventa un hallazgo, el problema es el prompt.
     notas: |
       **12 min** · la ventana más larga del taller. El grafo es lo único que
       hay que entender del domingo.
@@ -383,6 +388,7 @@ items:
       - **A quien termine antes**: que busque en `percepcion` el `return` que
         devuelve la apertura al estado. Es la trampa de dos láminas más
         adelante, y **encontrarla solo vale más que verla explicada.**
+      - **Leer el «qué significa»**: un vigilante que alarma con todo sano cuesta más que no tenerlo.
 
   - id: s2-r4-tras-reflexion
     tipo: codigo
@@ -727,6 +733,11 @@ items:
           Lo que pidió hacer. Comparado con lo que pide hoy, es lo que
           permite decir la segunda de las tres frases que un tablero nunca
           dice: **esto empeoró desde ayer**.
+    significa:
+      negocio: >-
+        Sin memoria, el lunes se vuelve a diagnosticar lo del viernes como si fuera nuevo. Es la diferencia entre una guardia y una alarma repetida.
+      modelo: >-
+        El agente consulta el historial ANTES de diagnosticar. Un `sin_hallazgos` no se registra: una guardia tranquila no ensucia la memoria.
     notas: |
       Un JSON en disco. **Deliberadamente simple**: lo que importa es que el
       agente consulte el historial **ANTES** de diagnosticar y lo escriba
@@ -737,6 +748,7 @@ items:
         ejecución**, la que dice «no hay diagnósticos previos».
       - Corre en el contenedor del agente: la memoria es suya, la plataforma no
         la ve.
+      - **El «qué significa» aclara el `[]`**: una guardia tranquila no ensucia la memoria.
 
   - id: s2-r4-feed-caido
     tipo: error-comun
@@ -891,10 +903,16 @@ items:
       sirve para comprobar el cableado aunque no razone. Y si nada arranca,
       las dos láminas siguientes traen la salida real de una ejecución
       completa, anotada.
+    significa:
+      negocio: >-
+        Faltan 168 filas de telemetría: una tienda entera dejó de reportar durante 21 días. El almacén no tiene datos, no tiene un problema de demanda.
+      modelo: >-
+        Los modelos de arequipa están sanos. La flota se ve sana en MAPE y sesgo — y el denominador cae de 192 a 184, que es lo único que lo delata.
     notas: |
       **4 min** alcanzan para uno o dos mundos, no para los cuatro.
       Ejecutar `feed_caido` en clase —que es el que enseña— y dejar los otros
       tres para que los prueben ellos.
+      - **Señalar el denominador, 184 y no 192**, y después leer el «qué significa».
 
   - id: s2-r4-salida
     tipo: salida-anotada
@@ -946,11 +964,17 @@ items:
           El campo del que cuelga todo el reto 5. `anomalia` significa que
           el problema está en los datos y no en el modelo, y mañana esa
           palabra será la diferencia entre reentrenar y frenar.
+    significa:
+      negocio: >-
+        El diagnóstico llega con alcance y con impacto en unidades. Eso es lo que alguien puede llevar a una reunión; «el MAPE subió» no lo es.
+      modelo: >-
+        El grafo se cuestionó a sí mismo y volvió a mirar. Lo que se lee no es la primera respuesta del modelo: es la que sobrevivió a su propia crítica.
     notas: |
       **Recorrer la salida señalando.** Convierte «el agente funciona» en «sé
       qué está haciendo el agente».
       - Los acentos que faltan son del lab, no de la lámina: **evita no-ASCII
         al imprimir** para que no se rompa en la consola de Windows.
+      - **Leer «qué significa»**: lo que se ve no es la primera respuesta, es la que sobrevivió a su propia crítica.
 
   - id: s2-r4-salida-2
     tipo: salida-anotada
@@ -1012,7 +1036,13 @@ items:
           anterior salen siempre; la bandera añade este resumen final, que
           sirve para comparar dos ejecuciones de un vistazo sin releer la
           salida entera.
+    significa:
+      negocio: >-
+        El mismo agente, sobre un mundo distinto, con una conclusión distinta. Es lo que permite confiar en él para decidir compras.
+      modelo: >-
+        La crítica quedó en pie y ya no quedaban vueltas: el agente entrega el diagnóstico marcado como no confirmado en vez de afirmarlo.
     notas: |
       Cinco anotaciones y tres minutos: ir rápido. La que hay que dejar
       respirar es la segunda — que las objeciones sean suyas es lo que hace
       creíble todo lo demás.
+      - **El «qué significa» es el contraste**: mismo agente, otro mundo, otra conclusión.

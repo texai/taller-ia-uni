@@ -34,6 +34,13 @@
 #  la sonda del taller es `make senales`, que imprime lo que sí cambia.
 #
 #  Marcas:      ⏱  tarda       🔑 gasta llave de LLM
+#
+#  OJO CON EL 🔑 AL ENSAYAR. Con `PROVEEDOR_LLM=mock` esos bloques corren y
+#  terminan en verde, pero el agente devuelve `sin_hallazgos` y no recomienda
+#  nada -- asi que `make actuar` no registra ningun reentrenamiento y la sonda
+#  de `/v1/reentrenamientos` da `[]` ANTES Y DESPUES. No es que el comando
+#  falle: es que sin llave no hay diagnostico que ejecutar. Los bloques con 🔑
+#  solo se ensayan de verdad con una llave puesta. Comprobado.
 #  Referencias: el `id` del ítem del curso del que sale cada comando.
 #
 #  ---------------------------------------------------------------------------

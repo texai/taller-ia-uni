@@ -614,6 +614,11 @@ items:
       Que las ocho comprobaciones pasen sobre el mundo sano. Y en el código, el
       `sum(...) / sum(...)` de una sola línea: es la trampa 1, y es la
       diferencia entre una herramienta que sirve y una que alarma sola.
+    significa:
+      negocio: >-
+        Volver al mundo sano es el control: sin él, dos degradaciones se apilan y cualquier medición posterior mide las dos a la vez.
+      modelo: >-
+        Los 192 vuelven a rendir 13.8% / +0.8% exactos. Que vuelva EXACTO es lo que permite usarlo como línea base para calibrar umbrales.
     notas: |
       **10 min y nadie escribe nada.** El objetivo es que vean que las tres
       trampas son tres líneas concretas y señalables.
@@ -621,6 +626,7 @@ items:
         encuentra la explica en voz alta y da la clase.
       - Se puede alargar el reloj. **Lo que no conviene es cortarlo antes del
         verificador**: el verde es la mitad del punto.
+      - **Decir por qué `reparar` importa**: sin él, dos degradaciones se apilan.
 
   - id: s1-r2-verificar
     tipo: comando-anotado

@@ -324,6 +324,11 @@ items:
       En el código, el `return None` de `_filtro_de`: en caso de duda, no se
       ejecuta. Y en la salida, que el texto del freno **está en el archivo**,
       literal — no lo escribió el modelo.
+    significa:
+      negocio: >-
+        Reentrenar sobre una tienda muda arruinaría 8 modelos que estaban sanos, y nadie lo notaría hasta el siguiente cierre de mes.
+      modelo: >-
+        El agente quiere actuar y la política no le deja. Ver un freno funcionando vale más que ver una acción ejecutándose.
     notas: |
       **10 min** · el escenario es `feed_caido` a propósito: **es el que
       frena**. Ver un agente que quiere actuar y no puede vale más que verlo
@@ -331,6 +336,7 @@ items:
       - **La pregunta por los puestos**: «¿qué campo lo escribió el LLM, y cuál
         usarías como freno?». **La respuesta es ninguno**, y está dos láminas
         más adelante.
+      - **Leer «qué significa» antes de la ventana**: ver un freno vale más que ver una acción.
 
   - id: s2-r5-comando
     tipo: comando-anotado
@@ -353,11 +359,17 @@ items:
           veredicto de la política sale con bandera o sin ella — el bloque
           `ACCIÓN` se imprime siempre, y es donde está el motivo de por qué
           NO se ejecutó algo.
+    significa:
+      negocio: >-
+        Es el comando que gasta plata: reentrena modelos de verdad. La variable de entorno es la diferencia entre recomendar y hacer.
+      modelo: >-
+        Con `EJECUTAR_ACCIONES=1` el agente pasa de escribir a ejecutar. Lo que decide qué se ejecuta es Python, no el prompt.
     notas: |
       **La diferencia con `make agente` es una sola palabra**:
       `-e EJECUTAR_ACCIONES=1`, entre `--rm` y el nombre del servicio.
       - **Que vaya ahí no es cosmético**: a la izquierda del nombre del
         servicio todo es de Docker; a la derecha, del programa.
+      - **El «qué significa» separa recomendar de hacer**: lo decide Python, no el prompt.
 
   - id: s2-r5-deriva
     tipo: demo
@@ -376,10 +388,16 @@ items:
       produce una recomendación real. Para ver la política en acción sin
       LLM, `evaluar()` se puede llamar a mano con una hipótesis inventada —
       está separada de `ejecutar` justamente para eso.
+    significa:
+      negocio: >-
+        El agente reentrena las 24 de bebidas y deja 168 intactas. Acotado, reversible, y con el motivo escrito en la bitácora para enero.
+      modelo: >-
+        Es deriva: el modelo envejeció contra un mundo que cambió. Reentrenar es la respuesta correcta, y por eso la política lo deja pasar.
     notas: |
       El número que importa es 24, y es estructural: una categoría son 24
       tiendas. Los segundos dependen de la máquina — medido en dos
       categorías dio 2.4s y 0.6s, así que no citar un cronómetro.
+      - **Leer el «qué significa»**: acotado, reversible, y con el motivo en la bitácora.
 
   - id: s2-r5-anomalia
     tipo: demo
@@ -396,12 +414,18 @@ items:
       Si el agente diagnostica `deriva` en vez de `anomalia`, esa es la
       conversación: significa que su percepción no distinguió una tienda
       muda de una degradación. Sirve igual, y sirve más.
+    significa:
+      negocio: >-
+        El agente NO reentrena, y esa es la decisión cara. Reentrenar acá habría metido el hueco de datos dentro de los modelos.
+      modelo: >-
+        Es anomalía: los datos faltan, el modelo está sano. Reentrenar rompería 8 modelos buenos — el freno lo detiene con una condición de Python.
     notas: |
       Demostrarlo, no describirlo. Es el criterio de aceptación de este
       batch y el momento en que la unidad entera se justifica.
 
       Si sale bien, la frase es: el agente quería actuar y algo se lo
       impidió. Ese algo son doce líneas de Python.
+      - **El «qué significa» es la decisión cara**: NO reentrenar. Habría roto 8 modelos sanos.
 
   - id: s2-r5-comparacion
     tipo: comparacion

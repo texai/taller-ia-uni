@@ -182,12 +182,18 @@ items:
       diagnóstico, ni uno que lo reescriba, ni nada que sobreviva a la
       ejecución. Y en la salida, cuántas herramientas llamó y en qué orden —
       hace falta para comparar contra las dos ejecuciones siguientes.
+    significa:
+      negocio: >-
+        El mismo sobre-stock del reto 1, ahora puesto delante de un agente. La pregunta del negocio es si se puede confiar en lo que diga.
+      modelo: >-
+        El bucle ve la misma telemetría que ustedes vieron a mano. Lo que cambia no es el dato: es quién lo mira y cuántas veces.
     notas: |
       **8 min** · la única ventana del sábado sobre el agente.
       - **La pregunta que rinde**: «¿en qué línea decidirías que ya tiene
         suficiente evidencia?». **No hay ninguna, y esa es la respuesta.**
       - **No saltarse la primera ejecución**: las tres de la lámina siguiente
         se comparan contra esta.
+      - **Leer «qué significa» antes de ejecutar**: lo que cambia no es el dato, es quién lo mira.
 
   - id: s1-r3-que-hace-bien
     tipo: markdown
@@ -246,6 +252,11 @@ items:
           esta bandera. El otro parámetro es `--fecha`, que fija el día que
           el agente cree que es.
         otrosValores: ["--fecha 2026-08-08"]
+    significa:
+      negocio: >-
+        Un diagnóstico por ejecución. Si cada ejecución dice algo distinto, no hay ninguna decisión de negocio que se pueda tomar con esto.
+      modelo: >-
+        Temperatura 0 y el mismo mundo: debería salir idéntico. Lo que varía no es el muestreo del modelo, es por dónde entró a mirar.
     notas: |
       **`plano` y NO `run`, y no es un detalle.** `run` levanta el grafo de
       mañana: verían al agente corregirse —la revelación del domingo— y
@@ -253,6 +264,7 @@ items:
       - Sin llave, `PROVEEDOR_LLM=mock` recorre el bucle igual. No razona, pero
         nadie se queda mirando la pantalla.
       - `make actuar` es lo mismo con `-e EJECUTAR_ACCIONES=1`. Se ve mañana.
+      - **Anticipar el «qué significa»**: temperatura 0, debería salir idéntico.
 
   - id: s1-r3-prediccion
     tipo: pregunta
@@ -328,12 +340,18 @@ items:
       `PROVEEDOR_LLM=mock` el bucle se recorre pero no razona, así que no
       sirve para esto: lo que hay que ver es la divergencia entre dos
       razonamientos, y el simulado no razona.
+    significa:
+      negocio: >-
+        Tres respuestas distintas al mismo problema es exactamente lo que un comité de inventario no puede usar. La inconsistencia es el hallazgo.
+      modelo: >-
+        Ninguna de las tres está mal: están incompletas de formas distintas. Al bucle no le falta modelo, le falta arquitectura.
     notas: |
       **Decir en voz alta: con temperatura 0.** La reacción natural es «bájale
       la temperatura» — ya está en cero.
       - **Lo que varía no es el muestreo: es por dónde entró a mirar.**
       - **10 min de comparación real.** Es lo que más rinde de la unidad y lo
         que más tienta acortar.
+      - **La frase del «qué significa»**: ninguna está mal, están incompletas de formas distintas.
 
   - id: s1-r3-divergencia
     tipo: markdown
