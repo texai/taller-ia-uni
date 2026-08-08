@@ -270,12 +270,18 @@ make verificar ARGS="--reto 1"                                  # ← s1-r1-list
 
 
 # ── S1·U5 · la telemetría por la API ─────────────────────────────────────────
-# id: s1-r1-api · s1-r1-lectura · se evidencian solos
+# id: s1-r1-api · s1-r1-lectura · s1-r1-swagger · se evidencian solos
 
 curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"  # ← s1-r1-api
 #   → 912 filas de JSON. Con `| head` para no llenar la terminal
 curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head  # ← s1-r1-lectura
 #   → una fila por modelo y día, con unidades además de porcentajes
+
+# la lámina de Swagger no teclea nada: se abre en el navegador. Esto solo
+# comprueba, en el ensayo, que la interfaz responde antes de proyectarla.
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8000/docs   # ← s1-r1-swagger
+#   → 200 · abrir http://localhost:8000/docs y probar GET /v1/metricas
+#     con «Try it out». Debajo sale el curl equivalente, ya escrito
 
 
 # ── S1·U5 · romper el mundo · campaña promocional ────────────────────────────

@@ -666,15 +666,38 @@ items:
   - id: s2-r5-panel
     tipo: demo
     titulo: La interfaz, de punta a punta
-    minutos: 2
+    entradilla: Las cuatro pestañas, en este orden. Es la única vez del taller que se abren todas.
+    minutos: 4
     pasos:
       - comando: docker compose up -d ui
-        esperado: "http://localhost:8501"
+        esperado: "abre http://localhost:8501"
+      - comando: "# 1 · pestaña «El agente» → botón «Correr el agente»"
+        esperado: las herramientas que llama, de a una · después el diagnóstico
+      - comando: "# 2 · misma pestaña, más abajo"
+        esperado: Reflexion · Recomendaciones · Accion, con el veredicto de la política
+      - comando: "# 3 · pestaña «Memoria»"
+        esperado: lo que recuerda de las corridas anteriores, con su alcance
+      - comando: "# 4 · pestaña «Bitacora de acciones»"
+        esperado: los reentrenamientos que llegó a pedir de verdad
     observar: >-
-      La ejecución completa: qué herramientas llamó, el diagnóstico, la
-      crítica, la corrección si la hubo, las recomendaciones y el veredicto
-      de la política. Todo el razonamiento, abierto.
+      **Empezar por «El agente» y pulsar «Correr el agente» en vivo**: se ven
+      las herramientas llamándose una a una, y esa espera es parte de la
+      lámina. Luego bajar a **Reflexion** —si dice «insuficiente», el agente
+      se corrigió solo— y a **Accion**, que es el veredicto de la política del
+      reto 5. **Memoria** explica por qué la segunda corrida no repite el
+      mismo diagnóstico. **Bitacora** solo tiene filas si se corrió
+      `make actuar`.
+    respaldo: >-
+      Si la interfaz no levanta, todo esto salió por la terminal en las dos
+      demos anteriores. Y la bitácora se lee con
+      `curl -s localhost:8000/v1/reentrenamientos`.
     notas: |
-      Es la respuesta a "¿cómo sé que no divaga?": se lee. Un agente cuya
-      ejecución no se puede inspeccionar es un agente en el que hay que
-      creer, y creer no escala.
+      **Es la respuesta a «¿cómo sé que no divaga?»: se lee.**
+      - Un agente cuya ejecución no se puede inspeccionar es un agente en el
+        que hay que **creer**, y creer no escala.
+      - **Correrlo en vivo aunque ya se haya corrido por terminal.** Ver las
+        herramientas aparecer de a una es lo que convence, y son 30 segundos.
+      - **🔑 gasta llave.** Con `PROVEEDOR_LLM=mock` el panel llega vacío: sin
+        hallazgos, sin reflexión y sin recomendaciones.
+      - Si «Bitacora de acciones» sale vacía es porque `EJECUTAR_ACCIONES` no
+        estaba puesto. **Es correcto**, y es el freno del reto 5.

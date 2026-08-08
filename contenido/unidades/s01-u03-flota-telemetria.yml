@@ -1251,16 +1251,19 @@ items:
   - id: s1-demo-ui
     tipo: demo
     titulo: La flota, de un vistazo
+    entradilla: "Pestaña «La flota». Es la única de las cuatro que se abre hoy."
     minutos: 4
     pasos:
       - comando: docker compose up -d ui
-        esperado: "http://localhost:8501"
+        esperado: "abre http://localhost:8501 · pestaña «La flota»"
       - comando: docker compose ps
         esperado: plataforma y ui, corriendo. El agente no aparece.
     observar: >-
-      192 filas. Ordenar por MAPE y ver que hay modelos malos que llevan
-      meses siendo malos sin que nadie los toque. Ordenar por sesgo y ver
-      que no es la misma lista. Esa diferencia es el taller entero.
+      **Pestaña «La flota», y nada más**: las otras tres están vacías hasta
+      mañana. Arriba, «MAPE por categoria»; abajo, la tabla de 192 filas.
+      **Ordenar por `mape` y ver que hay modelos malos que llevan meses siendo
+      malos** sin que nadie los toque. Después **ordenar por `sesgo_pct`: no
+      sale la misma lista.** Esa diferencia es el taller entero.
     respaldo: >-
       Si la interfaz no levanta, la misma información sale por la API:
       `curl -s localhost:8000/v1/metricas | head`. Y si tampoco, seguir con
@@ -1803,13 +1806,15 @@ items:
     minutos: 4
     pasos:
       - comando: make mlflow
-        esperado: "http://localhost:5000"
-      - comando: "# ordenar por mape_validacion, y filtrar por categoria"
+        esperado: "abre http://localhost:5000 · experimento «pronostico-demanda»"
+      - comando: "# Columns → añadir mape_validacion, y ordenar por esa columna"
     observar: >-
-      192 ejecuciones, una por modelo, con el nombre del `modelo_id`. Ordenar
-      por `mape_validacion` y ver la dispersión: el mejor ronda el 6% y el peor
-      pasa del 20%, **el día en que se entrenaron**. Ese abanico es el que
-      luego se desplaza entero, y es lo que estamos a punto de medir.
+      **Entrar al experimento `pronostico-demanda`**: 192 runs, uno por modelo,
+      con el nombre del `modelo_id`. La columna `mape_validacion` **no sale
+      sola** — se añade desde el botón **Columns**, y vale hacerlo en vivo.
+      Ordenar por ella y ver la dispersión: **el mejor ronda el 6% y el peor
+      pasa del 20%, el día en que se entrenaron.** Ese abanico es el que luego
+      se desplaza entero, y es lo que estamos a punto de medir.
     respaldo: >-
       Si no levanta, `registro.json` tiene lo mismo sin interfaz:
       `docker compose run --rm plataforma head -c 400 /datos/modelos/registro.json`.

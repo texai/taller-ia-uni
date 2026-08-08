@@ -131,8 +131,41 @@ items:
       **Dos minutos, y evitan la pregunta a mitad del reto.**
       - **Los dos parámetros de hoy**: `-s` la calla, `| head` corta a diez
         líneas. La respuesta completa son 912.
-      - **Decir que hay alternativa**: `http://localhost:8000/docs` es la misma
-        API con la interfaz de Swagger, y para explorar es más cómoda.
+      - La alternativa con navegador es la lámina siguiente.
+
+  # `/docs` estaba solo en las notas privadas de la lámina anterior, y es
+  # justo lo que le hace falta a la sala en el reto: la lista de endpoints y
+  # sus parámetros, sin que nadie los dicte. Lo da FastAPI gratis y no costaba
+  # nada abrirlo.
+  - id: s1-r1-swagger
+    tipo: demo
+    titulo: Y la misma API, con botones
+    entradilla: FastAPI trae su propia interfaz. Sirve para explorar sin memorizar ningún parámetro.
+    minutos: 3
+    pasos:
+      - comando: "# la plataforma ya está levantada desde make arriba"
+      - comando: "# abrir en el navegador:"
+        esperado: "http://localhost:8000/docs"
+      - comando: "# GET /v1/metricas → «Try it out» → categoria: bebidas → Execute"
+        esperado: la misma respuesta que da curl, con el comando curl equivalente debajo
+    observar: >-
+      **Los seis endpoints, con sus parámetros y qué devuelve cada uno.** Es la
+      documentación de la API y sale sola del código: nadie la escribió aparte.
+      En `GET /v1/metricas`, pulsar **«Try it out»**, poner `bebidas` en
+      `categoria` y **Execute** — y ahí abajo aparece **el `curl` equivalente,
+      ya escrito**. Esa es la parte que vale: se explora con botones y se
+      copia el comando.
+    respaldo: >-
+      Si no abre, la plataforma no está levantada: `make arriba`. Todo el reto
+      se puede hacer con `curl` sin pasar por acá.
+    notas: |
+      **Es la puerta cómoda al reto, y la que evita dictar parámetros.**
+      - **La idea que se llevan**: la documentación **sale del código**. Si
+        alguien añade un endpoint en `api.py`, aparece acá sin tocar nada más
+        — y por eso no puede estar desactualizada.
+      - **Que copien el `curl` de ahí abajo** en vez de teclearlo. Es lo que
+        ahorra los errores de dedo del reto.
+      - No quedarse. **Tres minutos**: el reto se hace leyendo, no clicando.
 
   - id: s1-r1-api
     tipo: comando-anotado

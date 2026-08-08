@@ -473,6 +473,41 @@ function partirEnLineas(trozos: Trozo[]): Trozo[][] {
 }
 
 /**
+ * Las direcciones que salen en `esperado`, como enlaces de verdad.
+ *
+ * Media docena de demos terminan en `http://localhost:8501` y esa línea era
+ * texto: el docente la leía y la tecleaba a mano en otra ventana, delante de
+ * la sala. Un `:5000` mal tecleado en vivo cuesta más de lo que parece, y el
+ * alumno que quiera abrir la suya tiene el mismo problema.
+ *
+ * Se abre en pestaña nueva por lo de siempre: la lámina proyectada no puede
+ * navegar a otro sitio, porque detrás va la clase entera sincronizada.
+ */
+function ConEnlaces({ texto }: { texto: string }) {
+  const trozos = texto.split(/(https?:\/\/[^\s)]+)/g);
+  return (
+    <>
+      {trozos.map((t, i) =>
+        /^https?:\/\//.test(t) ? (
+          <a
+            key={i}
+            href={t}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+            style={{ color: "var(--color-acento)" }}
+          >
+            {t}
+          </a>
+        ) : (
+          t
+        ),
+      )}
+    </>
+  );
+}
+
+/**
  * Un momento de demostración en vivo.
  *
  * Distinto de `terminal`: acá el docente ejecuta delante de todos. Lleva el
@@ -521,7 +556,7 @@ export function Demo({ item }: { item: ItemDemo }) {
                   className="mt-1.5 overflow-x-auto whitespace-pre-wrap font-mono text-sm"
                   style={{ color: "var(--tinta-suave)" }}
                 >
-                  {paso.esperado}
+                  <ConEnlaces texto={paso.esperado} />
                 </pre>
               )}
             </li>

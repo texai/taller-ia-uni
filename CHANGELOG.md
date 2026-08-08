@@ -5,6 +5,27 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-08
 
+### Las interfaces web: cuándo abrirlas, qué pestaña y qué mirar
+- Cuatro momentos del taller abren un navegador y las láminas decían **«abre
+  :8501»** y poco más. Ni qué pestaña, ni qué resaltar, y la dirección era
+  texto: el docente la tecleaba a mano en otra ventana, delante de la sala.
+- **Los `http://localhost:…` de las demos son enlaces** ahora, en pestaña
+  nueva — la lámina proyectada no puede navegar, que detrás va la clase
+  sincronizada.
+- **`s1-demo-ui`** dice pestaña «La flota» y que las otras tres están vacías
+  hasta mañana; ordenar por `mape`, después por `sesgo_pct`, y ver que **no
+  sale la misma lista**.
+- **`s1-mlflow-ui`** entra al experimento `pronostico-demanda` y avisa de que
+  `mape_validacion` **no sale sola**: se añade desde **Columns**.
+- **`s2-r5-panel`** pasó de dos minutos y un paso a las **cuatro pestañas en
+  orden**, con qué mirar en cada una y por qué «Bitacora» puede salir vacía —
+  que es correcto, y es el freno del reto 5.
+- **Lámina nueva: `:8000/docs`.** FastAPI trae Swagger y el curso solo lo
+  mencionaba en una nota privada. Es la puerta cómoda al reto 1: los seis
+  endpoints con sus parámetros, y **el `curl` equivalente ya escrito** debajo
+  de cada «Try it out» — que es lo que ahorra los errores de dedo.
+- La pauta comprueba en el ensayo que `/docs` responde antes de proyectarlo.
+
 ### Qué significa «construir features», dicho de una vez
 - La lámina de `modelo.py` llegaba **sin que nadie hubiera dicho qué es una
   feature**, y lo único que explicaba la cadena `.shift(1).rolling(7).mean()`
