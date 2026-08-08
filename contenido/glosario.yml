@@ -237,6 +237,17 @@ terminos:
       Un modelo no es un contenedor. Acá una sola imagen carga los 192
       artefactos.
 
+  - termino: Docker Compose
+    grupo: Docker
+    definicion: >-
+      Lo que levanta **varios** contenedores a la vez y los conecta entre sí,
+      leyendo `docker-compose.yml`. Docker a secas maneja uno; Compose maneja
+      el conjunto y les da una red donde se ven por su nombre.
+    ojo: >-
+      Por eso el agente llama a `http://plataforma:8000` y no a `localhost`:
+      `plataforma` es el nombre del servicio en el archivo, y Compose lo
+      resuelve. Desde tu máquina, en cambio, es `localhost:8000`.
+
   - termino: volumen
     grupo: Docker
     definicion: >-
@@ -366,6 +377,37 @@ terminos:
       con que comparar.
 
   # ------------------------------------------------------------ herramientas
+  - termino: pandas
+    grupo: Herramientas
+    definicion: >-
+      La librería de tablas de Python. Un `DataFrame` es una hoja de cálculo en
+      memoria: se filtra, se agrupa y se cruza con otra. **Es la única del
+      taller que se teclea**, en el reto 1.
+    ojo: >-
+      `groupby` no promedia nada por sí solo: hay que decirle qué hacer con
+      cada columna. Promediar porcentajes cuando había que sumar unidades es
+      la trampa 1 del reto 2.
+
+  - termino: scikit-learn
+    grupo: Herramientas
+    definicion: >-
+      La librería con la que están entrenados los 192 modelos. `Ridge` es una
+      regresión lineal con penalización, y se entrena con un `.fit()` — el
+      mismo de cualquier cuaderno.
+    ojo: >-
+      Se lee una vez, en `entrenar.py`, y no se toca en ningún reto. El taller
+      trata de vigilar modelos, no de exprimirlos.
+
+  - termino: joblib
+    grupo: Herramientas
+    definicion: >-
+      Con lo que un modelo entrenado se guarda en disco y se vuelve a cargar.
+      `joblib.dump(modelo, ruta)` de un lado, `joblib.load` del otro. Eso es
+      toda la persistencia.
+    ojo: >-
+      Un artefacto pesa 1 KB. Los 192 juntos, 856 KB — quien viene esperando
+      gigabytes está pensando en un modelo de lenguaje, no en uno de demanda.
+
   - termino: MLflow
     grupo: Herramientas
     definicion: >-
@@ -378,6 +420,18 @@ terminos:
     definicion: >-
       La librería con la que se construye el grafo del agente en el reto 4.
       Aporta el estado compartido, los nodos y las aristas condicionales.
+
+  - termino: curl
+    grupo: Herramientas
+    definicion: >-
+      Un cliente HTTP de terminal: pide una URL e imprime lo que responde. Es
+      la forma más corta de mirar una API sin abrir un navegador ni escribir
+      código.
+    tambien: "-s · | head"
+    ojo: >-
+      Los dos que se usan hoy: **`-s`** lo calla —sin él imprime una barra de
+      progreso que se mezcla con el JSON— y **`| head`** corta a diez líneas,
+      porque la respuesta completa son 912.
 
   - termino: Streamlit
     grupo: Herramientas

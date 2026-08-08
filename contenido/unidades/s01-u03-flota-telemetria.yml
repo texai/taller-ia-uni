@@ -5,6 +5,21 @@ objetivos:
   - Entender qué es una flota de modelos desplegados y quién la vigila hoy
   - "Leer la telemetría: qué dice el MAPE, qué dice el sesgo, qué dice la cobertura"
 items:
+  - id: s1-glosario-librerias
+    tipo: glosario
+    titulo: Tres librerías, antes de verlas en una tabla
+    entradilla: Las que fabrican los 192 modelos. Solo una se teclea hoy
+    minutos: 3
+    terminos: [pandas, scikit-learn, joblib]
+    nuevos: [pandas, scikit-learn, joblib]
+    notas: |
+      **Va antes de la tabla**, que las nombra las tres sin explicarlas.
+      - **Decir cuál se teclea**: solo `pandas`, y solo en el reto 1. Las otras
+        dos se leen.
+      - **El «ojo» de `joblib` es el que sorprende**: 1 KB por artefacto, 856 KB
+        la flota. Quien espera gigabytes está pensando en un modelo de lenguaje.
+      - Si preguntan por MLflow: viene en dos láminas.
+
   - id: s1-que-es-un-modelo
     tipo: markdown
     titulo: Qué es "un modelo en producción"
@@ -118,21 +133,21 @@ items:
           V --> C
           C --> TM[("metricas.csv<br/>la telemetria")]
         end
-        ML -.->|make mlflow| MLUI["registro :5000"]
-        TM --> API["API :8000 · make arriba<br/><small>api.py · FastAPI</small>"]
-        API --> UI["interfaz :8501 · make ui<br/><small>ui/app.py · Streamlit</small>"]
-        API -.->|mañana| AG["el agente · make agente<br/><small>grafo.py · LangGraph</small>"]
+        ML -.->|make mlflow| MLUI["registro :5000<br/>cada versión y su MAPE<br/><small>servicio aparte, con --profile</small>"]
+        TM --> API["API :8000 · make arriba<br/>la única puerta a la telemetría<br/><small>api.py · FastAPI</small>"]
+        API -->|lo que hay hoy| UI["interfaz :8501 · make ui<br/>el tablero que nadie mira<br/><small>ui/app.py · Streamlit</small>"]
+        API -.->|solo HTTP, no ve el disco| AG["el agente · make agente<br/>todavía no existe<br/><small>grafo.py · LangGraph</small>"]
     notas: |
       El mapa al que se vuelve toda la clase. **Anclarlo bien.**
-      - **Señalar dos cosas**: `ventas.csv` entra DOS veces (entrenar y medir —
-        un modelo no se degrada en abstracto sino contra la realidad), y **el
-        agente todavía no existe**. Lo construimos nosotros.
-      - **Cada caja gris es un comando de hoy.** No es una arquitectura de
-        referencia: es la lista de comandos de la tarde.
-      - **El recuadro es `make seed`**: encadena `datos`, `entrenar`,
-        `pronosticar` y `metricas`. Por eso la primera vez tarda.
-      - **Lo que NO tiene comando propio**: `romper` y `reparar` son
-        `pronosticar` + `metricas` otra vez. **Ninguno pasa por `entrenar`.**
+      - **`ventas.csv` entra DOS veces**: entrenar y medir. Un modelo no se
+        degrada en abstracto, sino contra la realidad.
+      - **El agente todavía no existe.** Y su flecha dice «solo HTTP, no ve el
+        disco»: no sabe dónde está `metricas.csv`.
+      - **Cada caja gris es un comando de hoy**, no una arquitectura de
+        referencia.
+      - **El recuadro es `make seed`.** Por eso la primera vez tarda.
+      - `romper` y `reparar` son `pronosticar` + `metricas` otra vez.
+        **Ninguno pasa por `entrenar`.**
 
   - id: s1-arquitectura-capas
     tipo: tabla
@@ -185,11 +200,11 @@ items:
 
   - id: s1-glosario-docker
     tipo: glosario
-    titulo: Cinco palabras de Docker, antes de teclear
+    titulo: Seis palabras de Docker, antes de teclear
     entradilla: Las que hacen falta para leer los comandos que vienen
     minutos: 3
-    terminos: [imagen, contenedor, volumen, servicio, up contra run]
-    nuevos: [imagen, contenedor, volumen, servicio, up contra run]
+    terminos: [imagen, contenedor, volumen, servicio, Docker Compose, up contra run]
+    nuevos: [imagen, contenedor, volumen, servicio, Docker Compose, up contra run]
     notas: |
       Todo lo que viene usa estas cinco palabras.
       - **`servicio` es la que se usa sin explicarse**: está en cada
@@ -197,6 +212,9 @@ items:
         servicio» signifique algo.
       - **La que se confunde el resto del día**: `up` deja algo vivo, `run`
         ejecuta y desaparece.
+      - **`Docker Compose` no es `Docker`**: uno maneja un contenedor, el otro
+        el conjunto y su red. Por eso el agente llama a `plataforma:8000` y no
+        a `localhost`.
 
   - id: s1-guia-docker
     tipo: archivo

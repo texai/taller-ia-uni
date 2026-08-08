@@ -120,6 +120,20 @@ items:
       - `escenario` no es «datos de prueba»: es una degradación con nombre, que
         se aplica y se revierte.
 
+  - id: s1-glosario-curl
+    tipo: glosario
+    titulo: Y una herramienta más, para mirar la API
+    entradilla: La forma más corta de preguntarle algo a un servicio sin abrir un navegador
+    minutos: 2
+    terminos: [curl]
+    nuevos: [curl]
+    notas: |
+      **Dos minutos, y evitan la pregunta a mitad del reto.**
+      - **Los dos parámetros de hoy**: `-s` la calla, `| head` corta a diez
+        líneas. La respuesta completa son 912.
+      - **Decir que hay alternativa**: `http://localhost:8000/docs` es la misma
+        API con la interfaz de Swagger, y para explorar es más cómoda.
+
   - id: s1-r1-api
     tipo: comando-anotado
     titulo: La telemetría, por la API
