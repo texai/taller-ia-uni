@@ -266,14 +266,11 @@ items:
       largo sin quejarse.
     arreglo: "`ToolNode(HERRAMIENTAS, messages_key=\"mensajes\")`."
     notas: |
-      Esta es la que cuesta una hora, y las dos son mudas. Anticiparlas es
-      la mitad del valor de esta unidad: quien las conoce las reconoce en
-      treinta segundos.
-
-      Si alguien escribe el estado en inglés no le pasa ninguna de las dos
-      — y vale la pena decirlo, porque la conclusión no es "escriban en
-      inglés" sino que un nombre distinto al que espera una librería es una
-      trampa que no avisa.
+      **La que cuesta una hora, y las dos son mudas.** Anticiparlas es medio
+      valor de la unidad: quien las conoce las reconoce en 30 segundos.
+      - En inglés no pasa ninguna de las dos. **La conclusión no es «escriban
+        en inglés»**: es que un nombre distinto al que espera una librería es
+        una trampa que no avisa.
 
   - id: s2-r4-messages-key-diff
     tipo: diff
@@ -295,17 +292,13 @@ items:
       ninguna excepción y **nunca ejecuta una herramienta**: `ToolNode` busca
       una clave `messages`, no la encuentra, y pasa de largo.
     notas: |
-      **Se muestra como cambio y no como bloque porque el bloque no enseña
-      nada.** Proyectado entero, alguien tiene que decir en voz alta cuál es la
-      línea nueva y qué le cambió; así lo dice el dibujo, y lo que queda en la
-      cabeza es el tamaño del arreglo comparado con el tamaño del síntoma.
-
-      La pregunta que vale la pena hacer acá: **¿cuánto habrían tardado en
-      encontrarlo?** Sin excepción, sin aviso, y con un diagnóstico que se lee
-      convincente porque el modelo escribe igual de bien sobre nada.
-
-      Es también el mejor ejemplo de la tesis del domingo: no fue el modelo, fue
-      el cableado.
+      Se muestra como cambio: lo que queda es **el tamaño del arreglo frente
+      al tamaño del síntoma.**
+      - **Lanzar la pregunta**: «¿cuánto habrían tardado en encontrarlo?». Sin
+        excepción, sin aviso, y con un diagnóstico convincente **porque el
+        modelo escribe igual de bien sobre nada.**
+      - **El mejor ejemplo de la tesis del domingo: no fue el modelo, fue el
+        cableado.**
 
   - id: s2-r4-aristas
     tipo: codigo
@@ -348,17 +341,12 @@ items:
       todo el domingo.
     minutos: 1
     notas: |
-      **Va justo antes de la ventana de lectura y eso es a propósito.** Leer
-      `grafo.py` con la tabla de los seis nodos al lado es otro ejercicio: se
-      busca en el archivo lo que la hoja ya nombró, en vez de descubrir el
-      vocabulario y el código a la vez.
-
-      Quien no vino ayer la necesita más que nadie: la primera cara es el bucle
-      plano y sus cuatro patologías, que es la sesión de ayer entera en media
-      página.
-
-      La última sección —el freno— es del reto 5, todavía no. Si alguien
-      pregunta, decir que sí, que está y que se ve después del receso.
+      **Va justo antes de la ventana de lectura, a propósito**: leer `grafo.py`
+      con la tabla de los seis nodos al lado es otro ejercicio.
+      - **Quien no vino ayer la necesita más que nadie**: su primera cara es la
+        sesión del sábado entera en media página.
+      - La última sección —el freno— es del reto 5. Si preguntan: **está, y se
+        ve después del receso.**
 
   - id: s2-r4-lectura
     tipo: lectura
@@ -389,17 +377,14 @@ items:
       no la toma el LLM: la toman un `if` y un contador de vueltas sobre un
       campo que el LLM escribió. Esa distinción es el reto entero.
     notas: |
-      **12 min**, y es la ventana más larga del taller. El grafo es lo
-      único que hay que entender del domingo, y leerlo entero cuesta menos que
-      escucharlo explicado.
-
-      Ir por los puestos con una pregunta: «¿cuántas veces puede volver a
-      percepción, y quién lo decide?». La respuesta —`MAX_VUELTAS`, arriba del
-      archivo— es la lámina de dentro de un rato.
-
-      Si alguien termina antes, que mire `percepcion` y busque el `return` que
-      devuelve la apertura al estado. Es la trampa de dos láminas más adelante,
-      y encontrarla solo vale más que verla explicada.
+      **12 min** · la ventana más larga del taller. El grafo es lo único que
+      hay que entender del domingo.
+      - **La pregunta por los puestos**: «¿cuántas veces puede volver a
+        percepción, y quién lo decide?». La respuesta, `MAX_VUELTAS`, es la
+        lámina de dentro de un rato.
+      - **A quien termine antes**: que busque en `percepcion` el `return` que
+        devuelve la apertura al estado. Es la trampa de dos láminas más
+        adelante, y **encontrarla solo vale más que verla explicada.**
 
   - id: s2-r4-tras-reflexion
     tipo: codigo
@@ -463,23 +448,16 @@ items:
     terminos: [alcance, severidad y urgencia, deriva, anomalía]
     nuevos: [alcance, severidad y urgencia]
     notas: |
-      Va justo antes de la forma del diagnóstico porque las dos primeras son
-      **campos de ese JSON**, y las dos se leen mal si nadie las abre.
-
-      **`alcance` importa más que la severidad**, y es lo contrario de lo que
-      la intuición dice. La severidad es qué tan grave suena; el alcance es
-      **de quién es la causa** —un modelo, una categoría, una tienda, la
-      flota— y es lo que decide a cuántos artefactos se les pasa por encima
-      mañana. Ocho categorías con bandera no son ocho problemas: son uno, y el
-      alcance correcto es la flota.
-
-      Y **`severidad y urgencia` van juntas para poder decir lo que las separa
-      del resto**: son las dos únicas del diagnóstico que **el LLM redacta y la
-      política no usa para avanzar**. En el reto 5 hay una regla que salió de
-      un error real —frenar por urgencia— y esta lámina la deja sembrada.
-
-      `deriva` y `anomalía` van apagadas, del sábado. Quien llegó hoy las tiene
-      completas acá, y son las dos que el nodo de reflexión pregunta.
+      Las dos primeras son **campos del JSON del diagnóstico**, y se leen mal
+      si nadie las abre.
+      - **`alcance` importa más que la severidad**, al revés de lo que dice la
+        intuición: es **de quién es la causa**, y decide a cuántos artefactos
+        se les pasa por encima. **Ocho categorías con bandera no son ocho
+        problemas: son uno, y el alcance es la flota.**
+      - **`severidad` y `urgencia` son las dos únicas que el LLM redacta y la
+        política NO usa para avanzar.** Siembra la regla del reto 5.
+      - `deriva` y `anomalía` van apagadas: son las que el nodo de reflexión
+        pregunta.
 
   - id: s2-r4-diagnostico
     tipo: codigo
@@ -753,17 +731,15 @@ items:
           permite decir la segunda de las tres frases que un tablero nunca
           dice: **esto empeoró desde ayer**.
     notas: |
-      Un JSON en disco, en el volumen `memoria`. Deliberadamente simple: lo
-      que importa no es el motor de persistencia, sino **que el agente
-      consulte el historial ANTES de diagnosticar y lo escriba DESPUÉS**.
-
-      Dos cosas más que decir sin lámina: un diagnóstico `sin_hallazgos`
-      **no se registra** —una guardia tranquila no ensucia la memoria— y
-      `--limpiar` la borra, que es útil para volver a demostrar la primera
-      ejecución, la que dice "no hay diagnósticos previos".
-
-      El comando corre en el contenedor del agente porque la memoria es
-      suya. La plataforma no la ve, igual que en producción.
+      Un JSON en disco. **Deliberadamente simple**: lo que importa es que el
+      agente consulte el historial **ANTES** de diagnosticar y lo escriba
+      **DESPUÉS**.
+      - Un `sin_hallazgos` **no se registra**: una guardia tranquila no ensucia
+        la memoria.
+      - `--limpiar` la borra. **Útil para volver a demostrar la primera
+        ejecución**, la que dice «no hay diagnósticos previos».
+      - Corre en el contenedor del agente: la memoria es suya, la plataforma no
+        la ve.
 
   - id: s2-r4-feed-caido
     tipo: error-comun
@@ -821,20 +797,13 @@ items:
           entrega una lectura, no un volcado. Sesenta y seis ejecuciones
           enteras en el prompt no caben, y no harían falta.
     notas: |
-      **Esta lámina paga una promesa que el curso hace tres veces.** Desde
-      la sesión 1 se viene repitiendo que un modelo puede estar sano y el
-      job caído desde el martes, y hasta acá no se había enseñado la
-      herramienta que lo mira.
-
-      El punto que la sala tiene que llevarse: **el fallo más común en
-      producción no es un modelo malo, es un pipeline roto**, y un pipeline
-      roto casi nunca levanta una excepción. Termina bien y entrega de
-      menos.
-
-      Conecta directo con el mundo `feed_caido` de la lámina anterior: allá
-      se ve como una anomalía en las métricas, acá se ve como 168 filas que
-      no están. Dos herramientas distintas mirando el mismo agujero, que es
-      lo que hace que el agente pueda decir de qué se trata.
+      **Paga una promesa que el curso hace tres veces**: se viene diciendo
+      desde el sábado que un modelo puede estar sano y el job caído.
+      - **Lo que se llevan**: el fallo más común en producción no es un modelo
+        malo, **es un pipeline roto** — y casi nunca levanta excepción. Termina
+        bien y entrega de menos.
+      - Conecta con `feed_caido`: allá es una anomalía en las métricas, acá son
+        **168 filas que no están**. Dos herramientas mirando el mismo agujero.
 
   - id: s2-r4-pregunta-feed
     tipo: pregunta
