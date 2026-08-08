@@ -102,10 +102,10 @@ items:
     titulo: La solución completa, por componentes
     clase: componentes
     minutos: 3
-    entradilla: Cada caja gris es un comando. Las cuatro de la izquierda son `make seed`.
+    entradilla: Cada caja oscura es un comando. Los cuatro del recuadro los encadena `make seed`.
     contenido: |
       flowchart LR
-        subgraph SEED["make seed · encadena estos cuatro"]
+        subgraph SEED["make seed = datos + entrenar + pronosticar + metricas"]
           direction LR
           D["make datos"] --> V[("ventas.csv<br/>el mundo")]
           V --> E["make entrenar<br/>192 Ridge"]
@@ -129,8 +129,8 @@ items:
         agente todavía no existe**. Lo construimos nosotros.
       - **Cada caja gris es un comando de hoy.** No es una arquitectura de
         referencia: es la lista de comandos de la tarde.
-      - **El recuadro es `make seed`**, los cuatro de una vez. Por eso la
-        primera vez tarda.
+      - **El recuadro es `make seed`**: encadena `datos`, `entrenar`,
+        `pronosticar` y `metricas`. Por eso la primera vez tarda.
       - **Lo que NO tiene comando propio**: `romper` y `reparar` son
         `pronosticar` + `metricas` otra vez. **Ninguno pasa por `entrenar`.**
 
