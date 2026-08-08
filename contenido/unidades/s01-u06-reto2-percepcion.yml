@@ -16,10 +16,10 @@ items:
     entradilla: "Criterio: en la flota sana, cero banderas"
     minutos: 2
     notas: |
-      La frase de la entradilla es todo el reto. Si la herramienta alarma
-      sobre lo normal, el agente que se construya encima no tiene
-      salvación: va a creerle a las banderas, y con razón — el error no es
-      suyo, es de quien puso el umbral.
+      **La entradilla es todo el reto.**
+      - Si la herramienta alarma sobre lo normal, **el agente encima no tiene
+        salvación**: le va a creer a las banderas, y con razón.
+      - **El error no es suyo: es de quien puso el umbral.**
 
   - id: s1-r2-mapa
     tipo: diagrama
@@ -34,12 +34,11 @@ items:
         C --> D["4 · comprobarlo<br/>verificar --reto 2"]
         D --> E{{"criterio: en la flota sana,<br/>ninguna bandera"}}
     notas: |
-      El paso 3 es el que ocupa media unidad, y no está en el enunciado del
-      reto: son tres errores de estadística bien calculada y mal
-      planteada. Los tres salieron construyendo este laboratorio.
-
-      El hexágono del final es literalmente el criterio de aceptación del
-      verificador. Anunciarlo acá y volver a él al comprobar.
+      - **El paso 3 ocupa media unidad y no está en el enunciado**: tres
+        errores de estadística bien calculada y mal planteada. **Los tres
+        salieron construyendo este laboratorio.**
+      - El hexágono final **es el criterio de aceptación del verificador**.
+        Anunciarlo acá y volver a él al comprobar.
   - id: s1-glosario-percepcion
     tipo: glosario
     titulo: Dos palabras del reto
@@ -201,12 +200,10 @@ items:
       - "+10% o −10%, según cuál pese más en número"
       - No se puede calcular sin los datos crudos
     notas: |
-      Treinta segundos de cuenta mental y el resto de discusión. La
-      respuesta intuitiva es la primera y es la que produce el error más
-      caro del reto 2.
-
-      Si alguien contesta la segunda de entrada, pedirle que lo explique en
-      voz alta: acaba de dar la clase.
+      **30 s de cuenta mental, el resto discusión.**
+      - La intuitiva es la primera, y **produce el error más caro del reto 2**.
+      - **Si alguien contesta la segunda de entrada, que lo explique en voz
+        alta**: acaba de dar la clase.
     solucion:
       explicacion: |
         **Depende de cuánto vende cada tienda.** El sesgo de un grupo no es
@@ -446,11 +443,10 @@ items:
       - "En ninguna: si nada está roto, todas rondan cero"
       - Es impredecible, depende del día
     notas: |
-      Va antes de la salida a propósito: el número de ORIENTE no impresiona a
-      nadie si primero se lee que es 8.7%.
-
-      La tercera opción es la que elige media sala, y es la intuición que hay
-      que romper para que los umbrales del reto tengan sentido.
+      - **Va antes de la salida a propósito**: el número de ORIENTE no
+        impresiona si primero se lee que es 8.7%.
+      - **La tercera la elige media sala.** Es la intuición que hay que romper
+        para que los umbrales tengan sentido.
     solucion:
       explicacion: |
         **En ORIENTE, y por tener pocos modelos.** Con la flota intacta, el

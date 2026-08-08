@@ -396,11 +396,11 @@ items:
       `make consola` es un intérprete corriente: se pega el bloque entero y se
       pulsa Enter dos veces. Se sale con `exit()`.
     notas: |
-      Medido acá: el MAPE de la flota sube de 13.8% a 16.0%, el de bebidas
-      pasa de 12.9% a 30.8% —más del doble de la flota— y 18 de las 24
-      tiendas de bebidas cruzan el 20%. Estos números se mueven algo según
-      el día en que cada uno generó su mundo; el que no se mueve es que
-      bebidas se despega sola.
+      **Medido**: MAPE de la flota 13.8 → 16.0. Bebidas 12.9 → **30.8**, más
+      del doble de la flota.
+      - **18 de las 24 tiendas de bebidas cruzan el 20%.**
+      - Se mueven según el día. **Lo que no se mueve es que bebidas se despega
+        sola.**
 
   - id: s1-r1-salida-visible
     tipo: salida-anotada

@@ -985,8 +985,12 @@ ese segundo.
 
 ### El aviso
 
-`validar-contenido` lista las notas de más de **70 palabras**. Es aviso y no
-error: hay láminas donde el contexto pesa y la nota larga se justifica. Lo que
-no puede es pasar sin que nadie lo decida — que es como estaba antes de esta
-regla: **223 notas, 16,256 palabras, media de 73**.
+`validar-contenido` marca una nota por **la forma antes que por el largo**:
+una entradilla de más de 45 palabras, prosa suelta **después** de que los
+bullets empezaron, o una nota que pasa de 110 palabras. Cinco bullets de
+noventa palabras se escanean; un párrafo de sesenta, no.
+
+Es aviso y no error, pero hoy **no lo dispara ninguna de las 223**. Antes de
+esta regla eran 16,256 palabras con media de 73; ahora son 10,700 con media de
+48, y ni una sola nota de prosa.
 

@@ -25,8 +25,18 @@ const GRIS = "\x1b[90m";
 const AMARILLO = "\x1b[33m";
 const FIN = "\x1b[0m";
 
-/** Palabras a partir de las cuales una nota deja de leerse de un vistazo. */
-const TOPE_DE_NOTA = 70;
+/**
+ * Cuándo una nota deja de leerse de un vistazo.
+ *
+ * Lo que se mide no es solo el largo: es **la forma**. Cinco bullets de
+ * noventa palabras se escanean; un párrafo de sesenta, no — hay que leerlo
+ * entero para saber si dice algo que haga falta ahora. Por eso el aviso
+ * dispara con cualquiera de las dos cosas, y la de la forma pesa más.
+ */
+const TOPE_DE_NOTA = 110;
+
+/** Palabras de la frase de apertura, antes del primer bullet. */
+const TOPE_DE_ENTRADILLA = 45;
 
 try {
   const curso = cargarCurso();
@@ -164,7 +174,7 @@ try {
   // Aviso y no error: hay láminas donde el contexto pesa y la nota larga está
   // justificada. Lo que no puede es pasar sin que nadie lo decida, que es
   // como estaba: 223 notas, 16,256 palabras, media de 73.
-  const gordas: { id: string; palabras: number }[] = [];
+  const gordas: { id: string; palabras: number; parrafo: boolean }[] = [];
   let conNotas = 0;
   for (const sesion of curso.sesiones) {
     for (const { item } of recorrer(sesion)) {
@@ -172,18 +182,46 @@ try {
       if (!n) continue;
       conNotas++;
       const palabras = n.trim().split(/\s+/).length;
-      if (palabras > TOPE_DE_NOTA) gordas.push({ id: item.id, palabras });
+
+      // La forma. Una nota bien hecha es una entradilla corta y bullets; lo
+      // que se persigue es la prosa, no las líneas — una frase que ocupa
+      // cuatro renglones al ajustarse sigue siendo una frase.
+      //
+      // Dos defectos, y el segundo es el que de verdad duele: una entradilla
+      // que ya es un párrafo, y prosa **después** de que los bullets
+      // empezaron, que es donde se esconde lo que nadie va a leer en vivo.
+      const lineas = n.split("\n");
+      const primerBullet = lineas.findIndex((l) => l.trim().startsWith("-"));
+      let parrafo = false;
+      if (primerBullet === -1) {
+        parrafo = palabras > TOPE_DE_ENTRADILLA;
+      } else {
+        const entradilla = lineas.slice(0, primerBullet).join(" ").trim();
+        if (entradilla.split(/\s+/).filter(Boolean).length > TOPE_DE_ENTRADILLA) {
+          parrafo = true;
+        }
+        for (const l of lineas.slice(primerBullet)) {
+          const t = l.trim();
+          // Sangrada es continuación de bullet; a ras de margen y sin guión,
+          // es prosa suelta.
+          if (t && !t.startsWith("-") && !/^ {2,}\S/.test(l)) parrafo = true;
+        }
+      }
+
+      if (parrafo || palabras > TOPE_DE_NOTA) {
+        gordas.push({ id: item.id, palabras, parrafo });
+      }
     }
   }
   if (gordas.length) {
     gordas.sort((a, b) => b.palabras - a.palabras);
     console.log(
       `\n${AMARILLO}Notas del docente que no se leen de reojo ` +
-        `(más de ${TOPE_DE_NOTA} palabras, ${gordas.length} de ` +
-        `${conNotas}):${FIN}`,
+        `(${gordas.length} de ${conNotas}):${FIN}`,
     );
     for (const g of gordas.slice(0, 12)) {
-      console.log(`  ${AMARILLO}·${FIN} ${g.id.padEnd(30)} ${g.palabras} palabras`);
+      const por = g.parrafo ? "prosa" : `${g.palabras} palabras`;
+      console.log(`  ${AMARILLO}·${FIN} ${g.id.padEnd(30)} ${por}`);
     }
     if (gordas.length > 12) {
       console.log(`  ${GRIS}… y ${gordas.length - 12} más${FIN}`);

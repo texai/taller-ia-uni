@@ -33,13 +33,11 @@ items:
         C --> D["4 · sobre deriva reentrena,<br/>sobre anomalia frena"]
         D --> E{{"lo que te llevas:<br/>el freno importa mas<br/>que el boton"}}
     notas: |
-      El orden del mapa es el argumento de la unidad: **primero el freno,
-      después el permiso**. Escribir la política antes de encender
-      `EJECUTAR_ACCIONES` no es una casualidad del guion.
-
-      El paso 4 son las dos demostraciones, y son el criterio de
-      aceptación: el mismo agente, el mismo permiso, dos mundos, dos
-      decisiones opuestas.
+      **El orden del mapa es el argumento: primero el freno, después el
+      permiso.** No es casualidad del guion.
+      - **El paso 4 son las dos demostraciones**, y son el criterio de
+        aceptación: mismo agente, mismo permiso, **dos mundos, dos decisiones
+        opuestas**.
   - id: s2-r5-riesgo
     tipo: markdown
     titulo: Equivocarse deja de costar una alerta
@@ -66,22 +64,15 @@ items:
     terminos: [política, radio de daño, alcance]
     nuevos: [política, radio de daño]
     notas: |
-      Dos palabras y las dos son de diseño, no de código. Van al principio
-      porque toda la unidad se dicta con ellas.
-
-      **`política`** es la que hay que separar de «prompt» con todas las
-      letras: es **código Python que decide qué se ejecuta**, no una
-      instrucción. Se cumple aunque el modelo esté convencidísimo de lo
-      contrario, y esa es la diferencia entera con lo del sábado.
-
-      **`radio de daño` es el criterio de la unidad**, y conviene decir lo que
-      **no** es: no es la probabilidad de equivocarse, ni la confianza del
-      agente. Es **cuánto se rompe si el diagnóstico estaba mal, y cuánto
-      cuesta deshacerlo**. Una categoría son 24 modelos y se revierte; la
-      flota son 192 a la vez y no queda ninguno sano con que comparar.
-
-      `alcance` va apagada, de ayer: es el campo del diagnóstico sobre el que
-      la política mide el radio.
+      Dos palabras de diseño, y toda la unidad se dicta con ellas.
+      - **Separar `política` de «prompt» con todas las letras**: es código
+        Python que decide qué se ejecuta. **Se cumple aunque el modelo esté
+        convencidísimo de lo contrario.**
+      - **`radio de daño` es el criterio de la unidad.** No es la probabilidad
+        de equivocarse ni la confianza: es **cuánto se rompe si el diagnóstico
+        estaba mal, y cuánto cuesta deshacerlo.**
+      - Una categoría son 24 modelos y se revierte; **la flota son 192 a la vez
+        y no queda ninguno sano con que comparar.**
 
   - id: s2-r5-apagado
     tipo: markdown
@@ -208,13 +199,11 @@ items:
       - Investigar por qué una tienda dejó de reportar
       - Ninguna; que todo lo apruebe una persona
     notas: |
-      La pregunta de diseño de la unidad, hecha antes de mostrar el código
-      de la política. Vale la pena dejar discutir un minuto: casi siempre
-      sale alguien defendiendo la última opción, y esa conversación es la
-      que hay que tener.
-
-      El criterio que se busca no es "qué tan seguro estoy" sino **qué tan
-      caro es equivocarse y cuánto cuesta deshacerlo**.
+      **Antes de mostrar el código de la política. Dejar discutir un minuto.**
+      - Casi siempre alguien defiende la última opción. **Esa es la
+        conversación que hay que tener.**
+      - **El criterio no es «qué tan seguro estoy»**, es qué tan caro es
+        equivocarse y cuánto cuesta deshacerlo.
     solucion:
       explicacion: |
         **Reentrenar una categoría con deriva confirmada.** Es la única de
@@ -267,10 +256,11 @@ items:
       Frenar por **radio de daño**. Lo peligroso no es cuándo, es
       reentrenar lo que no se debe, o demasiado de una vez.
     notas: |
-      Esto pasó de verdad construyendo el taller y es de lo mejor que hay
-      para enseñar. La lección general: **no des permisos contra un campo
-      que el propio agente redacta.** Si el freno depende de algo que el
-      modelo escribe, el modelo puede aflojarlo sin querer — o queriendo.
+      **Pasó de verdad construyendo el taller.**
+      - **La lección: no des permisos contra un campo que el propio agente
+        redacta.**
+      - Si el freno depende de algo que el modelo escribe, **puede aflojarlo
+        sin querer — o queriendo**.
 
   - id: s2-r5-monitorear
     tipo: markdown
@@ -305,13 +295,11 @@ items:
               return {tipo: valor}
           return None
     notas: |
-      Se exige `objetivo_tipo` y `objetivo_valor` como campos separados.
-      Adivinar el destino parseando "los 24 modelos de panadería" sería
-      pedirle a una expresión regular que decida a qué artefacto se le pasa
-      por encima.
-
-      Y fíjense en el `return None`: si el objetivo no identifica modelos
-      concretos, no se ejecuta. En caso de duda, no.
+      **`objetivo_tipo` y `objetivo_valor` van separados.** Adivinar el destino
+      parseando «los 24 modelos de panadería» sería pedirle a una regex que
+      decida a qué artefacto se le pasa por encima.
+      - **Señalar el `return None`**: si el objetivo no identifica modelos
+        concretos, no se ejecuta. **En caso de duda, no.**
 
   - id: s2-r5-lectura
     tipo: lectura
@@ -337,13 +325,12 @@ items:
       ejecuta. Y en la salida, que el texto del freno **está en el archivo**,
       literal — no lo escribió el modelo.
     notas: |
-      **10 min**, y el escenario es `feed_caido` a propósito: es el que
-      frena. Ver un agente que quiere actuar y no puede vale más que verlo
+      **10 min** · el escenario es `feed_caido` a propósito: **es el que
+      frena**. Ver un agente que quiere actuar y no puede vale más que verlo
       actuar.
-
-      La pregunta para los puestos: «¿qué campo de este diagnóstico lo escribió
-      el LLM, y cuál de esos usarías como freno?». La respuesta correcta es
-      ninguno, y está dos láminas más adelante.
+      - **La pregunta por los puestos**: «¿qué campo lo escribió el LLM, y cuál
+        usarías como freno?». **La respuesta es ninguno**, y está dos láminas
+        más adelante.
 
   - id: s2-r5-comando
     tipo: comando-anotado
@@ -367,14 +354,10 @@ items:
           `ACCIÓN` se imprime siempre, y es donde está el motivo de por qué
           NO se ejecutó algo.
     notas: |
-      `make actuar` es exactamente esta línea. Se muestra entera porque es
-      el momento del taller en que conviene saber qué se está ejecutando, y
-      porque **la diferencia con `make agente` es una sola palabra**:
+      **La diferencia con `make agente` es una sola palabra**:
       `-e EJECUTAR_ACCIONES=1`, entre `--rm` y el nombre del servicio.
-
-      Que vaya ahí y no al final no es cosmético. Todo lo que está a la
-      izquierda del nombre del servicio es de Docker; todo lo que está a la
-      derecha es del programa. `-e` es de Docker, así que va antes.
+      - **Que vaya ahí no es cosmético**: a la izquierda del nombre del
+        servicio todo es de Docker; a la derecha, del programa.
 
   - id: s2-r5-deriva
     tipo: demo
@@ -452,20 +435,14 @@ items:
         `anomalia`, una tienda muda. No ejecuta nada y deja escrito el
         motivo. El modelo sano sigue sano.
     notas: |
-      **Ese texto de la derecha no lo escribió el LLM.** Está en
-      `agente/accion.py`, literal, dentro de la regla que frena. Vale la
-      pena decirlo señalándolo: cuando un agente explica por qué no hizo
-      algo, uno asume que lo razonó — y acá lo que hay es una condición de
-      Python que se sabe explicar.
-
-      La diferencia entera está en un campo del diagnóstico —`tipo`— y en
-      una línea de código. Toda la unidad cabe en esa frase.
-
-      Sin `-e EJECUTAR_ACCIONES=1` la salida es una tercera:
-      `✗ no se ejecutó: modo solo-diagnostico`, y debajo un
-      `habría reentrenado: {'categoria': 'bebidas'}` por cada acción que
-      habría pasado la política. Es el modo en que conviene dejarlo cuando
-      la clase termine.
+      **Señalarlo: ese texto de la derecha NO lo escribió el LLM.** Está
+      literal en `agente/accion.py`, dentro de la regla que frena.
+      - Cuando un agente explica por qué no hizo algo, uno asume que lo razonó.
+        **Acá hay una condición de Python que se sabe explicar.**
+      - **La diferencia entera está en un campo (`tipo`) y una línea de
+        código.** Toda la unidad cabe en esa frase.
+      - Sin `EJECUTAR_ACCIONES=1` sale una tercera salida: `✗ no se ejecutó:
+        modo solo-diagnostico`. **Es como conviene dejarlo al terminar.**
 
   - id: s2-r5-quiebre
     tipo: imagen
@@ -479,17 +456,13 @@ items:
       queda callado con esto.
     minutos: 3
     notas: |
-      **Es el reverso exacto del sesgo silencioso**, y por eso se deja para
-      el final. Aquel no sonaba y había que actuar; este suena como una
-      alarma de incendios y **no hay que reentrenar**.
-
-      Lo que pasó: hubo faltantes de stock en carnes. La venta observada
-      cayó porque no había producto, no porque la demanda bajara. El modelo
-      pronosticó la demanda real y quedó altísimo contra una venta que
-      estaba topada por el almacén.
-
-      Dejar que la sala lo mire diez segundos antes de explicarlo. Casi
-      todos van a decir «hay que reentrenar carnes».
+      **El reverso exacto del sesgo silencioso.** Aquel no sonaba y había que
+      actuar; **este suena como una alarma y NO hay que reentrenar.**
+      - **Diez segundos de silencio antes de explicarlo.** Casi todos van a
+        decir «hay que reentrenar carnes».
+      - Qué pasó: faltó stock en carnes. **La venta cayó porque no había
+        producto, no porque bajara la demanda.** El modelo pronosticó bien y
+        quedó altísimo contra una venta topada por el almacén.
 
   - id: s2-r5-quiebre-politica
     tipo: markdown
@@ -514,37 +487,17 @@ items:
       columna `quiebre_stock`, y el día del faltante decía `1` con la demanda
       real al lado: 271 vendidas, 396 pedidas. Nada de eso llega hasta acá.
     notas: |
-      El cierre honesto de la unidad, y hay que decirlo con todas las
-      letras: **la política que construyeron tiene un agujero, y lo acaban
-      de ver.**
-
-      **Volver a la lámina del sábado**, `El mundo, por dentro` — la fila del 6
-      de agosto, `271.42, 396.01, 0, 1`. Ahí estaba la señal, en crudo, desde el
-      primer día.
-
-      Y acá está el matiz que hace buena la lección, porque **el dato sí le
-      llega al agente**: `metricas.csv` trae `dias_con_quiebre`, y
-      `resumen_flota` lo devuelve — pero solo dentro de la ficha de cada modelo
-      de las listas `peores_por_mape` y `peores_por_sesgo`. **No está en el
-      resumen global, no es una bandera, y nada en el contexto le dice qué
-      significa.** El agente lo tiene delante y no lo mira, igual que el humano
-      del lunes con su Excel.
-
-      Eso convierte la conversación de queja en diagnóstico: **un agente no
-      puede decidir mejor que los datos que le llegan — ni mejor de lo que le
-      dijeron que significan.** Lo que falta no es razonamiento, es
-      instrumentación: la diferencia entre «este agente no sirve para esto» y
-      «a este agente le falta un campo en el resumen y una frase en su
-      contexto».
-
-      Si alguien pregunta qué haría falta, hay tres respuestas y las tres son
-      de la plataforma, no del modelo: subir `dias_con_quiebre` al `global` de
-      `resumen_flota`, excluir esos días del reentrenamiento, o cruzar el
-      pronóstico contra el inventario. La primera es una línea.
-
-      Es también la respuesta a «¿entonces el agente sirve?». Sirve, y
-      tiene un borde. Saber dónde está el borde es lo que separa a alguien
-      que lo puso en producción de alguien que lo demostró.
+      **Decirlo con todas las letras: la política tiene un agujero, y lo
+      acaban de ver.**
+      - **Volver a la lámina del sábado** `El mundo, por dentro`: la fila del 6
+        de agosto, `271.42, 396.01, 0, 1`. **La señal estaba desde el primer
+        día.**
+      - **El matiz: el dato SÍ le llega.** `resumen_flota` devuelve
+        `dias_con_quiebre`, pero solo dentro de la ficha de cada modelo — **ni
+        en el global ni con nada que diga qué significa.**
+      - **La frase**: falta instrumentación, no razonamiento.
+      - Si preguntan qué haría falta: subirlo al global. **Es una línea.**
+      - Y a «¿entonces sirve?»: **sirve y tiene un borde.**
 
   - id: s2-r5-preguntas
     tipo: pausa-preguntas
@@ -597,19 +550,13 @@ items:
             nota: Lo único que escribe el agente con sus palabras
     notas: |
       **La columna que importa es `motivo`.** Las otras cuatro las pone la
-      plataforma; esa la escribe el agente, y es lo que permite reconstruir
-      en enero por qué existe un artefacto de las 3:40 de la mañana de un
-      martes. Sin ella la bitácora dice *qué* pasó y no *por qué*, que es
-      justo la mitad que hace falta cuando alguien pregunta.
-
-      **No hay un `make` para esto**, y conviene decirlo en vez de
-      inventarlo: la bitácora se lee por la API, que es como la leería
-      cualquier cosa que no sea esta clase.
-
-          curl -s localhost:8000/v1/reentrenamientos | head
-
-      También sale en la interfaz de :8501. Sin bitácora, la primera
-      pregunta del lunes —"¿quién reentrenó esto?"— no tiene respuesta.
+      plataforma; **esa la escribe el agente**, y permite reconstruir en enero
+      por qué existe un artefacto de las 3:40 de un martes.
+      - **No hay un `make` para esto**, y conviene decirlo en vez de
+        inventarlo: se lee por la API, `curl -s
+        localhost:8000/v1/reentrenamientos | head`, o en :8501.
+      - **Sin bitácora, la primera pregunta del lunes —«¿quién reentrenó
+        esto?»— no tiene respuesta.**
 
   - id: s2-r5-ui-tesis
     tipo: codigo
@@ -633,22 +580,14 @@ items:
       proyecta.
       """
     notas: |
-      **Las tres líneas resaltadas son el argumento de la interfaz entera**,
-      y valen por sí solas aunque nadie escriba una línea de Streamlit.
-
-      Un panel que solo muestre el diagnóstico final es un tablero más — y
-      los tableros ya los tienen, y ya vimos que no suenan. Lo que hace
-      distinto a un agente es que su razonamiento se puede leer: qué
-      herramientas llamó, qué hipótesis formuló, qué objeciones se puso y
-      si se corrigió.
-
-      Es la respuesta a la pregunta que siempre aparece: **«¿cómo sé que no
-      divaga?»**. Se lee. Un agente cuya ejecución no se puede inspeccionar
-      es un agente en el que hay que creer, y creer no escala a 192
-      modelos.
-
-      La interfaz **viene dada**: son 286 líneas y no se escriben hoy. Lo
-      que sí se hace es abrirla y leerla, que es lo que estamos haciendo.
+      **Las tres líneas resaltadas son el argumento de la interfaz entera.**
+      - Un panel que solo muestre el diagnóstico final es **un tablero más**, y
+        ya vimos que no suenan. Lo distinto de un agente es que **su
+        razonamiento se puede leer.**
+      - **La respuesta a «¿cómo sé que no divaga?»: se lee.** Un agente que no
+        se puede inspeccionar es un agente en el que hay que creer, y **creer
+        no escala a 192 modelos.**
+      - Viene dada: 286 líneas, no se escriben hoy.
 
   - id: s2-r5-ui-reflexion
     tipo: codigo
@@ -678,18 +617,12 @@ items:
               if corregido:
                   st.success("El diagnostico de arriba ya incorpora estas objeciones.")
     notas: |
-      Lo que hay que ver es lo que **no** hay: ninguna de estas líneas
-      decide nada. La interfaz solo lee el estado que el grafo dejó y lo
-      dibuja. `corregido` es una comparación de una cadena; el mensaje
-      verde es un `if`.
-
-      Toda la inteligencia está en el grafo, y eso es exactamente lo que
-      uno quiere: **una interfaz que razona es una interfaz que puede
-      contradecir al agente**, y entonces hay dos versiones de la verdad y
-      ninguna auditable.
-
-      La misma línea que ayer imprimimos en la consola —«reescrito tras la
-      reflexión»— es esta de acá. Un estado, dos presentaciones.
+      **Lo que hay que ver es lo que NO hay: ninguna línea decide nada.** La
+      interfaz lee el estado que el grafo dejó y lo dibuja.
+      - **La frase**: una interfaz que razona puede contradecir al agente, y
+        entonces hay dos versiones de la verdad y ninguna auditable.
+      - La línea que ayer salió por consola —«reescrito tras la reflexión»— es
+        esta. **Un estado, dos presentaciones.**
 
   - id: s2-r5-ui-repo
     tipo: enlace

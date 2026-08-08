@@ -77,11 +77,10 @@ items:
       - **Los dos números de cada línea son el caso entero.**
       - Tamaño de tienda: `miraflores` 1.35 · `juliaca` 0.75 → **promediar
         porcentajes está mal**. Es la trampa 1 del reto 2, sin nombrarla.
-      - Estacionalidad: bebidas 0.34 · abarrotes 0.12. Oscila 3× más, y **por
-        eso es la categoría de la campaña del reto 1**: el pico se esconde.
-      - Regiones desiguales: 14 en LIMA, 1 en CENTRO, 1 en ORIENTE. En el
-        reto 2 eso decide un umbral.
-      - Si preguntan si es real: inventado, pero **no arbitrario**.
+      - Estacionalidad: bebidas 0.34 · abarrotes 0.12. **Por eso bebidas es la
+        categoría de la campaña del reto 1**: el pico se esconde.
+      - Regiones desiguales: 14 en LIMA, 1 en ORIENTE. En el reto 2 eso decide
+        un umbral.
 
   - id: s1-caso-estado
     tipo: salida-anotada

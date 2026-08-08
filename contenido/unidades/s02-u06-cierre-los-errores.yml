@@ -51,12 +51,10 @@ items:
       - La mitad
       - Casi todos
     notas: |
-      La pregunta que abre el cierre, y la única del taller cuya respuesta
-      es la tesis entera. Preguntarla **antes** de proyectar la tabla.
-
-      Si la sala ya viene convencida y contesta "ninguno" en bloque, mejor:
-      significa que las ocho horas hicieron su trabajo. Revelar igual y
-      pasar a la tabla, que es la evidencia.
+      **Preguntarla ANTES de proyectar la tabla.** Es la única del taller cuya
+      respuesta es la tesis entera.
+      - Si contestan «ninguno» en bloque, **mejor**: las ocho horas hicieron su
+        trabajo. Revelar igual y pasar a la tabla, que es la evidencia.
     solucion:
       explicacion: |
         **Ninguno.** Los nueve estaban en lo que le dimos de comer o en cómo
@@ -175,11 +173,10 @@ items:
       no era un problema.
     minutos: 3
     notas: |
-      La lección se lleva a cualquier equipo: **un nombre ambiguo sin
-      definición le cuesta razonamiento a un agente, igual que a una
-      persona nueva.** Si tu esquema tiene un campo que hay que preguntar
-      qué significa, tu agente también lo va a preguntar — y va a inventar
-      la respuesta.
+      **La lección para cualquier equipo: un nombre ambiguo sin definición le
+      cuesta razonamiento a un agente, igual que a una persona nueva.**
+      - Si tu esquema tiene un campo que hay que preguntar qué significa, **tu
+        agente también lo va a preguntar — y va a inventar la respuesta.**
 
   - id: s2-c-incidencias
     tipo: markdown
@@ -228,12 +225,10 @@ items:
     destacado: Casi siempre es lo que le diste de comer
     minutos: 3
     notas: |
-      La frase del taller. Dejarla en pantalla y no explicarla: la tabla ya
+      **La frase del taller. Dejarla en pantalla y NO explicarla**: la tabla ya
       la explicó.
-
-      Si alguien pregunta por el "casi": sí, a veces el modelo es el
-      problema. Pero es lo último que hay que mirar, no lo primero, y la
-      bitácora de este taller da nueve razones.
+      - Si preguntan por el «casi»: sí, a veces el modelo es el problema.
+        **Pero es lo último que hay que mirar, no lo primero.**
 
   - id: s2-c-que-se-llevan
     tipo: criterios

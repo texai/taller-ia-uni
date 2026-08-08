@@ -367,12 +367,12 @@ items:
       - ["Mañana redescubre lo mismo", "No hay memoria entre ejecuciones", "Alerta repetida hasta que se la ignora"]
     resaltar: [2]
     notas: |
-      Las cuatro salieron de ejecuciones reales, no de una lista de riesgos.
-
-      La tercera está resaltada porque es la que la clase menos espera y la
-      más peligrosa: un agente que se equivoca en el diagnóstico se corrige;
-      un agente que infla el impacto entrena a todos a desconfiar de los
-      números correctos también.
+      - **Las cuatro salieron de ejecuciones reales**, no de una lista de
+        riesgos.
+      - **La tercera está resaltada porque es la que menos esperan y la más
+        peligrosa**: uno que se equivoca en el diagnóstico se corrige; **uno
+        que infla el impacto entrena a todos a desconfiar de los números
+        correctos también.**
 
   - id: s1-r3-cita-1
     tipo: cita-agente
@@ -452,12 +452,11 @@ items:
       - Memoria de lo que ya reportó
       - Más herramientas
     notas: |
-      A propósito sin respuesta correcta marcada: las tres últimas son
-      piezas reales de lo que se construye mañana, y la primera es la que
-      hay que discutir.
-
-      Revelar y dejar que discutan. Si gana "memoria", perfecto — es el
-      único que no se puede simular con nada más.
+      **A propósito sin respuesta correcta marcada.**
+      - Las tres últimas son piezas reales de mañana; **la primera es la que
+        hay que discutir**.
+      - **Si gana «memoria», perfecto**: es el único que no se puede simular
+        con nada más.
     solucion:
       explicacion: |
         Las tres últimas son piezas reales de lo que construimos mañana, y

@@ -33,12 +33,11 @@ items:
         D --> E["5 · ejecutarlo contra<br/>los cuatro mundos"]
         E --> F{{"criterio: cuatro mundos,<br/>cuatro lecturas distintas"}}
     notas: |
-      El reto más largo del taller, y el único con cinco pasos. Decir dónde
-      cae el receso —entre el 2 y el 3— para que nadie calcule mal su
-      propio ritmo.
-
-      El paso 3 es el difícil, y es donde está la idea de la que cuelga la
-      unidad: cuestionarse sin poder corregirse no sirve de nada.
+      El reto más largo del taller y el único con cinco pasos.
+      - **Decir dónde cae el receso: entre el 2 y el 3**, para que nadie
+        calcule mal su ritmo.
+      - **El paso 3 es el difícil**, y donde está la idea de la que cuelga la
+        unidad: *cuestionarse sin poder corregirse no sirve de nada*.
   - id: s2-r4-un-nodo
     tipo: markdown
     titulo: Un nodo, un trabajo
@@ -80,12 +79,11 @@ items:
     archivo: puml/grafo-agente.puml
     minutos: 9
     notas: |
-      Recorrerlo de a un mensaje. Proyectarlo entero de una vez es
-      exactamente lo que este tipo de ítem existe para evitar.
-
-      Los dos que hay que dejar respirar son el 7 —la reflexión mandando de
-      vuelta a percepción— y el 10, la crítica que queda en pie. Todo lo
-      demás es cableado.
+      **Recorrerlo de a un mensaje.** Proyectarlo entero es lo que este tipo
+      de ítem existe para evitar.
+      - **Dejar respirar dos**: el 7 (la reflexión mandando de vuelta a
+        percepción) y el 10 (la crítica que queda en pie).
+      - Todo lo demás es cableado.
     mensajes:
       - texto: "comparar_periodos(14, 45, categoria)"
         explicacion: >-
@@ -408,10 +406,9 @@ items:
           return "revision"
     notas: |
       Tres ramas, y cada una es una decisión de diseño:
-
-      El diagnóstico se sostuvo → se recomienda. La crítica pide más
-      evidencia y quedan vueltas → se vuelve a mirar. Y la tercera es la
-      interesante: la crítica sigue en pie y ya no quedan vueltas.
+      - Se sostuvo → se recomienda.
+      - Pide más evidencia y quedan vueltas → se vuelve a mirar.
+      - **La interesante**: la crítica sigue en pie y ya no quedan vueltas.
 
   - id: s2-r4-max-vueltas
     tipo: markdown
@@ -950,12 +947,10 @@ items:
           el problema está en los datos y no en el modelo, y mañana esa
           palabra será la diferencia entre reentrenar y frenar.
     notas: |
-      Recorrer la salida señalando. Es la lámina que convierte "el agente
-      funciona" en "sé qué está haciendo el agente".
-
-      Los acentos que faltan son del laboratorio, no de la lámina: el
-      código evita caracteres no ASCII en lo que imprime, para que no se
-      rompan en la consola de Windows.
+      **Recorrer la salida señalando.** Convierte «el agente funciona» en «sé
+      qué está haciendo el agente».
+      - Los acentos que faltan son del lab, no de la lámina: **evita no-ASCII
+        al imprimir** para que no se rompa en la consola de Windows.
 
   - id: s2-r4-salida-2
     tipo: salida-anotada
