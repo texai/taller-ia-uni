@@ -17,6 +17,45 @@ items:
       - **Señalar el QR**: quien no tenga el enlace, ahora. Después nadie
         vuelve a pedirlo y se pierde la clase entera.
 
+  - id: s1-la-app
+    tipo: criterios
+    titulo: Esta pantalla no es solo para mirar
+    entradilla: Seis cosas que solo funcionan si la siguen desde su propio dispositivo
+    minutos: 3
+    criterios:
+      - texto: La lámina que estoy dictando aparece sola en su pantalla
+        pista: >-
+          No hay que buscar por dónde voy. Y si se adelantan o retroceden, un
+          botón los devuelve a donde va la clase
+      - texto: Cuando lance una pregunta, responden desde ahí y el resultado se ve en vivo
+        pista: >-
+          Anónimo entre ustedes: en pantalla salen los totales, nunca quién
+          eligió qué
+      - texto: Pueden preguntarme sin levantar la mano, y sin poner su nombre si no quieren
+        pista: >-
+          Llegan a mi otra pantalla, no a la proyectada. Nadie más las ve
+      - texto: El glosario está siempre a un clic, abajo a la derecha
+        pista: >-
+          Cuarenta términos. A las 18:20 nadie se acuerda de qué era la
+          cobertura, y no hay que preguntarlo
+      - texto: Los archivos y las guías se bajan desde la propia lámina
+        pista: >-
+          Y cada ruta de código enlaza al repositorio, en la línea exacta
+      - texto: En los ratos de trabajo, el reloj corre en su pantalla
+        pista: >-
+          Con los minutos propuestos a la vista, para saber cuánto queda sin
+          preguntar
+    notas: |
+      **3 min, y pagan el día entero.** Una sala que no sabe que puede responder
+      no responde, y las preguntas dejan de medir nada.
+      - **Pedir que abran el enlace ahora**, no «cuando puedan». El QR de la
+        carátula sigue a un paso atrás.
+      - **Insistir en el anonimato de las dos direcciones**: sus respuestas
+        salen como totales, y sus preguntas no llevan nombre si no quieren.
+        Es lo que hace que pregunten de verdad.
+      - Si alguien no puede abrirlo: que siga por la pantalla compartida y lo
+        arregle en el receso. **No parar la clase por esto.**
+
   - id: s1-asistencia
     tipo: asistencia
     titulo: Tomar asistencia

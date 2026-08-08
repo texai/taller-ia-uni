@@ -127,14 +127,12 @@ items:
       - **Señalar dos cosas**: `ventas.csv` entra DOS veces (entrenar y medir —
         un modelo no se degrada en abstracto sino contra la realidad), y **el
         agente todavía no existe**. Lo construimos nosotros.
-      - **Cada caja gris es un comando que van a teclear hoy.** Decirlo: el
-        dibujo no es una arquitectura de referencia, es la lista de comandos de
-        la tarde.
-      - **El recuadro es `make seed`**: los cuatro de una vez. Por eso la
-        primera vez tarda y las siguientes no.
+      - **Cada caja gris es un comando de hoy.** No es una arquitectura de
+        referencia: es la lista de comandos de la tarde.
+      - **El recuadro es `make seed`**, los cuatro de una vez. Por eso la
+        primera vez tarda.
       - **Lo que NO tiene comando propio**: `romper` y `reparar` son
-        `pronosticar` + `metricas` otra vez, con el mundo cambiado. Ninguno
-        vuelve a pasar por `entrenar`.
+        `pronosticar` + `metricas` otra vez. **Ninguno pasa por `entrenar`.**
 
   - id: s1-glosario-docker
     tipo: glosario

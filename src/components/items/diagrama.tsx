@@ -30,6 +30,36 @@ export function Mermaid({ fuente }: { fuente: string }) {
           fontFamily: "inherit",
           fontSize: 16,
           securityLevel: "strict",
+          /*
+            El recuadro de un `subgraph`, con los colores de la aplicación.
+
+            El tema `dark` de Mermaid pinta los grupos con un gris claro
+            opaco. Sobre este lienzo casi negro eso no se lee como «estos
+            nodos van juntos»: se lee como un rectángulo recortado y mal
+            pegado encima del diagrama — que es exactamente lo que parecía en
+            la lámina de arquitectura.
+
+            Un grupo no necesita relleno para agrupar. Basta un borde tenue y
+            el rótulo, que es lo que hace el resto de la interfaz con sus
+            cajas. Va acá y no en el diagrama concreto para que cualquier
+            `subgraph` futuro salga bien sin acordarse de esto.
+          */
+          themeVariables: oscuro
+            ? {
+                clusterBkg: "#0f1115",
+                clusterBorder: "#262c37",
+                titleColor: "#9aa4b2",
+                lineColor: "#9aa4b2",
+                // El rótulo de una flecha viene con un chip gris de resalte
+                // detrás. Sobre el lienzo oscuro parece un subrayado de
+                // rotulador, no una etiqueta.
+                edgeLabelBackground: "#0f1115",
+              }
+            : {
+                clusterBkg: "#f6f7f9",
+                clusterBorder: "#e1e5ea",
+                edgeLabelBackground: "#ffffff",
+              },
         });
 
         const { svg } = await mermaid.render(`m${id}`, fuente);

@@ -434,15 +434,46 @@ export function Dictado({
     // `block: "center"` de `scrollIntoView` no sirve: mueve TODOS los
     // ancestros desplazables, así que arrastra también la página y el panel
     // del ítem. Acá se mueve solo la barra, calculando contra su propia caja.
-    const destino =
-      nodo.offsetTop - caja.clientHeight / 2 + nodo.offsetHeight / 2;
-    caja.scrollTo({
-      top: Math.max(0, destino),
-      // Suave, salvo para quien pidió al sistema que no le animen nada.
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
-    });
+    const destino = Math.max(
+      0,
+      nodo.offsetTop - caja.clientHeight / 2 + nodo.offsetHeight / 2,
+    );
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      caja.scrollTop = destino;
+      return;
+    }
+
+    // La animación se hace a mano en vez de con `behavior: "smooth"`.
+    //
+    // El desplazamiento nativo dura lo que el navegador decide, y con saltos
+    // cortos —una flecha, un ítem— sale seco: arranca a velocidad máxima y se
+    // para en seco. En una barra que se mira de reojo mientras se habla, eso
+    // se lee como un tirón y hace perder de vista dónde estaba uno.
+    //
+    // Con `easeInOutCubic` el salto entra y sale despacio, y el ojo puede
+    // seguir el recorrido en vez de tener que volver a buscar. Y la duración
+    // se escala con la distancia: mover una línea no puede costar lo mismo
+    // que cruzar media sesión de un salto.
+    const desde = caja.scrollTop;
+    const trecho = destino - desde;
+    if (Math.abs(trecho) < 1) return;
+
+    const duracion = Math.min(600, 220 + Math.abs(trecho) * 0.35);
+    const arranque = performance.now();
+    let animacion = 0;
+
+    const paso = (ahora: number) => {
+      const t = Math.min(1, (ahora - arranque) / duracion);
+      const suave = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+      caja.scrollTop = desde + trecho * suave;
+      if (t < 1) animacion = requestAnimationFrame(paso);
+    };
+    animacion = requestAnimationFrame(paso);
+
+    // Si la clase avanza otra vez antes de que termine, la animación vieja se
+    // cancela: dos a la vez se pelean por `scrollTop` y el resultado tiembla.
+    return () => cancelAnimationFrame(animacion);
   }, [pos.unidad, pos.item]);
 
   /**

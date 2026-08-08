@@ -5,6 +5,36 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Una lámina que dice para qué sirve la aplicación
+- Va **antes de pasar lista**, que es cuando todavía no han abierto el enlace.
+  Seis cosas que solo funcionan desde su propio dispositivo: la lámina que se
+  sigue sola, responder a las preguntas, preguntar sin levantar la mano, el
+  glosario, los descargables y los relojes de las ventanas de trabajo.
+- **El anonimato de las dos direcciones es lo que hay que decir en voz alta**:
+  sus respuestas salen como totales y sus preguntas no llevan nombre si no
+  quieren. Es lo que hace que pregunten de verdad. Una sala que no sabe que
+  puede responder no responde, y las preguntas dejan de medir nada.
+
+### Los diagramas se ven como el resto de la interfaz
+- Un `subgraph` salía con el **gris claro opaco** del tema `dark` de Mermaid.
+  Sobre este lienzo casi negro eso no se lee como «estos nodos van juntos»:
+  se lee como un rectángulo recortado y mal pegado encima del diagrama.
+  Ahora es solo un borde tenue y su rótulo, como el resto de las cajas.
+- Igual con los rótulos de flecha, que traían un chip gris de resalte detrás
+  —parecían subrayados con rotulador—. Va en el componente y no en el
+  diagrama, así que cualquier `subgraph` futuro sale bien sin acordarse.
+
+### El salto de la barra lateral, más suave
+- `behavior: "smooth"` dura lo que el navegador decide, y con saltos cortos
+  sale seco: arranca a velocidad máxima y se para en seco. En una barra que
+  se mira de reojo mientras se habla, eso se lee como un tirón.
+- Animación propia con `easeInOutCubic`: entra y sale despacio, y **la
+  duración se escala con la distancia** — mover una línea no puede costar lo
+  mismo que cruzar media sesión. Se cancela si la clase avanza otra vez antes
+  de terminar; dos animaciones peleando por `scrollTop` tiemblan.
+- Quien pidió al sistema no ver animaciones sigue sin verlas.
+
+
 ### El diagrama de arquitectura lleva los comandos
 - Era un mapa de componentes: decía qué había, no **cómo se hace**. Cada caja
   de proceso lleva ahora el comando que la ejecuta —`make datos`,
