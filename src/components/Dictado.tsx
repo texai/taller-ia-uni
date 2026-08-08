@@ -685,6 +685,29 @@ export function Dictado({
           </span>
 
           {/*
+            Cuántos están conectados, en la pantalla que se proyecta.
+
+            Es un número y nada más: **no lleva nombres**, así que no cae bajo
+            la regla de §14 —lo que no puede proyectarse es lo que identifica a
+            alguien— y a la clase le sirve verlo. En una sesión en línea, saber
+            que hay veintiuno mirando cambia cómo se pregunta y cómo se
+            responde, a los dos lados.
+
+            El docente lo necesita además para decidir: si el contador de una
+            pregunta dice 12 y hay 21 conectados, faltan nueve por responder y
+            no es momento de revelar.
+          */}
+          {modoDocente && conectados > 0 && (
+            <span
+              className="shrink-0 text-xs tabular-nums"
+              style={{ color: "var(--tinta-suave)" }}
+              title="Alumnos conectados ahora mismo"
+            >
+              {conectados} {conectados === 1 ? "conectado" : "conectados"}
+            </span>
+          )}
+
+          {/*
             Las preguntas de los alumnos NO salen acá aunque esta sea la
             pantalla del docente: es la que se comparte por videollamada, y una
             pregunta lleva el nombre de quien la hizo. Preguntar desde el

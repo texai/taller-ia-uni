@@ -5,6 +5,35 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Cada comando de un reto dice qué significa su resultado
+- Un comando produce números, y **los números no dicen nada solos**: «sesgo
+  +4.7%» es una cifra hasta que alguien la traduce a **36,981 unidades de más
+  en almacén en catorce días**. La sala hace esa traducción sola las primeras
+  veces y deja de hacerla a media tarde, que es cuando llegan los retos que
+  importan.
+- Campo **`significa: {negocio, modelo}`**, público y en la lámina, en los
+  cinco tipos que llevan comando. **Dos campos y no un párrafo**, porque son
+  dos preguntas distintas y la primera —qué le cuesta a la cadena— es la que se
+  olvida.
+- Los **17 comandos significativos** de los cinco retos, rellenos con las
+  cifras del ensayo de hoy. Y una cosa que se vio al escribirlos: la respuesta
+  de `modelo` es **«nada, y ese es el punto»** más veces de las que parece —en
+  el reto 1 los 192 no se tocan, en `feed_caido` los de arequipa están sanos—,
+  y escribirlo evita que la sala concluya que hay que reentrenar cada vez que
+  un número se mueve.
+- Las notas privadas llevan **cómo decirlo**, no qué dice la lámina.
+- `validar-contenido` **falla el build** si falta. Listaba los 17 antes de
+  rellenarlos.
+
+### El número de conectados, en la pantalla que se proyecta
+- Es **un número y nada más**: no lleva nombres, así que no cae bajo §14 —lo
+  que no puede proyectarse es lo que identifica a alguien— y a la clase le
+  sirve verlo. En una sesión en línea, saber que hay veintiuno mirando cambia
+  cómo se pregunta y cómo se responde, a los dos lados.
+- Al docente le sirve además para decidir: si el contador de una pregunta dice
+  12 y hay 21 conectados, **faltan nueve y no es momento de revelar**.
+
+
 ### El contador de la esquina es ahora el salto
 - «79 / 144» llevaba toda la clase en pantalla **sin servir para nada**. Para
   llegar a una lámina concreta solo había dos caminos: el índice lateral —que
