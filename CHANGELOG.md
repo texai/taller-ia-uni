@@ -5,6 +5,29 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Lo que hay debajo de cada caja del diagrama
+- El dibujo decía `make entrenar` y ahí se acababa: no se veía **qué herramienta
+  corre por debajo ni en qué archivo está**.
+- Cada caja de proceso lleva ahora una segunda línea con el archivo y la
+  librería — `entrenar.py · sklearn`, `metricas.py · pandas`,
+  `grafo.py · LangGraph`.
+- Y una **lámina nueva justo después** con la cadena entera, que es donde cabe
+  el comando de Docker sin apretar el dibujo: atajo → `docker compose run --rm
+  … python -m …` → archivo → librería, las siete filas. El patrón se ve de una
+  vez: quien lee una fila, lee las siete.
+
+### Los diagramas se pueden abrir aparte
+- Mermaid dibuja **SVG en línea**, no una `<img>`, así que el clic derecho no
+  ofrecía «abrir imagen en una pestaña nueva»: no hay archivo que abrir, el
+  dibujo lo acaba de construir el navegador.
+- Botón **«Abrir aparte ↗»** en la esquina de cada diagrama. Serializa el SVG
+  que ya está en pantalla, lo envuelve en un `Blob` y abre esa URL: mismo
+  dibujo a pantalla completa, con el zoom del navegador y guardable.
+- Sale de lo renderizado, así que **nunca puede quedar desincronizado con la
+  lámina** — que es justo lo que pasaría exportando un `.svg` a mano. Y vale
+  para los veinte diagramas del curso sin tocar ninguno.
+
+
 ### Una lámina que dice para qué sirve la aplicación
 - Va **antes de pasar lista**, que es cuando todavía no han abierto el enlace.
   Seis cosas que solo funcionan desde su propio dispositivo: la lámina que se

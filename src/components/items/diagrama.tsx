@@ -93,7 +93,73 @@ export function Mermaid({ fuente }: { fuente: string }) {
     );
   }
 
-  return <div ref={contenedor} className="flex justify-center" />;
+  return (
+    <div className="relative">
+      <div ref={contenedor} className="flex justify-center" />
+      <AbrirAparte contenedor={contenedor} />
+    </div>
+  );
+}
+
+/**
+ * Abrir el diagrama solo, en una pestaña.
+ *
+ * Mermaid dibuja **SVG en línea**, no una `<img>`: por eso el clic derecho no
+ * ofrece «abrir imagen en una pestaña nueva». No hay archivo que abrir — el
+ * dibujo lo acaba de construir el navegador.
+ *
+ * Se resuelve sin exportar nada ni añadir un paso de compilación: se serializa
+ * el SVG que ya está en pantalla, se envuelve en un `Blob` y se abre esa URL.
+ * Se ve el mismo dibujo, a pantalla completa, con el zoom del navegador y
+ * guardable con `⌘S`. Y como sale de lo que hay renderizado, **nunca puede
+ * quedar desincronizado con la lámina**, que es lo que pasaría con un `.svg`
+ * exportado a mano.
+ *
+ * Va sobre el propio diagrama y en gris tenue: proyectado no debe competir
+ * con el dibujo, pero tiene que estar donde uno lo busca.
+ */
+function AbrirAparte({
+  contenedor,
+}: {
+  contenedor: React.RefObject<HTMLDivElement | null>;
+}) {
+  const abrir = () => {
+    const svg = contenedor.current?.querySelector("svg");
+    if (!svg) return;
+
+    const copia = svg.cloneNode(true) as SVGElement;
+    // Sin el `max-width` que Mermaid le pone, y con fondo: abierto solo, un
+    // SVG transparente sobre el blanco del navegador deja el texto claro
+    // ilegible.
+    copia.removeAttribute("style");
+    copia.setAttribute("width", "100%");
+    const fondo = getComputedStyle(document.body).backgroundColor;
+
+    const doc =
+      `<!doctype html><meta charset="utf-8">` +
+      `<title>Diagrama · Taller 02</title>` +
+      `<body style="margin:0;background:${fondo};display:flex;` +
+      `align-items:center;justify-content:center;min-height:100vh">` +
+      new XMLSerializer().serializeToString(copia) +
+      `</body>`;
+
+    const url = URL.createObjectURL(new Blob([doc], { type: "text/html" }));
+    window.open(url, "_blank", "noopener");
+    // No se revoca de inmediato: la pestaña todavía no ha leído el blob.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={abrir}
+      className="absolute right-0 top-0 rounded-md px-2 py-1 text-xs opacity-50 transition-opacity hover:opacity-100"
+      style={{ color: "var(--tinta-suave)" }}
+      title="Abrir el diagrama solo, en una pestaña nueva"
+    >
+      Abrir aparte ↗
+    </button>
+  );
 }
 
 /**

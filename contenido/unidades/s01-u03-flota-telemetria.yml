@@ -107,21 +107,21 @@ items:
       flowchart LR
         subgraph SEED["make seed = datos + entrenar + pronosticar + metricas"]
           direction LR
-          D["make datos"] --> V[("ventas.csv<br/>el mundo")]
-          V --> E["make entrenar<br/>192 Ridge"]
+          D["make datos<br/><small>datos.py</small>"] --> V[("ventas.csv<br/>el mundo")]
+          V --> E["make entrenar<br/>192 Ridge<br/><small>entrenar.py · sklearn</small>"]
           E --> M[("modelos/<br/>192 artefactos")]
           E -.->|registro| ML[("MLflow")]
-          M --> J["make pronosticar<br/>el job de madrugada"]
+          M --> J["make pronosticar<br/>el job de madrugada<br/><small>pronosticar.py · joblib</small>"]
           V --> J
           J --> P[("predicciones.csv")]
-          P --> C["make metricas<br/>cruce contra lo vendido"]
+          P --> C["make metricas<br/>cruce contra lo vendido<br/><small>metricas.py · pandas</small>"]
           V --> C
           C --> TM[("metricas.csv<br/>la telemetria")]
         end
         ML -.->|make mlflow| MLUI["registro :5000"]
-        TM --> API["API :8000<br/>make arriba"]
-        API --> UI["interfaz :8501<br/>make ui"]
-        API -.->|mañana| AG["el agente<br/>make agente"]
+        TM --> API["API :8000 · make arriba<br/><small>api.py · FastAPI</small>"]
+        API --> UI["interfaz :8501 · make ui<br/><small>ui/app.py · Streamlit</small>"]
+        API -.->|mañana| AG["el agente · make agente<br/><small>grafo.py · LangGraph</small>"]
     notas: |
       El mapa al que se vuelve toda la clase. **Anclarlo bien.**
       - **Señalar dos cosas**: `ventas.csv` entra DOS veces (entrenar y medir —
@@ -133,6 +133,33 @@ items:
         `pronosticar` y `metricas`. Por eso la primera vez tarda.
       - **Lo que NO tiene comando propio**: `romper` y `reparar` son
         `pronosticar` + `metricas` otra vez. **Ninguno pasa por `entrenar`.**
+
+  - id: s1-arquitectura-capas
+    tipo: tabla
+    titulo: Y esto es lo que hay debajo de cada caja
+    entradilla: El mismo dibujo, sin el atajo. `make` no hace nada por sí solo
+    minutos: 4
+    columnas: [El atajo, Lo que ejecuta de verdad, Archivo, Librería]
+    filas:
+      - ["`make datos`", "`docker compose run --rm plataforma python -m plataforma datos`", "`plataforma/datos.py`", "—"]
+      - ["`make entrenar`", "`… python -m plataforma entrenar`", "`plataforma/entrenar.py`", "**scikit-learn** · joblib · MLflow"]
+      - ["`make pronosticar`", "`… python -m plataforma pronosticar`", "`plataforma/pronosticar.py`", "**joblib** · pandas"]
+      - ["`make metricas`", "`… python -m plataforma metricas`", "`plataforma/metricas.py`", "**pandas**"]
+      - ["`make arriba`", "`docker compose up -d plataforma ui`", "`plataforma/api.py`", "**FastAPI** · uvicorn"]
+      - ["`make ui`", "`docker compose up -d ui`", "`ui/app.py`", "**Streamlit**"]
+      - ["`make agente`", "`docker compose run --rm agente python -m agente run`", "`agente/grafo.py`", "**LangGraph** · LangChain"]
+    resaltar: [2]
+    notas: |
+      **La lámina que contesta «¿y qué hace `make` en realidad?».** Nada: lee
+      una receta y ejecuta sus líneas.
+      - **Leer una fila entera en voz alta**, la resaltada. Las demás se leen
+        solas después.
+      - **El patrón se repite en las siete**: `docker compose run --rm` +
+        servicio + `python -m` + módulo. Quien lo ve una vez, las lee todas.
+      - **`up -d` en dos filas, `run --rm` en cinco**: dejar algo vivo contra
+        ejecutar y desaparecer.
+      - **El día que trabajen sin este Makefile, esta columna es la que hay que
+        saber.**
 
   - id: s1-glosario-docker
     tipo: glosario
