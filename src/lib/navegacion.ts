@@ -135,6 +135,33 @@ export function totalItems(sesion: Sesion): number {
 }
 
 /**
+ * La inversa de `indiceDeItem`: dónde está el ítem número `n`.
+ *
+ * Es lo que permite saltar por el número que el contador ya enseña. El docente
+ * ve «79 / 144» en la esquina y esa cifra no servía para nada: el único modo
+ * de llegar a un sitio concreto era el índice lateral —que obliga a reconocer
+ * un título— o la flecha, cuarenta veces.
+ *
+ * `n` es 1-basado, como el contador. Fuera de rango se acota a los extremos en
+ * vez de fallar: quien teclea 999 quiere el final, y quien teclea 0 quiere el
+ * principio.
+ */
+export function posicionDeIndice(sesion: Sesion, n: number): Posicion {
+  const total = totalItems(sesion);
+  if (!total) return { unidad: 0, item: 0, paso: 0 };
+  let quedan = Math.min(Math.max(Math.round(n), 1), total) - 1;
+  for (let u = 0; u < sesion.unidades.length; u++) {
+    const cuantos = sesion.unidades[u]?.items.length ?? 0;
+    if (quedan < cuantos) return { unidad: u, item: quedan, paso: 0 };
+    quedan -= cuantos;
+  }
+  // Inalcanzable con `total` bien contado, pero el último ítem es la respuesta
+  // honesta si algún día no lo está.
+  const u = sesion.unidades.length - 1;
+  return { unidad: u, item: (sesion.unidades[u]?.items.length ?? 1) - 1, paso: 0 };
+}
+
+/**
  * El tiempo se cuenta de abajo hacia arriba.
  *
  * Lo declara el ítem, que es la pieza más pequeña y la única que alguien puede

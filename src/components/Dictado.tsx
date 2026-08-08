@@ -20,6 +20,7 @@ import {
   itemEn,
   minutosDeUnidad,
   pasosDe,
+  posicionDeIndice,
   retroceder,
   totalItems,
   unidadEn,
@@ -41,6 +42,188 @@ import { comparar } from "@/lib/navegacion";
  * audiencia, no a la pantalla. El índice existe para saltar cuando alguien
  * pregunta por algo de hace veinte minutos, no para recorrer.
  */
+/**
+ * El contador de la esquina, convertido en un salto.
+ *
+ * El número ya estaba ahí —«79 / 144»— y no servía para nada. Para llegar a
+ * una lámina concreta solo había dos caminos: el índice lateral, que obliga a
+ * reconocer un título entre 234, o la flecha, cuarenta veces. En vivo, cuando
+ * alguien pregunta por algo de hace media hora, ninguno de los dos sirve.
+ *
+ * Lleva las dos formas a propósito, y no es indecisión:
+ *
+ * - **La caja** es para cuando se sabe el número. Se teclea y Enter. Es lo que
+ *   se usa con la escaleta al lado, o volviendo a un sitio que uno anotó.
+ * - **El deslizador** es para cuando no se sabe: se arrastra viendo el título
+ *   cambiar debajo hasta reconocerlo. Buscar sin saber el número es el caso
+ *   más común de los dos.
+ *
+ * Se abre al pulsar el contador y se cierra con Escape o pulsando fuera. **No
+ * salta mientras se arrastra**: solo al soltar. Con la pantalla proyectada,
+ * arrastrar saltando dejaría a la clase pasando cuarenta láminas en dos
+ * segundos.
+ */
+function SaltarA({
+  indice,
+  total,
+  pasos,
+  paso,
+  onIr,
+}: {
+  indice: number;
+  total: number;
+  pasos: number;
+  paso: number;
+  onIr: (n: number) => void;
+}) {
+  const [abierto, setAbierto] = useState(false);
+  const [texto, setTexto] = useState("");
+  // Lo que el deslizador está señalando ahora mismo, que puede no ser dónde
+  // está la clase: mientras se arrastra, la sala no se ha movido.
+  const [apuntando, setApuntando] = useState(indice + 1);
+  const caja = useRef<HTMLInputElement | null>(null);
+
+  // El efecto solo escucha y enfoca. Poner los valores iniciales acá dentro
+  // sería escribir estado desde un efecto para algo que ya sabe el gesto que
+  // lo abrió — se hacen en `abrir`, que es donde ocurre.
+  useEffect(() => {
+    if (!abierto) return;
+    caja.current?.focus();
+    caja.current?.select();
+    const alTeclado = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAbierto(false);
+    };
+    window.addEventListener("keydown", alTeclado);
+    return () => window.removeEventListener("keydown", alTeclado);
+  }, [abierto]);
+
+  const abrir = () => {
+    // Siempre parte de dónde está la clase, no de dónde quedó el deslizador la
+    // vez anterior: media hora después, ese número ya no significa nada.
+    setTexto("");
+    setApuntando(indice + 1);
+    setAbierto(true);
+  };
+
+  const saltar = (n: number) => {
+    if (!Number.isFinite(n)) return;
+    onIr(n);
+    setAbierto(false);
+  };
+
+  return (
+    <div className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => (abierto ? setAbierto(false) : abrir())}
+        className="rounded-md px-2 py-1 text-sm tabular-nums"
+        style={{
+          color: abierto ? "var(--color-acento)" : "var(--tinta-suave)",
+          background: abierto ? "var(--lienzo-alto)" : "transparent",
+        }}
+        title="Saltar a una lámina"
+      >
+        {indice + 1} / {total}
+        {pasos > 1 && (
+          <span style={{ color: "var(--color-acento)" }}>
+            {" "}
+            · paso {paso + 1}/{pasos}
+          </span>
+        )}
+      </button>
+
+      {abierto && (
+        <>
+          {/* Pulsar fuera cierra. Va detrás del panel y delante de todo lo
+              demás, para que no haga falta acertarle al botón otra vez. */}
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setAbierto(false)}
+          />
+          <div
+            className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border p-4 shadow-xl"
+            style={{
+              borderColor: "var(--borde)",
+              background: "var(--lienzo-alto)",
+            }}
+          >
+            <p
+              className="text-[11px] font-semibold uppercase tracking-widest"
+              style={{ color: "var(--tinta-suave)" }}
+            >
+              Saltar a la lámina
+            </p>
+
+            <form
+              className="mt-3 flex items-center gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                saltar(Number(texto));
+              }}
+            >
+              <input
+                ref={caja}
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={total}
+                value={texto}
+                onChange={(e) => setTexto(e.target.value)}
+                placeholder={String(indice + 1)}
+                className="w-24 rounded-md border px-3 py-2 text-lg tabular-nums"
+                style={{
+                  borderColor: "var(--borde)",
+                  background: "var(--lienzo)",
+                  color: "var(--tinta)",
+                }}
+              />
+              <span className="text-sm" style={{ color: "var(--tinta-suave)" }}>
+                de {total}
+              </span>
+              <button
+                type="submit"
+                className="ml-auto rounded-md border px-3 py-2 text-sm font-medium"
+                style={{
+                  borderColor: "var(--color-acento)",
+                  color: "var(--color-acento)",
+                }}
+              >
+                Ir
+              </button>
+            </form>
+
+            <input
+              type="range"
+              min={1}
+              max={total}
+              value={apuntando}
+              onChange={(e) => setApuntando(Number(e.target.value))}
+              // Solo al soltar. Saltando en cada píxel, la clase vería pasar
+              // cuarenta láminas mientras uno busca.
+              onMouseUp={() => saltar(apuntando)}
+              onTouchEnd={() => saltar(apuntando)}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") saltar(apuntando);
+              }}
+              className="mt-4 w-full"
+              style={{ accentColor: "var(--color-acento)" }}
+              aria-label="Buscar una lámina arrastrando"
+            />
+            <p
+              className="mt-1 text-xs tabular-nums"
+              style={{ color: "var(--tinta-suave)" }}
+            >
+              {apuntando === indice + 1
+                ? "Arrastra para buscar, o teclea el número"
+                : `Ir a la ${apuntando} · suelta para saltar`}
+            </p>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 const EVENTO = "taller:navegacion";
 
 /**
@@ -525,18 +708,33 @@ export function Dictado({
             </button>
           )}
 
-          <p
-            className="shrink-0 text-sm tabular-nums"
-            style={{ color: "var(--tinta-suave)" }}
-          >
-            {indice + 1} / {total}
-            {pasos > 1 && (
-              <span style={{ color: "var(--color-acento)" }}>
-                {" "}
-                · paso {pos.paso + 1}/{pasos}
-              </span>
-            )}
-          </p>
+          {/*
+            El contador es el salto. Solo para el docente: el alumno lo ve
+            igual pero no lo puede pulsar — saltar es marcar el ritmo, y el
+            ritmo lo marca quien dicta (§4).
+          */}
+          {modoDocente ? (
+            <SaltarA
+              indice={indice}
+              total={total}
+              pasos={pasos}
+              paso={pos.paso}
+              onIr={(n) => irA(posicionDeIndice(sesion, n))}
+            />
+          ) : (
+            <p
+              className="shrink-0 text-sm tabular-nums"
+              style={{ color: "var(--tinta-suave)" }}
+            >
+              {indice + 1} / {total}
+              {pasos > 1 && (
+                <span style={{ color: "var(--color-acento)" }}>
+                  {" "}
+                  · paso {pos.paso + 1}/{pasos}
+                </span>
+              )}
+            </p>
+          )}
         </header>
 
         {/* La barra de avance de la sesión, fina y siempre visible. */}

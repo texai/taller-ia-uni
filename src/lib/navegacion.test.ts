@@ -14,6 +14,7 @@ import {
   retroceder,
   reprochesDeRitmo,
   ritmoDe,
+  posicionDeIndice,
   totalItems,
 } from "./navegacion";
 import { cargarCurso } from "./contenido";
@@ -353,4 +354,53 @@ test("una lectura corta el tramo: durante ese rato el docente no habla", () => {
   // Sin el corte, el tramo mayor serían los 48 minutos enteros.
   assert.equal(ritmoDe(u).tramoMayor, 20);
   assert.equal(ritmoDe(u).momentos, 1);
+});
+
+// --------------------------------------------------------------------------
+// Saltar por el número del contador
+// --------------------------------------------------------------------------
+
+test("posicionDeIndice es la inversa exacta de indiceDeItem", () => {
+  // La propiedad que importa: si el contador dice 79, teclear 79 tiene que
+  // llevar exactamente ahí. Se comprueba en TODA la sesión, no en tres casos
+  // sueltos, y también sobre el curso real más abajo.
+  const total = totalItems(SESION);
+  for (let n = 1; n <= total; n++) {
+    const pos = posicionDeIndice(SESION, n);
+    assert.equal(indiceDeItem(SESION, pos) + 1, n, `falla en ${n}`);
+    assert.equal(pos.paso, 0, "un salto entra por el primer paso");
+  }
+});
+
+test("y cruza las fronteras de unidad", () => {
+  // El caso que un `items[n]` ingenuo se come: el ítem 1 de la segunda unidad
+  // no es el ítem 1 de la sesión.
+  assert.deepEqual(posicionDeIndice(SESION, 2), { unidad: 0, item: 1, paso: 0 });
+  assert.deepEqual(posicionDeIndice(SESION, 3), { unidad: 1, item: 0, paso: 0 });
+});
+
+test("fuera de rango se acota, no falla", () => {
+  // Quien teclea 999 quiere el final; quien teclea 0 o un negativo, el
+  // principio. Fallar acá dejaría el mando en blanco a mitad de clase.
+  assert.deepEqual(posicionDeIndice(SESION, 0), { unidad: 0, item: 0, paso: 0 });
+  assert.deepEqual(posicionDeIndice(SESION, -5), { unidad: 0, item: 0, paso: 0 });
+  assert.equal(
+    indiceDeItem(SESION, posicionDeIndice(SESION, 999)) + 1,
+    totalItems(SESION),
+  );
+});
+
+test("la ida y vuelta se sostiene sobre las dos sesiones reales", () => {
+  // 234 ítems repartidos en trece unidades de tamaños distintos. Es donde un
+  // error de acarreo entre unidades se vería.
+  for (const sesion of cargarCurso().sesiones) {
+    const total = totalItems(sesion);
+    for (let n = 1; n <= total; n++) {
+      assert.equal(
+        indiceDeItem(sesion, posicionDeIndice(sesion, n)) + 1,
+        n,
+        `${sesion.id} falla en ${n}`,
+      );
+    }
+  }
 });

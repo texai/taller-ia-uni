@@ -5,6 +5,27 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### El contador de la esquina es ahora el salto
+- «79 / 144» llevaba toda la clase en pantalla **sin servir para nada**. Para
+  llegar a una lámina concreta solo había dos caminos: el índice lateral —que
+  obliga a reconocer un título entre 234— o la flecha, cuarenta veces. En
+  vivo, cuando alguien pregunta por algo de hace media hora, ninguno sirve.
+- Se pulsa el contador y se abre el salto, **con las dos formas y no es
+  indecisión**: la **caja** para cuando se sabe el número (se teclea y Enter,
+  que es lo que se usa con la escaleta al lado), y el **deslizador** para
+  cuando no se sabe — se arrastra viendo el número hasta reconocerlo. Buscar
+  sin saber el número es el caso más común de los dos.
+- **No salta mientras se arrastra, solo al soltar.** Con la pantalla
+  proyectada, saltar en cada píxel dejaría a la clase pasando cuarenta láminas
+  en dos segundos.
+- **Solo para el docente.** El alumno ve el mismo contador y no lo puede
+  pulsar: saltar es marcar el ritmo, y el ritmo lo marca quien dicta (§4).
+- Detrás va `posicionDeIndice`, la inversa de `indiceDeItem`, con prueba de
+  ida y vuelta **sobre los 234 ítems reales** — que es donde se vería un error
+  de acarreo entre unidades. Fuera de rango se acota en vez de fallar: quien
+  teclea 999 quiere el final.
+
+
 ### La pauta, ensayada de verdad
 - Se ejecutó contra un mundo real —sembrado, roto y reparado— en vez de leerse.
   **Las once evidencias numéricas que declara son correctas**, hasta la última
