@@ -33,13 +33,11 @@ items:
         C --> D["4 · comparar las tres<br/>salidas lado a lado"]
         D --> E{{"lo que te llevas:<br/>cuatro patologias, y ninguna<br/>se arregla con un prompt"}}
     notas: |
-      **El único reto del taller en el que no se escribe una línea.** Vale
-      la pena que se vea en el mapa: los cuatro pasos son leer, ejecutar,
+      **El único reto donde no se escribe una línea**: leer, ejecutar,
       ejecutar y comparar.
-
-      El paso 3 parece un desperdicio de tiempo hasta que la clase ve las
-      tres salidas juntas. Con temperatura 0 y el mismo mundo, deberían ser
-      idénticas. No lo son.
+      - **El paso 3 parece un desperdicio hasta ver las tres salidas juntas.**
+        Con temperatura 0 y el mismo mundo deberían ser idénticas. **No lo
+        son.**
 
   - id: s1-glosario-react
     tipo: glosario
@@ -49,23 +47,15 @@ items:
     terminos: [ReAct, herramienta, LLM]
     nuevos: [ReAct]
     notas: |
-      **ReAct se venía usando sin definirse**: está en los objetivos del reto,
-      en el diagrama de pasos y en boca del docente, y nadie había dicho qué
-      significa.
-
-      Reason + Act. **Pensar, actuar, observar, repetir**, y eso es todo: no es
-      una librería ni un framework, es la forma de un bucle. Que quepa en tres
-      palabras es la mitad del punto — el patrón que está debajo de casi todos
-      los agentes de hoy se explica en una frase, y por eso el archivo que
-      viene tiene veinte líneas.
-
-      Las otras dos van apagadas, de recordatorio. Conviene señalar la de
-      `herramienta`: **el bucle de ReAct es exactamente el ciclo de pedir y
-      ejecutar herramientas**, así que quien la entendió en el reto 2 ya
-      entendió la mitad de este.
-
-      Y sembrar lo del domingo sin decirlo todavía: ReAct es una **línea**.
-      Mañana lo mismo se dibuja como una red.
+      **ReAct se venía usando sin definirse.** Reason + Act: **pensar, actuar,
+      observar, repetir.** No es librería ni framework — es la forma de un
+      bucle.
+      - **Que quepa en tres palabras es la mitad del punto**: por eso el
+        archivo que viene tiene veinte líneas.
+      - **Señalar `herramienta`**: el bucle de ReAct es exactamente el ciclo de
+        pedir y ejecutar herramientas. Quien lo entendió en el reto 2 ya tiene
+        la mitad.
+      - **Sembrar sin decirlo**: ReAct es una línea. Mañana, una red.
 
   - id: s1-r3-bucle
     tipo: codigo
@@ -90,24 +80,14 @@ items:
                       ToolMessage(str(resultado), tool_call_id=llamada["id"])
                   )
     notas: |
-      Esto es ReAct entero: pensar, actuar, observar, repetir. No hay más.
-
-      **Plano** es la palabra, y conviene decirla mirando el archivo: esto es
-      una línea de ejecución, un bucle y nada más. Mañana lo mismo se dibuja
-      como un grafo —nodos con un trabajo cada uno y aristas que deciden—, y la
-      diferencia entre las dos formas es el domingo entero. Plano contra grafo,
-      una línea contra una red.
-
-      `bind_tools` es lo único no obvio: le pasa al modelo el esquema de
-      cada herramienta —nombre, argumentos y docstring— para que pueda
-      pedirlas. La docstring que leyeron hace un rato es lo que el modelo ve
-      acá.
-
-      **El `for` en vez de un `while True` merece una frase.** No es que el
-      bucle sepa cuándo parar: para solo cuando el modelo deja de pedir
-      herramientas. El tope existe porque sin él un modelo empeñado gasta la
-      llave de la clase en una tarde. Que haga falta un número arbitrario es,
-      en sí mismo, la primera pista de lo que le falta.
+      **ReAct entero. No hay más.**
+      - **Decir «plano» mirando el archivo**: una línea de ejecución, un bucle.
+        Mañana, un grafo. **Plano contra grafo, una línea contra una red.**
+      - `bind_tools` pasa al modelo el esquema de cada herramienta. **La
+        docstring que leyeron hace un rato es lo que el modelo ve acá.**
+      - **El `for` en vez de `while True` merece una frase**: no sabe cuándo
+        parar, para cuando el modelo deja de pedir. **Que haga falta un número
+        arbitrario ya es la primera pista de lo que le falta.**
 
   - id: s1-r3-llave
     tipo: salida-anotada
@@ -144,14 +124,11 @@ items:
           finge un verde: el simulado recorre el bucle y no razona, así que
           declararlo aprobado sería mentir sobre lo único que importa acá.
     notas: |
-      **Es la lámina que evita el peor momento posible del sábado**: descubrir
-      a las 18:10, con la demo en pantalla, que media sala no tiene llave.
-      Tres minutos ahora, y quien esté sin llave tiene la lámina siguiente.
-
-      La distinción de la primera anotación vale por sí sola y se lleva a
-      cualquier despliegue: **comprobar que una credencial existe no es
-      comprobar que sirve**. Cuota agotada, modelo retirado, región equivocada —
-      las tres devuelven una llave perfectamente válida.
+      **Evita el peor momento del sábado**: descubrir a las 18:10, con la demo
+      en pantalla, que media sala no tiene llave.
+      - **La frase que se llevan a cualquier despliegue**: comprobar que una
+        credencial existe no es comprobar que sirve. Cuota agotada, modelo
+        retirado, región equivocada — las tres devuelven una llave válida.
 
   - id: s1-r3-sin-llave
     tipo: error-comun
@@ -173,19 +150,13 @@ items:
       la pantalla del de al lado**, que para esta unidad alcanza: hoy no se
       escribe nada, se lee y se compara.
     notas: |
-      Va justo después de la comprobación porque es su respuesta. Que exista
-      escrita cambia cómo se siente quien levanta la mano: no es que se haya
-      quedado atrás, es un caso previsto con tres salidas.
-
-      **El orden importa y no es el de la comodidad.** La llave gratuita es la
-      primera porque es la única que deja ver lo que el reto existe para
-      enseñar: la divergencia entre tres ejecuciones. `mock` no razona, así que
-      con él la demo de las tres ejecuciones **no funciona** — y conviene
-      decírselo a quien lo elija, para que se acerque a mirar la pantalla de un
-      compañero en ese momento.
-
-      Está todo en el trabajo previo, con las URL. Esta lámina es para quien no
-      lo hizo, que es exactamente quien no va a abrir el PDF ahora.
+      **El orden no es el de la comodidad.** La llave gratuita va primera
+      porque es la única que deja ver la divergencia entre ejecuciones.
+      - **`mock` no razona: con él la demo de las tres ejecuciones NO
+        funciona.** Decírselo a quien lo elija, para que mire la pantalla de un
+        compañero en ese momento.
+      - Que exista escrita cambia cómo se siente quien levanta la mano: **es un
+        caso previsto, no quedarse atrás.**
 
   - id: s1-r3-lectura
     tipo: lectura
@@ -212,16 +183,11 @@ items:
       ejecución. Y en la salida, cuántas herramientas llamó y en qué orden —
       hace falta para comparar contra las dos ejecuciones siguientes.
     notas: |
-      **8 min**, y es la única ventana del sábado sobre el agente.
-      Alcanza para leer un archivo de ochenta líneas y ejecutarlo una vez.
-
-      La pregunta que rinde mientras se pasea por los puestos: «¿en qué línea
-      de este archivo decidirías que ya tiene suficiente evidencia?». No hay
-      ninguna, y esa es la respuesta.
-
-      Si la sala va lenta, alargar con el botón. Lo que no conviene es
-      saltarse la primera ejecución: las tres de la lámina siguiente se
-      comparan contra esta.
+      **8 min** · la única ventana del sábado sobre el agente.
+      - **La pregunta que rinde**: «¿en qué línea decidirías que ya tiene
+        suficiente evidencia?». **No hay ninguna, y esa es la respuesta.**
+      - **No saltarse la primera ejecución**: las tres de la lámina siguiente
+        se comparan contra esta.
 
   - id: s1-r3-que-hace-bien
     tipo: markdown
@@ -281,17 +247,12 @@ items:
           el agente cree que es.
         otrosValores: ["--fecha 2026-08-08"]
     notas: |
-      **`plano` y no `run`, y esto no es un detalle.** `python -m agente run`
-      levanta el grafo entero de mañana: la sala vería al agente criticarse y
-      corregirse, que es la revelación del domingo, y ninguna de las cuatro
-      patologías de esta unidad aparecería — porque la arquitectura ya las
-      corrige. Hoy se corre el bucle, y el bucle vive en `agente/plano.py`.
-
-      Si alguien no tiene llave, `PROVEEDOR_LLM=mock` recorre el bucle
-      igual. No razona, pero nadie se queda mirando la pantalla.
-
-      `make actuar` es la misma forma de línea con `-e EJECUTAR_ACCIONES=1`
-      delante del nombre del servicio. Se ve mañana; mencionarlo acá basta.
+      **`plano` y NO `run`, y no es un detalle.** `run` levanta el grafo de
+      mañana: verían al agente corregirse —la revelación del domingo— y
+      **ninguna de las cuatro patologías aparecería**.
+      - Sin llave, `PROVEEDOR_LLM=mock` recorre el bucle igual. No razona, pero
+        nadie se queda mirando la pantalla.
+      - `make actuar` es lo mismo con `-e EJECUTAR_ACCIONES=1`. Se ve mañana.
 
   - id: s1-r3-prediccion
     tipo: pregunta
@@ -368,12 +329,11 @@ items:
       sirve para esto: lo que hay que ver es la divergencia entre dos
       razonamientos, y el simulado no razona.
     notas: |
-      Con temperatura 0. Vale la pena decirlo en voz alta, porque la
-      reacción natural es "bajale la temperatura" — ya está en cero. Lo que
-      varía no es el muestreo del modelo, es por dónde entró a mirar.
-
-      **10 min** de comparación real. Es la parte de la unidad que más
-      rinde y la que más tienta a acortar.
+      **Decir en voz alta: con temperatura 0.** La reacción natural es «bájale
+      la temperatura» — ya está en cero.
+      - **Lo que varía no es el muestreo: es por dónde entró a mirar.**
+      - **10 min de comparación real.** Es lo que más rinde de la unidad y lo
+        que más tienta acortar.
 
   - id: s1-r3-divergencia
     tipo: markdown
