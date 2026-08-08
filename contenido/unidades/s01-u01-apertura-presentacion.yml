@@ -87,7 +87,7 @@ items:
         pista: Percibe, recuerda, razona, se cuestiona a sí mismo, y actúa
       - texto: El taller se evalúa solo por asistencia
         pista: No hay entregable ni examen. Lo que te llevas es el repositorio y lo que entendiste
-      - texto: Todo lo que veas hoy está en un repositorio público, y sigue estando el lunes
+      - texto: Todo lo que veas hoy está en un repositorio público
         pista: La plataforma, el agente, el verificador y los cuatro escenarios para seguir rompiendo
     notas: |
       **3 min** · leerlos completos, los seis.
