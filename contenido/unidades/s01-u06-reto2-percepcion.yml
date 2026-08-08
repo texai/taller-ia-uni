@@ -48,17 +48,13 @@ items:
     terminos: [LLM, herramienta]
     nuevos: [LLM, herramienta]
     notas: |
-      Corta, y va antes de la primera lámina porque las dos salen en su primera
-      frase.
-
-      **`herramienta` es la que hay que desactivar.** Fuera de acá significa
-      cualquier programa; en un agente es algo muy concreto: **una función que
-      el modelo puede pedir que se ejecute**, con su nombre, sus argumentos y
-      su docstring. Quien no tenga esa definición va a leer la unidad entera
-      creyendo que hablamos de utilidades.
-
-      Y en la definición está sembrado lo que la unidad demuestra: la docstring
-      es lo único que el modelo lee para decidir si la llama. Es prompt.
+      - **`herramienta` es la que hay que desactivar.** Fuera de acá es
+        cualquier programa; en un agente es **una función que el modelo puede
+        pedir que se ejecute**, con nombre, argumentos y docstring.
+      - Quien no tenga esa definición lee la unidad entera creyendo que
+        hablamos de utilidades.
+      - **Sembrado ahí**: la docstring es lo único que el modelo lee para
+        decidir si la llama. **Es prompt.**
 
   - id: s1-r2-por-que
     tipo: markdown
@@ -92,13 +88,11 @@ items:
       - texto: La estadística la hace Python, no el LLM.
         pista: El modelo razona sobre los números; no los calcula.
     notas: |
-      La tercera es la que más se discute. Pedirle a un LLM que compute un
-      test de Kolmogorov-Smirnov —el que compara la forma de dos
-      distribuciones, y que está dentro de `comparar_periodos`— es caro y poco
-      confiable, y además irreproducible: la misma pregunta dos veces puede dar
-      dos números.
-
-      Está en el glosario, con el detalle. Acá basta con decir qué compara.
+      **La tercera es la que más se discute.**
+      - Pedirle a un LLM que compute un Kolmogorov-Smirnov es caro, poco
+        confiable e **irreproducible**: la misma pregunta dos veces da dos
+        números.
+      - Acá basta con decir qué compara. El detalle está en el glosario.
 
   - id: s1-glosario-estadistica
     tipo: glosario
@@ -110,25 +104,15 @@ items:
     nuevos:
       [ventana y línea base, Kolmogorov-Smirnov, p-valor, significativo y relevante]
     notas: |
-      **4 min, y es la lámina que este reto necesitaba.** Media unidad se va en
-      tres trampas de estadística, y hasta acá el material proyectaba `p < 0.01`
-      sin que nadie hubiera dicho en voz alta qué es un p-valor. La mitad de la
-      sala no viene de estadística.
-
-      El orden es deliberado y cuenta una historia: para saber si algo cambió
-      hace falta **contra qué** compararlo (`ventana y línea base`); para
-      comparar dos conjuntos de números hay un test (`Kolmogorov-Smirnov`); ese
-      test devuelve un número (`p-valor`); y ese número **no responde la
-      pregunta que uno cree** (`significativo y relevante`).
-
-      La última es la que hay que dejar caer despacio: **el p-valor responde
-      «¿pasó algo?», no «¿me importa?»**. Con miles de días-modelo, casi todo
-      da significativo. Un agente que solo pregunta lo primero es un agente que
-      grita todos los días.
-
-      No hace falta que nadie sepa calcular un KS. Hace falta que sepan qué
-      compara —la forma de dos distribuciones— y por qué eso lo hace Python y
-      no el LLM, que es la tercera regla de hace un minuto.
+      **4 min.** Media sala no viene de estadística, y el material venía
+      proyectando `p < 0.01` sin decir qué es un p-valor.
+      - **El orden cuenta una historia**: contra qué comparar → qué test →
+        qué número devuelve → **ese número no responde lo que uno cree**.
+      - **Dejar caer la última despacio: el p-valor responde «¿pasó algo?», no
+        «¿me importa?».** Con miles de días-modelo casi todo da significativo.
+        Un agente que solo pregunta lo primero **grita todos los días**.
+      - Nadie tiene que saber calcular un KS: solo qué compara, y por qué lo
+        hace Python y no el LLM.
 
   - id: s1-guia-herramientas
     tipo: archivo
@@ -141,15 +125,10 @@ items:
       descubre usándolas: la docstring es prompt.
     minutos: 1
     notas: |
-      Las siete aparecen repartidas entre hoy y mañana —`agregado_por` en un
-      rato, `estado_del_job` el domingo— y esta hoja es la única vez que están
-      las siete juntas. Vale la pena decirlo: es el índice de los ojos del
-      agente.
-
-      Conviene tenerla abierta durante la ventana de lectura de dentro de un
-      rato, que es sobre `comparar_periodos` y `agregado_por`. Quien entra al
-      archivo sabiendo qué devuelve cada herramienta lee el código en la mitad
-      del tiempo.
+      - **Es la única vez que las siete están juntas.** Decirlo: es el índice
+        de los ojos del agente.
+      - **Que la tengan abierta durante la ventana de lectura.** Quien entra al
+        archivo sabiendo qué devuelve cada una lee en la mitad de tiempo.
 
   - id: s1-r2-firma
     tipo: codigo
@@ -199,16 +178,11 @@ items:
           diseño de herramienta, no cortesía**: el LLM no tiene ninguna otra
           fuente sobre este mundo que lo que devuelven las herramientas.
     notas: |
-      Enganchar con la lámina anterior: si la docstring es prompt, el valor de
-      retorno también lo es —y el de error, más que ninguno, porque es el que
-      se lee justo antes de decidir el siguiente paso.
-
-      La regla que se llevan: **una herramienta que falla muda convierte una
-      llamada equivocada en tres.** Con veinte llamadas por ejecución eso es
-      la diferencia entre un agente que responde y uno que da vueltas.
-
-      Esta no se escribe en el reto —ya está escrita— pero se mira dos minutos
-      porque el criterio se aplica a la que sí van a escribir.
+      **Enganchar con la anterior**: si la docstring es prompt, el valor de
+      retorno también — y el de error más que ninguno.
+      - **La regla que se llevan**: una herramienta que falla muda convierte
+        una llamada equivocada en tres. Con veinte llamadas por ejecución, es
+        la diferencia entre responder y dar vueltas.
 
   - id: s1-r2-pregunta-sesgo
     tipo: pregunta
@@ -325,15 +299,12 @@ items:
       - ["limpieza", "−2.6%", "−4.9%", "+2.3 pp"]
     resaltar: [0]
     notas: |
-      Ninguna infla hacia abajo. Ese es el punto: no es ruido, es un sesgo
+      **Ninguna infla hacia abajo. Ese es el punto**: no es ruido, es un sesgo
       sistemático de la cuenta.
-
-      Panadería es el caso extremo. Con el umbral de 3 pp de la dimensión
-      `categoria`, promediar porcentajes la pone al borde de encender una
-      bandera en un mundo donde no pasa nada.
-
-      Las cifras están medidas sobre un mundo generado el 7 de agosto. Se
-      mueven un poco según el día; lo que no se mueve es el signo.
+      - **Panadería es el caso extremo**: con el umbral de 3 pp, promediar
+        porcentajes la pone al borde de encender una bandera **en un mundo
+        donde no pasa nada**.
+      - Las cifras se mueven según el día. **El signo no.**
 
   - id: s1-r2-ventana
     tipo: error-comun
@@ -414,19 +385,13 @@ items:
       # demostrar lo unico que existe para demostrar.
       CAIDA_SESGO_SILENCIOSO = 0.06
     notas: |
-      **La lámina que cierra el argumento de la calibración**, y por el otro
-      lado: no solo los umbrales de la herramienta se miden contra la flota
-      sana — el escenario que la pone a prueba también.
-
-      Las tres líneas resaltadas son la confesión de un error del laboratorio.
-      El valor estaba en 0.18 y con eso 57 de 192 modelos cruzaban el umbral:
-      cualquier tablero lo habría gritado, y el escenario dejaba de demostrar
-      lo único que existe para demostrar. Se bajó a 0.06 midiendo, no
-      opinando.
-
-      Es una buena respuesta para quien pregunte si el laboratorio está
-      «trucado» para que salga la lección: sí, y está escrito en el código, con
-      el número que se probó y el que se descartó.
+      Cierra el argumento de la calibración por el otro lado: **también el
+      escenario se mide contra la flota sana.**
+      - **Las tres líneas resaltadas son la confesión de un error del lab.**
+        Estaba en 0.18 y 57 de 192 cruzaban el umbral: cualquier tablero lo
+        habría gritado. Se bajó a 0.06 **midiendo, no opinando**.
+      - Si preguntan si el lab está «trucado»: **sí, y está escrito en el
+        código**, con el número que se probó y el que se descartó.
 
   - id: s1-r2-umbrales
     tipo: tabla
@@ -440,12 +405,10 @@ items:
       - ["tienda", 8, "+51.3%", "3.21 pp"]
     resaltar: [2]
     notas: |
-      La fila de tienda es la que sorprende: se mueve dos veces y media más
-      que la de categoría sin que nada esté roto.
-
-      Región es heterogénea a propósito y vale la pena decirlo — LIMA tiene
-      14 tiendas y 112 modelos; ORIENTE tiene una y ocho. Por eso su
-      columna no es un número solo.
+      - **La fila de tienda sorprende**: se mueve 2.5× más que la de categoría
+        **sin que nada esté roto**.
+      - Región es heterogénea a propósito: LIMA tiene 14 tiendas y 112 modelos;
+        ORIENTE, una y ocho. **Por eso su columna no es un número solo.**
 
   - id: s1-r2-por-que-tienda
     tipo: markdown
@@ -556,19 +519,14 @@ items:
           grupos chicos ocupan los dos bordes de la tabla.** Esa es toda la
           lección: el ruido no tiene signo, tiene tamaño de muestra.
     notas: |
-      Es la herramienta que produjo la tabla de umbrales de hace dos láminas, y
-      decirlo cierra el círculo: los números no salieron de la intuición de
-      nadie, salieron de ejecutar esto contra un mundo intacto.
-
-      La misma llamada con `dimension="categoria"` o `"tienda"` es la que
-      revela la **forma** de un problema. Si la degradación se concentra en una
-      categoría y aparece en todas las tiendas, la causa es del producto; si se
-      concentra en una tienda y toca todas las categorías, la causa es de esa
-      tienda. Es el reto 4 entero, adelantado en una frase.
-
-      Si alguien pregunta por `unidades_de_mas`: es la única columna que habla
-      de plata. LIMA está en −1,653 y ORIENTE en +2,261 sobre un mundo donde
-      nada está roto.
+      **Decirlo: es la herramienta que produjo la tabla de umbrales.** Los
+      números no salieron de la intuición de nadie.
+      - **La misma llamada revela la FORMA de un problema**: concentrado en una
+        categoría y en todas las tiendas → causa del producto. Concentrado en
+        una tienda y en todas las categorías → causa de esa tienda. **Es el
+        reto 4 en una frase.**
+      - `unidades_de_mas` es la única columna que habla de plata: LIMA −1,653,
+        ORIENTE +2,261, **en un mundo sano.**
 
   - id: s1-r2-umbrales-elegidos
     tipo: codigo
@@ -661,17 +619,12 @@ items:
       `sum(...) / sum(...)` de una sola línea: es la trampa 1, y es la
       diferencia entre una herramienta que sirve y una que alarma sola.
     notas: |
-      **10 min**, y nadie escribe nada. El laboratorio trae la
-      implementación y el objetivo no es teclearla: es que la sala vea que las
-      tres trampas de las últimas seis láminas son tres líneas concretas y
-      señalables.
-
-      Ir pasando por los puestos. La pregunta que rinde es «¿dónde está acá la
-      trampa 1?» — quien la encuentra la explica en voz alta y da la clase.
-
-      El reloj se puede mover con los botones de la lámina. Si la sala va
-      lenta, alargarlo; lo que no conviene es cortarlo antes de que corra el
-      verificador, porque el verde es la mitad del punto.
+      **10 min y nadie escribe nada.** El objetivo es que vean que las tres
+      trampas son tres líneas concretas y señalables.
+      - **La pregunta que rinde**: «¿dónde está acá la trampa 1?». Quien la
+        encuentra la explica en voz alta y da la clase.
+      - Se puede alargar el reloj. **Lo que no conviene es cortarlo antes del
+        verificador**: el verde es la mitad del punto.
 
   - id: s1-r2-verificar
     tipo: comando-anotado
@@ -752,13 +705,11 @@ items:
           el reto siguiente arrancaría con una tienda muda y nadie sabría
           por qué.
     notas: |
-      Cuando algo falla, la línea sale con `✗` y debajo, en gris, el detalle
-      con el número que salió — no "falló", sino "sesgo: 3.4%. Cuidado con
-      promediar porcentajes". **El detalle es la pista**, y es la parte del
-      verificador que más se agradece a las dos de la tarde.
-
-      Si alguien ve 17,304 filas en vez de 17,472, es que quedó en
-      `feed_caido`: `make reparar` y listo.
+      - Al fallar sale `✗` y debajo, en gris, **el detalle con el número**: no
+        «falló» sino «sesgo: 3.4%. Cuidado con promediar porcentajes».
+        **El detalle es la pista.**
+      - **Si alguien ve 17,304 filas en vez de 17,472**: quedó en `feed_caido`.
+        `make reparar` y listo.
 
   - id: s1-r2-preguntas
     tipo: pausa-preguntas
