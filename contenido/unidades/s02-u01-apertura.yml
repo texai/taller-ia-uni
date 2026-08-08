@@ -35,20 +35,11 @@ items:
         Q --> NO["hoy: 4 patologias,<br/>ninguna del modelo"]
         Q -.->|las proximas 4 horas| CAP["reflexion, revision,<br/>memoria, accion"]
     notas: |
-      **Es el mismo dibujo del sábado con otras cajas**, y decirlo en voz
-      alta ayuda: piezas que ya existen, algo construido con ellas, un
-      rombo con la pregunta incómoda, y una flecha punteada hacia lo que
-      viene. Quien estuvo ayer reconoce la forma; quien no, aprende la
-      gramática con la que se va a dibujar el resto del día.
-
-      El rombo es otra vez lo único que hay que señalar. El sábado la
-      pregunta era **quién los mira**; hoy es **si se puede confiar en el
-      que los mira**. Todo el domingo cuelga de ahí.
-
-      Para quien no vino: no hace falta haber estado. El bucle de ayer está
-      en `agente/plano.py` —ochenta líneas, con una docstring que explica por
-      qué existe como archivo aparte— y se corre con `make plano`. Hoy se
-      parte del grafo, que es otro camino.
+      **Decir en voz alta: es el mismo dibujo del sábado, con otras cajas.**
+      - **Señalar el rombo.** Ayer la pregunta era *quién los mira*; hoy es
+        **si se puede confiar en el que los mira**. Todo el domingo cuelga ahí.
+      - Para quien no vino: no hace falta haber estado. El bucle de ayer está
+        en `agente/plano.py` y se ejecuta con `make plano`.
 
   - id: s2-guias
     tipo: descargas
@@ -75,13 +66,8 @@ items:
         titulo: 3 · Romper el mundo
         descripcion: Los cuatro escenarios, que hoy se usan los cuatro
     notas: |
-      **2 min**, y el orden no es el mismo del sábado: primero la 5, que es la
-      de hoy, y después las que hoy se dan por sabidas.
-
-      Quien estuvo ayer ya las tiene y pasa de largo. Esta lámina es para quien
-      llega hoy: la 1 y la 2 son la media hora de contexto que se perdió, y
-      leerlas en el receso le alcanza para seguir.
-
-      La 5 conviene señalarla aparte: es el mapa del domingo entero, y tenerla
-      abierta durante la ventana de lectura del grafo ahorra la mitad de las
-      preguntas.
+      **2 min** · el orden cambia: primero la 5, que es la de hoy.
+      - **Esta lámina es para quien llega hoy.** Quien vino ayer pasa de largo.
+      - La 1 y la 2 son el contexto que se perdió: leerlas en el receso alcanza.
+      - **Señalar la 5 aparte**: es el mapa del domingo. Tenerla abierta durante
+        la lectura del grafo ahorra la mitad de las preguntas.

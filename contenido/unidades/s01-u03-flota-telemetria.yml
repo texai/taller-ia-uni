@@ -33,21 +33,13 @@ items:
       | Guardar el artefacto | **joblib**, un `.joblib` por modelo |
       | Registrar la versión | **MLflow**, el mismo del Módulo 2 |
     notas: |
-      **Los cuatro nombres de la tabla hay que decirlos en voz alta**, aunque
-      parezcan obvios. Es la respuesta a «¿y con qué se generan los modelos?»,
-      y sin ella un alumno termina las ocho horas sin poder nombrar la librería
-      que entrenó lo que estuvo vigilando.
-
-      El que sorprende es el tercero: **guardar un modelo entrenado es una
-      línea**. `joblib.dump(modelo, ruta)`. Ni servidor de modelos, ni formato
-      propio, ni nada. Se ve en un rato.
-
-      Y el cuarto es un reencuentro: MLflow es del Módulo 2, y acá vuelve
-      haciendo exactamente su trabajo. También se abre en un rato.
-
-      Si alguien pregunta por qué Ridge y no algo mejor: porque un modelo
-      más complejo no cambiaría nada de lo que vamos a hacer, y sí
-      alargaría el entrenamiento de los 192.
+      **Decir los cuatro nombres en voz alta.** Es la respuesta a «¿con qué se
+      generan los modelos?».
+      - **El que sorprende: guardar un modelo es UNA línea.**
+        `joblib.dump(modelo, ruta)`. Ni servidor, ni formato propio.
+      - MLflow es del Módulo 2. Reencuentro, y se abre en un rato.
+      - Si preguntan por qué Ridge: uno más complejo no cambiaría nada de lo
+        que vamos a hacer, y alargaría el entrenamiento de los 192.
 
   - id: s1-features
     tipo: codigo
@@ -71,21 +63,15 @@ items:
               # shift(1) para no filtrar el valor del propio dia que se predice.
               df[f"media_{v}"] = df["unidades"].shift(1).rolling(v).mean()
     notas: |
-      **El `shift(1)` resaltado es la línea más peligrosa del laboratorio**, y
-      por eso está. Sin él, la media móvil de siete días incluiría el día que
-      se está prediciendo: el modelo entrenaría viendo la respuesta y daría un
-      error de validación espectacular que se derrumba en producción. Se llama
-      fuga de datos, y es la primera cosa que hay que buscar en las features de
-      cualquiera.
-
-      La otra frase que vale: este archivo lo usan **el entrenamiento y el
-      pronóstico**, y vive en un solo sitio a propósito. Si los dos calcularan
-      las features distinto aparece *training/serving skew*, que es de los
-      fallos más comunes y más difíciles de diagnosticar en producción —
-      el modelo funciona en el cuaderno y falla servido, sin que nada avise.
-
-      Doce features y una regresión. Nadie va a ganar un concurso con esto, y
-      no hace falta: el taller trata de vigilar modelos, no de exprimirlos.
+      **El `shift(1)` es la línea más peligrosa del lab.** Sin él la media
+      móvil incluiría el día que se predice: el modelo entrena viendo la
+      respuesta. Es **fuga de datos**, y lo primero que se busca en features
+      ajenas.
+      - **Un solo archivo para entrenamiento y pronóstico, a propósito.** Si
+        calcularan distinto → *training/serving skew*: funciona en el cuaderno
+        y falla servido, sin que nada avise.
+      - Doce features y una regresión. No hace falta más: vigilamos modelos, no
+        los exprimimos.
 
   - id: s1-modelo-vs-contenedor
     tipo: comparacion
@@ -106,11 +92,10 @@ items:
         milisegundos para decidir qué reponer mañana. Una imagen, 192
         modelos, ningún endpoint.
     notas: |
-      Este es el punto que más se resiste. Vale la pena decirlo dos veces:
-      el patrón de despliegue dominante en pronóstico de demanda es batch,
-      no servicio. Y desde el lado del monitoreo cambia todo — un servicio
-      se cae y alguien se entera; un job batch termina bien y entrega
-      basura.
+      **El punto que más se resiste: decirlo dos veces.**
+      - En pronóstico de demanda el patrón dominante es **batch, no servicio**.
+      - **La frase**: un servicio se cae y alguien se entera; un job batch
+        termina bien y entrega basura.
 
   - id: s1-arquitectura
     tipo: diagrama
@@ -131,12 +116,10 @@ items:
         API --> UI["interfaz :8501"]
         API -.->|mañana| AG["el agente"]
     notas: |
-      Es el mapa al que se vuelve toda la clase. Dejarlo bien anclado.
-
-      Dos cosas que señalar con el dedo: `ventas.csv` entra DOS veces —una
-      para entrenar y otra para calcular métricas, porque un modelo no se
-      degrada en abstracto sino contra la realidad— y el agente todavía no
-      existe. Lo construimos nosotros.
+      El mapa al que se vuelve toda la clase. **Anclarlo bien.**
+      - **Señalar dos cosas**: `ventas.csv` entra DOS veces (entrenar y medir —
+        un modelo no se degrada en abstracto sino contra la realidad), y **el
+        agente todavía no existe**. Lo construimos nosotros.
 
   - id: s1-glosario-docker
     tipo: glosario
@@ -146,18 +129,12 @@ items:
     terminos: [imagen, contenedor, volumen, servicio, up contra run]
     nuevos: [imagen, contenedor, volumen, servicio, up contra run]
     notas: |
-      Va justo antes de la tabla de comandos porque todo lo que viene usa estas
-      cinco palabras. Quien hizo el taller anterior las tiene; quien no, se
-      pierde en la primera línea.
-
-      **`servicio` es la que se usa sin explicarse.** Aparece en cada
-      `docker compose run --rm plataforma …` —esa palabra es el nombre de un
-      servicio— y en `make estado`, y es lo que hace que «el agente no es un
-      servicio» signifique algo.
-
-      La última es la que se confunde el resto del día, y por eso está acá y no
-      dentro de un comando anotado: **`up` deja algo vivo, `run` ejecuta y
-      desaparece**.
+      Todo lo que viene usa estas cinco palabras.
+      - **`servicio` es la que se usa sin explicarse**: está en cada
+        `docker compose run --rm plataforma …` y hace que «el agente no es un
+        servicio» signifique algo.
+      - **La que se confunde el resto del día**: `up` deja algo vivo, `run`
+        ejecuta y desaparece.
 
   - id: s1-guia-docker
     tipo: archivo
@@ -170,13 +147,10 @@ items:
       tener al lado durante la próxima hora.
     minutos: 1
     notas: |
-      **1 min**: se anuncia y se pasa. Quien la bajó en la lámina de apertura
-      ya la tiene; esto es para el que no, y para que sepa **cuál** de las seis
-      es la que sirve ahora.
-
-      La frase que conviene decir: lo que viene —la tabla de `make`, los dos
-      comandos anotados y la demo— está entero acá dentro. Quien se pierda en
-      un comando no tiene que levantar la mano: lo busca.
+      **1 min**, se anuncia y se pasa.
+      - Sirve para que sepan **cuál** de las seis es la de ahora.
+      - **La frase**: todo lo que viene está acá dentro. Quien se pierda en un
+        comando no levanta la mano — lo busca.
 
   - id: s1-make
     tipo: tabla
@@ -197,26 +171,13 @@ items:
       - ["`make reset`", "`docker compose down -v` — la `-v` borra los volúmenes"]
     resaltar: [6]
     notas: |
-      Empezar por qué es `make`: un ejecutor de recetas de 1976, anterior a
-      Docker y a casi todo lo demás. Lee el archivo `Makefile` del
-      directorio, busca la receta que le pediste y ejecuta sus líneas. Nada
-      más. `make ayuda` las lista todas, y `cat Makefile` las muestra.
-
-      La fila resaltada es la trampa del día: **`make ui` usa `up`, no
-      `run`**, y esa palabra decide si algo queda vivo o se ejecuta y
-      desaparece. Vuelve tres veces durante la clase.
-
-      Las dos últimas usan `--profile`, y por eso `make arriba` no las levanta:
-      un servicio con perfil solo arranca si se lo pide por su nombre. Se ven
-      las dos hoy — `mlflow` en un rato, `ollama` solo si alguien llega sin
-      llave.
-
-      Lo que quiero que se lleven no es la tabla: es que **ningún comando
-      del taller es magia**, y que el día que trabajen sin este Makefile
-      sepan escribir la columna de la derecha. El propio código de la
-      plataforma lo dice en su docstring — "en clase se usan los atajos del
-      Makefile, pero conviene que los alumnos vean que detrás no hay
-      magia".
+      **Empezar por qué es `make`**: ejecutor de recetas de 1976. Lee el
+      `Makefile`, busca la receta y ejecuta sus líneas. Nada más.
+      - **La fila resaltada es la trampa del día: `make ui` usa `up`, no
+        `run`.** Vuelve tres veces durante la clase.
+      - Las dos últimas usan `--profile`: por eso `make arriba` no las levanta.
+      - **Lo que se llevan no es la tabla**: es que ningún comando del taller es
+        magia, y que sin este Makefile sabrían escribir la columna derecha.
 
   - id: s1-cadena
     tipo: codigo
@@ -242,23 +203,12 @@ items:
       	$(MAKE) metricas
     notas: |
       **`romper` y `reparar` son la misma receta con la primera línea
-      cambiada**, y las dos líneas resaltadas son toda la diferencia: donde una
-      pone `escenario --nombre x`, la otra pone `datos`, que regenera el
-      histórico limpio desde la semilla. Las otras dos son idénticas.
-
-      Y lo que importa es **lo que no está en ninguna de las dos**: no hay
-      `entrenar`. El mundo cambia, se vuelve a ejecutar el job con los modelos
-      viejos, y se mide. Los 192 artefactos son los mismos toda la tarde — que
-      es literalmente lo que pasa en producción, donde reentrenar es semanal o
-      mensual y el mundo cambia cuando le da la gana.
-
-      `$(EN_PLATAFORMA)` es la variable de arriba del archivo:
-      `docker compose run --rm plataforma python -m plataforma`. Se define una
-      vez y la usan las seis recetas de la plataforma.
-
-      Si alguien pregunta por qué `seed` es una sola línea y las otras tres:
-      porque `seed` encadena los cuatro pasos dentro de Python. `cat Makefile`
-      lo enseña entero, y `make ayuda` las lista todas.
+      cambiada.** Una pone `escenario --nombre x`, la otra `datos`.
+      - **Lo que importa es lo que NO está en ninguna: no hay `entrenar`.** El
+        mundo cambia, se reejecuta el job con los modelos viejos, y se mide.
+      - **Los 192 artefactos son los mismos toda la tarde** — como en
+        producción, donde reentrenar es mensual y el mundo cambia cuando quiere.
+      - `$(EN_PLATAFORMA)` es la variable de arriba del archivo.
 
   - id: s1-pregunta-reentrenar
     tipo: pregunta
@@ -277,12 +227,10 @@ items:
       - Solo seed, y solo la primera vez
       - Ninguna
     notas: |
-      Treinta segundos de lectura de la lámina anterior y el resto de
-      discusión. Casi todo el mundo dice que `reparar` reentrena — suena a que
-      arregla los modelos, y no toca ninguno.
-
-      Es la pregunta que hace que la tarde entera tenga sentido: si los
-      modelos no cambian nunca, todo lo que se mueve es el mundo.
+      **Casi todos dicen que `reparar` reentrena.** Suena a que arregla los
+      modelos, y no toca ninguno.
+      - **La frase al revelar**: si los modelos no cambian nunca, todo lo que
+        se mueve es el mundo. La tarde entera cuelga de ahí.
     solucion:
       explicacion: |
         **Solo `seed`, y solo la primera vez.** Las otras dos regeneran el
@@ -346,12 +294,11 @@ items:
           — `mlflow` y `ollama` lo están, por eso hay que pedirlos aparte.
           Nombrar los dos deja claro que **`agente` no es un servicio**.
     notas: |
-      Es el primer comando de Docker que muchos van a leer entero. Ir
-      despacio: cada paso del recorrido es un segmento.
-
-      Si alguien pregunta por qué el agente no es un servicio: porque no
-      escucha nada. Corre una vez al día, produce un diagnóstico y termina.
-      Eso es el ítem de `--rm`, dos pantallas más adelante.
+      Primer comando de Docker que muchos leen entero. **Ir despacio**, un
+      segmento por paso.
+      - Si preguntan por qué el agente no es un servicio: **no escucha nada**.
+        Corre una vez al día, diagnostica y termina. Se ve en `--rm`, dos
+        pantallas más adelante.
 
   - id: s1-seed
     tipo: comando-anotado
@@ -389,12 +336,11 @@ items:
           `metricas` y `escenario`, y cada uno tiene su atajo en el
           Makefile. `seed` encadena los cuatro primeros.
     notas: |
-      El segmento de `--rm` es el que más rinde. La pregunta natural —"si
-      borras el contenedor, ¿dónde quedan los 192 modelos?"— es la puerta
-      de entrada a los volúmenes, y vale la pena dejar que la hagan.
-
-      En Windows esta línea se teclea igual. El `.\taller.ps1` envuelve al
-      `make`, no al `docker compose`.
+      **El segmento de `--rm` es el que más rinde.**
+      - **Dejar que hagan la pregunta**: «si borras el contenedor, ¿dónde
+        quedan los 192 modelos?». Es la puerta a los volúmenes.
+      - En Windows esta línea se teclea igual: `.\taller.ps1` envuelve al
+        `make`, no al `docker compose`.
 
   - id: s1-seed-salida
     tipo: salida-anotada
@@ -442,21 +388,12 @@ items:
           a alguien le sale otro número, casi seguro dejó el mundo roto de
           una prueba anterior: `make reparar` y listo.
     notas: |
-      Recorrer las cuatro etapas señalando el diagrama de arquitectura de
-      hace tres láminas: **son sus cuatro flechas, en el mismo orden**.
-
-      La anotación del `3/4` es la que engancha con el caso, y la frase que
-      rinde en la sesión 2 va acá: el agente también vigila el job. Un
-      modelo puede estar perfectamente sano y el pipeline caído desde el
-      martes.
-
-      **Lo que tarda no es esto.** El `seed` medido corre en medio minuto;
-      los cinco minutos de la primera vez son de `make arriba` construyendo
-      las tres imágenes. Decirlo evita la pregunta de por qué la segunda
-      vez va tan rápido.
-
-      Quien hizo el trabajo previo ya tiene todo esto y solo necesita
-      `make arriba`.
+      **Recorrer las cuatro etapas señalando el diagrama de hace tres
+      láminas: son sus cuatro flechas, en orden.**
+      - En el `3/4`, la frase que rinde mañana: **el agente también vigila el
+        job.** Un modelo sano y el pipeline caído desde el martes.
+      - **Lo que tarda no es esto**: `seed` son 30 s. Los cinco minutos de la
+        primera vez son de `make arriba` construyendo imágenes.
 
   - id: s1-glosario-pipeline
     tipo: glosario
@@ -466,21 +403,13 @@ items:
     terminos: [pipeline, telemetría, días-modelo, percentil]
     nuevos: [pipeline, telemetría, días-modelo, percentil]
     notas: |
-      Las cuatro acaban de aparecer y ninguna se explicó. `seed` se anuncia a
-      sí mismo como «pipeline completo», la salida dice «17,472 días-modelo», y
-      la palabra `telemetría` es la que va a nombrar todo lo que el agente
-      puede mirar.
-
-      **`días-modelo` es la que vale.** 17,472 no son filas de datos ni
-      modelos: son **la unidad en que se cuenta la observación de una flota**,
-      un modelo durante un día. Cuando alguien diga «tenemos poca telemetría»,
-      la pregunta es cuántos días-modelo — no cuántos modelos.
-
-      **`percentil`** se cuela en dos sitios y conviene tenerla antes: la
-      columna `latencia_p95_ms` de la lámina siguiente, y el
-      `sesgo_modelo_p90` que el agente va a mirar mañana. Un percentil no es un
-      promedio: es un corte, y por eso resiste a los valores extremos que un
-      promedio se traga.
+      Las cuatro acaban de salir en pantalla sin explicarse.
+      - **`días-modelo` es la que vale.** 17,472 no son filas ni modelos: es la
+        unidad en que se cuenta observar una flota. Ante «tenemos poca
+        telemetría», la pregunta es **cuántos días-modelo**.
+      - **`percentil`** hace falta antes: sale en `latencia_p95_ms` (lámina
+        siguiente) y en `sesgo_modelo_p90` mañana. No es un promedio: es un
+        corte, y resiste los extremos que un promedio se traga.
 
   - id: s1-artefactos
     tipo: salida-anotada
@@ -526,17 +455,13 @@ items:
           se repone en 24 tiendas**, y no los mira nadie. Ese contraste es el
           taller.
     notas: |
-      **Es la lámina que convierte «artefacto» en una cosa que se puede
-      listar.** La palabra se usa las ocho horas y hasta acá no tenía imagen.
-
-      Los dos números que valen: **1 KB cada uno** y **856 KB la flota**. Un
-      modelo de pronóstico no es un modelo de lenguaje, y quien viene del taller
-      de Docker esperando gigabytes necesita oírlo.
-
-      Si alguien pregunta qué hay dentro de un `.joblib`: los coeficientes de la
-      Ridge, serializados. Se abre con `joblib.load` y es un objeto de
-      scikit-learn, nada más. **No hace falta abrirlo hoy** — lo que importa es
-      que existen, que son 192 y que nadie los va a tocar en toda la tarde.
+      Convierte «artefacto» en algo que se puede listar. La palabra se usa las
+      ocho horas y hasta acá no tenía imagen.
+      - **Los dos números: 1 KB cada uno, 856 KB la flota entera.** Un modelo
+        de pronóstico no es un modelo de lenguaje. Quien viene esperando
+        gigabytes necesita oírlo.
+      - Si preguntan qué hay dentro: los coeficientes de la Ridge. **No hace
+        falta abrirlo hoy.**
 
   - id: s1-flota-pausa
     tipo: pausa-preguntas
@@ -547,13 +472,10 @@ items:
       - ¿Alguna imagen se quedó construyendo?
       - ¿Quedó alguna duda de qué hace `run --rm` que no sea `up`?
     notas: |
-      **2 min**, no cinco. El sitio es este y no antes: acabamos de
-      teclear los dos comandos que todo el resto del taller da por hechos,
-      y si alguien se quedó atrás hay que saberlo **ahora**, no cuando
-      empiece el reto 1.
-
-      Los tres rescates vienen justo después. Si alguien levanta la mano
-      con uno de ellos, la respuesta es "es la siguiente lámina".
+      **2 min, no cinco.** Acaban de teclear los dos comandos que el resto del
+      taller da por hechos: si alguien se quedó atrás, saberlo **ahora**.
+      - Los tres rescates vienen justo después. Si alguien levanta la mano con
+        uno: «es la siguiente lámina».
 
   - id: s1-rescate-docker
     tipo: error-comun
@@ -589,11 +511,10 @@ items:
       `--reload` en uvicorn y con sondeo del sistema de archivos, que hace
       falta en Windows porque los avisos de cambio no cruzan el montaje.
     notas: |
-      Este apareció tres veces preparando el taller, con tres caras
-      distintas, y era el mismo error cada vez. Es típico de cualquier
-      laboratorio con volúmenes montados, así que vale por sí solo como
-      material: la pregunta a hacerse siempre es "¿el proceso vio este
-      archivo?".
+      - Apareció **tres veces** preparando el taller, con tres caras distintas
+        y el mismo error debajo.
+      - **La pregunta que hay que enseñarles a hacerse**: «¿el proceso vio este
+        archivo?».
 
   - id: s1-rescate-disco
     tipo: error-comun
@@ -616,14 +537,11 @@ items:
       juntas son la mitad del tiempo.
     minutos: 1
     notas: |
-      Va acá y no en el cierre a propósito: **el momento de tener a mano la
-      guía de fallas es antes de fallar**, no después. Los tres rescates de las
-      tres láminas anteriores son las tres primeras entradas.
-
-      Decir que la primera línea de la guía es `make verificar`, y que esa es
-      la respuesta a casi todo lo que va a pasar hoy. Quien se quede atascado
-      en cualquier momento de las ocho horas: esta hoja primero, la mano
-      levantada después.
+      **El momento de tener la guía de fallas es antes de fallar.**
+      - Los tres rescates de recién son sus tres primeras entradas.
+      - **Decir que la primera línea de la guía es `make verificar`**, y que es
+        la respuesta a casi todo lo de hoy: esta hoja primero, la mano
+        levantada después.
 
   - id: s1-mundo-crudo
     tipo: salida-anotada
@@ -668,23 +586,16 @@ items:
           las doce features. Compárenla con la de al lado — las dos están acá,
           y solo una llega hasta el modelo.
     notas: |
-      **Es el archivo del que sale todo lo demás, y hasta ahora solo se había
-      nombrado.** Cinco veces se dijo «`ventas.csv`, 76,800 filas» sin enseñar
-      una sola.
-
-      La lámina existe por la cuarta anotación y conviene dictarla despacio,
-      sin adelantar el final: la columna `quiebre_stock` **está en el mundo**.
-      No es que el dato no exista; es que se pierde entre acá y la telemetría
-      que el agente mira, y por eso el domingo la política tiene un agujero que
-      no se puede tapar razonando mejor. Sembrarla ahora hace que el cierre del
-      reto 5 sea una decisión de instrumentación y no una queja.
-
-      Si alguien pregunta cuántos días hay con quiebre: 861 filas de 76,800, un
-      1.1%. Poco, y suficiente para arruinar un reentrenamiento.
-
-      La otra frase, para quien venga de ingeniería de datos: acá se ve por qué
-      **la venta observada no es la demanda**. Es de los sesgos más caros que
-      hay en pronóstico de retail, y no es del modelo: es del dato.
+      El archivo del que sale todo lo demás. Se nombró cinco veces sin enseñar
+      una fila.
+      - **La lámina existe por la cuarta anotación. Despacio, y sin adelantar
+        el final**: `quiebre_stock` **está en el mundo**. El dato existe; se
+        pierde entre acá y la telemetría que el agente mira.
+      - Sembrarlo ahora hace que el cierre del reto 5 sea una decisión de
+        instrumentación y no una queja.
+      - Si preguntan cuántos días: **861 de 76,800, un 1.1%.** Poco, y basta
+        para arruinar un reentrenamiento.
+      - Para quien venga de datos: **la venta observada no es la demanda.**
 
   - id: s1-telemetria
     tipo: modelo-datos
@@ -712,9 +623,9 @@ items:
           - { nombre: dias_en_promocion, tipo: int }
           - { nombre: dias_con_quiebre, tipo: int }
     notas: |
-      Señalar que `unidades_reales` y `unidades_pronosticadas` están además
-      de los porcentajes. No es redundancia: sin las unidades no se puede
-      agregar bien. Por qué, es el reto 2 — no adelantarlo.
+      - **Señalar que `unidades_reales` y `unidades_pronosticadas` están además
+        de los porcentajes.** No es redundancia: sin unidades no se agrega bien.
+      - **El porqué es el reto 2. NO adelantarlo.**
 
   - id: s1-metricas-definidas
     tipo: markdown
@@ -732,7 +643,7 @@ items:
       Es la métrica que todo el mundo mira, y es la única de las tres que
       casi siempre está en el tablero.
     notas: |
-      Insistir en "valor absoluto". De ahí sale toda la unidad siguiente.
+      - **Insistir en «valor absoluto».** De ahí sale toda la unidad siguiente.
 
   - id: s1-sesgo
     tipo: comparacion
@@ -752,10 +663,11 @@ items:
         durante tres semanas es inventario que alguien compró y nadie
         vendió.
     notas: |
-      Acá va la frase que sostiene el taller: el MAPE puede quedarse quieto
-      mientras el sesgo se dispara. Ese es el modo de falla más caro y el
-      que ningún umbral sobre el MAPE detecta. No dar todavía los números
-      — son del reto 1.
+      **La frase que sostiene el taller**: el MAPE puede quedarse quieto
+      mientras el sesgo se dispara.
+      - Es el modo de falla más caro, y **ningún umbral sobre el MAPE lo
+        detecta**.
+      - **NO dar los números todavía** — son del reto 1.
 
   - id: s1-intervalo
     tipo: codigo
@@ -772,23 +684,14 @@ items:
                           "limite_inferior": round(float(max(0.0, p - 1.96 * sigma)), 2),
                           "limite_superior": round(float(p + 1.96 * sigma), 2),
     notas: |
-      **El 1.96 es el número que hay que nombrar.** Es el ancho de una normal
-      que deja el 95% en el medio — acá con la sigma reducida a 0.6 queda un
-      intervalo que en la práctica cubre alrededor del 90%. La promesa del
-      modelo, entonces, es: *«la venta va a caer aquí dentro nueve de cada diez
-      días»*.
-
-      Y ahí está lo que la cobertura mide: **cuántas veces esa promesa se
-      cumplió**. No cuántos días hubo predicción, no cuántos modelos corrieron.
-      Cuántas veces el modelo dijo la verdad sobre su propia incertidumbre.
-
-      La sigma sale de la desviación de los últimos 90 días, así que un
-      producto que vende parejo tiene un intervalo estrecho y uno que salta lo
-      tiene ancho. Es correcto y es lo que hace que la cobertura signifique
-      algo: no premia al que se cubre.
-
-      Con esto en pantalla, la pregunta que viene se contesta sola — y por eso
-      se hace **antes** de mirar esta lámina si la sala va rápida.
+      **Nombrar el 1.96**: el ancho de una normal que deja el 95% en medio.
+      Con sigma a 0.6 cubre ~90%.
+      - **La promesa del modelo**: «la venta cae aquí dentro nueve de cada diez
+        días». La cobertura mide **cuántas veces esa promesa se cumplió** — no
+        cuántos días hubo predicción.
+      - Sigma sale de los últimos 90 días: quien vende parejo tiene intervalo
+        estrecho. **No premia al que se cubre.**
+      - Si la sala va rápida, lanzar la pregunta **antes** de esta lámina.
 
   - id: s1-pregunta-cobertura
     tipo: pregunta
@@ -808,10 +711,9 @@ items:
       - Faltan datos para decirlo
       - El intervalo está mal calculado
     notas: |
-      Es la métrica que casi todos leen mal, y por eso se pregunta **antes**
-      de explicarla. Dejar que se equivoquen: la primera opción es la que
-      gana casi siempre, y equivocarse acá es lo que hace que la
-      explicación se quede.
+      - **Se pregunta ANTES de explicarla, a propósito.**
+      - **Dejar que se equivoquen**: gana la primera opción casi siempre, y
+        equivocarse acá es lo que hace que la explicación se quede.
     solucion:
       explicacion: |
         **97% de cobertura en un intervalo del 90% no es estar mejor: es
@@ -854,9 +756,9 @@ items:
       Una cobertura que se desploma es un modelo que dejó de saber lo que
       no sabe — y eso suele pasar antes de que el MAPE se mueva.
     notas: |
-      Preguntar qué creen que mide antes de decirlo. La confusión con "días
-      con predicción disponible" es tan común que vale la pena que salga de
-      ellos.
+      - **Preguntar qué creen que mide antes de decirlo.**
+      - La confusión con «días con predicción disponible» es tan común que
+        conviene que salga de ellos.
 
   - id: s1-glosario-senales
     tipo: glosario
@@ -866,19 +768,13 @@ items:
     terminos: [MAPE, sesgo, cobertura]
     nuevos: [MAPE, sesgo, cobertura]
     notas: |
-      **Es la lámina de referencia de las ocho horas**, y va después de las
-      tres y no antes: cada una trae su fórmula y sus confusiones propias, y
-      esta las pone juntas, que es como hay que compararlas.
-
-      Lo que la lámina agrega son los tres «ojo»: son las
-      tres formas de leer mal la telemetría, y las tres aparecen en algún reto:
-      el MAPE que no se entera es el reto 1, el sesgo promediado es la trampa 1
-      del reto 2, y la cobertura al revés es la pregunta de hace un minuto.
-
-      Y decir en voz alta que **el glosario está siempre disponible**, con el
-      botón de abajo a la derecha. Es la primera vez que aparece y conviene
-      señalarlo: de acá al domingo nadie va a levantar la mano para preguntar
-      qué era la cobertura.
+      **La lámina de referencia de las ocho horas.**
+      - **Lo que agrega son los tres «ojo»**: las tres formas de leer mal la
+        telemetría, y cada una es un reto. MAPE que no se entera = reto 1;
+        sesgo promediado = trampa 1 del reto 2; cobertura al revés = la
+        pregunta de hace un minuto.
+      - **Decir en voz alta que el glosario está siempre ahí**, botón abajo a
+        la derecha.
 
   - id: s1-guia-telemetria
     tipo: archivo
@@ -890,14 +786,10 @@ items:
       sano contra los que se lee todo lo demás: 13.8%, +0.8%, 88.7%, 8 de 192.
     minutos: 1
     notas: |
-      **Es la guía que hay que tener abierta el resto del sábado**, y conviene
-      decirlo así. La última página trae los cuatro números del mundo sano, que
-      son los que la sala tenía que anotar hace dos láminas — quien no lo hizo,
-      los tiene acá.
-
-      Es también la que rescata al que llegue tarde al reto 1: las tres formas
-      de leer mal la telemetría son el reto 1, la trampa 1 del reto 2, y la
-      pregunta de la cobertura de hace un minuto.
+      **«Esta es la que hay que tener abierta el resto del sábado.»**
+      - Su última página trae los cuatro números del mundo sano. Quien no los
+        anotó, los tiene ahí.
+      - Es la que rescata al que llegue tarde al reto 1.
 
   - id: s1-demo-ui
     tipo: demo
@@ -918,18 +810,13 @@ items:
       el diagrama: nada de lo que viene depende de haber visto esta
       pantalla.
     notas: |
-      **5 min**, no diez. La tentación es empezar a analizar acá, y el
-      análisis es el reto 1.
-
-      **Esto es `make ui`, y es el `up` de la tabla del principio.** Vale
-      la pena hacer el segundo paso —`docker compose ps`, que es `make
-      estado`— para que se vea con los ojos: la interfaz y la plataforma
-      están ahí porque se levantaron con `up -d`; de los `run --rm` que
-      llevamos corridos no queda ni rastro. Uno deja algo vivo; el otro
-      ejecuta y desaparece.
-
-      Se apagan con `make abajo`, que es `docker compose down`. Sin la
-      `-v`: esa borraría los volúmenes, y con ellos los 192 modelos.
+      **5 min, no diez.** La tentación es analizar acá, y el análisis es el
+      reto 1.
+      - **Hacer el `docker compose ps` en vivo**: la ui y la plataforma están
+        porque se levantaron con `up -d`; de los `run --rm` no queda rastro.
+        **Uno deja algo vivo, el otro ejecuta y desaparece.**
+      - Se apagan con `make abajo`. **Sin `-v`** — esa borra los volúmenes y
+        con ellos los 192 modelos.
 
   - id: s1-ui-captura
     tipo: imagen
@@ -942,17 +829,12 @@ items:
       que se van a leer todos los demás.
     minutos: 2
     notas: |
-      **Es el respaldo de la demo anterior**, y por eso va justo después.
-      Si la interfaz no levantó en el aula, esta lámina es la clase; si
-      levantó, sirve para dejar los cuatro números fijos mientras se
-      explica el resto.
-
-      Los cuatro números de arriba son el punto de comparación de las ocho
-      horas. Vale la pena que la sala los anote: 13.8, +0.8, 88.7. Todo lo
-      que viene después es "cómo se movió esto".
-
-      El gráfico de abajo es plano y aburrido a propósito. Guardarlo en la
-      memoria: en el reto 5 vuelve, y no está plano.
+      **Respaldo de la demo anterior.** Si la ui no levantó, esta lámina es la
+      clase.
+      - **Que anoten: 13.8, +0.8, 88.7.** Todo lo que viene es «cómo se movió
+        esto».
+      - El gráfico plano es a propósito. **En el reto 5 vuelve, y no está
+        plano.**
 
   - id: s1-inventario
     tipo: salida-anotada
@@ -998,19 +880,14 @@ items:
           lámina anterior. Nadie rompió nada: es el mundo alejándose del día
           del entrenamiento.
     notas: |
-      **Es la primera herramienta del agente que ve la clase**, y va acá
-      justo porque todavía no hay agente: se lee como lo que es, una función
-      que devuelve un objeto. Mañana la llama un LLM y no cambia nada.
-
-      La comparación con la captura anterior es el punto de la lámina y
-      conviene hacerla en voz alta: 10.4 contra 13.8. Si alguien pregunta por
-      qué no se reentrena y ya, la respuesta corta es que reentrenar sobre
-      datos que no se entienden repite el problema con números nuevos —y es
-      exactamente el freno que se construye en el reto 5.
-
-      `mape_validacion_medio` sale del registro de los modelos, no de la
-      telemetría: es lo que cada uno midió contra su propio conjunto de
-      validación al entrenarse.
+      **Primera herramienta del agente que ve la clase**, y todavía no hay
+      agente: se lee como lo que es, una función. Mañana la llama un LLM y no
+      cambia nada.
+      - **La comparación en voz alta: 10.4 contra 13.8.**
+      - Si preguntan «¿por qué no reentrenar y ya?»: reentrenar sobre datos que
+        no se entienden repite el problema con números nuevos. **Es el freno
+        del reto 5.**
+      - `mape_validacion_medio` sale del registro, no de la telemetría.
 
   - id: s1-validacion
     tipo: codigo
@@ -1032,25 +909,16 @@ items:
               modelo = Ridge(alpha=alpha).fit(X_tr, y_tr)
               mape_val = _mape(y_va, pd.Series(modelo.predict(X_va), index=y_va.index))
     notas: |
-      **El corte es por tiempo y no al azar, y esa es la lámina.** En una serie
-      temporal, repartir las filas aleatoriamente entrena con días posteriores
-      a los que evalúa: el modelo ya vio el futuro y el error de validación
-      sale precioso. Acá se aparta el último trozo, que es lo único que se
-      parece a producción.
-
-      Con eso, el 10.4% de hace un rato es un número honesto: el modelo se
-      equivocaba así **en días que no había visto**. Y aun así hoy va por
-      13.8%. La diferencia no es un error de nadie — son tres meses de mundo.
-
-      `Ridge` en vez de una regresión pelada es la otra media frase: penaliza
-      los coeficientes grandes, y con doce features correlacionadas entre sí
-      —tres rezagos y dos medias móviles miden casi lo mismo— una regresión sin
-      penalización reparte pesos enormes que se cancelan y se vuelve
-      inestable. `alpha=1.0` y a otra cosa.
-
-      `Ridge` sale de `sklearn.linear_model`, y esa es la cuarta línea del
-      archivo. Conviene decirlo: **el modelo se entrena con scikit-learn**, con
-      el mismo `.fit()` de cualquier cuaderno.
+      **El corte es por tiempo y no al azar. Esa es la lámina.** Repartir al
+      azar una serie temporal entrena con días posteriores a los que evalúa: el
+      modelo vio el futuro.
+      - Por eso el **10.4% es honesto**: se equivocaba así en días que no había
+        visto. Hoy va por 13.8%. **La diferencia son tres meses de mundo**, no
+        un error de nadie.
+      - `Ridge` penaliza coeficientes grandes: con doce features
+        correlacionadas, una regresión pelada se vuelve inestable.
+      - **Decirlo: se entrena con scikit-learn, con el `.fit()` de cualquier
+        cuaderno.**
 
   - id: s1-pausa-fabrica
     tipo: pausa-preguntas
@@ -1061,17 +929,12 @@ items:
       - ¿Alguien aparta su conjunto de validación por tiempo, o lo reparte al azar?
       - ¿Cada cuánto se reentrena en donde trabajan? ¿Y quién lo decide?
     notas: |
-      **3 min**, y el sitio no es casual: acabamos de cerrar el «qué es un
-      modelo acá» y lo que viene son cinco láminas seguidas sobre cómo se
-      fabrica uno. Es la última ventana barata antes de ese tramo.
-
-      La segunda pregunta es la que rinde. Repartir una serie temporal al azar
-      es de los errores más comunes que hay, y en una sala de veinte siempre
-      hay dos o tres que lo hacen sin saber que está mal.
-
-      La tercera engancha directo con el reto 5: quien contesta «cada mes» ya
-      entendió por qué el modelo que está sirviendo se entrenó contra un mundo
-      que ya no existe.
+      **3 min** · última ventana barata antes de cinco láminas seguidas sobre
+      cómo se fabrica un modelo.
+      - **La segunda es la que rinde**: repartir una serie temporal al azar. En
+        una sala de veinte siempre hay dos o tres que lo hacen sin saberlo.
+      - La tercera engancha con el reto 5: quien dice «cada mes» ya entendió
+        que el modelo sirve contra un mundo que ya no existe.
 
   - id: s1-guardar
     tipo: codigo
@@ -1096,26 +959,14 @@ items:
                   }
               )
     notas: |
-      **`joblib.dump(modelo, ruta)`. Esa es toda la persistencia.** Serializa el
-      objeto de scikit-learn a disco, y del otro lado `joblib.load` lo devuelve
-      listo para `.predict()`. Vale la pena decirlo despacio porque la palabra
-      «artefacto» sugiere algo mucho más ceremonioso de lo que es.
-
-      Lo que sí merece atención es lo de abajo. **La `version` no se pone: se
-      hereda y se incrementa** — `previo.get(...).get("version", 0) + 1`. Si
-      corren `make entrenar` dos veces, la segunda deja `version: 2`. Es la
-      línea que convierte una carpeta de archivos en un registro de modelos.
-
-      Y hay una decisión escondida en el `previo`, tres líneas más abajo del
-      fragmento: los modelos que **no** se tocaron conservan su versión y su
-      fecha. Un `--categoria bebidas` reentrena 24 y deja los otros 168 como
-      estaban, con su edad. El registro tiene que mostrar la flota como está de
-      verdad, con modelos de distinta edad conviviendo — que es como se ven
-      todas las flotas reales.
-
-      El `mape_validacion` que se guarda acá es **el 10.4% de hace dos
-      láminas**, y ahora se ve de dónde sale: lo escribe el propio
-      entrenamiento, modelo por modelo, en el momento en que se entrena.
+      **`joblib.dump(modelo, ruta)` es toda la persistencia.** Decirlo despacio:
+      «artefacto» suena mucho más ceremonioso de lo que es.
+      - **La `version` no se pone: se hereda y se incrementa.** Es la línea que
+        convierte una carpeta de archivos en un registro de modelos.
+      - Los modelos que **no** se tocan conservan su versión y su fecha: un
+        `--categoria bebidas` reentrena 24 y deja 168 con su edad. **Las flotas
+        reales conviven con modelos de distinta edad.**
+      - El `mape_validacion` de acá **es el 10.4% de hace dos láminas.**
 
   - id: s1-entrenar
     tipo: comando-anotado
@@ -1131,19 +982,12 @@ items:
           telemetría; este toca los artefactos. `make entrenar` es su atajo.
         otrosValores: ["datos", "escenario", "pronosticar", "metricas", "seed"]
     notas: |
-      **Es el único comando de las ocho horas que cambia un modelo**, y hasta
-      acá solo se había visto escondido dentro de `seed`, como la barra de
-      progreso `2/4`.
-
-      Ejecutarlo suelto sirve para dos cosas. Una, ver cuánto tarda de verdad: es
-      el único paso lento del laboratorio, y explica por qué ninguna de las
-      recetas de `romper` y `reparar` lo incluye. Y dos, ver el efecto en el
-      registro — **la `version` sube de 1 a 2**, que es la lámina anterior
-      ocurriendo.
-
-      Acepta los mismos filtros que `escenario`: `--categoria bebidas`
-      reentrena 24 modelos y deja 168 intactos. Es exactamente lo que el agente
-      va a pedir el domingo, y lo que la política del reto 5 deja pasar o no.
+      **El único comando de las ocho horas que cambia un modelo.** Hasta acá
+      solo se vio escondido dentro de `seed`, como el `2/4`.
+      - Suelto enseña dos cosas: **cuánto tarda de verdad** (por eso `romper` y
+        `reparar` no lo incluyen) y que **la `version` sube en uno**.
+      - Acepta los filtros de `escenario`: `--categoria bebidas` toca 24 y deja
+        168. **Es lo que el agente va a pedir el domingo.**
 
   - id: s1-entrenar-salida
     tipo: salida-anotada
@@ -1175,14 +1019,12 @@ items:
           algo: los `.joblib` pesan lo mismo, se llaman igual y tienen otra
           marca de tiempo. **El registro es el que lleva la cuenta.**
     notas: |
-      La primera anotación es la que enseña, y suele sorprender: se reentrena y
-      el modelo sigue sin saber nada de julio. Lo que arregla un
-      reentrenamiento es el ajuste, no la ignorancia — para eso hacen falta
-      datos nuevos, que es otra conversación.
-
-      Si alguien quiere comprobarlo: `ls -l /datos/modelos | head` antes y
-      después. Mismo nombre, mismo tamaño, otra hora. Un comando que no crea
-      archivos y sí cambia el mundo.
+      **La primera anotación es la que enseña, y sorprende**: se reentrena y el
+      modelo sigue sin saber nada de julio.
+      - **Un reentrenamiento arregla el ajuste, no la ignorancia.** Para eso
+        hacen falta datos nuevos.
+      - Para comprobarlo: `ls -l /datos/modelos | head` antes y después. Mismo
+        nombre, mismo tamaño, otra hora.
 
   - id: s1-pregunta-reentrenar-arregla
     tipo: pregunta
@@ -1202,12 +1044,10 @@ items:
       - Solo si se cambia el algoritmo
       - Depende de cuántas veces se reentrene
     notas: |
-      Treinta segundos. Es corta y va acá porque la lámina anterior acaba de
-      dejar el dato raro en pantalla: la fecha no se movió.
-
-      La respuesta correcta suele salir sola en cuanto alguien mira la fecha.
-      Lo que hay que dejar caer después es la consecuencia: **el reto 5 va a
-      recomendar reentrenar, y eso solo sirve si además llegan datos nuevos.**
+      **30 s.** Va acá porque la lámina anterior dejó el dato raro en pantalla:
+      la fecha no se movió.
+      - **La consecuencia, al revelar**: el reto 5 va a recomendar reentrenar,
+        y eso solo sirve si además llegan datos nuevos.
     solucion:
       explicacion: |
         **No, porque sigue sin ver julio.** El corte de entrenamiento está en
@@ -1264,21 +1104,15 @@ items:
                       )
                       mlflow.log_metric("mape_validacion", mape_val)
     notas: |
-      **Acá vuelve el Módulo 2**, y conviene nombrarlo así: es la misma
-      herramienta, haciendo el mismo trabajo, dentro de un caso que ya conocen.
-
-      La distinción que vale es **parámetro contra métrica**. Un parámetro es
-      lo que decidiste antes de entrenar —qué algoritmo, qué `alpha`, hasta qué
-      fecha, con cuántas filas—; una métrica es lo que salió. MLflow los separa
-      a propósito: los primeros se filtran, las segundas se comparan.
-
-      Y `log_metric("mape_validacion", ...)` **es el 10.4% otra vez**, por
-      tercera vez en esta unidad y ahora en su sitio definitivo. Sale del
-      entrenamiento, se guarda en el registro local y se registra en MLflow.
-
-      El `if mlflow is not None` de arriba es una concesión al taller: si la
-      librería no está, el entrenamiento sigue. Un registro de modelos no debe
-      poder tumbar un entrenamiento, y en clase menos.
+      **Nombrarlo: acá vuelve el Módulo 2.** Misma herramienta, mismo trabajo,
+      dentro de un caso que ya conocen.
+      - **La distinción que vale: parámetro contra métrica.** Parámetro es lo
+        que decidiste antes de entrenar; métrica es lo que salió. Los primeros
+        se filtran, las segundas se comparan.
+      - `log_metric("mape_validacion", ...)` **es el 10.4% otra vez**, tercera
+        aparición y ya en su sitio.
+      - El `if mlflow is not None`: **un registro no debe poder tumbar un
+        entrenamiento.**
 
   - id: s1-mlflow-compose
     tipo: codigo
@@ -1302,24 +1136,13 @@ items:
           volumes:
             - datos:/datos
     notas: |
-      **Es el archivo que lleva toda la tarde detrás de cada comando y no se
-      había abierto.** Cada `docker compose run --rm plataforma …` sale de un
-      bloque como este: de ahí salen la imagen, los puertos, los volúmenes.
-
-      Las dos líneas resaltadas son las que explican una cosa que ya se dijo y
-      no se había justificado. **`profiles: ["mlflow"]` es por qué `make arriba`
-      no lo levanta**: un servicio con perfil solo arranca si se lo pide por su
-      nombre. Es el mismo mecanismo que esconde `ollama`. Sin eso, todo el
-      mundo pagaría el arranque de dos servicios que la mayoría no usa.
-
-      Y el `--backend-store-uri file:///datos/mlruns` es la otra media frase:
-      **MLflow no tiene base de datos acá**, lee una carpeta del mismo volumen
-      `datos` donde están los modelos. Por eso puede levantarse cuando se le
-      antoje y ver todo lo que se entrenó antes.
-
-      Si alguien pregunta por qué usa el Dockerfile de la plataforma: porque
-      `mlflow` ya está en sus dependencias, y construir una imagen aparte para
-      un servicio opcional sería una imagen más que baja todo el mundo.
+      **El archivo que lleva toda la tarde detrás de cada comando, sin
+      abrirse.** De un bloque como este salen imagen, puertos y volúmenes.
+      - **`profiles: ["mlflow"]` es por qué `make arriba` no lo levanta**: con
+        perfil, solo arranca si se lo pides por su nombre. Igual que `ollama`.
+      - **MLflow no tiene base de datos acá**: lee una carpeta del mismo volumen
+        `datos`. Por eso ve todo lo entrenado antes.
+      - Si preguntan por el Dockerfile: `mlflow` ya está en sus dependencias.
 
   - id: s1-mlflow-ui
     tipo: demo
@@ -1340,21 +1163,13 @@ items:
       `docker compose run --rm plataforma head -c 400 /datos/modelos/registro.json`.
       Nada de lo que viene depende de haber visto esta pantalla.
     notas: |
-      **Paga una promesa que el curso hace en el minuto ocho.** El diagrama de
-      apertura dibuja MLflow con una flecha punteada y la nota dice «el
-      registro de modelos que van a ver hoy es MLflow». Este es el momento.
-
       **4 min y no más.** No es un taller de MLflow: se abre, se ordena por
-      `mape_validacion`, se dice que es el mismo del Módulo 2 y se cierra. Lo
-      que la sala tiene que llevarse es que **el 10.4% de la lámina del
-      inventario tiene dónde mirarse**, y que cada uno de los 192 tiene su
-      ficha con qué algoritmo, qué `alpha` y hasta qué fecha.
-
-      La pregunta que suele salir: «¿y esto no debería ser el registro de
-      producción?». Sí, y en una cadena de verdad lo sería —con etapas, con
-      promoción a producción, con quién aprobó qué. Acá el registro que manda
-      es `registro.json`, porque el job tiene que poder ejecutar sin MLflow
-      arriba. Es una simplificación consciente y vale la pena decirlo.
+      `mape_validacion`, se dice que es el del Módulo 2 y se cierra.
+      - **Lo que se llevan**: el 10.4% tiene dónde mirarse, y cada uno de los
+        192 tiene ficha con algoritmo, `alpha` y fecha.
+      - Si sale «¿no debería ser el registro de producción?»: sí, y en una
+        cadena real lo sería. **Acá manda `registro.json` porque el job tiene
+        que poder ejecutar sin MLflow arriba.** Simplificación consciente.
 
   - id: s1-glosario-herramientas
     tipo: glosario
@@ -1364,19 +1179,13 @@ items:
     terminos: [MLflow, LangGraph, Streamlit]
     nuevos: [MLflow, LangGraph, Streamlit]
     notas: |
-      Van juntas porque comparten una propiedad: **ninguna de las tres se
-      escribe en este taller, y las tres se abren.** MLflow ahora mismo,
-      LangGraph mañana por la mañana, Streamlit mañana al final.
-
-      Decirlo explícitamente ahorra ansiedad: nadie tiene que aprender
-      LangGraph hoy. Lo que hay que entender es qué problema resuelve cada una,
-      y para eso basta con leerlas.
-
-      **MLflow** es el reencuentro con el Módulo 2 y está en pantalla ahora
-      mismo. **LangGraph** es lo que convierte el bucle del sábado en el grafo
-      del domingo, y es la única de las tres que aporta una idea y no solo una
-      comodidad. **Streamlit** dibuja el razonamiento del agente en 286 líneas,
-      y su docstring es una tesis que se lee el domingo.
+      Van juntas porque **ninguna de las tres se escribe en este taller, y las
+      tres se abren.**
+      - **Decirlo explícitamente ahorra ansiedad**: nadie tiene que aprender
+        LangGraph hoy.
+      - MLflow está en pantalla ahora. **LangGraph es la única que aporta una
+        idea y no solo comodidad.** Streamlit dibuja el razonamiento en 286
+        líneas.
 
   - id: s1-mlflow-captura
     tipo: imagen
@@ -1391,24 +1200,13 @@ items:
       parámetros — los mismos ocho que se pasan a `log_params`.
     minutos: 3
     notas: |
-      **Es el respaldo de la demo anterior**, y sirve igual si la interfaz no
-      levanta en el aula.
-
-      Señalar la columna recuadrada: `mape_validacion`, y que va de 6.4 a 17.9
-      entre modelos de la misma categoría. **La flota nunca fue pareja**, ni
-      siquiera el día que se entrenó. Eso importa para el reto 2: un umbral
-      único sobre 192 modelos con esta dispersión de partida marca a los mismos
-      todos los días.
-
-      Las otras columnas son la lámina de código de hace dos minutos, ocurrida:
-      `algoritmo: Ridge`, `entrenado_hasta: 2026-05-08` igual para todos,
-      `n_entrenamiento: 253` — que son los días que quedaron después de apartar
-      las cuatro semanas de validación y de descartar las filas sin rezagos.
-
-      Si alguien pregunta por qué las columnas no salen solas: hay que
-      añadirlas en **Columns**. MLflow muestra por omisión lo que es común a
-      cualquier experimento, y los parámetros propios se eligen. Es medio
-      minuto y vale la pena hacerlo en vivo.
+      Respaldo de la demo anterior, si la interfaz no levanta.
+      - **Señalar `mape_validacion`: va de 6.4 a 17.9 entre modelos de la misma
+        categoría. La flota nunca fue pareja**, ni el día que se entrenó.
+      - Eso importa para el reto 2: **un umbral único con esta dispersión marca
+        a los mismos todos los días.**
+      - Las columnas no salen solas: se añaden en **Columns**. Medio minuto, y
+        vale hacerlo en vivo.
 
   - id: s1-job-carga
     tipo: codigo
@@ -1429,18 +1227,12 @@ items:
               mid: joblib.load(r["artefacto"]) for mid, r in flota.items()
           }
     notas: |
-      **Este es el job batch del caso, y son tres líneas.** Se lee el mundo, se
-      lee el registro, y se abren los 192 artefactos de una vez con
-      `joblib.load` — el reverso exacto del `joblib.dump` de hace dos láminas.
-
-      Señalar que los modelos se cargan **todos juntos y una sola vez**, no uno
-      por petición. Es la diferencia de la que hablaba la lámina «un modelo no
-      es un contenedor»: un proceso, 192 modelos en memoria, un CSV de salida.
-      856 KB caben de sobra.
-
-      Y la ruta de cada artefacto sale del registro, no de armar el nombre a
-      mano. Es lo que permite que un modelo reentrenado ayer y otro de mayo
-      convivan sin que el job se entere.
+      **El job batch del caso, y son tres líneas.** Mundo, registro, y los 192
+      artefactos de una vez — el reverso del `joblib.dump` de hace dos láminas.
+      - **Señalar que se cargan todos juntos y una sola vez**, no uno por
+        petición. Un proceso, 192 modelos en memoria, un CSV. 856 KB.
+      - La ruta sale del registro, no de armar el nombre. Por eso conviven un
+        modelo de ayer y otro de mayo sin que el job se entere.
 
   - id: s1-flota-dada
     tipo: criterios
@@ -1452,9 +1244,8 @@ items:
       - texto: La plataforma y su API vienen dadas. Tampoco se tocan.
       - texto: Lo que construimos es lo que vigila. Nada más.
     notas: |
-      Decirlo explícitamente ahorra media hora. Siempre hay alguien que
-      quiere mejorar el modelo, y es una conversación legítima que hay que
-      cortar acá.
+      - **Decirlo explícitamente ahorra media hora.** Siempre hay alguien que
+        quiere mejorar el modelo: conversación legítima, pero se corta acá.
 
   - id: s1-pregunta-hoy
     tipo: pregunta
@@ -1472,9 +1263,9 @@ items:
       - Cuando se queja el negocio
       - No nos enteramos
     notas: |
-      Revelar recién cuando hayan respondido todos. "Cuando se queja el
-      negocio" suele ganar, y es la mejor entrada posible al reto 1: para
-      cuando el negocio se queja, el sobre-stock ya está comprado.
+      - **Revelar solo cuando hayan respondido todos.**
+      - Gana «cuando se queja el negocio», y es la mejor entrada al reto 1:
+        **para cuando el negocio se queja, el sobre-stock ya está comprado.**
     solucion:
       explicacion: |
         Acá no hay respuesta correcta: es un retrato de la sala. Lo que

@@ -24,15 +24,10 @@ items:
     entradilla: Llevas una hora viendo trozos. Este es el sitio del que salen.
     minutos: 2
     notas: |
-      **Diez minutos, y no es relleno.** Hasta ahora se han proyectado
-      fragmentos de siete archivos —`config.py`, `modelo.py`, `entrenar.py`,
-      `pronosticar.py`, el `Makefile`, `docker-compose.yml`— sin decir nunca
-      cómo está organizado el repositorio.
-
-      Y dentro de un rato empieza el reto 1, cuyo primer paso es abrir
-      `plataforma/api.py`. Buscar un archivo en una estructura que no se ha
-      visto nunca, con el reloj corriendo, es lo que esta unidad existe para
-      evitar.
+      **10 min, y no es relleno.** Llevan una hora viendo fragmentos de siete
+      archivos sin saber cómo está organizado el repositorio.
+      - En un rato el reto 1 manda abrir `plataforma/api.py` con el reloj
+        corriendo. Esta unidad existe para que no lo busquen a ciegas.
 
   - id: s1-lab-arbol
     tipo: salida-anotada
@@ -75,18 +70,12 @@ items:
           repositorio que cada uno tiene que editar, y el único que **no** se
           sube a git.
     notas: |
-      Recorrer las cuatro carpetas en voz alta y sin abrir ninguna. El objetivo
-      no es explicar qué hace cada archivo: es que cuando dentro de diez
-      minutos la lámina diga «abre `agente/herramientas.py`», la sala ya sepa
-      hacia dónde mirar.
-
-      **La comparación de las dos primeras líneas es la que rinde**, y conviene
-      dejarla caer: 1,177 contra 1,591. Vigilar cuesta más que producir, y eso
-      sorprende a todo el mundo — hasta que uno recuerda que la plataforma solo
-      tiene que funcionar, y el agente tiene que darse cuenta de cuándo no.
-
-      Si alguien pregunta por los `Dockerfile` y los `requirements.txt`: hay
-      uno por servicio, dentro de su carpeta. No se abren hoy.
+      **Recorrer las cuatro carpetas en voz alta, sin abrir ninguna.** No es
+      explicar archivos: es que sepan hacia dónde mirar en diez minutos.
+      - **Dejar caer la comparación: 1,177 contra 1,591.** Vigilar cuesta más
+        que producir. Sorprende a todo el mundo.
+      - Si preguntan por `Dockerfile` y `requirements.txt`: uno por servicio,
+        dentro de su carpeta. No se abren hoy.
 
   - id: s1-lab-mapa
     tipo: diagrama
@@ -114,21 +103,14 @@ items:
         R["retos/verificar.py"] -.->|comprueba| P
         R -.->|comprueba| A
     notas: |
-      **Es el diagrama de `s1-arquitectura` otra vez**, y decirlo así es la
-      mitad del valor de esta lámina: el mismo dibujo, con los nombres de los
-      archivos encima. Las cajas no cambiaron; ahora tienen dirección.
-
-      Lo que hay que señalar con el dedo es **la única flecha que cruza de una
-      carpeta a otra**: `api.py → herramientas.py`. El agente no lee el disco
-      de la plataforma, no importa nada de ella, y no sabe dónde está
-      `metricas.csv`. Habla por HTTP, igual que en producción.
-
-      Esa separación explica dos cosas que ya se dijeron sin justificar: por
-      qué el verificador corre en el contenedor del agente —para someterse a la
-      misma ceguera— y por qué el agente no es un servicio.
-
-      Y las tres cajas de `agente/` son el orden del taller: `herramientas` es
-      el reto 2, `grafo` es el 4, `accion` es el 5.
+      **Decirlo: es el diagrama de hace una hora, con nombres de archivo.**
+      - **Señalar la única flecha que cruza de carpeta a carpeta**:
+        `api.py → herramientas.py`. El agente no lee el disco de la plataforma
+        ni sabe dónde está `metricas.csv`. Habla por HTTP, como en producción.
+      - Eso explica dos cosas ya dichas: por qué el verificador corre en el
+        contenedor del agente, y por qué el agente no es un servicio.
+      - Las tres cajas de `agente/` son el orden del taller: herramientas = 2,
+        grafo = 4, accion = 5.
 
   - id: s1-lab-retos
     tipo: tabla
@@ -144,19 +126,13 @@ items:
       - ["5 · la acción", "La política que decide qué se ejecuta", "`agente/accion.py`"]
     resaltar: [2]
     notas: |
-      **Esta es la lámina por la que existe la unidad.** Los cinco retos entran
-      por un comando, y el archivo aparece cuando ya empezó la ventana de
-      lectura. Verlos los cinco juntos, antes del primero, convierte cada
-      referencia posterior en «ah, ese» en vez de en una búsqueda.
-
-      La fila resaltada es la única que se toca dos veces: `herramientas.py` se
-      lee el sábado en el reto 2 y el domingo vuelve entero, cuando el grafo lo
-      llama. Es el archivo más largo del repositorio, 514 líneas, y las siete
-      herramientas están una detrás de otra.
-
-      **Cuatro de los cinco están en `agente/`**, y vale la pena decirlo: la
-      plataforma se lee una vez y ya; lo que se construye —lo que se lee de
-      verdad— es lo que vigila.
+      **La lámina por la que existe la unidad.** Verlos los cinco juntos
+      convierte cada referencia posterior en «ah, ese».
+      - La fila resaltada es la única que se toca dos veces:
+        `herramientas.py`, sábado en el reto 2 y domingo con el grafo. 514
+        líneas, el archivo más largo.
+      - **Decir que cuatro de los cinco están en `agente/`**: la plataforma se
+        lee una vez; lo que se lee de verdad es lo que vigila.
 
   - id: s1-lab-ayuda
     tipo: salida-anotada
@@ -203,17 +179,12 @@ items:
           volver a ejecutar `seed`, que son unos minutos. `abajo` apaga sin
           borrar, que es lo que uno quiere casi siempre.
     notas: |
-      **La lista sale del propio `Makefile`**: cada receta lleva su comentario
-      `##` al lado y `ayuda` los recorta con un `grep` y un `awk`. Es un truco
-      de cuatro líneas que vale la pena robar — un repositorio que se explica
-      solo al teclear `make` es un repositorio en el que se entra sin
-      preguntarle a nadie.
-
-      La lámina está recortada: son 23 atajos y acá salen doce. Los otros son
-      los pasos sueltos del `seed` y los servicios opcionales.
-
-      Y decir lo que hay que teclear en cualquier repositorio ajeno, en este
-      orden: `README.md`, `make ayuda`, y el archivo que el README diga.
+      - **La lista sale del propio `Makefile`**: cada receta con su `##`, y
+        `ayuda` los recorta con un `grep` y un `awk`. **Truco de cuatro líneas
+        que vale la pena robar.**
+      - Recortada: son 23 atajos y salen doce.
+      - **La regla para cualquier repo ajeno, en este orden**: `README.md`,
+        `make ayuda`, y el archivo que el README diga.
 
   - id: s1-lab-lectura
     tipo: lectura
@@ -244,17 +215,13 @@ items:
       y todas se abren. Si algo del taller parece magia en las próximas horas,
       el archivo está a un clic.
     notas: |
-      **8 min**, y es la única ventana del taller sin un objetivo concreto.
-      Todas las demás mandan abrir un archivo y buscar algo; esta manda pasear.
-
-      Ir por los puestos con una pregunta que no tiene respuesta correcta:
-      «¿qué archivo abrirías primero si esto fuera de tu equipo?». Casi siempre
-      sale `README.md` o el `Makefile`, y las dos son buenas — lo interesante
-      es que nadie dice `grafo.py`, que es lo que más nos interesa a nosotros.
-
-      `retos/incidencias.md` es el que sorprende. Vale la pena señalarlo: está
-      escrito para el cierre, pero quien lo lea ahora va a reconocer tres o
-      cuatro de sus entradas a lo largo del día.
+      **8 min** · la única ventana sin objetivo concreto. Las demás mandan
+      buscar algo; esta, reconocer el sitio.
+      - **Lanzar la pregunta sin respuesta correcta**: «¿qué archivo abrirías
+        primero si esto fuera de tu equipo?». Sale `README.md` o el `Makefile`.
+        **Nadie dice `grafo.py`**, que es lo que a nosotros nos interesa.
+      - **Señalar `retos/incidencias.md`**: es el sorpresa. Quien lo lea ahora
+        reconocerá tres o cuatro entradas a lo largo del día.
 
   - id: s1-lab-pregunta
     tipo: pregunta
@@ -273,13 +240,10 @@ items:
       - Lee `/datos/metricas.csv` del volumen compartido
       - Recibe los datos por parámetro cuando se lo ejecuta
     notas: |
-      Treinta segundos. La tercera es la que más se elige, y es razonable: el
-      volumen `datos` existe y la plataforma escribe ahí.
-
-      Después de revelar, la frase: **el agente no monta ese volumen**. No es un
-      descuido, es la decisión que hace que el laboratorio se parezca a
-      producción — y la que obliga a que las herramientas de percepción sean lo
-      que son.
+      **30 s.** La tercera es la que más se elige, y es razonable.
+      - Al revelar, la frase: **el agente no monta ese volumen.** No es
+        descuido — es lo que hace que el lab se parezca a producción, y lo que
+        obliga a que las herramientas de percepción sean como son.
     solucion:
       explicacion: |
         **Por HTTP, contra la API.** El agente no importa nada de la
@@ -321,10 +285,10 @@ items:
       lunes, con los cuatro escenarios para seguir rompiendo cosas.
     minutos: 1
     notas: |
-      Un minuto. Se dice y se pasa: lo importante es que sepan que no es un
-      laboratorio de clase que se apaga el domingo.
-
-      Vuelve en el cierre, con la carpeta `guias/` y todo lo demás.
+      **1 min**, se dice y se pasa.
+      - Lo único que tienen que sacar: **no es un lab de clase que se apaga el
+        domingo.**
+      - Vuelve en el cierre, con la carpeta `guias/`.
 
   - id: s1-lab-transicion
     tipo: transicion
@@ -337,8 +301,7 @@ items:
       descubrir cuánto se tarda
     minutos: 2
     notas: |
-      Media frase y el mapa, que la aplicación dibuja sola.
-
-      La frase que engancha: **a partir de acá se deja de mirar y se empieza a
-      buscar.** Y el primer archivo del reto 1 —`plataforma/api.py`— es uno de
-      los que acaban de ver en el árbol.
+      - Media frase. El mapa lo dibuja la aplicación.
+      - **La frase**: «a partir de acá se deja de mirar y se empieza a buscar».
+      - El primer archivo del reto 1, `plataforma/api.py`, acaban de verlo en
+        el árbol.

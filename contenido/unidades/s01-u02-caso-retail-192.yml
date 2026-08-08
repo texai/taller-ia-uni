@@ -13,15 +13,11 @@ items:
     archivo: casos/retail-192.yml
     minutos: 5
     notas: |
-      El marco de las ocho horas. Todo lo que viene —los cinco retos— pasa
-      dentro de esta empresa y sobre esta flota.
-
-      Leer las cifras en voz alta y dejarlas respirar. No dar todavía los
-      números del sesgo silencioso: eso es el reto 1, y adelantarlo le quita
-      el golpe. Acá basta con que quede la imagen del Excel de los lunes.
-
-      Este mismo caso vuelve a abrir el domingo, desde el mismo archivo,
-      para quien no vino.
+      El marco de las ocho horas: los cinco retos pasan acá dentro.
+      - Leer las cifras en voz alta y **dejarlas respirar**.
+      - **NO adelantar los números del sesgo silencioso** — es el reto 1 y le
+        quita el golpe. Acá basta la imagen del Excel de los lunes.
+      - Vuelve a abrir el domingo, desde este mismo archivo.
 
   - id: s1-glosario-caso
     tipo: glosario
@@ -31,23 +27,13 @@ items:
     terminos: [flota, el mundo, artefacto, job batch]
     nuevos: [flota, el mundo, artefacto, job batch]
     notas: |
-      **Va acá y no al principio del todo** porque acaban de oír el caso: las
-      cuatro palabras ya tienen a qué agarrarse. Explicadas antes, son
-      definiciones; explicadas ahora, son nombres de cosas que la sala acaba de
-      ver.
-
-      La que más rinde es **«el mundo»**. Suena a licencia poética y es
-      literal: es `ventas.csv`, es lo único que el laboratorio inventa, y es lo
-      único que se toca para provocar cada uno de los fallos de esta tarde. Los
-      192 modelos no se van a tocar nunca.
-
-      **«flota»** existe para que nadie diga «los modelos»: el problema del
-      taller aparece justo cuando son demasiados para mirarlos de a uno, y la
-      palabra lo lleva puesto.
-
-      Y decir en voz alta que **el glosario está siempre disponible**, con el
-      botón de abajo a la derecha. Es la primera vez que aparece: de acá al
-      domingo nadie va a levantar la mano para preguntar qué era un artefacto.
+      - **«el mundo» es la que rinde.** No es poesía: es `ventas.csv`, lo único
+        que el lab inventa y lo único que se toca para provocar cada fallo.
+        **Los 192 modelos no se tocan nunca.**
+      - «flota» para que nadie diga «los modelos»: el problema aparece cuando
+        son demasiados para mirarlos de a uno.
+      - **Decir en voz alta que el glosario está siempre ahí**, botón abajo a
+        la derecha. Es la primera vez que aparece.
 
   - id: s1-caso-codigo
     tipo: codigo
@@ -86,35 +72,16 @@ items:
           ("congelados", 160, 0.26),
       ]
     notas: |
-      **La cadena deja de ser «24 tiendas en cinco regiones» y pasa a tener
-      nombres.** Vale la pena leer unos cuantos en voz alta: la sala peruana
-      reconoce Miraflores, Chimbote y Juliaca, y a partir de acá cuando salga
-      `dem-bebidas-arequipa` en un JSON ya sabe qué es.
-
-      El fragmento se salta la mitad de Lima —el separador punteado lo dice—
-      porque son catorce tiendas seguidas y no aportan nada de a una. Lo que
-      importa es lo de los bordes.
-
-      **Los dos números de cada línea son el caso entero.** El de la tienda es
-      un factor de tamaño: `miraflores` vende 1.35 veces la tienda media y
-      `juliaca` 0.75. De ahí sale que promediar porcentajes esté mal —una
-      tienda no pesa lo que otra— y de ahí sale, sin decirlo todavía, la
-      trampa 1 del reto 2.
-
-      El de la categoría es la amplitud de la estacionalidad semanal: bebidas
-      0.34 contra abarrotes 0.12. Bebidas oscila tres veces más de una semana
-      a otra, y **por eso es la categoría que se elige para la campaña
-      promocional del reto 1**: donde ya hay movimiento, un pico extra se
-      esconde mejor.
-
-      Y el reparto por región tampoco es un descuido: 14 tiendas en LIMA, una
-      en CENTRO, una en ORIENTE. Guardarlo — en el reto 2 esa desigualdad
-      decide un umbral.
-
-      Si alguien pregunta si esto es real: es un mundo generado, y está escrito
-      en un archivo que se lee en una pantalla. **Que sea inventado no lo hace
-      arbitrario**; cada número de acá tiene una consecuencia que se va a ver
-      esta tarde.
+      **Leer nombres en voz alta**: Miraflores, Chimbote, Juliaca. Después,
+      `dem-bebidas-arequipa` en un JSON ya significa algo.
+      - **Los dos números de cada línea son el caso entero.**
+      - Tamaño de tienda: `miraflores` 1.35 · `juliaca` 0.75 → **promediar
+        porcentajes está mal**. Es la trampa 1 del reto 2, sin nombrarla.
+      - Estacionalidad: bebidas 0.34 · abarrotes 0.12. Oscila 3× más, y **por
+        eso es la categoría de la campaña del reto 1**: el pico se esconde.
+      - Regiones desiguales: 14 en LIMA, 1 en CENTRO, 1 en ORIENTE. En el
+        reto 2 eso decide un umbral.
+      - Si preguntan si es real: inventado, pero **no arbitrario**.
 
   - id: s1-caso-estado
     tipo: salida-anotada
@@ -163,21 +130,10 @@ items:
           prácticamente cero. Una flota sana no tiene sesgo. Por eso cuando
           aparece, apareció de verdad.
     notas: |
-      **Es el ancla del caso, y va acá para poder señalarla el resto del día.**
-      Hasta ahora el caso era una historia; estos son sus archivos y sus
-      números.
-
-      La lista merece medio minuto: que quede claro que el laboratorio no es
-      una simulación de mentira, son 76,800 filas de historia y 192 artefactos
-      de verdad en disco.
-
-      **Dónde están, si alguien pregunta:** en el volumen `datos` de Docker, no
-      en la carpeta del repositorio. Por eso sobreviven a `make abajo` y por eso
-      `make reset` —que es `down -v`— los borra. Para verlos:
-      `docker compose run --rm plataforma ls -la /datos`.
-
-      El par 13.8 / +0.8 hay que pedir que lo anoten. Vuelve seis veces.
-
-      Si a alguien le salen otros números: el mundo se genera contra la fecha
-      del día. El MAPE y el sesgo coinciden al primer decimal; el conteo de
-      modelos sobre umbral se mueve.
+      **El ancla del caso: se señala el resto del día.** 76,800 filas y 192
+      artefactos de verdad en disco, no una simulación de mentira.
+      - **Pedir que anoten 13.8 / +0.8.** Vuelve seis veces.
+      - Si preguntan dónde están: volumen `datos` de Docker, no en el repo. Por
+        eso sobreviven a `make abajo` y `make reset` los borra.
+      - Si a alguien le salen otros números: el mundo se genera contra la fecha
+        del día. MAPE y sesgo coinciden al primer decimal; el conteo se mueve.

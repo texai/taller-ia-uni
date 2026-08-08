@@ -29,14 +29,10 @@ items:
       - ["Mañana redescubre lo mismo", "Memoria", "Consulta el historial antes de diagnosticar y lo escribe después"]
     resaltar: [2]
     notas: |
-      La fila resaltada es la que explica por qué hay dos capas y no una.
-      **Cuestionarse sin poder corregirse no sirve de nada**: el
-      diagnóstico saldría contradiciendo a sus propias objeciones. Esa
-      frase es la tesis de la unidad siguiente.
-
-      Falta una capa en esta tabla y vale la pena decirlo: la **acción**.
-      No arregla ninguna patología — es capacidad nueva, y trae sus propios
-      problemas. Es el reto 5.
+      - **La fila resaltada**: por qué hay dos capas y no una. *Cuestionarse
+        sin poder corregirse no sirve de nada* — es la tesis de mañana.
+      - **Decir que falta una capa en la tabla: la acción.** No arregla ninguna
+        patología, es capacidad nueva y trae sus propios problemas. Reto 5.
 
   - id: s2-el-grafo
     tipo: diagrama
@@ -55,12 +51,10 @@ items:
         C --> A["accion"]
         D <-.->|lee antes, escribe despues| M[("memoria")]
     notas: |
-      NO explicarlo acá. Se presenta y se pasa: la explicación es la unidad
-      siguiente, y adelantarla le quita el efecto.
-
-      Lo único que vale señalar con el dedo son las dos flechas que vuelven
-      hacia atrás. Todo lo demás de este dibujo es cableado; esas dos
-      son lo que lo convierte en algo que se puede creer.
+      - **NO explicarlo acá.** Se presenta y se pasa; adelantarlo le quita el
+        efecto a la unidad siguiente.
+      - **Señalar solo las dos flechas que vuelven hacia atrás.** Lo demás es
+        cableado; esas dos son lo que lo hace creíble.
 
   - id: s2-glosario-agente
     tipo: glosario
@@ -72,25 +66,15 @@ items:
     nuevos:
       [arquitectura cognitiva, grafo, nodo, estado, reflexión y revisión, memoria]
     notas: |
-      **4 min** bien gastados. El domingo entero se dicta con estas
-      palabras, y la mitad de la sala llega sin haber tocado un grafo de
-      agentes nunca.
-
-      **`arquitectura cognitiva` va primero porque es el título de la sesión**,
-      y se venía usando sin definirse: está en la portada, en el nombre del
-      reto 4 y en el subtítulo del curso. Que la sala pueda decir qué significa
-      **antes** de construirla es la diferencia entre seguir un montaje y
-      entender por qué se monta.
-
-      `herramienta` va apagada: es del sábado, y quien estuvo la reconoce. Para
-      quien llega hoy es la única de la lámina que necesita leer entera.
-
-      La entrada de `reflexión y revisión` adelanta la tesis de la unidad —
-      cuestionarse sin poder corregirse no sirve de nada— y eso está bien acá:
-      se enuncia ahora y se demuestra en el reto 4.
-
-      Quien llegó hoy por primera vez tiene el glosario entero en el botón de
-      abajo, incluidas las palabras del sábado.
+      **4 min bien gastados.** El domingo entero se dicta con estas palabras, y
+      media sala nunca tocó un grafo de agentes.
+      - **`arquitectura cognitiva` primero**: es el título de la sesión y se
+        venía usando sin definir. Poder decir qué significa **antes** de
+        construirla es la diferencia con seguir un montaje.
+      - `herramienta` va apagada: es de ayer. Para quien llega hoy es la única
+        que hay que leer entera.
+      - `reflexión y revisión` adelanta la tesis: se enuncia acá, se demuestra
+        en el reto 4.
 
   - id: s2-que-no-es
     tipo: markdown
@@ -107,9 +91,9 @@ items:
       El mismo modelo, con las mismas herramientas, pero obligado a pasar
       por sitios donde solo puede hacer una cosa.
     notas: |
-      Si alguien pregunta por qué no un solo prompt gigante: porque un
-      prompt con quince reglas cumple unas y olvida otras, y cuáles olvida
-      cambia en cada ejecución. Un grafo no olvida un nodo.
+      - Si preguntan «¿por qué no un prompt gigante?»: un prompt con quince
+        reglas cumple unas y olvida otras, y **cuáles olvida cambia en cada
+        ejecución**. Un grafo no olvida un nodo.
 
   - id: s2-pregunta-agregar
     tipo: pregunta
@@ -128,12 +112,12 @@ items:
       - Memoria
     respuesta: Reflexión
     notas: |
-      Reflexión aparece en dos de las cuatro filas de la tabla, así que es
-      la correcta — pero lo interesante es la discusión, no el acierto.
-
-      Si gana memoria: buena señal, es la que más gente reconoce de su
-      propio trabajo. Si gana revisión, es que leyeron bien la fila
-      resaltada. Cualquiera de las dos abre la unidad siguiente.
+      Correcta: **reflexión** (sale en dos de las cuatro filas). Pero lo que
+      interesa es la discusión, no el acierto.
+      - Si gana **memoria**: buena señal, es la que más gente reconoce de su
+        propio trabajo.
+      - Si gana **revisión**: leyeron bien la fila resaltada.
+      - Cualquiera de las dos abre la unidad siguiente.
     solucion:
       explicacion: |
         Reflexión, y por la tabla: aparece en dos de las cuatro filas.
