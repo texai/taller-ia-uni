@@ -136,18 +136,16 @@ export function PausaPreguntas({ item }: { item: ItemPausaPreguntas }) {
 }
 
 /**
- * Recordatorio de tomar asistencia.
- *
- * El alumno no lo ve nunca: `cursoParaAlumno` lo quita en el servidor, así que
- * este componente solo se dibuja en las vistas del docente. Que exista acá no
- * lo expone.
- */
-/**
  * Tomar asistencia, y la clase se entera.
  *
  * La `nota` la quita el servidor para el alumno, así que su presencia es lo
  * que distingue las dos caras: con nota, es la pantalla del docente; sin ella,
  * la que ve la sala. No hace falta preguntarle a nadie quién está mirando.
+ *
+ * El «con micrófono, no por el chat» es de la coordinación del programa, y va
+ * en la cara pública a propósito: la sala tiene que saber que se le va a pedir
+ * hablar **antes** de que le toque, o el primer nombre se lleva medio minuto
+ * de silencio mientras alguien busca el botón.
  */
 export function Asistencia({ item }: { item: ItemAsistencia }) {
   return (
@@ -156,8 +154,13 @@ export function Asistencia({ item }: { item: ItemAsistencia }) {
         {item.titulo ?? "Tomar asistencia"}
       </h2>
       <p className="mt-4 text-xl" style={{ color: "var(--tinta-suave)" }}>
-        Un minuto. El taller se evalúa solo por asistencia, así que esto es lo
-        único que hay que registrar en las ocho horas.
+        El taller se evalúa solo por asistencia, así que esto es lo único que
+        hay que registrar en las ocho horas. Se toma <strong>dos veces por
+        sesión</strong>: ahora y al volver del receso.
+      </p>
+      <p className="mt-4 text-xl" style={{ color: "var(--tinta-suave)" }}>
+        Nombre por nombre y <strong>en voz alta, con micrófono</strong>. El
+        chat no cuenta.
       </p>
       {item.nota && (
         <div className="mt-8">

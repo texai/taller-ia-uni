@@ -16,6 +16,17 @@ items:
       sitios donde algo pueda pasar
     minutos: 2
 
+  # Al minuto 14 de la sesión, que es lo más cerca que hay de los 15 que pide
+  # el correo de coordinación. Estaba en la lámina dos —minuto uno— y ahí un
+  # domingo a las 09:01 se marca ausente a media clase.
+  - id: s2-asistencia
+    tipo: asistencia
+    titulo: Tomar asistencia
+    nota: >-
+      Primera de las dos de hoy; la segunda es al volver del receso. Uno por
+      uno y en voz alta, con micrófono: no vale el chat de Zoom. Anotar
+      también a quien no vino ayer.
+
   - id: s2-patologias
     tipo: tabla
     titulo: Las cuatro patologías, y qué las resuelve

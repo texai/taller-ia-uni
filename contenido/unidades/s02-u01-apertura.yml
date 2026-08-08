@@ -15,11 +15,6 @@ items:
       - **El QR otra vez**: hoy hay gente que no vino el sábado.
       - Decir que es la sesión 2 de 2 y que se cierra a la hora.
 
-  - id: s2-asistencia
-    tipo: asistencia
-    titulo: Tomar asistencia
-    nota: Segunda sesión. Anotar también a quien no vino ayer.
-
   - id: s2-portada
     tipo: titulo
     titulo: La arquitectura cognitiva

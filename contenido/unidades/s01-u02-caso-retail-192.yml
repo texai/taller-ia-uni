@@ -86,15 +86,17 @@ items:
     tipo: salida-anotada
     titulo: Y así está la flota hoy
     entradilla: El estado inicial del caso, medido. Todo lo que viene se compara contra estos números.
-    comando: make seed  ·  y después → resumen_flota(dias=14)
+    comando: make archivos  ·  y después → resumen_flota(dias=14)
     minutos: 4
     salida: |
-      # lo que deja make seed, en el volumen `datos` (montado en /datos)
-      /datos/ventas.csv            76,800 filas   el mundo, dos años de historia
-      /datos/modelos/                 192 .joblib  856 KB en total
-      /datos/predicciones.csv      17,472 filas   lo que escribió el job
-      /datos/metricas.csv          17,472 filas   lo unico que el agente mira
-      /datos/ejecuciones_job.csv        1 fila    la bitacora del job
+      /datos  ·  volumen `datos` de Docker, no una carpeta del repo
+
+        ventas.csv               76,800 filas      4.0 MB   el mundo, dos anos de historia
+        modelos/                 193 archivos    266.2 KB   un .joblib por modelo, mas registro.json
+        predicciones.csv         17,472 filas      1.5 MB   lo que escribio el job
+        metricas.csv             17,472 filas      1.6 MB   lo unico que el agente mira
+        ejecuciones_job.csv            1 fila        86 B   la bitacora del job
+        mlruns/                 2,881 archivos    143.5 KB   el registro de MLflow, si se levanto
 
       # y lo que dicen esas metricas
       {
@@ -107,11 +109,18 @@ items:
         "modelos_con_mape_sobre_25": 8
       }
     anotaciones:
-      - texto: "/datos/metricas.csv          17,472 filas"
+      - texto: "volumen `datos` de Docker, no una carpeta del repo"
+        explicacion: >-
+          Por eso `ls` después de `make seed` **no muestra nada nuevo**: no hay
+          carpeta que mostrar. Un volumen es almacenamiento que gestiona
+          Docker, y solo se ve desde dentro de un contenedor — que es lo que
+          hace `make archivos`. Sobrevive a `make abajo`; lo borra `make reset`.
+      - texto: "metricas.csv             17,472 filas"
         explicacion: >-
           192 modelos por 91 días. **Es todo lo que hay para saber si algo va
           mal**, y es exactamente por lo que nadie lo mira: no hay forma de
-          leer diecisiete mil filas un lunes por la mañana.
+          leer diecisiete mil filas un lunes por la mañana. Las primeras cinco,
+          si alguien quiere verlas: `make archivos ARGS="--ver metricas.csv"`.
       - texto: '"entrenados_hasta": "2026-05-08"'
         explicacion: >-
           Tres meses sin reentrenar, y no es un descuido del laboratorio: es lo
@@ -129,10 +138,12 @@ items:
           prácticamente cero. Una flota sana no tiene sesgo. Por eso cuando
           aparece, apareció de verdad.
     notas: |
-      **El ancla del caso: se señala el resto del día.** 76,800 filas y 192
-      artefactos de verdad en disco, no una simulación de mentira.
+      **El ancla del caso: se señala el resto del día.**
       - **Pedir que anoten 13.8 / +0.8.** Vuelve seis veces.
-      - Si preguntan dónde están: volumen `datos` de Docker, no en el repo. Por
-        eso sobreviven a `make abajo` y `make reset` los borra.
-      - Si a alguien le salen otros números: el mundo se genera contra la fecha
-        del día. MAPE y sesgo coinciden al primer decimal; el conteo se mueve.
+      - **Adelantarse a «hice `make seed` y `ls` no muestra nada»:** `/datos`
+        es un **volumen** de Docker, no una carpeta. Solo se ve desde dentro,
+        y eso hace este comando.
+      - `mlruns/` sale ya, mucho antes de nombrar MLflow. Si lo señalan: el
+        registro de experimentos, se abre en el reto 1 con `make mlflow`.
+      - Si les salen otros números: el mundo se genera contra la fecha del día.
+        MAPE y sesgo coinciden al primer decimal; los tamaños bailan algún KB.

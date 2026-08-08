@@ -100,15 +100,22 @@ docker compose ps
 # estado de partida: entorno levantado, `/datos` vacío
 
 # sonda · antes
-docker compose run --rm plataforma sh -c 'ls /datos; ls /datos/modelos 2>/dev/null | wc -l'
-#   → vacío · 0
+make archivos
+#   → «/datos está vacío. Corre:  make seed»
 
 make seed                                          # ⏱ ~30 s
 
-# sonda · despues
-docker compose run --rm plataforma sh -c 'ls /datos; ls /datos/modelos 2>/dev/null | wc -l'
-#   → ventas.csv modelos predicciones.csv metricas.csv ejecuciones_job.csv · 193
-#     (192 modelos + registro.json)
+# sonda · despues — y es la lámina, no solo una sonda
+make archivos
+#   → ventas.csv 76,800 filas · modelos/ 193 archivos (192 + registro.json)
+#     predicciones.csv y metricas.csv 17,472 filas · ejecuciones_job.csv 1 fila
+#     mlruns/ 2,881 archivos — MLflow escribe desde el primer entrenamiento,
+#     mucho antes de que se hable de MLflow. No es un resto de otra corrida.
+
+# ⚠️ ESTA es la respuesta a «hice make seed y `ls` no muestra nada»: /datos es
+#    un volumen de Docker, no una carpeta del disco. Sale en cada clase.
+make archivos ARGS="--ver metricas.csv"
+#   → cabecera + 5 filas de telemetría
 
 # deja el mundo: SANO
 

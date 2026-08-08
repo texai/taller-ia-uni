@@ -56,11 +56,6 @@ items:
       - Si alguien no puede abrirlo: que siga por la pantalla compartida y lo
         arregle en el receso. **No parar la clase por esto.**
 
-  - id: s1-asistencia
-    tipo: asistencia
-    titulo: Tomar asistencia
-    nota: El taller se evalúa solo por asistencia. Tomarla ahora, no al final.
-
   - id: s1-portada
     tipo: titulo
     titulo: Un agente que vigila 192 modelos
@@ -182,6 +177,18 @@ items:
       - Las 1-3 se usan hoy; las 4-6, mañana. Cada una reaparece sola en su
         momento, pero es más cómodo tenerlas ya.
       - También en el aula virtual y en el repo, carpeta `guias/`.
+
+  # Acá, y no en la lámina tres, porque el correo de coordinación fija la
+  # primera asistencia **15 minutos después de iniciada la sesión**. Sumando
+  # los minutos de arriba, este punto cae exactamente en el 15. Tomarla al
+  # minuto cuatro marcaba ausente a quien entra a las 15:10, y el acta es lo
+  # único con lo que se evalúa el taller.
+  - id: s1-asistencia
+    tipo: asistencia
+    titulo: Tomar asistencia
+    nota: >-
+      Primera de las dos de hoy; la segunda es al volver del receso. Uno por
+      uno y en voz alta, con micrófono: no vale el chat de Zoom.
 
   - id: s1-recap
     tipo: diagrama

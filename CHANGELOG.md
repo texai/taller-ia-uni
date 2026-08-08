@@ -5,6 +5,35 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-08
 
+### Dos asistencias por sesión, no una
+- El correo de coordinación del programa lo pide literal: **una a los 15
+  minutos de empezar y otra al volver del receso**, verbal y con micrófono, sin
+  chat de Zoom. El curso tenía **una sola por sesión, y en el minuto uno.**
+- Faltaban las dos de después del receso —las que recogen a quien no volvió— y
+  las dos primeras estaban tan al principio que marcaban ausente a quien entra
+  a las 15:10. El acta es lo único con lo que se evalúa el taller.
+- Cuatro tarjetas ahora: sesión 1 en el minuto 15 exacto y cerrando el reto 1;
+  sesión 2 en el 14 —el seam más cercano— y detrás de su receso.
+- La cara pública dice que se toma **dos veces por sesión** y que es **en voz
+  alta con micrófono**. Va en la pública a propósito: la sala tiene que saber
+  que se le va a pedir hablar antes de que le toque.
+- Una prueba nueva fija la regla —dos por sesión, una a cada lado del receso—
+  para que reordenar contenido no se lleve una por delante.
+
+### `make archivos`, para ver dónde quedaron los datos
+- Después de `make seed` un `ls` en el repositorio sale **idéntico**, y parece
+  que el primer comando del taller no hizo nada. Es lo normal: `/datos` es un
+  **volumen** de Docker, no una carpeta del disco. No había forma de mirarlo:
+  la única puerta era `make consola` y saber pandas.
+- Comando nuevo en el laboratorio: lista qué hay —filas, tamaño y qué es cada
+  cosa— y con `ARGS="--ver metricas.csv"` asoma las primeras líneas.
+- La lámina del estado de la flota ahora **es** esa salida, medida sobre una
+  siembra virgen. Aparecía con cinco archivos y en realidad son seis: `mlruns/`
+  se escribe desde el primer entrenamiento, mucho antes de nombrar MLflow.
+- Y con su anotación, que es lo que se responde en clase: por qué `ls` no
+  muestra nada, y que el volumen sobrevive a `make abajo` pero no a `make
+  reset`.
+
 ### Fuera los minutos de la barra lateral
 - Quedaban dos sitios: el `· 12 min` del rótulo de la unidad —solo en modo
   docente— y el `3′` al final de cada ítem con tiempo, que **sí veían los dos**.

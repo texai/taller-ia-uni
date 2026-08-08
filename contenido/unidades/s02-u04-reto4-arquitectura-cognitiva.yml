@@ -443,6 +443,16 @@ items:
       A mitad de la unidad a propósito: la segunda parte es la difícil, y
       **90 min** seguidos de grafo no los aguanta nadie.
 
+  # La «después del receso» que pide el correo de coordinación. Es la última
+  # que se toma en el programa: pasada esta, el acta ya no cambia.
+  - id: s2-asistencia-2
+    tipo: asistencia
+    titulo: Asistencia, la segunda
+    nota: >-
+      La última de las cuatro del taller. Uno por uno y en voz alta, con
+      micrófono: no vale el chat de Zoom. Si alguien no volvió del receso,
+      queda ausente en esta.
+
   - id: s2-glosario-diagnostico
     tipo: glosario
     titulo: Dos campos que el diagnóstico tiene que rellenar

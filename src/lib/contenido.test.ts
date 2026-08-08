@@ -684,7 +684,7 @@ test("el curso real no filtra notas ni respuestas hacia el alumno", () => {
     .cursoParaAlumno(curso)
     .sesiones.flatMap((s) => s.unidades.flatMap((u) => u.items))
     .filter((i) => i.tipo === "asistencia");
-  assert.ok(asistencias.length >= 2, "una por sesión");
+  assert.ok(asistencias.length >= 2, "al menos una por sesión");
   for (const a of asistencias) {
     assert.equal((a as unknown as Record<string, unknown>).nota, undefined);
   }
@@ -1324,4 +1324,31 @@ test("la asistencia la ve la clase; su instrucción, no", () => {
       );
     },
   );
+});
+
+test("dos asistencias por sesión, y una de ellas detrás del receso", () => {
+  // Regla de la coordinación del programa, no nuestra: una asistencia 15 min
+  // después de empezar y otra al volver del receso. Es lo único con lo que se
+  // evalúa el taller, así que un ítem que se caiga al reordenar contenido se
+  // paga con un acta incompleta y sin forma de reconstruirla el lunes.
+  const curso = mod.cargarCurso();
+
+  for (const sesion of curso.sesiones) {
+    const items = sesion.unidades.flatMap((u) => u.items);
+    const asistencias = items
+      .map((it, i) => ({ it, i }))
+      .filter(({ it }) => it.tipo === "asistencia");
+    assert.equal(asistencias.length, 2, `${sesion.id}: dos asistencias`);
+
+    const receso = items.findIndex((it) => it.tipo === "receso");
+    assert.ok(receso >= 0, `${sesion.id}: tiene receso`);
+    assert.ok(
+      asistencias[0]!.i < receso,
+      `${sesion.id}: la primera va antes del receso`,
+    );
+    assert.ok(
+      asistencias[1]!.i > receso,
+      `${sesion.id}: la segunda va después del receso`,
+    );
+  }
 });

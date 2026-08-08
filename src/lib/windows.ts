@@ -46,6 +46,7 @@ export const CONOCIDOS = new Set([
   "entrenar",
   "pronosticar",
   "metricas",
+  "archivos",
   "agente",
   "plano",
   "memoria",

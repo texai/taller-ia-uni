@@ -263,7 +263,7 @@ items:
     entradilla: La receta de make romper, tal cual está en el Makefile
     lenguaje: makefile
     ruta: Makefile
-    numeros: ["100-103"]
+    numeros: ["110-113"]
     minutos: 2
     resaltar: ["2-4"]
     contenido: |2
@@ -781,3 +781,15 @@ items:
     tipo: receso
     titulo: Receso
     minutos: 20
+
+  # La segunda asistencia del día. Va pegada al receso a propósito: el correo
+  # de coordinación pide una «después del receso», y es también la que recoge
+  # a quien se fue y no volvió. Queda acá, cerrando el reto 1, para que el
+  # reto 2 empiece por su título.
+  - id: s1-asistencia-2
+    tipo: asistencia
+    titulo: Asistencia, la segunda
+    nota: >-
+      Esta es la que cuenta para la segunda mitad. Uno por uno y en voz alta,
+      con micrófono: no vale el chat de Zoom. Si alguien no volvió del receso,
+      queda ausente en esta.
