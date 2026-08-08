@@ -149,7 +149,8 @@ items:
       - comando: "# GET /v1/metricas → «Try it out» → categoria: bebidas → Execute"
         esperado: la misma respuesta que da curl, con el comando curl equivalente debajo
     observar: >-
-      **Los seis endpoints, con sus parámetros y qué devuelve cada uno.** Es la
+      **Las ocho rutas, con sus parámetros y qué devuelve cada una** — seis de
+      lectura y dos que escriben, marcadas en verde y en amarillo. Es la
       documentación de la API y sale sola del código: nadie la escribió aparte.
       En `GET /v1/metricas`, pulsar **«Try it out»**, poner `bebidas` en
       `categoria` y **Execute** — y ahí abajo aparece **el `curl` equivalente,
