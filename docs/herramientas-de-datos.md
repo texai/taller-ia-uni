@@ -248,9 +248,31 @@ with mlflow.start_run(run_name=m["modelo_id"]):
     mlflow.log_metric("mape_validacion", mape_val)
 ```
 
+**Cómo se ordena por dentro** — no hay base de datos: es una carpeta, y la
+jerarquía se lee tal cual en `/datos/mlruns`.
+
+```
+153427446901588698/         EXPERIMENTO · su meta.yaml dice pronostico-demanda
+├── 003e2e01c1a44ae0.../    RUN · uno de 192, uno por modelo
+│   ├── params/algoritmo       Ridge         ← un archivo, un valor, para siempre
+│   ├── metrics/mape_valid…    1786…  12.607  0   ← cuándo · cuánto · paso
+│   ├── tags/mlflow.runName    dem-congelados-trujillo
+│   └── artifacts/             VACÍA
+└── … 191 más
+```
+
 - *«¿parámetro o métrica?»* → parámetro es lo que decidiste **antes** de
   entrenar; métrica es lo que salió. Los primeros se filtran, las segundas se
-  comparan.
+  comparan. **La prueba está en el formato**: un parámetro es un archivo con un
+  valor; una métrica lleva fecha, valor y paso, y por eso puede tener muchas
+  líneas y un parámetro no.
+- *«¿un run es un modelo?»* → no: es la **ficha** de haberlo entrenado. Y por
+  eso `artifacts/` está vacía — el `.joblib` vive en `/datos/modelos`, porque
+  el job tiene que cargarlo con MLflow apagado.
+- *«¿y el Model Registry?»* → **no se usa.** Acá solo hay seguimiento
+  (experimentos y runs); versiones y promoción a producción quedan fuera. Lo
+  más parecido del laboratorio es el campo `version` de `registro.json`, que
+  sube uno por reentrenamiento.
 - *«¿por qué el `import` está en un `try`?»* → **un registro de modelos no
   debe poder tumbar un entrenamiento.** Si la librería no está, el
   entrenamiento sigue.

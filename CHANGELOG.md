@@ -5,6 +5,45 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-08
 
+### MLflow deja de ser «el del Módulo 2»
+- Se nombraba cinco veces antes de abrirse —el diagrama, la tabla de capas, la
+  de atajos— y lo único que se decía de él era eso. **Quien no hizo ese módulo,
+  o lo hizo hace tres meses, llegaba a la demo sin saber qué estaba mirando.**
+  Es el mismo agujero que tenía `make`, y rompe §18 igual.
+- **Qué es y qué problema resuelve**, con y sin: un `.joblib` no sabe nada de
+  sí mismo, y cuando en agosto falla, la pregunta que no se puede responder es
+  *¿venía fallando o lo rompimos nosotros?*
+- **Cómo se organizan sus conceptos**, que no estaban en ninguna parte:
+  experimento → run → parámetros, métricas, tags, artefactos. Se enseña con el
+  **árbol de carpetas real** de `/datos/mlruns`, medido sobre una siembra
+  virgen — MLflow no tiene base de datos acá, así que la jerarquía se lee tal
+  cual y eso cuesta menos que explicarla.
+- **Parámetro contra métrica salió de las notas privadas.** Era la distinción
+  que hace útil el registro y solo la veía el docente. Ahora tiene glosario,
+  está en el árbol —un parámetro es un archivo con un valor; una métrica lleva
+  fecha, valor y paso— y **una pregunta a la clase** que la comprueba.
+- Cuatro términos nuevos: `MLflow` reescrito, `experimento`, `run` y
+  `parámetro contra métrica`. La definición vieja decía «no se usa en ningún
+  reto», que ya no era verdad.
+- Dos correcciones de dato: `artifacts/` está **vacía** —el `.joblib` va a
+  `/datos/modelos` para que el job cargue sin MLflow levantado— y el docstring
+  de `entrenar.py` decía lo contrario. Y **el Model Registry no se usa**;
+  decirlo evita prometer lo que no hay.
+
+### El sílabo y la encuesta docente, que el programa pide por escrito
+- «En la primera sesión se deberá proyectar y explicar el sílabo, con énfasis
+  en los criterios de evaluación». **La palabra sílabo no aparecía en el
+  curso.** Lámina nueva en la apertura con las dos sesiones, la evaluación y lo
+  que se pide de la sala.
+- «Los últimos 5 minutos para la encuesta docente, validando en la plataforma
+  que todos respondieron». **No había ítem**: el domingo acababa en la pausa de
+  preguntas, y despedir a la clase para pedirla después es cómo se pierde la
+  mitad.
+- Tipo nuevo `encuesta`, hermano de `asistencia`: es una parada, no una lámina
+  de contenido, así que se ve como tal y lleva la URL en grande. Su instrucción
+  al docente es privada; la URL no, que es lo que hay que abrir.
+- Una prueba fija que sea **el último ítem del curso**.
+
 ### Dos asistencias por sesión, no una
 - El correo de coordinación del programa lo pide literal: **una a los 15
   minutos de empezar y otra al volver del receso**, verbal y con micrófono, sin

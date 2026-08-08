@@ -405,15 +405,50 @@ terminos:
       `joblib.dump(modelo, ruta)` de un lado, `joblib.load` del otro. Eso es
       toda la persistencia.
     ojo: >-
-      Un artefacto pesa 1 KB. Los 192 juntos, 856 KB — quien viene esperando
+      Un artefacto pesa 1 KB. Los 192 juntos, 266 KB — quien viene esperando
       gigabytes está pensando en un modelo de lenguaje, no en uno de demanda.
 
   - termino: MLflow
     grupo: Herramientas
     definicion: >-
-      El registro de modelos del Módulo 2: guarda cada versión entrenada con
-      sus métricas y sus parámetros. Acá aparece en el diagrama de arquitectura
-      y no se usa en ningún reto.
+      La libreta de laboratorio de los entrenamientos: cada vez que se entrena
+      un modelo, apunta con qué se entrenó y qué tal salió. Acá lo escribe
+      `entrenar.py` en quince líneas, y se lee en una interfaz que se levanta
+      aparte con `make mlflow`.
+    ojo: >-
+      No entrena, no sirve modelos y no decide nada. **Solo apunta.** Si se
+      cae, el entrenamiento sigue igual — por eso su `import` está en un `try`.
+
+  - termino: experimento
+    grupo: Herramientas
+    definicion: >-
+      La carpeta de MLflow donde caen los entrenamientos que se comparan entre
+      sí. Acá hay uno solo, `pronostico-demanda`, y dentro caben las 192
+      ejecuciones de cada corrida de `make entrenar`.
+    ojo: >-
+      Se elige con `mlflow.set_experiment("pronostico-demanda")`. Si nadie lo
+      elige, MLflow inventa uno llamado `Default` y ahí acaba todo mezclado.
+
+  - termino: run
+    grupo: Herramientas
+    definicion: >-
+      Un entrenamiento, uno solo, con todo lo que se sabe de él: sus
+      parámetros, sus métricas y cuánto tardó. En castellano, una **ejecución**.
+      `make entrenar` abre 192, uno por modelo.
+    ojo: >-
+      Un run no es un modelo: es la **ficha** de haberlo entrenado. El modelo
+      —el `.joblib`— está en `/datos/modelos`, no dentro del run.
+
+  - termino: parámetro contra métrica
+    grupo: Herramientas
+    definicion: >-
+      Los dos tipos de dato que lleva un run. **Parámetro** es lo que decidiste
+      antes de entrenar —el algoritmo, el `alpha`, hasta qué fecha—.
+      **Métrica** es lo que salió: acá, `mape_validacion`.
+    ojo: >-
+      Por eso los parámetros se **filtran** y las métricas se **comparan**. Y
+      por eso una métrica lleva fecha y puede tener muchos valores, y un
+      parámetro tiene uno y para siempre.
 
   - termino: LangGraph
     grupo: Herramientas

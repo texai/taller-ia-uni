@@ -1352,3 +1352,35 @@ test("dos asistencias por sesión, y una de ellas detrás del receso", () => {
     );
   }
 });
+
+test("la encuesta docente cierra la sesión 2, y su instrucción es privada", () => {
+  // Requisito escrito de la coordinación: los últimos cinco minutos del
+  // domingo. Va última porque despedir a la clase y pedirla después es cómo se
+  // pierde la mitad de las respuestas — y si alguien mete contenido detrás, es
+  // exactamente lo que pasaría sin que nadie lo notara hasta el domingo.
+  const curso = mod.cargarCurso();
+  const ultima = curso.sesiones[curso.sesiones.length - 1]!;
+  const items = ultima.unidades.flatMap((u) => u.items);
+  const final = items[items.length - 1]!;
+
+  assert.equal(final.tipo, "encuesta", "la encuesta es el último ítem");
+  assert.ok(
+    (final as unknown as Record<string, unknown>).nota,
+    "lleva instrucción para el docente",
+  );
+
+  const publico = mod
+    .cursoParaAlumno(curso)
+    .sesiones.flatMap((s) => s.unidades.flatMap((u) => u.items))
+    .filter((i) => i.tipo === "encuesta");
+  assert.equal(publico.length, 1, "la lámina sí la ve la clase");
+  assert.equal(
+    (publico[0] as unknown as Record<string, unknown>).nota,
+    undefined,
+    "su instrucción, no",
+  );
+  assert.ok(
+    (publico[0] as unknown as Record<string, unknown>).url,
+    "la URL sí: es lo que tienen que abrir",
+  );
+});

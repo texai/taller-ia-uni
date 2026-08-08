@@ -589,6 +589,26 @@ export interface ItemAsistencia extends ItemBase {
 }
 
 /**
+ * La encuesta docente del final, que es de la universidad y no del taller.
+ *
+ * Existe por lo mismo que `asistencia`: es una **parada obligatoria** que la
+ * coordinación del programa pide por escrito, y una lámina de contenido no
+ * sirve para eso. Los últimos cinco minutos de la última sesión se apartan
+ * para que la clase la responda, y hay que comprobar en la plataforma que
+ * respondieron **antes de cerrar la videollamada** — después ya no vuelven.
+ *
+ * Es su propio tipo y no un `criterios` porque tiene que verse como lo que es:
+ * el reloj se para, y nadie está enseñando nada.
+ */
+export interface ItemEncuesta extends ItemBase {
+  tipo: "encuesta";
+  /** Dónde se responde. Se proyecta: es lo que la sala tiene que abrir. */
+  url?: string;
+  /** Instrucción privada. Se filtra en el servidor, como las notas. */
+  nota?: string;
+}
+
+/**
  * Una pregunta del docente hacia los alumnos.
  *
  * `visibilidad: publica` proyecta el recuento y, tras el revelado, los
@@ -667,6 +687,7 @@ export type Item =
   | ItemReceso
   | ItemPausaPreguntas
   | ItemAsistencia
+  | ItemEncuesta
   | ItemPregunta;
 
 export type TipoItem = Item["tipo"];
@@ -741,6 +762,7 @@ export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   receso: "dictado",
   "pausa-preguntas": "dictado",
   asistencia: "dictado",
+  encuesta: "dictado",
   pregunta: "dictado",
 };
 

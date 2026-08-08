@@ -1102,7 +1102,7 @@ items:
     entradilla: Las últimas cuatro semanas, apartadas antes de entrenar
     lenguaje: python
     ruta: plataforma/entrenar.py
-    numeros: ["109", "113-119"]
+    numeros: ["115", "119-125"]
     resaltar: ["3-6"]
     minutos: 3
     contenido: |2
@@ -1149,7 +1149,7 @@ items:
     entradilla: Una línea. Lo demás de esta lámina es el registro, que es lo que se vuelve caro.
     lenguaje: python
     ruta: plataforma/entrenar.py
-    numeros: ["121-123", "140-148"]
+    numeros: ["127-129", "146-154"]
     resaltar: ["4"]
     minutos: 4
     contenido: |2
@@ -1286,13 +1286,119 @@ items:
             Reentrenar cien veces sobre el mismo histórico da cien veces el
             mismo modelo. Lo que falta no es repetición, son datos.
 
+  # MLflow llevaba toda la tarde nombrándose —el diagrama, la tabla de capas,
+  # la de atajos— y lo único que se decía de él era «el del Módulo 2». Eso no
+  # es abrir el vocabulario (§18): quien no hizo ese módulo, o lo hizo hace
+  # tres meses, llega a la demo sin saber qué está mirando. Estas tres láminas
+  # son lo que faltaba: qué resuelve, cómo se llaman sus piezas, y cómo encajan.
+  - id: s1-glosario-mlflow
+    tipo: glosario
+    titulo: Cuatro palabras antes de abrir MLflow
+    entradilla: Son las que salen en pantalla dentro de dos láminas. Sin ellas la interfaz no se lee.
+    minutos: 3
+    terminos: [MLflow, experimento, run, parámetro contra métrica]
+    nuevos: [MLflow, experimento, run, parámetro contra métrica]
+    notas: |
+      **Las dos que de verdad hay que dejar puestas son `run` y la última.**
+      - **`run` = ejecución = una fila de la tabla que van a ver.** Y no es un
+        modelo: es la ficha de haberlo entrenado.
+      - **Parámetro contra métrica es la distinción que hace útil el registro.**
+        Sin ella la interfaz es una tabla más.
+      - Si alguien viene del Módulo 2: es exactamente lo mismo, con 192 runs.
+
+  - id: s1-que-es-mlflow
+    tipo: comparacion
+    titulo: Qué es MLflow, y qué problema resuelve
+    entradilla: El problema no es entrenar. Es acordarse, tres meses después, de con qué se entrenó.
+    minutos: 4
+    izquierda:
+      titulo: Sin registro
+      contenido: |
+        Se entrena, sale un `.joblib`, y el archivo no sabe nada de sí mismo:
+
+        ```
+        /datos/modelos/dem-bebidas-miraflores.joblib
+        ```
+
+        ¿Con qué `alpha`? ¿Hasta qué fecha? ¿Qué error dio el día que se
+        entrenó? **Está en la cabeza de quien lo corrió**, o en un Excel.
+
+        Y cuando en agosto el modelo falla, la pregunta que no se puede
+        responder es la única que importa: *¿venía fallando o lo rompimos
+        nosotros?*
+      titulo_alt: Sin él
+    derecha:
+      titulo: Con registro
+      contenido: |
+        Quince líneas dentro del mismo bucle de entrenamiento, y cada uno de
+        los 192 queda con su ficha:
+
+        ```
+        alpha            1.0
+        algoritmo        Ridge
+        entrenado_hasta  2026-05-08
+        mape_validacion  12.607
+        ```
+
+        **Ahora sí se puede ordenar por error, filtrar por categoría y
+        comparar la corrida de hoy con la del mes pasado.**
+
+        Cuesta quince líneas y no cambia el modelo en nada.
+    notas: |
+      **La idea que se llevan: un modelo sin su ficha es irreproducible**, y
+      eso no se nota hasta que falla.
+      - **Es la misma idea del `Makefile`**, aplicada al entrenamiento: la
+        documentación que se escribe sola es la única que sobrevive.
+      - Si sale «¿y no basta con un CSV?»: sí, y de hecho el laboratorio tiene
+        uno —`registro.json`—. Lo que da MLflow encima es la **interfaz** para
+        ordenar y comparar 192 filas sin escribir código.
+      - No prometer más: **acá no se usa el Model Registry** (versiones,
+        promoción a producción). Solo el seguimiento.
+
+  - id: s1-mlflow-arbol
+    tipo: codigo
+    titulo: Cómo se ordena por dentro
+    entradilla: No hay base de datos. Es una carpeta, y la jerarquía se ve tal cual.
+    lenguaje: text
+    minutos: 4
+    contenido: |
+      /datos/mlruns/
+      └── 153427446901588698/            ← EXPERIMENTO · meta.yaml dice
+          │                                 name: pronostico-demanda
+          ├── meta.yaml
+          ├── 003e2e01c1a44ae0.../        ← RUN · uno de 192, uno por modelo
+          │   ├── meta.yaml                  start_time, end_time, run_id
+          │   ├── params/                 ← ocho archivos, uno por parámetro
+          │   │   ├── algoritmo              Ridge
+          │   │   ├── alpha                  1.0
+          │   │   └── entrenado_hasta        2026-05-08
+          │   ├── metrics/
+          │   │   └── mape_validacion     ← 1786210591427  12.607  0
+          │   │                              (cuándo · cuánto · paso)
+          │   ├── tags/
+          │   │   └── mlflow.runName         dem-congelados-trujillo
+          │   └── artifacts/              ← vacía, y a propósito: el .joblib
+          │                                 se escribe en /datos/modelos
+          └── … 191 más
+    notas: |
+      **Un experimento es una carpeta y un run es una subcarpeta.** Mirarlo
+      cuesta menos que explicarlo.
+      - **Un parámetro es un archivo con un valor dentro; una métrica, uno con
+        fecha, valor y paso.** Por eso una métrica puede tener muchas líneas y
+        un parámetro no: la distinción entera está en el formato.
+      - **`artifacts/` vacía va a salir.** MLflow *puede* guardar el modelo
+        dentro del run; acá manda `/datos/modelos` porque el job tiene que
+        cargar los 192 sin MLflow levantado.
+      - El número largo lo pone MLflow; el nombre vive en su `meta.yaml`.
+      - Verlo en vivo: `make archivos ARGS="--ver mlruns"`.
+
   - id: s1-mlflow-registro
     tipo: codigo
     titulo: Y cada entrenamiento queda registrado
     entradilla: Ocho parámetros y una métrica, por modelo. Esto es MLflow, el del Módulo 2.
     lenguaje: python
     ruta: plataforma/entrenar.py
-    numeros: ["124-138"]
+    numeros: ["130-144"]
     minutos: 3
     contenido: |2
               if mlflow is not None:
@@ -1320,6 +1426,56 @@ items:
         aparición y ya en su sitio.
       - El `if mlflow is not None`: **un registro no debe poder tumbar un
         entrenamiento.**
+
+  # El tramo de MLflow son cinco láminas seguidas de exposición. Esta pregunta
+  # es el respiro, y comprueba lo único que hay que llevarse: si `alpha` y el
+  # MAPE parecen la misma clase de cosa, la interfaz de la lámina siguiente no
+  # se va a poder leer.
+  - id: s1-pregunta-mlflow
+    tipo: pregunta
+    titulo: Parámetro o métrica
+    pregunta: >-
+      De estos cuatro, ¿cuál es una MÉTRICA y no un parámetro?
+    minutos: 3
+    opciones:
+      - alpha = 1.0
+      - algoritmo = Ridge
+      - mape_validacion = 12.607
+      - entrenado_hasta = 2026-05-08
+    respuesta: mape_validacion = 12.607
+    solucion:
+      explicacion: |
+        **La regla de bolsillo: si lo escribiste tú antes de ejecutar, es
+        parámetro; si lo escribió el programa después, es métrica.**
+
+        Y de ahí sale para qué sirve cada uno. Por los parámetros se
+        **filtra** —«enséñame los Ridge con alpha 1.0»—; por las métricas se
+        **ordena y se compara**, que es lo que se va a hacer en la lámina
+        siguiente con los 192 a la vez.
+      razones:
+        - opcion: alpha = 1.0
+          razon: >-
+            Lo elegiste **antes** de entrenar. Es una decisión, no un
+            resultado: se filtra por él, no se compara.
+        - opcion: algoritmo = Ridge
+          razon: >-
+            Igual: una decisión tomada antes. Podría haber sido otra, y el
+            registro sirve justo para poder comparar las dos.
+        - opcion: mape_validacion = 12.607
+          razon: >-
+            **Es lo único que no decidiste: salió.** Por eso lleva fecha y
+            puede medirse muchas veces, y por eso se ordena por esta columna.
+        - opcion: entrenado_hasta = 2026-05-08
+          razon: >-
+            Suena a resultado porque es una fecha, pero es el **corte que
+            elegiste** para separar entrenamiento de validación.
+    notas: |
+      **La trampa es la última**, y es la que enseña: parece resultado por ser
+      fecha, y es una decisión.
+      - Si gana `mape_validacion` cómodo, seguir. **Si se reparten, volver una
+        lámina**: la interfaz siguiente no se lee sin esto.
+      - **La regla de bolsillo**: si lo escribiste tú antes de ejecutar, es
+        parámetro; si lo escribió el programa después, es métrica.
 
   - id: s1-mlflow-compose
     tipo: codigo
@@ -1384,15 +1540,15 @@ items:
     entradilla: Las tres vienen dadas. Conviene saber cuál hace qué antes de abrirlas.
     minutos: 3
     terminos: [MLflow, LangGraph, Streamlit]
-    nuevos: [MLflow, LangGraph, Streamlit]
+    nuevos: [LangGraph, Streamlit]
     notas: |
       Van juntas porque **ninguna de las tres se escribe en este taller, y las
       tres se abren.**
       - **Decirlo explícitamente ahorra ansiedad**: nadie tiene que aprender
         LangGraph hoy.
-      - MLflow está en pantalla ahora. **LangGraph es la única que aporta una
-        idea y no solo comodidad.** Streamlit dibuja el razonamiento en 286
-        líneas.
+      - MLflow vuelve solo para cerrar el trío; ya se abrió hace cuatro
+        láminas. **LangGraph es la única que aporta una idea y no solo
+        comodidad.** Streamlit dibuja el razonamiento en 286 líneas.
 
   - id: s1-mlflow-captura
     tipo: imagen

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import type {
   ItemAsistencia,
+  ItemEncuesta,
   ItemPausaPreguntas,
   ItemReceso,
 } from "@/lib/tipos";
@@ -162,6 +163,49 @@ export function Asistencia({ item }: { item: ItemAsistencia }) {
         Nombre por nombre y <strong>en voz alta, con micrófono</strong>. El
         chat no cuenta.
       </p>
+      {item.nota && (
+        <div className="mt-8">
+          <p
+            className="text-xs font-semibold uppercase tracking-widest"
+            style={{ color: "var(--color-aviso)" }}
+          >
+            Solo el docente
+          </p>
+          <p
+            className="mt-1 text-lg leading-relaxed"
+            style={{ color: "var(--tinta-suave)" }}
+          >
+            {item.nota}
+          </p>
+        </div>
+      )}
+    </Interrupcion>
+  );
+}
+
+/**
+ * La encuesta docente, en los últimos cinco minutos del programa.
+ *
+ * Se parece a `Asistencia` porque es el mismo tipo de parada —obligatoria, de
+ * la universidad, y con algo que comprobar antes de cerrar—, pero lleva la URL
+ * grande: la sala tiene que poder teclearla desde el móvil sin pedirla dos
+ * veces. Que se vea de lejos es la mitad del trabajo.
+ */
+export function Encuesta({ item }: { item: ItemEncuesta }) {
+  return (
+    <Interrupcion etiqueta="Encuesta docente" color="var(--color-aviso)">
+      <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+        {item.titulo ?? "La encuesta del programa"}
+      </h2>
+      <p className="mt-4 text-xl" style={{ color: "var(--tinta-suave)" }}>
+        Cinco minutos, ahora y no en casa. Es de la universidad, no del taller,
+        y es lo último que queda del programa.
+      </p>
+      {item.url && (
+        <p className="mt-8 break-all font-mono text-2xl sm:text-3xl">
+          {item.url}
+        </p>
+      )}
       {item.nota && (
         <div className="mt-8">
           <p

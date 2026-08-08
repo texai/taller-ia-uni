@@ -146,6 +146,8 @@ export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
 
   asistencia: { requeridos: [], opcionales: ["nota"] },
 
+  encuesta: { requeridos: [], opcionales: ["nota", "url"] },
+
   caso: {
     requeridos: [],
     opcionales: ["empresa", "cifras", "bloques", "archivo"],

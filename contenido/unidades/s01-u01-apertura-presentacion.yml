@@ -93,6 +93,47 @@ items:
         hay que transcribir nada).
       - Si alguien quiere escribirlo igual: `make verificar ARGS="--reto 2"`.
 
+  # La lámina de arriba es la versión hablada del taller; ésta es la oficial.
+  # La coordinación del programa pide por escrito que en la primera sesión se
+  # proyecte y se explique el sílabo, con énfasis en los criterios de
+  # evaluación — y hasta ahora la palabra «sílabo» no aparecía en el curso.
+  - id: s1-silabo
+    tipo: criterios
+    titulo: El sílabo, y cómo se evalúa
+    entradilla: Lo que el programa firmó que este taller cubre. Es el documento del aula virtual.
+    minutos: 3
+    criterios:
+      - texto: "Sesión 1 · El mundo y la percepción"
+        pista: >-
+          El caso y su flota de 192 modelos, la telemetría que emiten, y las
+          tres primeras prácticas: encontrar el problema a mano, construir la
+          percepción y ver un bucle ReAct por dentro
+      - texto: "Sesión 2 · La arquitectura cognitiva"
+        pista: >-
+          Del bucle plano al grafo: memoria, reflexión, revisión y acción con
+          frenos. Las dos últimas prácticas y el cierre sobre los errores
+      - texto: "Evaluación: asistencia. No hay examen ni entregable"
+        pista: >-
+          Y por eso se toma cuatro veces, dos por sesión: al cuarto de hora de
+          empezar y al volver del receso
+      - texto: Se pide cámara encendida y micrófono para responder la lista
+        pista: >-
+          La asistencia no se registra por el chat. Cuando le toque su nombre,
+          se contesta hablando
+      - texto: Los materiales quedan en el aula virtual y en un repositorio público
+        pista: >-
+          Las seis guías en PDF, el laboratorio completo y estas láminas. No
+          hay nada que transcribir
+    notas: |
+      **Requisito del programa, y son tres minutos.** No es relleno: es el
+      contrato, y la parte que preguntan es siempre la misma.
+      - **Abrir el PDF del aula virtual mientras se dice esto.** El sílabo
+        oficial hay que proyectarlo, no solo resumirlo.
+      - **El criterio 3 es el que escuchan.** Decirlo entero: sin examen, sin
+        entregable, y la asistencia se toma cuatro veces.
+      - Si preguntan por la nota: la del aula virtual sale de esas cuatro
+        listas, y el acta se envía el lunes.
+
   - id: s1-docente
     tipo: markdown
     titulo: Quién les habla

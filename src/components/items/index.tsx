@@ -25,7 +25,7 @@ import { Archivo, Descargas, Diagrama, Enlace, Imagen } from "./medios";
 import { DiagramaSecuencia } from "./secuencia";
 import { Caso } from "./caso";
 import { Glosario } from "./glosario";
-import { Asistencia, PausaPreguntas, Receso } from "./dictado";
+import { Asistencia, Encuesta, PausaPreguntas, Receso } from "./dictado";
 import { Diff } from "./diff";
 import { Lectura } from "./lectura";
 import { Pregunta } from "./pregunta";
@@ -146,9 +146,11 @@ export function RenderizarItem({
     case "pregunta":
       return <Pregunta item={item} {...vivo} />;
     case "asistencia":
-      // El alumno nunca llega acá: `cursoParaAlumno` lo quita en el servidor.
-      // Este componente solo se dibuja en las vistas del docente.
+      // La lámina sí la ve la clase; lo que le quita el servidor es la `nota`
+      // con la instrucción al docente. Igual para `encuesta`.
       return <Asistencia item={item} />;
+    case "encuesta":
+      return <Encuesta item={item} />;
 
     default:
       return <SinRenderizador item={item} />;
