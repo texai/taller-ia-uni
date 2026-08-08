@@ -6,6 +6,7 @@ import type { ItemLectura } from "@/lib/tipos";
 import { comoCuentaRegresiva } from "@/lib/reloj";
 import { enlaceALab } from "@/lib/sitio";
 import { aPowerShell } from "@/lib/windows";
+import { Copiar } from "./copiar";
 import { QuéSignifica } from "./marco";
 import { Prosa } from "./texto";
 
@@ -237,9 +238,12 @@ export function Lectura({ item }: { item: ItemLectura }) {
                         background: "var(--lienzo-alto)",
                       }}
                     >
-                      <div>
-                        <span style={{ color: "var(--tinta-suave)" }}>$ </span>
-                        {c}
+                      <div className="flex items-start gap-3">
+                        <span className="min-w-0 flex-1">
+                          <span style={{ color: "var(--tinta-suave)" }}>$ </span>
+                          {c}
+                        </span>
+                        <Copiar texto={c} />
                       </div>
                       {win && (
                         <div className="mt-1.5 flex items-baseline gap-2.5">
@@ -250,11 +254,12 @@ export function Lectura({ item }: { item: ItemLectura }) {
                             Windows
                           </span>
                           <span
-                            className="min-w-0"
+                            className="min-w-0 flex-1"
                             style={{ color: "var(--tinta-suave)" }}
                           >
                             {win}
                           </span>
+                          <Copiar texto={win} />
                         </div>
                       )}
                     </li>

@@ -10,6 +10,7 @@ import { llave, trocear, ubicar, type Trozo } from "@/lib/anotaciones";
 import { comoTextoPlano, recortar } from "@/lib/resaltado";
 import { enlaceALab, rutaDeLab } from "@/lib/sitio";
 import { aPowerShell } from "@/lib/windows";
+import { Copiar } from "./copiar";
 import { Caja, Etiqueta, Marco, QuéSignifica } from "./marco";
 import { Prosa } from "./texto";
 
@@ -26,7 +27,7 @@ import { Prosa } from "./texto";
  * se escriben igual en las dos, y repetirlos sería ruido (ver
  * `lib/windows.ts`).
  */
-function EnWindows({ html }: { html: string }) {
+function EnWindows({ html, texto }: { html: string; texto?: string }) {
   return (
     <div className="mt-1.5 flex items-baseline gap-2.5">
       <span
@@ -36,9 +37,10 @@ function EnWindows({ html }: { html: string }) {
         Windows
       </span>
       <div
-        className="min-w-0 overflow-x-auto text-[15px] opacity-75 [&_pre]:!bg-transparent"
+        className="min-w-0 flex-1 overflow-x-auto text-[15px] opacity-75 [&_pre]:!bg-transparent"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+      {texto && <Copiar texto={texto} />}
     </div>
   );
 }
@@ -121,10 +123,15 @@ export function Terminal({ item }: { item: ItemTerminal }) {
         style={{ borderColor: "var(--borde)" }}
       >
         <div
-          className="overflow-x-auto px-5 py-4 text-[15px] [&_pre]:!bg-transparent"
+          className="flex items-start gap-3 px-5 py-4"
           style={{ background: "var(--lienzo-alto)" }}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        >
+          <div
+            className="min-w-0 flex-1 overflow-x-auto text-[15px] [&_pre]:!bg-transparent"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+          <Copiar texto={item.comando} />
+        </div>
 
         {htmlWin && (
           <div
@@ -135,10 +142,15 @@ export function Terminal({ item }: { item: ItemTerminal }) {
               <Etiqueta>Windows</Etiqueta>
             </div>
             <div
-              className="overflow-x-auto px-5 pb-4 pt-1 text-[15px] [&_pre]:!bg-transparent"
+              className="flex items-start gap-3 px-5 pb-4 pt-1"
               style={{ background: "var(--lienzo-alto)" }}
-              dangerouslySetInnerHTML={{ __html: htmlWin }}
-            />
+            >
+              <div
+                className="min-w-0 flex-1 overflow-x-auto text-[15px] [&_pre]:!bg-transparent"
+                dangerouslySetInnerHTML={{ __html: htmlWin }}
+              />
+              {win && <Copiar texto={win} etiqueta="Copiar" />}
+            </div>
           </div>
         )}
 
@@ -211,6 +223,9 @@ export function ComandoAnotado({
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
+      <div className="mb-2 flex justify-end">
+        <Copiar texto={item.comando} etiqueta="Copiar el comando" />
+      </div>
       <BloqueAnotado
         texto={item.comando}
         trozos={trozos}
@@ -484,11 +499,23 @@ export function Demo({ item }: { item: ItemDemo }) {
         <ol className="mt-4 space-y-4">
           {pasos.map((paso, i) => (
             <li key={i}>
-              <div
-                className="overflow-x-auto text-[15px] [&_pre]:!bg-transparent"
-                dangerouslySetInnerHTML={{ __html: paso.html }}
-              />
-              {paso.htmlWindows && <EnWindows html={paso.htmlWindows} />}
+              <div className="flex items-start gap-3">
+                <div
+                  className="min-w-0 flex-1 overflow-x-auto text-[15px] [&_pre]:!bg-transparent"
+                  dangerouslySetInnerHTML={{ __html: paso.html }}
+                />
+                {/* Los pasos que son un comentario o una llamada a herramienta
+                    no se copian: no hay nada que teclear. */}
+                {!/^\s*(#|→|…)/.test(paso.comando) && (
+                  <Copiar texto={paso.comando} />
+                )}
+              </div>
+              {paso.htmlWindows && (
+                <EnWindows
+                  html={paso.htmlWindows}
+                  texto={aPowerShell(paso.comando) ?? undefined}
+                />
+              )}
               {paso.esperado && (
                 <pre
                   className="mt-1.5 overflow-x-auto whitespace-pre-wrap font-mono text-sm"

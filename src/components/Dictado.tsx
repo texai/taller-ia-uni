@@ -10,8 +10,8 @@ import {
 } from "react";
 import Link from "next/link";
 
-import type { ItemPregunta, Sesion, Termino } from "@/lib/tipos";
-import { FAMILIA } from "@/lib/tipos";
+import type { ItemPregunta, Sesion, Termino, TipoItem } from "@/lib/tipos";
+import { FAMILIA, señalDe } from "@/lib/tipos";
 import {
   acotar,
   avanzar,
@@ -222,6 +222,39 @@ function SaltarA({
       )}
     </div>
   );
+}
+
+/**
+ * El símbolo, el color y el nombre de cada señal del índice.
+ *
+ * Separados del render porque los tres se leen juntos: cambiar uno sin mirar
+ * los otros dos produce una leyenda que no corresponde con lo que se ve.
+ */
+function simboloDeSeñal(tipo: TipoItem): string {
+  if (FAMILIA[tipo] === "dictado") return "◆";
+  const s = señalDe(tipo);
+  // `▶` para lo que se ejecuta y `▦` para lo que se mira. Se eligieron por
+  // silueta y no por bonitos: en una lista de doscientas líneas lo que se
+  // reconoce de reojo es la forma, no el detalle.
+  if (s === "ejecutar") return "▶";
+  if (s === "grafico") return "▦";
+  return "•";
+}
+
+function colorDeSeñal(tipo: TipoItem): string {
+  if (FAMILIA[tipo] === "dictado") return "var(--color-aviso)";
+  const s = señalDe(tipo);
+  if (s === "ejecutar") return "var(--color-acento)";
+  if (s === "grafico") return "var(--tinta)";
+  return "var(--tinta-suave)";
+}
+
+function nombreDeSeñal(tipo: TipoItem): string {
+  if (FAMILIA[tipo] === "dictado") return "pausa";
+  const s = señalDe(tipo);
+  if (s === "ejecutar") return "se ejecuta un comando";
+  if (s === "grafico") return "diagrama o captura";
+  return "";
 }
 
 const EVENTO = "taller:navegacion";
@@ -591,6 +624,23 @@ export function Dictado({
           <p className="text-xs" style={{ color: "var(--tinta-suave)" }}>
             {sesion.horaInicio}–{sesion.horaFin} · {total} ítems
           </p>
+
+          {/* La leyenda. Tres símbolos sin explicar son tres símbolos que cada
+              uno interpreta a su manera, y ocupa una línea. */}
+          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px]">
+            {(
+              [
+                ["◆", "pausa", "var(--color-aviso)"],
+                ["▶", "se ejecuta", "var(--color-acento)"],
+                ["▦", "gráfico", "var(--tinta)"],
+              ] as const
+            ).map(([simbolo, nombre, color]) => (
+              <span key={nombre} className="whitespace-nowrap">
+                <span style={{ color }}>{simbolo}</span>{" "}
+                <span style={{ color: "var(--tinta-suave)" }}>{nombre}</span>
+              </span>
+            ))}
+          </p>
         </div>
 
         <ol ref={panel} className="flex-1 overflow-y-auto px-2 py-3">
@@ -685,18 +735,22 @@ export function Dictado({
                         ref={actual ? activo : undefined}
                         aria-current={actual ? "true" : undefined}
                       >
+                        {/*
+                          Tres señales, no dos. La barra distinguía solo «se
+                          para la clase» de «todo lo demás», y en ese «todo lo
+                          demás» estaban los momentos que más se buscan: el
+                          comando que se teclea delante de la sala y el dibujo
+                          que uno recuerda por su forma y no por su título.
+                          Ver `señalDe` en `lib/tipos.ts`.
+                        */}
                         <span
                           aria-hidden
                           className="shrink-0 text-[10px]"
-                          style={{
-                            color:
-                              FAMILIA[it.tipo] === "dictado"
-                                ? "var(--color-aviso)"
-                                : "var(--tinta-suave)",
-                          }}
+                          style={{ color: colorDeSeñal(it.tipo) }}
                         >
-                          {FAMILIA[it.tipo] === "dictado" ? "◆" : "•"}
+                          {simboloDeSeñal(it.tipo)}
                         </span>
+                        <span className="sr-only">{nombreDeSeñal(it.tipo)}</span>
                         <span className="truncate">
                           {it.titulo ?? it.id}
                         </span>

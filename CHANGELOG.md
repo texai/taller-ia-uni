@@ -3,6 +3,39 @@
 Resumen de cambios por fecha, más reciente arriba. El detalle batch por batch
 vive en [`docs/DONE.md`](docs/DONE.md).
 
+## 2026-08-08
+
+### Un botón para copiar cada comando
+- Los comandos de los retos se teclean **desde otra ventana**: la clase mira la
+  lámina, cambia a la terminal y escribe `make verificar ARGS="--reto 1"` o
+  `docker compose run --rm plataforma python -m plataforma escenario --nombre
+  campana_promocional`. Un error de dedo ahí son tres minutos de reto perdidos
+  averiguando por qué no corre, multiplicados por veinte personas.
+- Seleccionar con el ratón tampoco servía: en una lámina proyectada el texto
+  está a tamaño de leerse de lejos, y arrastrar sobre él se lleva media línea
+  de al lado.
+- Botón en las cuatro formas en que aparece un comando: `lectura`, `terminal`,
+  `comando-anotado` y cada paso de una `demo`. **La línea de Windows tiene el
+  suyo**, porque quien está en PowerShell necesita esa y no la de `make`.
+- En una `demo` se saltan los pasos que no son comandos —comentarios, flechas,
+  elipsis—: un botón que copia `# y para la peor tienda` es ruido.
+- **Confirma copiando** («Copiado ✓» por 1.6 s), y esa es la mitad del valor.
+  Sin la confirmación uno cambia de ventana, pega, no sale nada, y vuelve sin
+  saber si falló el botón o el pegado.
+
+### La navegación dice qué pasa en cada punto
+- La barra lateral ya marcaba con **◆** los puntos de espera o interacción. Los
+  demás ítems eran todos el mismo punto, así que **no se veía dónde hay que
+  ejecutar algo** ni dónde hay un dibujo — y son justo los dos sitios donde el
+  docente necesita anticiparse: la terminal en pie, el puerto :8501 abierto.
+- Tres señales ahora: **◆** pausa, **▶** se ejecuta (demo, terminal, comando
+  anotado, salida anotada) y **▦** gráfico (diagrama, secuencia, imagen, modelo
+  de datos). Cada una con su color y su nombre para lectores de pantalla.
+- **Leyenda bajo la cabecera de la sesión**, porque un símbolo sin glosa se
+  aprende a la tercera lámina o no se aprende.
+- La señal se deriva del tipo del ítem (§8), así que un ítem nuevo la hereda
+  sin tocar nada. Y la ve **también el alumno**: el tipo no es campo privado.
+
 ## 2026-08-07
 
 ### Qué es `make`, explicado en pantalla

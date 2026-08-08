@@ -671,6 +671,46 @@ export type Item =
 
 export type TipoItem = Item["tipo"];
 
+/**
+ * Qué marca un ítem en el índice lateral, además de su familia.
+ *
+ * La barra eran doscientas líneas con dos símbolos: rombo para lo que
+ * interrumpe, punto para todo lo demás. Y «todo lo demás» mezclaba una lámina
+ * de prosa con **el momento en que el docente teclea un comando delante de la
+ * clase** — que es lo que hay que localizar de un vistazo cuando se prepara,
+ * y lo que el alumno quiere encontrar cuando vuelve al material el lunes.
+ *
+ * Tres señales, y las tres responden a una pregunta distinta:
+ *
+ * - **`ejecutar`** — acá corre algo. Un comando, una demo en vivo, una
+ *   herramienta que hay que levantar en su puerto.
+ * - **`grafico`** — acá hay un dibujo o una captura. Es lo que se busca
+ *   cuando uno recuerda la forma y no el título.
+ * - **`dictado`** (la familia) — acá se para la clase.
+ */
+export type Señal = "ejecutar" | "grafico" | null;
+
+export function señalDe(tipo: TipoItem): Señal {
+  switch (tipo) {
+    // Se teclea o se levanta algo. `salida-anotada` entra porque es lo que
+    // el comando acaba de escupir: sin ella la demo queda a medias.
+    case "demo":
+    case "terminal":
+    case "comando-anotado":
+    case "salida-anotada":
+      return "ejecutar";
+    // Se mira. `imagen` incluida: las capturas de :5000 y :8501 son el
+    // respaldo de la demo, y se buscan igual que el diagrama.
+    case "diagrama":
+    case "diagrama-secuencia":
+    case "imagen":
+    case "modelo-datos":
+      return "grafico";
+    default:
+      return null;
+  }
+}
+
 export const FAMILIA: Record<TipoItem, FamiliaItem> = {
   caratula: "contenido",
   titulo: "contenido",
