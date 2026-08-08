@@ -25,6 +25,9 @@ const GRIS = "\x1b[90m";
 const AMARILLO = "\x1b[33m";
 const FIN = "\x1b[0m";
 
+/** Palabras a partir de las cuales una nota deja de leerse de un vistazo. */
+const TOPE_DE_NOTA = 70;
+
 try {
   const curso = cargarCurso();
   const items = curso.sesiones.reduce(
@@ -149,6 +152,42 @@ try {
         `(${sinAbrir.length} de ${curso.glosario?.length}):${FIN}`,
     );
     console.log(`  ${AMARILLO}·${FIN} ${sinAbrir.join(", ")}`);
+  }
+
+  // Las notas privadas, en formato de chuleta.
+  //
+  // El curso se dicta en línea y con la cámara encendida: el docente las lee
+  // de reojo entre lámina y lámina, mientras la sala le mira la cara. Un
+  // párrafo de ciento ochenta palabras no se lee de reojo — se lee bajando la
+  // vista diez segundos, y eso se nota desde el otro lado.
+  //
+  // Aviso y no error: hay láminas donde el contexto pesa y la nota larga está
+  // justificada. Lo que no puede es pasar sin que nadie lo decida, que es
+  // como estaba: 223 notas, 16,256 palabras, media de 73.
+  const gordas: { id: string; palabras: number }[] = [];
+  let conNotas = 0;
+  for (const sesion of curso.sesiones) {
+    for (const { item } of recorrer(sesion)) {
+      const n = (item as { notas?: string }).notas;
+      if (!n) continue;
+      conNotas++;
+      const palabras = n.trim().split(/\s+/).length;
+      if (palabras > TOPE_DE_NOTA) gordas.push({ id: item.id, palabras });
+    }
+  }
+  if (gordas.length) {
+    gordas.sort((a, b) => b.palabras - a.palabras);
+    console.log(
+      `\n${AMARILLO}Notas del docente que no se leen de reojo ` +
+        `(más de ${TOPE_DE_NOTA} palabras, ${gordas.length} de ` +
+        `${conNotas}):${FIN}`,
+    );
+    for (const g of gordas.slice(0, 12)) {
+      console.log(`  ${AMARILLO}·${FIN} ${g.id.padEnd(30)} ${g.palabras} palabras`);
+    }
+    if (gordas.length > 12) {
+      console.log(`  ${GRIS}… y ${gordas.length - 12} más${FIN}`);
+    }
   }
 
   // Ningún comando deja fuera a Windows.

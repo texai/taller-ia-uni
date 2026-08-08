@@ -944,3 +944,49 @@ sabe traducirse, y si la lista de `windows.ts` promete comandos que
 `taller.ps1` no tiene. Sin eso la regla dura hasta el primer `target` nuevo:
 `plano` y `senales` llevaban semanas en el `Makefile` sin estar en el script, y
 en Windows contestaban «No conozco el comando».
+
+---
+
+## 20 · Las notas del docente son una chuleta, no un guion
+
+El curso se dicta **en línea y con la cámara encendida**. Entre lámina y
+lámina el docente baja la vista un segundo, coge lo que necesita y vuelve a
+mirar a la sala. Una nota de ciento ochenta palabras no se lee así: se lee
+bajando la vista diez segundos, y eso se nota desde el otro lado de la
+videollamada.
+
+### El formato
+
+    notas: |
+      **N min** · la intención de la lámina, si no es obvia
+      - Lo importante, un bullet por idea.
+      - **En negrita lo que hay que enfatizar**, para que salte solo.
+      - Pistas concretas: la cifra medida, el comando, la pregunta a la sala.
+
+Reglas:
+
+- **Bullets, no párrafos.** Si una idea necesita tres líneas seguidas de
+  prosa, o no cabe en una nota o no era una idea.
+- **Los minutos primero**, en negrita, cuando la lámina tiene presupuesto.
+- **La negrita marca la acción**, no el tema: «decir X sin disculparse»,
+  «contar las manos», «señalar el rombo».
+- **Lo que se mide, con su número.** «El MAPE sube de 13.8 a 16.0» vale; «el
+  MAPE sube bastante» no sirve para nada en vivo.
+- **Lo que NO hay que adelantar va explícito**, porque es lo que más cuesta
+  recordar en caliente.
+
+### Lo que no va en una nota
+
+El *porqué* de una decisión de diseño del taller. Eso vive en el comentario de
+cabecera del archivo de unidad, en `DONE.md` o en este documento — sitios que
+se leen preparando la clase, no dictándola. Una nota que explica por qué la
+lámina está donde está le está robando espacio a lo que el docente necesita en
+ese segundo.
+
+### El aviso
+
+`validar-contenido` lista las notas de más de **70 palabras**. Es aviso y no
+error: hay láminas donde el contexto pesa y la nota larga se justifica. Lo que
+no puede es pasar sin que nadie lo decida — que es como estaba antes de esta
+regla: **223 notas, 16,256 palabras, media de 73**.
+

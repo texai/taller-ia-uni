@@ -17,9 +17,9 @@ items:
     entradilla: Arquitectura cognitiva para monitoreo de modelos en producción
     minutos: 2
     notas: |
-      Preguntar quién hizo el trabajo previo. Si hay manos abajo, avisar que
-      el rescate va en paralelo durante los próximos quince minutos, sin
-      detener la clase.
+      - **Preguntar a mano alzada: ¿quién hizo el trabajo previo?**
+      - Muchas manos abajo → el rescate va en paralelo los próximos 15 min,
+        sin parar la clase.
 
   - id: s1-que-es-esto
     tipo: criterios
@@ -40,26 +40,13 @@ items:
       - texto: Todo lo que veas hoy está en un repositorio público, y sigue estando el lunes
         pista: La plataforma, el agente, el verificador y los cuatro escenarios para seguir rompiendo
     notas: |
-      **3 min**, y decirlos completos. Una sala que sabe cómo termina
-      el día escucha distinto: deja de preguntarse si esto va a servirle y
-      empieza a mirar el contenido.
-
-      Los dos criterios que más tranquilizan son el quinto y el sexto. El
-      de la evaluación quita la ansiedad del examen, que en un taller de
-      ocho horas es la mitad de la atención perdida. El del repositorio
-      quita la ansiedad de copiar todo a mano — nadie necesita transcribir
-      una lámina.
-
-      **El segundo hay que decirlo mirando a la sala, y sin disculparse.** El
-      laboratorio trae las herramientas y el grafo ya escritos, y es una
-      decisión: en cuatro horas con veinte personas, un error de sintaxis de
-      alguien se lleva el reto entero. Lo que sí da tiempo es a abrir el
-      archivo, entender por qué está así, ejecutarlo y romperlo. Si alguien
-      llega esperando teclear cuatro horas seguidas, mejor corregirlo en el
-      minuto tres que en el reto 2.
-
-      Y si alguien quiere escribirlo igual, perfecto: el verificador está ahí
-      para decirle si lo suyo pasa. `make verificar ARGS="--reto 2"`.
+      **3 min** · leerlos completos, los seis.
+      - **Énfasis en el 2, sin disculparse**: el lab viene escrito. Con 20
+        personas, un error de sintaxis ajeno se lleva el reto entero.
+      - Corregir esa expectativa **ahora**, no en el reto 2.
+      - Los que tranquilizan: el 5 (no hay examen) y el 6 (queda el repo, no
+        hay que transcribir nada).
+      - Si alguien quiere escribirlo igual: `make verificar ARGS="--reto 2"`.
 
   - id: s1-docente
     tipo: markdown
@@ -89,19 +76,13 @@ items:
       | WhatsApp | 976 324 488 |
       
     notas: |
-      **2 min**, y el punto no es el currículum. Lo que la sala tiene
-      que sacar de acá es por qué este taller está armado como está: lo de
-      BBVA es exactamente este problema a otra escala — herramienta nueva,
-      gente que ya tiene trabajo, y una adopción que solo funciona si lo que
-      enseñas se puede usar el lunes.
-
-      Si hay que recortar el día, este ítem es de los primeros que se cae.
-      Pero el dato de las 800 horas de docencia sí conviene decirlo: es lo
-      que responde en silencio a «¿este va a saber explicarlo?».
-
-      El WhatsApp está a propósito. En un taller de ocho horas siempre queda
-      alguien con una pregunta que no hizo, y el correo institucional se
-      responde en tres días.
+      **2 min** · no es el currículum, es por qué el taller está armado así.
+      - BBVA = este mismo problema a otra escala: herramienta nueva, gente que
+        ya tiene trabajo, y adopción solo si sirve el lunes.
+      - **Decir las 800 horas de docencia**: responde en silencio a «¿este
+        sabrá explicarlo?».
+      - El WhatsApp está a propósito. Siempre queda alguien sin preguntar.
+      - **Si el reloj aprieta, este ítem es el primero que se cae.**
 
   - id: s1-prework
     tipo: archivo
@@ -114,19 +95,11 @@ items:
       verde.
     minutos: 2
     notas: |
-      **Preguntar a mano alzada quién lo hizo.** Es el único dato que
-      cambia cómo se dicta la primera hora: si hay muchas manos abajo, el
-      rescate va en paralelo mientras la clase sigue, y los tres ítems de
-      rescate de la unidad siguiente pasan de ser un por si acaso a ser
-      material.
-
-      Está en el aula virtual de la universidad, no acá. Se pone también
-      acá porque quien llega sin haberlo hecho necesita poder bajarlo en
-      ese momento, y buscar en otra plataforma con la clase empezada es
-      exactamente lo que no va a hacer.
-
-      Lo importante no es que lo lean ahora: es que sepan que lo que falla
-      en la próxima media hora está resuelto ahí dentro.
+      **Contar las manos.** Es el dato que decide cómo va la primera hora.
+      - Muchas abajo → los tres rescates de la unidad siguiente dejan de ser
+        «por si acaso» y se dictan.
+      - No hay que leerlo ahora. Lo que tienen que saber: **lo que se rompa en
+        la próxima media hora está resuelto ahí dentro.**
 
   - id: s1-guias
     tipo: descargas
@@ -153,23 +126,13 @@ items:
         titulo: 6 · Si algo falla
         descripcion: Las trece cosas que se rompieron montando esto
     notas: |
-      **3 min**, y son de verdad: esperar a que las bajen. Un enlace que se
-      anuncia y no se abre no existe, y a las 17:30 nadie vuelve a la lámina
-      tres.
-
-      Decir para qué **no** son: no sustituyen a la clase ni hay que leerlas
-      ahora. Son para tener al lado mientras se trabaja, y para el lunes. Dos
-      caras cada una a propósito — lo que no cabe en dos caras no se consulta
-      con la clase en marcha.
-
-      Las tres primeras se usan hoy; las otras tres, mañana. Y cada una vuelve
-      a aparecer sola en su momento, así que quien no la baje ahora tiene una
-      segunda oportunidad — pero conviene decir que es más cómodo tenerlas
-      todas ya.
-
-      También están en el aula virtual y en el repositorio, en
-      `github.com/texai/taller-ia-uni-lab` → carpeta `guias/`, ahí en markdown
-      además del PDF.
+      **3 min de verdad: callarse y esperar a que las bajen.** A las 17:30
+      nadie vuelve a la lámina tres.
+      - Decir para qué **no** son: no sustituyen la clase, no se leen ahora.
+        Son para tener al lado, y para el lunes.
+      - Las 1-3 se usan hoy; las 4-6, mañana. Cada una reaparece sola en su
+        momento, pero es más cómodo tenerlas ya.
+      - También en el aula virtual y en el repo, carpeta `guias/`.
 
   - id: s1-recap
     tipo: diagrama
@@ -187,20 +150,14 @@ items:
         Q --> HOY["hoy: un Excel los lunes,<br/>5 de las 24 tiendas"]
         Q -.->|las proximas 8 horas| AG["un agente<br/>que los vigila"]
     notas: |
-      **Es el repaso del programa, no del taller.** Cuatro módulos dejaron
-      cada uno una pieza, y hoy están todas puestas a la vez. Nombrar cada
-      caja y dejar que la sala reconozca lo suyo: casi todos hicieron el
-      taller de Docker, GitHub Actions y Kubernetes, donde el último bloque
-      fue "monitoreo básico y operación". **Esto empieza justo donde lo
-      básico deja de alcanzar.** Y el registro de modelos que van a ver hoy
-      es MLflow, el mismo del Módulo 2.
-
-      Lo que importa del dibujo es el rombo. Todo lo de la izquierda es
-      construir y desplegar; a la derecha no hay nada equivalente. La
-      flecha punteada es el taller entero.
-
-      No detenerse en las cajas: se miran y se pasan. La caja del Excel es
-      la que engancha con el caso, que viene enseguida.
+      **Es el repaso del programa, no del taller.** Nombrar cada caja y dejar
+      que reconozcan lo suyo.
+      - **La frase**: su taller de Docker/Actions/K8s cerró con «monitoreo
+        básico». *Esto empieza donde lo básico deja de alcanzar.*
+      - MLflow es el mismo del Módulo 2.
+      - **Señalar el rombo con el dedo**: a la izquierda todo es construir y
+        desplegar; a la derecha no hay nada. La flecha punteada es el taller.
+      - No detenerse en las cajas. La del Excel engancha con el caso.
 
   - id: s1-donde-estamos
     tipo: transicion
@@ -213,6 +170,4 @@ items:
       los mire
     minutos: 2
     notas: |
-      Después del diagrama esto es media frase y el mapa de la sesión, que
-      la aplicación dibuja sola: qué unidades quedan por delante y cuál
-      viene ahora.
+      - Media frase y pasar. El mapa lo dibuja la aplicación sola.
