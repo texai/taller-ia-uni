@@ -5,6 +5,24 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### Qué es `make`, explicado en pantalla
+- Se usaba **desde el primer comando del taller y nunca se explicaba**: la
+  definición vivía solo en las notas privadas, así que la sala veía `make X`
+  diez veces sin que nadie dijera qué es. Rompía §18 — el vocabulario se abre
+  antes de usarse.
+- Tres láminas nuevas antes de la tabla de atajos: el **glosario** (`make`,
+  `Makefile`, `taller.ps1`), **qué problema resuelve** —con y sin él, y la
+  receta real del archivo— y **la alternativa de Windows**.
+- Lo de Windows era el hueco más grande: `taller.ps1` aparecía en cada lámina
+  que manda ejecutar algo, **sin que nadie hubiera dicho qué era**.
+- La idea que se llevan, y que estaba sin decir: **el `Makefile` es la
+  documentación que sí se mantiene.** Si el comando cambia y el archivo no,
+  deja de funcionar y alguien lo arregla; un README puede llevar meses
+  mintiendo.
+- Dos preguntas para que el tramo respire, y las dos comprueban lo mismo: si
+  gana la opción equivocada, `make` todavía se ve como magia.
+
+
 ### Lo que hay debajo de cada caja del diagrama
 - El dibujo decía `make entrenar` y ahí se acababa: no se veía **qué herramienta
   corre por debajo ni en qué archivo está**.

@@ -161,6 +161,28 @@ items:
       - **El día que trabajen sin este Makefile, esta columna es la que hay que
         saber.**
 
+  - id: s1-pregunta-capas
+    tipo: pregunta
+    pregunta: "`make entrenar` y `docker compose run --rm plataforma python -m plataforma entrenar`: ¿en qué se diferencian?"
+    minutos: 2
+    opciones:
+      - El primero es más rápido, usa una caché
+      - En nada. El primero ejecuta exactamente el segundo
+      - El primero corre en tu máquina, el segundo en un contenedor
+      - El primero entrena, el segundo solo simula
+    respuesta: En nada. El primero ejecuta exactamente el segundo
+    solucion:
+      explicacion: >-
+        Es literalmente la misma línea. `make` la lee del `Makefile` y la
+        ejecuta — no añade nada, no la optimiza, no la cambia.
+      descartes:
+        - opcion: El primero corre en tu máquina, el segundo en un contenedor
+          razon: Los dos corren en el mismo contenedor. La línea es la misma.
+    notas: |
+      **30 s, y va acá porque la tabla de capas acaba de estar en pantalla.**
+      - Si gana la primera o la tercera, **`make` todavía se ve como magia** y
+        conviene volver una lámina atrás.
+
   - id: s1-glosario-docker
     tipo: glosario
     titulo: Cinco palabras de Docker, antes de teclear
@@ -192,6 +214,106 @@ items:
       - **La frase**: todo lo que viene está acá dentro. Quien se pierda en un
         comando no levanta la mano — lo busca.
 
+  - id: s1-glosario-make
+    tipo: glosario
+    titulo: Tres palabras antes de teclear nada
+    entradilla: Se van a usar las ocho horas, y ninguna se ha explicado todavía
+    minutos: 3
+    terminos: [make, Makefile, taller.ps1]
+    nuevos: [make, Makefile, taller.ps1]
+    notas: |
+      **Va antes de la tabla de atajos**, no después: la tabla ya usa `make` en
+      las diez filas.
+      - **La frase de `make`: no hace nada por sí solo.** `make entrenar` no
+        entrena — ejecuta la línea que alguien escribió bajo `entrenar:`.
+      - **Decir lo de `taller.ps1` mirando a la sala.** Media clase está en
+        Windows y lleva rato viendo una segunda línea sin saber qué es.
+      - Si preguntan por WSL2: se puede, pero **montarlo antes de la clase es
+        una forma cara de perder la primera hora.**
+
+  - id: s1-que-es-make
+    tipo: comparacion
+    titulo: Qué es make, y qué problema resuelve
+    entradilla: Un ejecutor de recetas de 1976, anterior a Docker y a casi todo lo demás
+    minutos: 4
+    izquierda:
+      titulo: Sin él
+      contenido: |
+        Para poblar el mundo hay que teclear, sin equivocarse:
+
+        ```
+        docker compose run --rm plataforma \
+          python -m plataforma seed
+        ```
+
+        Y acordarse de `--rm`, del nombre del servicio, y de que el módulo se
+        llama `plataforma` igual que el servicio pero no es lo mismo.
+
+        **El problema no es teclear.** Es que cada persona lo teclea distinto,
+        y el que lo escribe en el README deja de actualizarlo en dos semanas.
+    derecha:
+      titulo: Con él
+      contenido: |
+        ```
+        make seed
+        ```
+
+        La receta vive en el `Makefile`, en la raíz del repositorio:
+
+        ```
+        seed:  ## Pipeline completo
+        	$(EN_PLATAFORMA) seed
+        ```
+
+        **Un nombre, dos puntos, y debajo lo que se ejecuta.** Eso es todo lo
+        que hay que saber de la sintaxis para leer el archivo entero.
+    notas: |
+      **La idea que se llevan**: el `Makefile` es la documentación que sí se
+      mantiene.
+      - **Decirlo así**: si el comando cambia y el `Makefile` no, deja de
+        funcionar y alguien lo arregla. **Un README puede llevar meses
+        mintiendo** y nadie se entera.
+      - `$(EN_PLATAFORMA)` es una variable de arriba del archivo. Se define una
+        vez y la usan las seis recetas de la plataforma.
+      - **`cat Makefile` lo enseña entero.** Son 100 líneas y se leen de una
+        sentada. Vale la pena decir que se puede.
+
+  - id: s1-make-windows
+    tipo: comparacion
+    titulo: Y en Windows, que no trae make
+    entradilla: Mismo nombre detrás, mismos contenedores, mismo resultado
+    minutos: 3
+    izquierda:
+      titulo: macOS y Linux
+      contenido: |
+        ```
+        make arriba
+        make seed
+        make romper ESCENARIO=sesgo_silencioso
+        make verificar ARGS="--reto 1"
+        ```
+
+        Recetas en `Makefile`.
+    derecha:
+      titulo: Windows · PowerShell
+      contenido: |
+        ```
+        .\taller.ps1 arriba
+        .\taller.ps1 seed
+        .\taller.ps1 romper sesgo_silencioso
+        .\taller.ps1 verificar --reto 1
+        ```
+
+        Mismo repositorio, archivo `taller.ps1`.
+    notas: |
+      **La regla, en una frase**: mismo nombre detrás del comando.
+      - **Lo único que cambia es cómo se pasan los valores**: `ESCENARIO=x` y
+        `ARGS="…"` se vuelven argumentos sueltos. PowerShell no tiene la
+        sintaxis de variables de `make`.
+      - **Decir que no hace falta WSL2.** Docker Desktop y nada más.
+      - Cada lámina del taller que manda ejecutar algo trae **las dos líneas**.
+        Señalarlo acá y no volver a mencionarlo.
+
   - id: s1-make
     tipo: tabla
     titulo: Todos los comandos del taller son atajos
@@ -218,6 +340,33 @@ items:
       - Las dos últimas usan `--profile`: por eso `make arriba` no las levanta.
       - **Lo que se llevan no es la tabla**: es que ningún comando del taller es
         magia, y que sin este Makefile sabrían escribir la columna derecha.
+
+  - id: s1-pregunta-make
+    tipo: pregunta
+    pregunta: Si borras el `Makefile` del repositorio, ¿qué deja de funcionar?
+    minutos: 2
+    opciones:
+      - El laboratorio entero
+      - Los 192 modelos, que se entrenan desde ahí
+      - Nada, salvo los atajos
+      - Docker, que lo necesita para arrancar
+    respuesta: Nada, salvo los atajos
+    solucion:
+      explicacion: >-
+        `make` no ejecuta nada suyo: ejecuta líneas que alguien escribió. Sin
+        el `Makefile` habría que teclear el `docker compose run --rm …`
+        entero, y el laboratorio funcionaría exactamente igual.
+      descartes:
+        - opcion: El laboratorio entero
+          razon: El laboratorio son contenedores y Python. `make` solo los llama.
+        - opcion: Docker, que lo necesita para arrancar
+          razon: Es al revés. `make` llama a Docker, no al contrario.
+    notas: |
+      **La pregunta que comprueba si entendieron la tabla anterior.**
+      - Suele ganar la primera, y es la señal de que `make` todavía se ve como
+        magia.
+      - **Al revelar, la frase**: el día que trabajen sin este Makefile, la
+        columna derecha es la que hay que saber.
 
   - id: s1-cadena
     tipo: codigo

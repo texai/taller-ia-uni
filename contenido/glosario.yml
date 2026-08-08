@@ -196,6 +196,38 @@ terminos:
       La receta congelada de un entorno: el sistema, las librerías y el código.
       Se construye una vez y no cambia.
 
+  - termino: make
+    grupo: Docker
+    definicion: >-
+      Un ejecutor de recetas, de 1976. Lee un archivo llamado `Makefile`, busca
+      la receta que le pediste por su nombre y ejecuta sus líneas. Nada más —
+      no compila, no sabe de Docker, no sabe de Python.
+    ojo: >-
+      No hace nada por sí solo. `make entrenar` no entrena: ejecuta la línea
+      que alguien escribió bajo `entrenar:`, y esa línea es un
+      `docker compose run`.
+
+  - termino: Makefile
+    grupo: Docker
+    definicion: >-
+      El archivo donde viven las recetas, en la raíz del repositorio. Cada
+      bloque es un nombre, dos puntos, y debajo las líneas que se ejecutan.
+      Se abre con `cat Makefile` y se lee entero de una sentada.
+    ojo: >-
+      Es la documentación que sí se mantiene: si el comando cambia y el
+      `Makefile` no, deja de funcionar y alguien lo arregla. Un README puede
+      llevar meses mintiendo.
+
+  - termino: taller.ps1
+    grupo: Docker
+    definicion: >-
+      El equivalente del `Makefile` para Windows, en PowerShell. Mismos
+      nombres, mismos contenedores, mismos resultados — `make arriba` y
+      `.\taller.ps1 arriba` son el mismo comando.
+    ojo: >-
+      Windows no trae `make`. Existe para no obligar a nadie a montar WSL2
+      antes de la clase, que es una forma cara de perder la primera hora.
+
   - termino: contenedor
     grupo: Docker
     definicion: >-
