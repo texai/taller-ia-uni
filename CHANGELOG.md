@@ -5,6 +5,33 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-07
 
+### La barra lateral deja ver la estructura del curso
+- Eran **236 líneas casi iguales**: el árbol del curso estaba ahí y no se veía.
+  Ahora cada unidad es un bloque —cabecera separada del cuerpo, y sus ítems
+  colgando de una **guía vertical**— y la unidad en curso se distingue por
+  fondo y por color sin tener que leerla.
+- **El ítem activo se marcaba con fondo y negrita**, y eso ya lo llevaban el
+  título de la unidad y cualquier ítem con texto claro: había media docena de
+  líneas compitiendo por parecer «la actual». Ahora lo distingue una **barra de
+  acento a la izquierda**, que no la tiene nada más. Es una señal de forma, no
+  de peso: se reconoce sin leer.
+- Y al avanzar con la flecha, **el activo queda centrado verticalmente** en la
+  barra, no pegado a un borde. `scrollIntoView` con `block: "nearest"` lo
+  dejaba en la última línea visible, sin nada delante — leyendo siempre el
+  borde, sin poder anticipar lo que viene. No se usa `block: "center"` porque
+  mueve **todos** los ancestros desplazables y arrastraría la página entera:
+  se calcula contra la caja del propio panel.
+
+### Los enlaces del material abren en una pestaña nueva
+- Pulsar el GitHub de la ficha del docente **navegaba fuera de la lámina**.
+  Proyectando eso no es una molestia: es perder la posición del dictado
+  delante de la clase y volver con el botón de atrás mientras veinte personas
+  miran.
+- Vale para todo el markdown del curso, no solo la ficha. **Solo los
+  externos** — un ancla interna que abriera pestaña sería peor que el problema
+  que resuelve. Con prueba de los tres casos.
+
+
 ### Cada comando de un reto dice qué significa su resultado
 - Un comando produce números, y **los números no dicen nada solos**: «sesgo
   +4.7%» es una cifra hasta que alguien la traduce a **36,981 unidades de más

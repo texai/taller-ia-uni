@@ -40,6 +40,35 @@ export function Titulo({ item }: { item: ItemTitulo }) {
 }
 
 /**
+ * Los enlaces del material salen en una pestaña nueva.
+ *
+ * Sin esto, pulsar el GitHub de la ficha del docente —o cualquier enlace del
+ * curso— **navega fuera de la lámina**. Proyectando eso no es una molestia:
+ * es perder la posición del dictado delante de la clase y tener que volver
+ * con el botón de atrás mientras veinte personas miran.
+ *
+ * Solo los externos. Un ancla interna que abriera pestaña sería peor que el
+ * problema que se está resolviendo.
+ *
+ * `noreferrer` va con `noopener` por costumbre y porque no cuesta nada: el
+ * segundo evita que la pestaña abierta pueda tocar la que la abrió.
+ */
+const ENLACES_FUERA = {
+  a({ href, children, ...resto }: React.ComponentProps<"a">) {
+    const externo = /^https?:\/\//.test(href ?? "");
+    return (
+      <a
+        href={href}
+        {...(externo ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...resto}
+      >
+        {children}
+      </a>
+    );
+  },
+} as const;
+
+/**
  * Markdown renderizado.
  *
  * Los estilos van acá y no en una hoja global porque el markdown del curso
@@ -49,7 +78,9 @@ export function Titulo({ item }: { item: ItemTitulo }) {
 export function Markdown({ children }: { children: string }) {
   return (
     <div className="[&_p]:my-4 [&_p]:text-lg [&_p]:leading-relaxed [&_li]:text-lg [&_li]:leading-relaxed [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_h1]:mt-8 [&_h1]:text-3xl [&_h1]:font-semibold [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-semibold [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_strong]:font-semibold [&_a]:underline [&_blockquote]:my-4 [&_blockquote]:border-l-2 [&_blockquote]:pl-5 [&_blockquote]:italic [&_table]:my-4 [&_table]:w-full [&_th]:border-b [&_th]:py-2 [&_th]:text-left [&_td]:border-b [&_td]:py-2 [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.9em]">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={ENLACES_FUERA}>
+        {children}
+      </ReactMarkdown>
     </div>
   );
 }
@@ -95,7 +126,9 @@ export function Prosa({
     <div
       className={`${className} ${TAMANO_PROSA[tamano]} [&_p]:leading-relaxed [&_p]:my-0 [&_p+p]:mt-3 [&_strong]:font-semibold [&_a]:underline [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-6 [&_code]:px-0.5 [&_code]:text-[0.92em] [&_code]:font-mono`}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={ENLACES_FUERA}>
+        {children}
+      </ReactMarkdown>
     </div>
   );
 }

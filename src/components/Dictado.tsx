@@ -417,12 +417,27 @@ export function Dictado({
    * hace falta, y lo justo.
    */
   const activo = useRef<HTMLButtonElement | null>(null);
+  const panel = useRef<HTMLOListElement | null>(null);
 
   useEffect(() => {
     const nodo = activo.current;
-    if (!nodo) return;
-    nodo.scrollIntoView({
-      block: "nearest",
+    const caja = panel.current;
+    if (!nodo || !caja) return;
+
+    // Centrado dentro del panel, no `scrollIntoView`.
+    //
+    // `block: "nearest"` dejaba el ítem pegado a un borde: se veía, pero sin
+    // nada delante ni detrás. Avanzando con la flecha eso significa leer
+    // siempre la última línea de la lista, sin poder anticipar lo que viene.
+    // Centrado se ve lo mismo hacia arriba que hacia abajo.
+    //
+    // `block: "center"` de `scrollIntoView` no sirve: mueve TODOS los
+    // ancestros desplazables, así que arrastra también la página y el panel
+    // del ítem. Acá se mueve solo la barra, calculando contra su propia caja.
+    const destino =
+      nodo.offsetTop - caja.clientHeight / 2 + nodo.offsetHeight / 2;
+    caja.scrollTo({
+      top: Math.max(0, destino),
       // Suave, salvo para quien pidió al sistema que no le animen nada.
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
@@ -547,16 +562,33 @@ export function Dictado({
           </p>
         </div>
 
-        <ol className="flex-1 overflow-y-auto px-2 py-3">
-          {sesion.unidades.map((u, iu) => (
-            <li key={u.id} className="mb-4">
+        <ol ref={panel} className="flex-1 overflow-y-auto px-2 py-3">
+          {/*
+            Cada unidad es un bloque, no una tirada de líneas.
+
+            Proyectada, la barra eran doscientas treinta y seis líneas casi
+            iguales: la estructura del curso estaba ahí y no se veía. Ahora la
+            unidad se lee como una unidad —cabecera separada, y sus ítems
+            colgando de una guía vertical— y la que se está dictando se
+            distingue de las demás sin tener que leerla.
+          */}
+          {sesion.unidades.map((u, iu) => {
+            const enCurso = iu === pos.unidad;
+            return (
+            <li
+              key={u.id}
+              className="mb-1 rounded-lg py-1"
+              style={{
+                background: enCurso ? "var(--lienzo)" : undefined,
+              }}
+            >
               <p
-                className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
+                className="px-3 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.15em]"
                 style={{
-                  color:
-                    iu === pos.unidad
-                      ? "var(--color-acento)"
-                      : "var(--tinta-suave)",
+                  color: enCurso
+                    ? "var(--color-acento)"
+                    : "var(--tinta-suave)",
+                  opacity: enCurso ? 1 : 0.65,
                 }}
               >
                 {/*
@@ -572,9 +604,21 @@ export function Dictado({
                   ? ` · ${minutosDeUnidad(u)} min`
                   : ""}
               </p>
-              <p className="px-3 pb-1 text-sm font-medium">{u.titulo}</p>
+              <p
+                className="px-3 pb-1.5 text-sm font-semibold"
+                style={{ color: enCurso ? "var(--tinta)" : "var(--tinta-suave)" }}
+              >
+                {u.titulo}
+              </p>
 
-              <ol>
+              {/* La guía vertical es lo que hace que los ítems se lean como
+                  «de esta unidad» y no como una línea más de la lista. */}
+              <ol
+                className="ml-4 border-l pl-1"
+                style={{
+                  borderColor: enCurso ? "var(--color-acento)" : "var(--borde)",
+                }}
+              >
                 {u.items.map((it, ii) => {
                   const actual = iu === pos.unidad && ii === pos.item;
                   return (
@@ -585,11 +629,27 @@ export function Dictado({
                           irA({ unidad: iu, item: ii, paso: 0 });
                           setIndiceAbierto(false);
                         }}
-                        className="flex w-full items-baseline gap-2 rounded-md px-3 py-1.5 text-left text-sm transition-colors hover:bg-black/20"
+                        /*
+                          El activo se marcaba con fondo y negrita, y eso ya lo
+                          llevaban el título de la unidad y cualquier ítem con
+                          texto claro: en una barra de 236 líneas había media
+                          docena compitiendo por parecer «la actual».
+
+                          Ahora lo distingue una **barra de acento a la
+                          izquierda** —que no la tiene nada más— más el fondo y
+                          el color. Es una señal de forma, no de peso: se
+                          reconoce sin leer.
+                        */
+                        className="relative flex w-full items-baseline gap-2 rounded-md py-1.5 pl-4 pr-3 text-left text-sm transition-colors hover:bg-black/20"
                         style={{
-                          background: actual ? "var(--lienzo)" : undefined,
+                          background: actual
+                            ? "var(--lienzo-alto)"
+                            : undefined,
                           color: actual ? "var(--tinta)" : "var(--tinta-suave)",
                           fontWeight: actual ? 600 : 400,
+                          boxShadow: actual
+                            ? "inset 3px 0 0 0 var(--color-acento)"
+                            : undefined,
                         }}
                         ref={actual ? activo : undefined}
                         aria-current={actual ? "true" : undefined}
@@ -623,7 +683,8 @@ export function Dictado({
                 })}
               </ol>
             </li>
-          ))}
+            );
+          })}
         </ol>
       </nav>
 
