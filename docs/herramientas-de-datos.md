@@ -1,84 +1,233 @@
-# Dónde aparece cada librería de datos
+# Qué hay debajo de cada comando
 
 Chuleta para dictar. El taller se apoya en `make` y Docker, y eso **esconde
-qué librería está corriendo por debajo**: `make entrenar` no dice
-«scikit-learn» en ninguna parte. Esta hoja deshace ese enmascaramiento —
-para cada herramienta, dónde vive en el código, en qué láminas sale a la
-superficie, y qué es lo que la sala suele preguntar.
+dos cosas a la vez**: qué librería está corriendo por debajo, y qué cambió de
+verdad al ejecutarlo. `make entrenar` no dice «scikit-learn» ni dice «la
+versión del registro subió de 1 a 2».
 
-El orden es el del dictado.
-
----
-
-## El resumen, en una tabla
-
-| Librería | Dónde vive | Qué hace en el caso | Se ve en |
-|---|---|---|---|
-| **pandas** | `plataforma/modelo.py`, `entrenar.py`, `pronosticar.py`, `metricas.py`, `ui/app.py` | Features, el job batch y el cálculo de la telemetría. **Es la que más aparece** | S1 · 13 láminas |
-| **scikit-learn** | `plataforma/entrenar.py` (`Ridge`, `linear_model`) | Los 192 modelos. Un `.fit()` por modelo | S1 · 6 láminas |
-| **joblib** | `entrenar.py` (`dump`), `pronosticar.py` (`load`) | Persistencia del artefacto: **una línea por lado** | S1 · 5 láminas |
-| **MLflow** | `plataforma/entrenar.py`, servicio con `profiles` | Registro de experimentos. Reencuentro con el Módulo 2 | S1 · 10 láminas |
-| **scipy** | `agente/herramientas.py` (`stats.ks_2samp`) | El test que compara dos distribuciones de MAPE | S1 · 3 láminas |
-| **statistics** | `agente/herramientas.py` | Medias y desviaciones, biblioteca estándar | S1 · reto 2 |
-| **FastAPI / pydantic** | `plataforma/api.py` | La API de telemetría, `:8000` | S1 · 2 láminas |
-| **LangChain** | `agente/plano.py`, `herramientas.py` (`@tool`) | `bind_tools`, los mensajes, el decorador de herramienta | S1 reto 3 · S2 reto 4 |
-| **LangGraph** | `agente/grafo.py` | `StateGraph`, `ToolNode`, `add_messages` | S2 · 8 láminas |
-| **Streamlit** | `ui/app.py` | La interfaz, 286 líneas | S1 demo · S2 cierre |
-| **httpx** | `agente/*`, `ui/app.py` | Todo lo que el agente ve, lo ve por HTTP | transversal |
+Esta hoja deshace las dos capas. Para cada comando: la cadena entera hasta la
+línea de Python que se ejecuta, la librería que entra en juego, y **el antes y
+el después medidos**. Las cifras salen de un ensayo completo del laboratorio,
+no de memoria.
 
 ---
 
-## Sesión 1 · dónde se levanta la máscara
+## Parte 1 · La cadena, comando por comando
 
-### pandas — la que más sale, y la única que la sala teclea
+Todos los `make` del taller son la misma forma: **`make X` → `docker compose
+run --rm <servicio> python -m <paquete> <subcomando>`**. El `--rm` borra el
+contenedor al terminar; lo que sobrevive es el volumen `datos`.
 
-| Lámina | Qué se ve |
+| `make X` | La línea real que se ejecuta | Entra en |
+|---|---|---|
+| `arriba` | `docker compose build` + `docker compose up -d plataforma ui` | — |
+| `seed` | `docker compose run --rm plataforma python -m plataforma seed` | `plataforma/__main__.py` |
+| `datos` | `… python -m plataforma datos` | `plataforma/datos.py` |
+| `entrenar` | `… python -m plataforma entrenar` | `plataforma/entrenar.py` |
+| `pronosticar` | `… python -m plataforma pronosticar` | `plataforma/pronosticar.py` |
+| `metricas` | `… python -m plataforma metricas` | `plataforma/metricas.py` |
+| `consola` | `docker compose run --rm plataforma python` | un REPL con `/datos` montado |
+| `romper E=x` | `… python -m plataforma escenario --nombre x` **+ `make pronosticar` + `make metricas`** | `plataforma/escenario.py` |
+| `reparar` | `… python -m plataforma datos` **+ `make pronosticar` + `make metricas`** | `plataforma/datos.py` |
+| `agente` | `docker compose run --rm agente python -m agente run` | `agente/grafo.py` |
+| `plano` | `… python -m agente plano` | `agente/plano.py` |
+| `senales` | `… python -m agente senales` | `agente/herramientas.py` |
+| `memoria` | `… python -m agente memoria` | `agente/memoria.py` |
+| `actuar` | `docker compose run --rm **-e EJECUTAR_ACCIONES=1** agente python -m agente run` | `agente/accion.py` |
+| `verificar` | `docker compose run --rm agente python -m retos.verificar` | `retos/verificar.py` |
+| `ui` | `docker compose up -d ui` | `ui/app.py` |
+| `mlflow` | `docker compose --profile mlflow up -d mlflow` | servidor de MLflow |
+
+**Las tres cosas que hay que saber decir de esta tabla:**
+
+1. **`romper` y `reparar` son tres comandos, no uno**, y son la misma receta
+   con la primera línea cambiada. Ninguna de las dos incluye `entrenar`.
+2. **`-e EJECUTAR_ACCIONES=1` va antes del nombre del servicio.** Todo lo que
+   está a la izquierda del servicio es de Docker; a la derecha, del programa.
+3. **`run --rm` no deja nada vivo; `up -d` sí.** Es la trampa que vuelve tres
+   veces durante la clase.
+
+El despacho de subcomandos está en `plataforma/__main__.py:33`
+(`argparse.ArgumentParser` + `add_parser`). Si alguien pregunta «¿de dónde sale
+`seed`?», es ahí.
+
+---
+
+## Parte 2 · Qué cambió — el antes y el después, medido
+
+Esto es lo que hay que poder justificar en vivo. Todas las cifras se midieron
+ejecutando el laboratorio; las que dependen del día del mundo van marcadas.
+
+### `make seed` — el estado de partida
+
+| | |
 |---|---|
-| `s1-que-es-un-modelo` | La tabla que nombra las cuatro librerías. **Es la respuesta a «¿con qué se generan los modelos?»** |
-| `s1-features` | `shift(1)` y las medias móviles. La línea más peligrosa del lab |
-| `s1-validacion` | El corte por tiempo, con pandas |
-| `s1-job-carga` | El job batch: `read_csv`, los 192 `load`, un CSV de salida |
-| `s1-r1-groupby` | **Diez líneas que la sala pega en `make consola`.** `.agg()`, `groupby` |
-| `s1-r1-a-mano` | La demo: el bloque anterior corriendo |
+| **Antes** | `/datos` vacío |
+| **Después** | 76,800 filas de venta · 192 artefactos · 17,472 días-modelo |
+| **La flota** | MAPE **13.8%** · sesgo **+0.8%** · cobertura 0.887 · 8 sobre umbral |
 
-**Lo que pueden preguntar, y la respuesta corta:**
+**La frase:** «Estos cuatro números son el punto de comparación de las ocho
+horas. Todo lo que viene es cómo se movieron.»
 
-- *«¿por qué `shift(1)`?»* → sin él la media móvil de 7 días incluye el día que
-  se predice. Es **fuga de datos**: el modelo entrena viendo la respuesta.
-- *«¿por qué `.agg()` y no `.apply()`?»* → `apply` sobre un groupby emite un
-  `FutureWarning` en pandas 2.2 y arrastra las columnas de agrupación. `agg`
-  además separa visualmente lo que se promedia de lo que se suma.
-- *«¿dónde está `metricas.csv`?»* → en el volumen `datos` de Docker, en
-  `/datos`. **No en el disco.** Por eso `make consola`.
+### `make entrenar` — el único comando que toca un modelo
 
-### scikit-learn — sale una vez y hay que nombrarla
-
-| Lámina | Qué se ve |
+| | |
 |---|---|
-| `s1-que-es-un-modelo` | El nombre, en la tabla |
-| `s1-validacion` | `from sklearn.linear_model import Ridge`, y `.fit()` |
-| `s1-mlflow-registro` | `algoritmo: Ridge` como parámetro registrado |
+| **Antes** | `registro.json` → `"version": 1` · `entrenado_hasta: 2026-05-08` |
+| **Después** | `"version": 2` · **la fecha NO se movió** |
 
-**Lo que pueden preguntar:**
+**La frase:** «Un reentrenamiento arregla el ajuste, no la ignorancia. Sigue
+sin saber nada de julio.»
+**Ojo al ensayar:** la versión no se reinicia. En tu segundo ensayo verás 3→4.
 
-- *«¿por qué Ridge y no algo mejor?»* → un modelo más complejo no cambia nada
-  de lo que hacemos y alarga el entrenamiento de los 192. **El taller trata de
-  vigilar modelos, no de exprimirlos.**
-- *«¿qué hace `alpha=1.0`?»* → penaliza los coeficientes grandes. Con doce
-  features correlacionadas entre sí —tres rezagos y dos medias móviles miden
-  casi lo mismo— una regresión sin penalización reparte pesos enormes que se
-  cancelan y se vuelve inestable.
+### `make romper ESCENARIO=campana_promocional`
+
+| | Antes | Después |
+|---|---|---|
+| MAPE flota | 13.8% | **16.0%** |
+| Sesgo flota | +0.8% | **−10.6%** |
+| Bebidas | 12.9% | **30.8%** — más del doble de la flota |
+| Tiendas de bebidas sobre 20% | — | **18 de 24** |
+
+**Negocio:** se pronosticó de MENOS. Es **venta perdida**, no sobre-stock.
+**Modelo:** ninguno de los 192 se tocó. Está mal en las 24 tiendas a la vez,
+así que la causa es la categoría, no una tienda.
+
+### `make romper ESCENARIO=sesgo_silencioso` — el corazón del taller
+
+| | Antes | Después |
+|---|---|---|
+| MAPE flota | 13.8% | **14.5%** ← siete décimas |
+| Sesgo flota | +0.8% | **+4.7%** |
+| Sobre umbral | 8 de 192 | **16 de 192** |
+| Unidades de más | 6,532 | **36,981** |
+
+**Negocio:** 36,981 unidades de más en almacén en catorce días. Plata
+inmovilizada que nadie pidió.
+**Modelo:** el MAPE apenas se movió, así que **un umbral sobre el MAPE no
+suena**. La señal que lo dice está a dos centímetros de la que todos miran.
+
+### `make romper ESCENARIO=feed_caido` — el que NO hay que reentrenar
+
+| | Antes | Después |
+|---|---|---|
+| Filas de `metricas.csv` | 17,473 | **17,305** ← faltan 168 |
+| MAPE flota | 13.8% | 13.7% |
+| Sesgo flota | +0.8% | +0.8% |
+| **Modelos contados** | 192 | **184** ← el delator |
+
+**Negocio:** una tienda entera dejó de reportar durante 21 días. No hay
+problema de demanda: hay ausencia de datos.
+**Modelo:** los ocho de arequipa están sanos. **En MAPE y sesgo la flota se ve
+sana** — el único rastro es el denominador.
+> 168 filas ÷ 21 días = 8 modelos. 192 − 8 = 184. La aritmética cierra, y
+> decirla en voz alta convence más que la cifra sola.
+
+### `make reparar` — la vuelta al control
+
+| | |
+|---|---|
+| **Después** | 13.8% · +0.8% · 8 de 192 · 6,532 unidades — **exacto** |
+
+**La frase:** «Vuelve exacto, y por eso sirve de sonda. Si te sale otro
+número, el `reparar` no corrió.»
+
+### `make plano` (reto 3) y `make agente` (reto 4)
+
+No hay un antes/después numérico: lo que cambia es **la respuesta**.
+- `plano` ejecutado tres veces con temperatura 0 y el mismo mundo → **tres
+  respuestas distintas**. Ninguna está mal; están incompletas de formas
+  distintas.
+- `agente` sobre el mismo mundo → una respuesta que **sobrevivió a su propia
+  crítica**, con alcance e impacto en unidades.
+
+### `make actuar` (reto 5)
+
+| | Antes | Después |
+|---|---|---|
+| `/v1/reentrenamientos` | `[]` | **una entrada con su motivo** |
+| Artefactos con hora nueva | — | **24 de 192** (bebidas) |
+
+Sobre `feed_caido` en cambio **no ejecuta nada**, y ese es el punto del reto.
+> **Al ensayar sin llave esto no se ve.** Con `PROVEEDOR_LLM=mock` el agente
+> devuelve `sin_hallazgos`, no recomienda nada, y la sonda da `[]` **antes y
+> después**. No es que el comando falle. Comprobado.
+
+---
+
+## Parte 3 · Las librerías: archivo, import y uso
+
+### pandas — la que más aparece, y la única que la sala teclea
+
+| Archivo | Línea | Import |
+|---|---|---|
+| `plataforma/modelo.py` | 11 | `import pandas as pd` |
+| `plataforma/entrenar.py` | 19 | `import pandas as pd` |
+| `plataforma/pronosticar.py` | 20 | `import pandas as pd` |
+| `plataforma/metricas.py` | 20 | `import pandas as pd` |
+| `ui/app.py` | 18 | `import pandas as pd` |
+
+**Cómo se usa, en las líneas que importan:**
+
+```python
+# modelo.py:30-33 — las features, y la línea peligrosa
+df[f"lag_{d}"]   = df["unidades"].shift(d)
+df[f"media_{v}"] = df["unidades"].shift(1).rolling(v).mean()
+#                                  └─ shift(1) para no filtrar el propio día
+
+# metricas.py:43-46 — el cruce pronóstico contra realidad
+pred = pd.read_csv(RUTA_PREDICCIONES, parse_dates=["fecha_objetivo"])
+real = pd.read_csv(RUTA_VENTAS,       parse_dates=["fecha"])
+df   = pred.merge(real, ...)
+
+# metricas.py:64 — el MAPE, y de ahí sale «valor absoluto»
+df["ape"] = (df["error"].abs() / seguro) * 100
+```
+
+Verbos que salen en pantalla: `read_csv`, `merge`, `groupby`, `agg`,
+`shift`, `rolling`, `sort_values`, `to_csv`, `DataFrame`, `Series`,
+`Timedelta`.
+
+**Preguntas que pueden apretar:**
+- *«¿por qué `shift(1)`?»* → sin él la media móvil de 7 días incluye el día
+  que se predice. **Fuga de datos**: el modelo entrena viendo la respuesta.
+- *«¿por qué un solo archivo de features?»* → si entrenamiento y pronóstico
+  las calcularan distinto, aparece **training/serving skew**: funciona en el
+  cuaderno y falla servido, sin que nada avise.
+- *«¿dónde está `metricas.csv`?»* → en el volumen `datos`, en `/datos`. **No
+  en tu disco.** Por eso `make consola`.
+
+### scikit-learn — un solo archivo, tres líneas
+
+| Archivo | Línea | Import |
+|---|---|---|
+| `plataforma/entrenar.py` | 20 | `from sklearn.linear_model import Ridge` |
+
+```python
+# entrenar.py:118-119
+modelo   = Ridge(alpha=alpha).fit(X_tr, y_tr)
+mape_val = _mape(y_va, pd.Series(modelo.predict(X_va), index=y_va.index))
+
+# pronosticar.py:93 — el mismo objeto, del otro lado
+pred = estimador.predict(ventana[COLUMNAS])
+```
+
+- *«¿por qué Ridge?»* → uno más complejo no cambia nada de lo que hacemos y
+  alarga el entrenamiento de los 192. **Vigilamos modelos, no los exprimimos.**
+- *«¿qué hace `alpha=1.0`?»* → penaliza coeficientes grandes. Con doce
+  features correlacionadas —tres rezagos y dos medias móviles miden casi lo
+  mismo— una regresión sin penalización se vuelve inestable.
 - *«¿por qué el corte de validación es por tiempo?»* → repartir al azar una
-  serie temporal entrena con días posteriores a los que evalúa.
+  serie temporal entrena con días **posteriores** a los que evalúa.
 
-### joblib — la que sorprende por lo pequeña
+### joblib — dos líneas, una por lado
 
-| Lámina | Qué se ve |
-|---|---|
-| `s1-artefactos` | `ls` de los 192 `.joblib`. 1 KB cada uno, 856 KB la flota |
-| `s1-guardar` | `joblib.dump(modelo, ruta)`. **Esa es toda la persistencia** |
-| `s1-job-carga` | `joblib.load`, el reverso exacto |
+| Archivo | Línea | Uso |
+|---|---|---|
+| `plataforma/entrenar.py` | 122 | `joblib.dump(modelo, ruta)` |
+| `plataforma/pronosticar.py` | 68 | `{mid: joblib.load(r["artefacto"]) for …}` |
 
+Eso es **toda la persistencia**. 1 KB por artefacto, 856 KB la flota entera.
 - *«¿qué hay dentro de un `.joblib`?»* → los coeficientes de la Ridge,
   serializados. Se abre con `joblib.load` y es un objeto de scikit-learn.
 - *«¿por qué no pickle?»* → joblib es pickle optimizado para arrays de numpy.
@@ -86,36 +235,38 @@ El orden es el del dictado.
 
 ### MLflow — el reencuentro con el Módulo 2
 
-| Lámina | Qué se ve |
-|---|---|
-| `s1-recap` | La caja en el diagrama de apertura. **Se promete acá** |
-| `s1-mlflow-registro` | `log_params`, `log_metric`, `start_run` |
-| `s1-mlflow-compose` | `profiles: ["mlflow"]` y `--backend-store-uri file://` |
-| `s1-mlflow-ui` | La demo, 4 min |
-| `s1-mlflow-captura` | El respaldo, con `mape_validacion` de 6.4 a 17.9 |
-
-- *«¿parámetro o métrica?»* → parámetro es lo que decidiste **antes** de
-  entrenar (algoritmo, `alpha`, hasta qué fecha); métrica es lo que salió. Los
-  primeros se filtran, las segundas se comparan.
-- *«¿por qué no está levantado?»* → tiene `profiles`, y un servicio con perfil
-  solo arranca si se lo pide por su nombre. Igual que `ollama`.
-- *«¿no debería ser el registro de producción?»* → sí, y en una cadena real lo
-  sería. Acá manda `registro.json` **porque el job tiene que poder ejecutar sin
-  MLflow arriba**. Simplificación consciente.
-- *«¿dónde guarda?»* → no tiene base de datos: lee `file:///datos/mlruns`, una
-  carpeta del mismo volumen donde están los modelos.
-
-### scipy — solo un test, pero es el corazón del reto 2
-
-| Lámina | Qué se ve |
-|---|---|
-| `s1-r2-tres-reglas` | La tercera regla: el test lo hace Python, no el LLM |
-| `s1-glosario-estadistica` | Kolmogorov-Smirnov y p-valor, definidos |
-| `s1-r2-significancia` | Trampa 3 · significativo no es relevante |
-
-La llamada real es una línea, en `agente/herramientas.py`:
+| Archivo | Línea | Import |
+|---|---|---|
+| `plataforma/entrenar.py` | 28 | `import mlflow` — **dentro de un `try`** |
 
 ```python
+# entrenar.py:100-101, 125-138
+mlflow.set_tracking_uri(f"file://{RUTA_MLRUNS}")
+mlflow.set_experiment(EXPERIMENTO)
+with mlflow.start_run(run_name=m["modelo_id"]):
+    mlflow.log_params({"algoritmo": "Ridge", "alpha": …, "entrenado_hasta": …})
+    mlflow.log_metric("mape_validacion", mape_val)
+```
+
+- *«¿parámetro o métrica?»* → parámetro es lo que decidiste **antes** de
+  entrenar; métrica es lo que salió. Los primeros se filtran, las segundas se
+  comparan.
+- *«¿por qué el `import` está en un `try`?»* → **un registro de modelos no
+  debe poder tumbar un entrenamiento.** Si la librería no está, el
+  entrenamiento sigue.
+- *«¿por qué no está levantado?»* → tiene `profiles: ["mlflow"]`, y un
+  servicio con perfil solo arranca si se lo pides por su nombre.
+- *«¿dónde guarda?»* → no tiene base de datos: `file:///datos/mlruns`, una
+  carpeta del **mismo volumen** donde están los modelos.
+
+### scipy — una sola línea en todo el taller
+
+| Archivo | Línea | Import |
+|---|---|---|
+| `agente/herramientas.py` | 29 | `from scipy import stats` |
+
+```python
+# herramientas.py:327
 ks, p = stats.ks_2samp([f["mape"] for f in b], [f["mape"] for f in r])
 ```
 
@@ -123,57 +274,93 @@ ks, p = stats.ks_2samp([f["mape"] for f in b], [f["mape"] for f in r])
   Devuelve un estadístico y un p-valor.
 - *«¿por qué no se lo pedimos al LLM?»* → caro, poco confiable e
   **irreproducible**: la misma pregunta dos veces da dos números.
-- *«¿qué es el p-valor?»* → responde *«¿pasó algo?»*, no *«¿me importa?»*. Con
-  miles de días-modelo casi todo da significativo, y un agente que solo
-  pregunta lo primero grita todos los días.
+- *«¿qué es el p-valor?»* → responde *«¿pasó algo?»*, no *«¿me importa?»*.
 
----
+### LangChain — el decorador y los mensajes
 
-## Sesión 2 · LangChain, LangGraph y Streamlit
-
-Ninguna de las tres se escribe en el taller, **y las tres se abren**. Decirlo
-en voz alta ahorra ansiedad: nadie tiene que aprender LangGraph el domingo.
-
-| Lámina | Librería | Qué se ve |
+| Archivo | Línea | Import |
 |---|---|---|
-| `s1-r3-bucle` | LangChain | `bind_tools`, `HumanMessage`, `ToolMessage`. **ReAct entero** |
-| `s1-r2-firma` | LangChain | El decorador `@tool` y la docstring como prompt |
-| `s2-r4-estado` | LangGraph | El `TypedDict` del estado |
-| `s2-r4-estado-por-que` | LangGraph | **`add_messages`**, y por qué no una lista |
-| `s2-r4-messages-key` | LangGraph | La trampa: `ToolNode` lee otra clave |
-| `s2-r4-aristas` | LangGraph | `StateGraph`, `START`, `END`, el cableado |
-| `s2-r5-ui-reflexion` | Streamlit | Cómo se dibuja el razonamiento |
+| `agente/herramientas.py` | 28 | `from langchain_core.tools import tool` |
+| `agente/grafo.py` | 36 | `from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage` |
+| `agente/llm.py` | 32-42 | `ChatGoogleGenerativeAI`, `ChatGroq`, `ChatOpenAI` — según `PROVEEDOR_LLM` |
+
+```python
+# herramientas.py:116 — así se declara una herramienta
+@tool
+def comparar_periodos(...):
+    """La docstring que el modelo lee para decidir si la llama."""
+
+# grafo.py:136 — así se le pasan al modelo
+llm = obtener_llm().bind_tools(HERRAMIENTAS)
+```
 
 - *«¿qué hace `bind_tools`?»* → le pasa al modelo el **esquema** de cada
-  herramienta —nombre, argumentos y docstring— para que pueda pedirlas. La
-  docstring es lo único que el modelo lee para decidir si la llama: **es
-  prompt**.
-- *«¿por qué `add_messages` y no una lista?»* → es un reductor. Sin él, cada
-  nodo que devuelve `messages` **reemplaza** la conversación en vez de
+  herramienta —nombre, argumentos y docstring— para que pueda pedirlas. **La
+  docstring es prompt.**
+
+### LangGraph — el domingo entero
+
+| Archivo | Línea | Import |
+|---|---|---|
+| `agente/grafo.py` | 37 | `from langgraph.graph import END, START, StateGraph` |
+| `agente/grafo.py` | 38 | `from langgraph.graph.message import add_messages` |
+| `agente/grafo.py` | 39 | `from langgraph.prebuilt import ToolNode` |
+
+```python
+# grafo.py:56 — el estado, con el reductor
+mensajes: Annotated[list[AnyMessage], add_messages]
+
+# grafo.py:382-390 — el cableado
+g = StateGraph(Estado)
+g.add_node("percepcion",   percepcion)
+g.add_node("herramientas", ToolNode(HERRAMIENTAS, messages_key="mensajes"))
+g.add_node("diagnostico",  diagnostico)
+g.add_node("reflexion",    reflexion)
+g.add_node("revision",     revision)
+g.add_node("recomendacion", recomendacion)
+```
+
+- *«¿por qué `add_messages` y no una lista?»* → es un **reductor**. Sin él,
+  cada nodo que devuelve `mensajes` **reemplaza** la conversación en vez de
   añadirse.
-- *«¿por qué LangGraph y no un `while`?»* → un prompt con quince reglas cumple
-  unas y olvida otras, y cuáles olvida cambia en cada ejecución. **Un grafo no
-  olvida un nodo.** Es la única de las tres librerías que aporta una idea y no
-  solo una comodidad.
+- *«¿y ese `messages_key="mensajes"`?»* → `ToolNode` lee y escribe en
+  `messages` por omisión. Nuestro estado usa `mensajes`. **Es la trampa que
+  cuesta una hora, y el arreglo es una línea.**
+- *«¿por qué un grafo y no un `while`?»* → un prompt con quince reglas cumple
+  unas y olvida otras, y **cuáles olvida cambia en cada ejecución**. Un grafo
+  no olvida un nodo.
+
+### Streamlit — 286 líneas, y no se escriben
+
+| Archivo | Línea | Import |
+|---|---|---|
+| `ui/app.py` | 19 | `import streamlit as st` |
+
+Se usa lo básico y nada más: `st.title`, `st.caption`, `st.columns(4)`,
+`st.metric`, `st.line_chart`, `st.dataframe`, `st.markdown`, `st.subheader`,
+`st.success` / `st.warning`.
+
+- *«¿decide algo la interfaz?»* → **no, y es deliberado.** Solo lee el estado
+  que el grafo dejó y lo dibuja. Una interfaz que razona puede contradecir al
+  agente, y entonces hay dos versiones de la verdad.
+
+### FastAPI y httpx — la frontera
+
+| Archivo | Uso |
+|---|---|
+| `plataforma/api.py` | `FastAPI`, `HTTPException`, `Query`, `BaseModel` de pydantic |
+| `agente/*.py`, `ui/app.py` | `httpx` — **todo lo que el agente ve, lo ve por HTTP** |
+
+Es la única flecha que cruza de `plataforma/` a `agente/`. El agente **no lee
+el disco de la plataforma** y no sabe dónde está `metricas.csv`.
 
 ---
 
-## Lo que `make` está escondiendo, comando por comando
+## La regla para responder en caliente
 
-| Comando | Lo que corre por debajo | Librerías |
-|---|---|---|
-| `make seed` | `datos` + `entrenar` + `pronosticar` + `metricas` | pandas, sklearn, joblib, MLflow |
-| `make datos` | Genera `ventas.csv`, 76,800 filas | `csv` (estándar) |
-| `make entrenar` | 192 × `Ridge().fit()` + `joblib.dump` + `mlflow.log_*` | **sklearn, joblib, MLflow, pandas** |
-| `make pronosticar` | 192 × `joblib.load` + `.predict()` → CSV | **joblib, pandas** |
-| `make metricas` | Cruza pronóstico contra realidad | **pandas** |
-| `make consola` | `python` dentro del contenedor | **pandas** (la sala la usa) |
-| `make senales` | Llama la API y agrega | httpx |
-| `make agente` / `plano` | El grafo o el bucle | **LangGraph / LangChain**, scipy |
-| `make ui` | Streamlit en `:8501` | **Streamlit, pandas** |
-| `make mlflow` | El servidor de MLflow con `--profile` | **MLflow** |
+> **Modelos → scikit-learn + joblib. Tablas → pandas. Razonamiento →
+> LangChain/LangGraph.** MLflow solo observa. scipy sale una vez.
 
-**La regla para responder en vivo:** todo lo que toca *modelos* es
-scikit-learn + joblib; todo lo que toca *tablas* es pandas; todo lo que toca
-*razonamiento* es LangChain/LangGraph. MLflow solo observa, y scipy aparece
-una sola vez.
+Y si la pregunta es «¿qué hizo este comando?», la respuesta siempre tiene la
+misma forma: **qué le costó al negocio** y **qué le pasó —o no— al modelo**.
+La segunda es «nada» más veces de las que parece, y ese suele ser el punto.
