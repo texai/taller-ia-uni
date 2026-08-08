@@ -329,6 +329,50 @@ items:
       - Si gana la primera o la tercera, **`make` todavía se ve como magia** y
         conviene volver una lámina atrás.
 
+  # Va JUSTO antes del glosario de Docker y no después: es lo que decide a qué
+  # ritmo se dicta el resto de la unidad. Si la sala está en las dos primeras
+  # opciones, las seis palabras siguientes hay que leerlas enteras y despacio;
+  # si está en las dos últimas, se pasan en un minuto y se gana tiempo para el
+  # reto 1. Preguntarlo después ya no sirve de nada.
+  - id: s1-pregunta-nivel-docker
+    tipo: pregunta
+    titulo: ¿Cuánto conocen de Docker?
+    pregunta: ¿Cuánto conoces de Docker?
+    visibilidad: publica
+    segundos: 45
+    permiteOmitir: true
+    minutos: 2
+    opciones:
+      - Nunca lo he escuchado
+      - Sé lo que es
+      - Lo he usado algunas pocas veces
+      - Lo uso con mucha frecuencia
+      - Lo domino
+    solucion:
+      explicacion: |
+        **Acá no hay respuesta correcta: es un retrato de la sala**, y sirve
+        para calibrar el ritmo de la próxima media hora.
+
+        La respuesta útil es la honesta. En un taller de MLOps la presión es
+        a marcar de más, y eso solo consigue que la clase vaya deprisa por
+        encima de gente que se quedó atrás sin decirlo.
+
+        Nada de lo que viene hoy exige dominar Docker. Los comandos están
+        escritos y el entorno viene hecho: lo que hace falta es **leerlos sin
+        que parezcan magia**, y para eso alcanzan las seis palabras de la
+        lámina siguiente.
+    notas: |
+      **Decide el ritmo de la unidad. Mirar el reparto, no el ganador.**
+      - **Peso en las dos primeras** → las seis palabras enteras, con su
+        ejemplo. Y decirlo en voz alta: **hoy no hace falta saber Docker**,
+        los comandos vienen escritos.
+      - **Peso en las dos últimas** → glosario en un minuto, señalando solo
+        `volumen` y `up` contra `run`: las dos que fallan aunque se use a
+        diario.
+      - **Decir que es anónima antes de lanzarla.** Solo salen totales, y
+        `permiteOmitir` está puesto.
+      - Es la pregunta del taller donde más se exagera. Tomarla con pinzas.
+
   - id: s1-glosario-docker
     tipo: glosario
     titulo: Seis palabras de Docker, antes de teclear
