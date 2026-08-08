@@ -739,7 +739,15 @@ export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
   for (const sesion of sesiones) {
     for (const unidad of sesion.unidades) {
       for (const item of unidad.items) {
-        if (item.tipo === "caratula") item.curso = cabecera;
+        if (item.tipo === "caratula") {
+          item.curso = cabecera;
+          // Y su título, por lo mismo. La lámina no lo usa —dibuja
+          // `curso.titulo` a tamaño de portada—, pero la barra lateral sí:
+          // sin esto cae al identificador y la primera línea del curso se lee
+          // «s1-caratula». Derivarlo acá lo arregla en las dos sesiones y en
+          // cualquier carátula futura, sin declarar nada en el YAML (§8).
+          item.titulo ??= cabecera.titulo;
+        }
       }
     }
   }

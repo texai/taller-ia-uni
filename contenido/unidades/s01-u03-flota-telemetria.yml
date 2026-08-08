@@ -46,7 +46,7 @@ items:
       | Las features | **pandas** |
       | El ajuste | **scikit-learn**, `Ridge` de `sklearn.linear_model` |
       | Guardar el artefacto | **joblib**, un `.joblib` por modelo |
-      | Registrar la versión | **MLflow**, el mismo del Módulo 2 |
+      | Anotar cómo se entrenó | **MLflow**, el mismo del Módulo 2 |
     notas: |
       **Decir los cuatro nombres en voz alta.** Es la respuesta a «¿con qué se
       generan los modelos?».
@@ -133,7 +133,7 @@ items:
           V --> C
           C --> TM[("metricas.csv<br/>la telemetria")]
         end
-        ML -.->|make mlflow| MLUI["registro :5000<br/>cada versión y su MAPE<br/><small>servicio aparte, con --profile</small>"]
+        ML -.->|make mlflow| MLUI["registro :5000<br/>un entrenamiento por modelo, y su MAPE<br/><small>servicio aparte, con --profile</small>"]
         TM --> API["API :8000 · make arriba<br/>la única puerta a la telemetría<br/><small>api.py · FastAPI</small>"]
         API -->|lo que hay hoy| UI["interfaz :8501 · make ui<br/>el tablero que nadie mira<br/><small>ui/app.py · Streamlit</small>"]
         API -.->|solo HTTP, no ve el disco| AG["el agente · make agente<br/>todavía no existe<br/><small>grafo.py · LangGraph</small>"]

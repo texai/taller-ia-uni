@@ -5,6 +5,30 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-08
 
+### «Registrar sus versiones» era falso, y la carátula no tenía nombre
+- La caja de MLflow del repaso decía **«registrar sus versiones»**, y eso es
+  justo lo que MLflow **no** hace acá: numerar versiones y promoverlas a
+  producción es el *Model Registry*, que no se usa. Lo que anota es cada
+  entrenamiento. Corregido en los tres sitios donde se repetía —el diagrama de
+  apertura, la tabla de piezas y el de arquitectura— porque la lámina nueva de
+  conceptos lo habría contradicho a media tarde.
+- La carátula salía en la barra lateral como **`s1-caratula`**: no declara
+  título porque todo lo saca de `curso.yml` (§8), y la barra caía al
+  identificador. Ahora el cargador también le deriva el título, así que la
+  primera línea del curso se lee «Caso aplicado de IA en industria».
+
+### El atajo, abierto: `ls` y `head` dentro del contenedor
+- `make archivos` dejaba sin responder la mejor pregunta —**¿y sin el
+  atajo?**—, que es la misma queja de siempre: se ve el comando corto y no la
+  herramienta de debajo.
+- Lámina nueva con los dos comandos de Docker en crudo y los dos atajos
+  equivalentes, uno debajo del otro. La idea que se llevan: **`ls` y `head` son
+  los de toda la vida**; lo único que había que aprender es el prefijo
+  `docker compose run --rm plataforma`, que levanta un contenedor con el
+  volumen montado, ejecuta dentro y lo borra.
+- `head -3` y no `cat`, dicho antes de que alguien lo pruebe: `metricas.csv`
+  son 17,472 líneas.
+
 ### MLflow deja de ser «el del Módulo 2»
 - Se nombraba cinco veces antes de abrirse —el diagrama, la tabla de capas, la
   de atajos— y lo único que se decía de él era eso. **Quien no hizo ese módulo,

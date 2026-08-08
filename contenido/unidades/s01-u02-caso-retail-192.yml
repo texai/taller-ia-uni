@@ -146,4 +146,42 @@ items:
       - `mlruns/` sale ya, mucho antes de nombrar MLflow. Si lo señalan: el
         registro de experimentos, se abre en el reto 1 con `make mlflow`.
       - Si les salen otros números: el mundo se genera contra la fecha del día.
-        MAPE y sesgo coinciden al primer decimal; los tamaños bailan algún KB.
+        MAPE y sesgo coinciden al primer decimal.
+      - **El atajo esconde lo interesante.** La lámina siguiente lo abre.
+
+  # `make archivos` deja la mejor pregunta sin responder: ¿y cómo se entra al
+  # volumen sin el atajo? Es la misma queja que con `make seed` — se ve el
+  # comando corto y no la herramienta de debajo. Acá caben los dos comandos de
+  # Docker en crudo, que además son los que sirven cuando lo que hace falta es
+  # mirar UN archivo y no el inventario entero.
+  - id: s1-datos-sin-make
+    tipo: demo
+    titulo: Y lo mismo sin make, entrando al contenedor
+    entradilla: El atajo por dentro. Son dos comandos de Docker, y el segundo sirve para cualquier archivo.
+    minutos: 3
+    pasos:
+      - comando: "# listar el volumen, sin atajo:"
+      - comando: docker compose run --rm plataforma ls -lh /datos
+        esperado: las seis entradas, con su tamaño y su fecha
+      - comando: "# y asomarse a un archivo, cualquiera:"
+      - comando: docker compose run --rm plataforma head -3 /datos/metricas.csv
+        esperado: la cabecera y dos filas de telemetría
+      - comando: "# los mismos dos, con atajo:"
+      - comando: make archivos
+      - comando: make archivos ARGS="--ver metricas.csv"
+    observar: >-
+      Que `ls` y `head` son los de siempre — **no hay nada de MLOps acá**. Lo
+      único distinto es el prefijo: `docker compose run --rm plataforma`
+      levanta un contenedor con el volumen montado, ejecuta el comando dentro
+      y lo borra. El `--rm` es eso último.
+    notas: |
+      **La idea: `/datos` no es inaccesible, solo está en otro sitio.**
+      - **Señalar que `ls` y `head` son de toda la vida.** Quien sepa Linux ya
+        sabe leer este volumen; lo único que había que aprender es el prefijo.
+      - **`--rm` o se acumulan contenedores parados.** Es la misma línea que ya
+        vieron en `make seed`, con otro comando al final.
+      - `head -3` en vez de `cat`: **`cat` de `metricas.csv` son 17,472 líneas**
+        y se lleva la terminal por delante. Decirlo antes de que alguien lo
+        haga en vivo.
+      - Los dos atajos hacen exactamente esto. Con formato más amable, y sin
+        acordarse del prefijo.

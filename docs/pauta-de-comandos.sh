@@ -117,6 +117,14 @@ make archivos
 make archivos ARGS="--ver metricas.csv"
 #   → cabecera + 5 filas de telemetría
 
+# y los dos de la lámina siguiente, que son los mismos sin atajo. `ls` y `head`
+# son los de toda la vida; lo unico que hay que aprender es el prefijo.
+docker compose run --rm plataforma ls -lh /datos
+#   → las seis entradas, con tamaño y fecha
+docker compose run --rm plataforma head -3 /datos/metricas.csv
+#   → cabecera + 2 filas
+#   ⚠️ head y NO cat: metricas.csv son 17,472 líneas y se lleva la terminal
+
 # deja el mundo: SANO
 
 
