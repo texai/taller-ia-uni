@@ -45,6 +45,37 @@ export interface ItemBase {
 // Familia: contenido
 // --------------------------------------------------------------------------
 
+/**
+ * La carátula del curso, como primera lámina de la sesión.
+ *
+ * Existe por lo que se veía al empezar a dictar: lo primero en pantalla era
+ * **«Tomar asistencia»**. Es lo primero que hay que *hacer*, pero no lo
+ * primero que hay que *enseñar* — la clase entra y lo que ve es una tarea
+ * administrativa en vez de saber a qué vino.
+ *
+ * **No declara nada.** Todo sale de `curso.yml` y de la cabecera de la
+ * sesión, y lo rellena el cargador (§8): un título repetido a mano en tres
+ * sitios es un título que va a estar mal en dos.
+ */
+export interface ItemCaratula extends ItemBase {
+  tipo: "caratula";
+  /** Imagen del QR, relativa a `public/`. Lo único que se puede elegir. */
+  qr?: string;
+  /**
+   * Lo de abajo lo rellena `cargarCurso` desde `curso.yml`. No se escribe en
+   * el YAML de la unidad, y por eso va sin documentar campo a campo: es una
+   * copia, no una fuente.
+   */
+  curso?: {
+    titulo: string;
+    subtitulo?: string;
+    programa?: string;
+    institucion?: string;
+    docente?: string;
+    descripcion?: string;
+  };
+}
+
 /** Un corte de sección. Una idea sola, grande. */
 export interface ItemTitulo extends ItemBase {
   tipo: "titulo";
@@ -607,6 +638,7 @@ export interface Solucion {
 // --------------------------------------------------------------------------
 
 export type Item =
+  | ItemCaratula
   | ItemTitulo
   | ItemMarkdown
   | ItemCodigo
@@ -640,6 +672,7 @@ export type Item =
 export type TipoItem = Item["tipo"];
 
 export const FAMILIA: Record<TipoItem, FamiliaItem> = {
+  caratula: "contenido",
   titulo: "contenido",
   markdown: "contenido",
   codigo: "contenido",

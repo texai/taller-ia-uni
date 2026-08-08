@@ -545,14 +545,6 @@ export function Dictado({
           <p className="text-xs" style={{ color: "var(--tinta-suave)" }}>
             {sesion.horaInicio}–{sesion.horaFin} · {total} ítems
           </p>
-          {modoDocente && (
-            <p
-              className="mt-2 text-[11px]"
-              style={{ color: "var(--color-aviso)" }}
-            >
-              Modo docente · sin notas, esta pantalla se comparte
-            </p>
-          )}
         </div>
 
         <ol className="flex-1 overflow-y-auto px-2 py-3">

@@ -721,6 +721,29 @@ export function cargarCurso(raiz: string = raizPorDefecto()): Curso {
     }
   }
 
+  // La carátula se rellena acá, no se escribe.
+  //
+  // Es lo mismo que hace `resolverGlosario` con las entradas, y por lo mismo:
+  // el título del curso repetido a mano en la portada de las dos sesiones es
+  // un título que va a estar mal en una de las dos en cuanto alguien lo
+  // corrija (§8). Solo puede hacerse acá, que es donde existen a la vez la
+  // cabecera del curso y los ítems.
+  const cabecera = {
+    titulo: String(bruto.titulo ?? ""),
+    subtitulo: bruto.subtitulo ? String(bruto.subtitulo) : undefined,
+    programa: bruto.programa ? String(bruto.programa) : undefined,
+    institucion: bruto.institucion ? String(bruto.institucion) : undefined,
+    docente: bruto.docente ? String(bruto.docente) : undefined,
+    descripcion: bruto.descripcion ? String(bruto.descripcion) : undefined,
+  };
+  for (const sesion of sesiones) {
+    for (const unidad of sesion.unidades) {
+      for (const item of unidad.items) {
+        if (item.tipo === "caratula") item.curso = cabecera;
+      }
+    }
+  }
+
   if (problemas.length) throw new ErrorDeContenido(problemas);
 
   return {

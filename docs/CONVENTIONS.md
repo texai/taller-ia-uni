@@ -159,6 +159,7 @@ funciona si el catálogo cubre lo que un docente realmente necesita.
 
 | Tipo | Para qué | Campos propios |
 |---|---|---|
+| `caratula` | La portada del curso. Primera lámina de la sesión | `qr` — el resto se deriva (§8) |
 | `titulo` | Un corte de sección. Una idea sola | `destacado` |
 | `markdown` | Prosa renderizada | `contenido` \| `archivo` |
 | `codigo` | Fragmento con resaltado | `lenguaje`, `contenido` \| `archivo`, `lineas`, `resaltar`, `ruta` |

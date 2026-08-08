@@ -6,6 +6,17 @@ objetivos:
 requisitos:
   - Haber hecho el trabajo previo y llegar con las 24 comprobaciones en verde
 items:
+  - id: s1-caratula
+    tipo: caratula
+    qr: /contenido/img/qr.svg
+    minutos: 1
+    notas: |
+      **La lámina con la que se abre la videollamada.** Dejarla puesta
+      mientras entra la gente.
+      - **Leer el subtítulo en voz alta**, que es la promesa del día.
+      - **Señalar el QR**: quien no tenga el enlace, ahora. Después nadie
+        vuelve a pedirlo y se pierde la clase entera.
+
   - id: s1-asistencia
     tipo: asistencia
     titulo: Tomar asistencia

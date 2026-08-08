@@ -33,6 +33,10 @@ export const CAMPOS_COMUNES = [
 ] as const;
 
 export const ESPECIFICACION: Record<TipoItem, EspecificacionTipo> = {
+  // No declara nada del curso: lo rellena `cargarCurso` (§8). Lo único
+  // elegible es la imagen del QR.
+  caratula: { requeridos: [], opcionales: ["qr"] },
+
   titulo: { requeridos: ["titulo"], opcionales: ["destacado"] },
 
   markdown: {

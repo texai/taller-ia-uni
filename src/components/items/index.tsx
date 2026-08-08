@@ -29,6 +29,7 @@ import { Asistencia, PausaPreguntas, Receso } from "./dictado";
 import { Diff } from "./diff";
 import { Lectura } from "./lectura";
 import { Pregunta } from "./pregunta";
+import { Caratula } from "./caratula";
 
 export interface PropsItem {
   item: Item;
@@ -84,6 +85,8 @@ export function RenderizarItem({
   vivo,
 }: PropsItem) {
   switch (item.tipo) {
+    case "caratula":
+      return <Caratula item={item} sesion={sesion} />;
     case "titulo":
       return <Titulo item={item} />;
     case "markdown":

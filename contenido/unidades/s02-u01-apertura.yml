@@ -6,6 +6,15 @@ objetivos:
 requisitos:
   - Nada. Se puede seguir sin haber estado el sábado.
 items:
+  - id: s2-caratula
+    tipo: caratula
+    qr: /contenido/img/qr.svg
+    minutos: 1
+    notas: |
+      **Se abre con esto mientras entra la gente**, igual que ayer.
+      - **El QR otra vez**: hoy hay gente que no vino el sábado.
+      - Decir que es la sesión 2 de 2 y que se cierra a la hora.
+
   - id: s2-asistencia
     tipo: asistencia
     titulo: Tomar asistencia
