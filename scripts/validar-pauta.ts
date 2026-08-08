@@ -10,14 +10,20 @@
  * ninguna, porque se confía en ella — así que esto falla si el contenido gana
  * un comando y la pauta no.
  *
- * Tres comprobaciones:
+ * Cuatro comprobaciones:
  *
  *  1. **Cobertura.** Todo comando que el curso dicta está en la pauta.
- *  2. **Sondas.** Todo comando que modifica el mundo tiene la misma sonda
+ *  2. **Referencia.** Y con el `id` de su lámina al lado, en una marca
+ *     `# ← s1-xxx`. El curso llega a la pauta por su comando; esto cierra el
+ *     otro sentido: desde la línea que se va a teclear, saber qué hay
+ *     proyectado. Sin comprobarlo se desfasa en silencio — cuando entró, dos
+ *     bloques citaban ítems (`s1-r3-correr`, `s2-r4-correr`) que llevaban
+ *     tiempo renombrados en el contenido, y nadie se había enterado.
+ *  3. **Sondas.** Todo comando que modifica el mundo tiene la misma sonda
  *     antes y después. Un comando que corre sin error y no deja ver qué
  *     cambió no está probado: `make seed` puede terminar en verde y haber
  *     escrito en el sitio equivocado.
- *  3. **Sintaxis.** El archivo tiene que parsear como script de shell.
+ *  4. **Sintaxis.** El archivo tiene que parsear como script de shell.
  */
 
 import { execFileSync } from "node:child_process";
@@ -157,6 +163,15 @@ function main(): void {
     return !enPauta.includes(n) && !enPauta.includes(comando.toLowerCase());
   });
 
+  // Las referencias: toda lámina que dicta un comando tiene que aparecer
+  // marcada al lado de alguna línea de la pauta. Se busca `← id` y no el `id`
+  // suelto a propósito — el identificador también sale en las cabeceras
+  // `# id:` de los bloques, y esas describen el bloque entero. Lo que cierra
+  // el círculo es la marca pegada a la línea que se teclea.
+  const sinReferencia = [...new Set(comandos.map((c) => c.id))].filter(
+    (id) => !pauta.includes(`← ${id}`),
+  );
+
   // Las sondas: cada bloque que corre un comando que mueve el mundo tiene que
   // repetir la misma línea de sonda antes y después.
   const MUEVEN = [
@@ -192,7 +207,7 @@ function main(): void {
     }
   }
 
-  if (faltan.length || sinSonda.length) {
+  if (faltan.length || sinReferencia.length || sinSonda.length) {
     if (faltan.length) {
       console.error(
         `\n${ROJO}Comandos del curso que la pauta no cubre:${FIN}`,
@@ -201,6 +216,17 @@ function main(): void {
         console.error(`  ${ROJO}·${FIN} ${GRIS}${id}${FIN}  ${comando}`);
       }
     }
+    if (sinReferencia.length) {
+      console.error(
+        `\n${ROJO}Láminas que la pauta no cita con «# ← id»:${FIN}`,
+      );
+      for (const id of sinReferencia) {
+        console.error(`  ${ROJO}·${FIN} ${id}`);
+      }
+      console.error(
+        `${GRIS}  Va al final de la línea que se teclea, no en la cabecera.${FIN}`,
+      );
+    }
     if (sinSonda.length) {
       console.error(`\n${ROJO}Bloques sin sonda antes y después:${FIN}`);
       for (const s of sinSonda) console.error(`  ${ROJO}·${FIN} ${s}`);
@@ -208,9 +234,10 @@ function main(): void {
     process.exit(1);
   }
 
+  const laminas = new Set(comandos.map((c) => c.id)).size;
   console.log(
-    `${VERDE}✓${FIN} La pauta cubre los ${comandos.length} comandos del curso, ` +
-      `en ${bloques.length} bloques.`,
+    `${VERDE}✓${FIN} La pauta cubre los ${comandos.length} comandos del curso ` +
+      `—${laminas} láminas, todas citadas— en ${bloques.length} bloques.`,
   );
 }
 

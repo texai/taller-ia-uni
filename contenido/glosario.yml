@@ -65,6 +65,45 @@ terminos:
       El archivo que queda de entrenar un modelo: los coeficientes, en disco.
       Cuando se dice «los 192 modelos» se habla de 192 de estos.
 
+  - termino: feature
+    grupo: El caso
+    definicion: >-
+      Una columna de números que se le da al modelo como pista. Un modelo no
+      lee «martes 14 de julio en Miraflores»: lee **trece números**, y las
+      features son esos números. Construirlas es fabricarlas a partir del
+      histórico, que es todo lo que hay.
+    ojo: >-
+      En castellano, «variable de entrada» o «predictor». Casi nadie lo dice
+      así: se dice *feature*, y por eso conviene reconocerla escrita.
+
+  - termino: rezago
+    grupo: El caso
+    definicion: >-
+      Cuánto se vendió hace N días, usado como pista para hoy. `lag_7` es «lo
+      de hace una semana». En inglés, *lag* — y así se llama la columna.
+    ojo: >-
+      Es la feature que más pesa en demanda, y por una razón poco elegante: el
+      mejor predictor de un martes suele ser el martes pasado.
+
+  - termino: media móvil
+    grupo: El caso
+    definicion: >-
+      El promedio de los últimos N días, recalculado cada día. `media_7`
+      responde «¿cómo venía la semana?» y suaviza el ruido de un día suelto.
+    ojo: >-
+      Un rezago es **un** día y puede ser raro —una promoción, un feriado—. La
+      media es el nivel. Por eso el modelo lleva las dos cosas.
+
+  - termino: fuga de datos
+    grupo: El caso
+    definicion: >-
+      Colar en las features información que el día de la predicción todavía no
+      existe. El modelo entrena viendo parte de la respuesta, luce
+      espectacular en validación y se desploma servido.
+    ojo: >-
+      En inglés, *data leakage*. Acá lo evita un `.shift(1)` de doce
+      caracteres, y es lo primero que hay que buscar en features ajenas.
+
   # ---------------------------------------------------------- la telemetría
   - termino: telemetría
     grupo: La telemetría

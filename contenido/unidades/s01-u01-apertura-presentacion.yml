@@ -251,9 +251,8 @@ items:
       que reconozcan lo suyo.
       - **La frase**: su taller de Docker/Actions/K8s cerró con «monitoreo
         básico». *Esto empieza donde lo básico deja de alcanzar.*
-      - MLflow es el mismo del Módulo 2, y lo que anota acá es **cada
-        entrenamiento**: con qué se hizo y qué error dio. Numerar versiones y
-        promoverlas a producción es el *Model Registry*, y **no se usa**.
+      - MLflow es el del Módulo 2, y acá anota **cada entrenamiento**. Numerar
+        versiones es el *Model Registry*, y no se usa.
       - **Señalar el rombo con el dedo**: a la izquierda todo es construir y
         desplegar; a la derecha no hay nada. La flecha punteada es el taller.
       - No detenerse en las cajas. La del Excel engancha con el caso.

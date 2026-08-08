@@ -56,10 +56,140 @@ items:
       - Si preguntan por qué Ridge: uno más complejo no cambiaría nada de lo
         que vamos a hacer, y alargaría el entrenamiento de los 192.
 
+  # La lámina de código llegaba sin que nadie hubiera dicho qué es una feature
+  # ni por qué hay que fabricarlas. Estas dos abren eso: primero con una fila
+  # de datos reales —el modelo no lee fechas, lee trece números—, y después
+  # desmontando la cadena de pandas, que es donde la clase se pierde.
+  - id: s1-glosario-features
+    tipo: glosario
+    titulo: Cuatro palabras antes de mirar el código
+    entradilla: Las que hacen falta para leer doce líneas de pandas sin adivinar
+    minutos: 3
+    terminos: [feature, rezago, media móvil, fuga de datos]
+    nuevos: [feature, rezago, media móvil, fuga de datos]
+    notas: |
+      **La que hay que dejar clavada es `feature`**: el resto del taller la usa
+      sin traducir.
+      - **Decirlo en una frase**: el modelo no sabe qué día es ni en qué tienda
+        está. Solo ve números, y alguien tuvo que fabricarlos.
+      - `rezago` y `media móvil` son las dos formas de mirar atrás: **un día
+        concreto** y **el nivel de la semana**. Por eso están las dos.
+      - `fuga de datos` se abre acá y se cobra en la lámina siguiente.
+
+  - id: s1-que-es-una-feature
+    tipo: tabla
+    titulo: Qué es «construir features»
+    entradilla: Una fila real de bebidas en Miraflores. Esto, y solo esto, es lo que ve el modelo.
+    minutos: 4
+    columnas: [Columna, Valor, De dónde sale]
+    filas:
+      - ["`fecha`", "2025-07-19", "**el modelo NO la ve.** Solo ordena"]
+      - ["`unidades`", "1,092.16", "**lo que hay que predecir**, no una feature"]
+      - ["`lag_7`", "645.18", "lo que se vendió el 12 de julio, hace 7 días"]
+      - ["`lag_14` · `lag_28`", "…", "lo mismo, hace 2 y hace 4 semanas"]
+      - ["`media_7`", "604.71", "el promedio de los 7 días anteriores"]
+      - ["`media_28`", "…", "el promedio del mes anterior"]
+      - ["`dow_1` … `dow_6`", "0 0 0 0 0 1", "sábado. Seis casillas, una encendida"]
+      - ["`en_promocion`", "0 ó 1", "del propio histórico"]
+      - ["`t`", "0.00 → 1.00", "qué tan avanzada va la serie"]
+    resaltar: [3, 5]
+    notas: |
+      **La frase que resuelve la lámina: el modelo no sabe qué día es ni dónde
+      está. Ve trece números y devuelve uno.**
+      - **Señalar las dos filas resaltadas juntas.** `lag_7` es *un día*
+        —pudo ser raro—; `media_7` es *el nivel*. Un modelo con solo lo primero
+        persigue el ruido.
+      - **`dow` = day of week**, y van seis y no siete: el domingo es «todas
+        apagadas». Con siete, la séptima no aporta nada y estorba al ajuste.
+      - Si alguien pregunta por `t`: le deja aprender una tendencia lenta.
+      - Los números son de verdad, de `ventas.csv`. Se pueden comprobar en
+        `make consola`.
+
+  - id: s1-cadena-features
+    tipo: codigo
+    titulo: Y la línea que casi nadie lee bien
+    entradilla: shift, rolling y mean, de izquierda a derecha, sobre esos mismos números
+    lenguaje: text
+    minutos: 4
+    contenido: |
+      df["unidades"].shift(1).rolling(7).mean()
+                    └──┬───┘ └───┬────┘ └─┬──┘
+                       1         2        3
+
+      la columna         1 · shift(1)      2 · rolling(7)   3 · mean()
+      ─────────────      ────────────      ──────────────   ──────────
+      12 jul   645.18    corre todo        agrupa los 7
+      13 jul   684.56    UNA fila hacia    valores de cada   el promedio
+      14 jul   762.33    abajo, para que   ventana:          de esa ventana
+      15 jul   464.48    la fila del 19    12..18 jul
+      16 jul   399.47    NO se vea a
+      17 jul   554.02    si misma
+      18 jul   722.90
+      ─────────────                                          ↓
+      19 jul  1092.16  ← el dia que se predice          media_7 = 604.71
+
+      (645.18 + 684.56 + 762.33 + 464.48 + 399.47 + 554.02 + 722.90) / 7
+                                                        = 604.705714…
+    notas: |
+      **Sin el `shift(1)`, el 1,092.16 del día 19 entra en su propia media** y
+      el modelo entrena viendo parte de la respuesta. Eso es fuga de datos.
+      - **Leerla como una frase, de izquierda a derecha**: corre uno, agrupa
+        de siete, promedia.
+      - `.rolling(7)` **no calcula nada**: dice de cuántos en cuántos. El
+        número lo pone `.mean()`, y podría ser `.max()`.
+      - **La pista de que hay fuga**: validación baja de golpe y producción no
+        se parece. Acá 10.4% contra 13.8% — **esa brecha es sana**.
+      - Las 6 primeras filas salen `NaN`; por eso hay un `.dropna()`.
+
+  # El respiro del tramo, y de paso la comprobación que vale: si la fuga de
+  # datos se entiende sobre un ejemplo inventado, se va a reconocer en features
+  # ajenas. Si no, la lámina anterior fue una curiosidad de pandas.
+  - id: s1-pregunta-fuga
+    tipo: pregunta
+    titulo: Cuál filtra el futuro
+    pregunta: >-
+      Para predecir las ventas de HOY, ¿cuál de estas features es fuga de
+      datos?
+    minutos: 3
+    opciones:
+      - Lo que se vendió hace 7 días
+      - El promedio de los 7 días anteriores
+      - El total de la semana que termina hoy
+      - Si hoy es sábado
+    respuesta: El total de la semana que termina hoy
+    solucion:
+      explicacion: |
+        **La prueba es siempre la misma: ¿este número existe la mañana en que
+        hay que predecir?**
+
+        El total de una semana que termina hoy incluye lo de hoy — que es
+        justo lo que no se sabe todavía. Con esa columna el modelo luce
+        perfecto en validación y se desploma servido, sin que nada avise.
+      razones:
+        - opcion: Lo que se vendió hace 7 días
+          razon: >-
+            Cerrado hace una semana. Es `lag_7`, y está en el modelo.
+        - opcion: El promedio de los 7 días anteriores
+          razon: >-
+            **Anteriores**, y por eso lleva `.shift(1)`. Es `media_7`.
+        - opcion: El total de la semana que termina hoy
+          razon: >-
+            **Incluye hoy.** Es la respuesta metida entre las pistas: no
+            existe cuando hay que predecir.
+        - opcion: Si hoy es sábado
+          razon: >-
+            El calendario se sabe con años de antelación. Son las `dow_`.
+    notas: |
+      **Si la tercera gana cómodo, seguir.** Es la única que no existe todavía
+      la mañana de la predicción.
+      - **La regla de bolsillo, y es la que se llevan**: ¿este número existe
+        cuando hay que predecir? Si no, es fuga.
+      - Si alguien duda entre la 2 y la 3, es exactamente el `.shift(1)`.
+
   - id: s1-features
     tipo: codigo
     titulo: Y estas son las features, de verdad
-    entradilla: Doce líneas que producen todo lo que el modelo sabe del mundo
+    entradilla: Trece columnas, y un solo archivo que las calcula para entrenar y para predecir
     lenguaje: python
     ruta: plataforma/modelo.py
     numeros: ["13-21", "32-33"]
@@ -78,15 +208,16 @@ items:
               # shift(1) para no filtrar el valor del propio dia que se predice.
               df[f"media_{v}"] = df["unidades"].shift(1).rolling(v).mean()
     notas: |
-      **El `shift(1)` es la línea más peligrosa del lab.** Sin él la media
-      móvil incluiría el día que se predice: el modelo entrena viendo la
-      respuesta. Es **fuga de datos**, y lo primero que se busca en features
-      ajenas.
+      **Ahora que la cadena está desmontada, esta lámina es de una sola idea:
+      el archivo.**
       - **Un solo archivo para entrenamiento y pronóstico, a propósito.** Si
         calcularan distinto → *training/serving skew*: funciona en el cuaderno
-        y falla servido, sin que nada avise.
-      - Doce features y una regresión. No hace falta más: vigilamos modelos, no
-        los exprimimos.
+        y falla servido, sin que nada avise. Está dicho en su docstring.
+      - **`COLUMNAS` es la lista, y es el contrato**: `entrenar` y
+        `pronosticar` la importan los dos. Añadir una feature es tocar acá y
+        nada más.
+      - Trece features y una regresión. No hace falta más: vigilamos modelos,
+        no los exprimimos.
 
   - id: s1-modelo-vs-contenedor
     tipo: comparacion
@@ -416,6 +547,81 @@ items:
       - **Los 192 artefactos son los mismos toda la tarde** — como en
         producción, donde reentrenar es mensual y el mundo cambia cuando quiere.
       - `$(EN_PLATAFORMA)` es la variable de arriba del archivo.
+
+  # La receta del Makefile dice qué se ejecuta y en qué orden; no dice qué
+  # archivo toca cada paso, que es lo que hace falta para saber por qué un `ls`
+  # da idéntico después de romper el mundo. Esto es ese mapa, y de paso deja
+  # ver que los .joblib no aparecen en ninguna línea de `romper`.
+  - id: s1-entradas-salidas
+    tipo: codigo
+    titulo: Y qué archivo toca cada uno
+    entradilla: Los mismos comandos, con lo que leen y lo que escriben. Todo dentro de /datos.
+    lenguaje: text
+    minutos: 5
+    contenido: |
+      Todos tienen la misma forma:
+        docker compose run --rm plataforma python -m plataforma <sub>
+        run --rm = contenedor de usar y tirar, con /datos montado
+
+      make seed  encadena los cuatro de abajo, en este orden
+      ─────────────────────────────────────────────────────────────────────
+        datos          LEE   (nada: lo inventa)
+                       ESCR  ventas.csv .................. 76,800 filas
+
+        entrenar       LEE   ventas.csv
+                       ESCR  modelos/*.joblib ............ 192 archivos
+                       ESCR  modelos/registro.json ....... version, mape_val
+                       ESCR  mlruns/ .................... 192 runs de MLflow
+
+        pronosticar    LEE   ventas.csv + registro.json + los 192 .joblib
+                       ESCR  predicciones.csv ............ 17,472 filas
+                       ESCR  ejecuciones_job.csv ......... +1 fila (append)
+
+        metricas       LEE   predicciones.csv + ventas.csv
+                       ESCR  metricas.csv ............... 17,472 filas
+    notas: |
+      **La lámina que responde «¿y esto qué tocó?» para el resto del día.**
+      - **Cada paso lee lo que escribió el anterior.** Por eso el orden no es
+        decorativo: `pronosticar` sin `entrenar` no tiene modelos que cargar.
+      - `ejecuciones_job.csv` es **el único que se abre en modo append**. Los
+        demás se sobrescriben enteros, y por eso delata cuántas veces corrió
+        el job.
+      - No leerla entera en voz alta. **Se señala y se vuelve** cuando alguien
+        pregunte qué cambió.
+
+  - id: s1-entradas-salidas-romper
+    tipo: codigo
+    titulo: Y qué toca romper el mundo
+    entradilla: Los mismos tres archivos. Y una ausencia, que es de lo que trata la tarde.
+    lenguaje: text
+    minutos: 4
+    contenido: |
+      make romper ESCENARIO=campana_promocional
+      ─────────────────────────────────────────────────────────────────────
+        escenario      LEE   ventas.csv
+        --nombre X     ESCR  ventas.csv  ← el MISMO archivo, reescrito
+        + pronosticar  ESCR  predicciones.csv
+        + metricas     ESCR  metricas.csv
+
+        ⚠ los 192 .joblib NO aparecen en ninguna linea.
+          Cambia el mundo, no el modelo. Por eso un `ls` da identico
+          antes y despues: es el punto del taller.
+
+      make reparar  = datos + pronosticar + metricas   (regenera limpio)
+      ─────────────────────────────────────────────────────────────────────
+
+        archivos       LEE   todo /datos        ESCR  nada
+        make consola   python a secas, REPL con pandas y /datos montado
+    notas: |
+      **La ausencia es la lámina.** No hay `entrenar` en ninguna de las dos
+      recetas.
+      - **`ventas.csv` es el único archivo del taller que se reescribe en su
+        sitio**, y todo lo demás cuelga de él. Romper el mundo es literalmente
+        eso: una pasada sobre ese CSV.
+      - **Preguntarlo en voz alta antes de pasar**: si los modelos son los
+        mismos y el error sube, ¿de quién es la culpa?
+      - `reparar` no es «deshacer»: **regenera el histórico desde cero** con la
+        misma semilla. Por eso vuelve exacto y sirve de sonda.
 
   - id: s1-pregunta-reentrenar
     tipo: pregunta
@@ -1506,6 +1712,45 @@ items:
       - **MLflow no tiene base de datos acá**: lee una carpeta del mismo volumen
         `datos`. Por eso ve todo lo entrenado antes.
       - Si preguntan por el Dockerfile: `mlflow` ya está en sus dependencias.
+
+  # Acá ya se han nombrado los tres puertos por separado —:8000 en la API,
+  # :8501 en la interfaz, :5000 recién—, y nunca juntos. Esta lámina cierra
+  # ese hilo: qué escucha en cada uno, y de dónde lee. Es la otra mitad del
+  # mapa: arriba los comandos de usar y tirar, acá lo que se queda encendido.
+  - id: s1-servicios-puertos
+    tipo: codigo
+    titulo: Y lo que se queda encendido
+    entradilla: Los de arriba corren y mueren. Estos tres se levantan y esperan, cada uno en su puerto.
+    lenguaje: text
+    minutos: 4
+    contenido: |
+      make arriba  →  docker compose build
+                      docker compose up -d plataforma ui
+      ─────────────────────────────────────────────────────────────────────
+
+        plataforma   uvicorn plataforma.api:app              :8000
+                     ← el UNICO que lee /datos en vivo
+
+                     GET /v1/metricas ......... metricas.csv
+                     GET /v1/modelos .......... modelos/registro.json
+                     GET /v1/series/{id} ...... predicciones.csv + ventas.csv
+                     GET /v1/job/ejecuciones .. ejecuciones_job.csv
+
+        ui           streamlit                                :8501
+                     ← no lee archivos: pide a :8000
+
+        mlflow       mlflow ui                                :5000
+                     --backend-store-uri file:///datos/mlruns
+                     (make mlflow · perfil aparte: `make arriba` NO lo levanta)
+    notas: |
+      **La diferencia que ordena todo el laboratorio: `run --rm` corre y
+      muere; `up -d` se queda escuchando.**
+      - **Los cuatro `GET` vuelven en el reto 1**, con `curl`. Acá solo se
+        señala que cada uno sale de un archivo concreto.
+      - **La interfaz no abre ni un CSV.** Pide a `:8000` como cualquiera, y
+        eso es lo que la hace sustituible.
+      - Si preguntan por qué MLflow sí lee `/datos` directo: porque su almacén
+        **es** una carpeta, no una base de datos. Lo vieron dos láminas atrás.
 
   - id: s1-mlflow-ui
     tipo: demo

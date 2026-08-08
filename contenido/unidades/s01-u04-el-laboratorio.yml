@@ -112,6 +112,49 @@ items:
       - Las tres cajas de `agente/` son el orden del taller: herramientas = 2,
         grafo = 4, accion = 5.
 
+  # La flecha que cruza de carpeta a carpeta es la idea entera del diagrama de
+  # arriba, y en un dibujo se pasa por alto. Acá está dicha con lo que la
+  # prueba: el servicio del agente NO monta el volumen de datos. No es una
+  # convención que se pueda saltar por descuido — no tiene por dónde.
+  - id: s1-lab-agente-api
+    tipo: codigo
+    titulo: Y por qué el agente no puede hacer trampa
+    entradilla: Los tres comandos del agente, y la única puerta que tienen
+    lenguaje: text
+    minutos: 4
+    contenido: |
+      docker compose run --rm agente python -m agente <sub>
+      ─────────────────────────────────────────────────────────────────────
+
+        senales     make senales     ─── HTTP :8000 ──►  la API
+        plano       make plano       ─── HTTP :8000 ──►  la API  + el LLM
+        run         make agente      ─── HTTP :8000 ──►  la API  + el LLM
+        verificar   make verificar   ─── HTTP :8000 ──►  la API
+                    (python -m retos.verificar --reto 1)
+
+      ⚠ el agente NUNCA abre /datos. Ni siquiera lo tiene montado:
+
+          agente:
+            volumes:
+              - ./agente:/app/agente
+              - ./retos:/app/retos
+              - memoria:/memoria      ← otro volumen, solo suyo
+
+        No hay `datos:/datos` en esa lista. Todo lo que el agente sabe de la
+        flota entra por :8000, igual que el `curl` que van a escribir ustedes.
+    notas: |
+      **La restricción que hace honesto el taller, y no es una convención: es
+      el `docker-compose.yml`.**
+      - **Señalar la lista de volúmenes.** Aunque alguien quisiera hacer
+        `pd.read_csv("/datos/metricas.csv")` dentro del agente, **no existe esa
+        ruta** en su contenedor. Falla, y falla rápido.
+      - Por eso el reto 2 se puede creer: la herramienta de percepción ve
+        exactamente lo que vería en una empresa, una API.
+      - `memoria:/memoria` es un volumen aparte, y aparece en el reto 4.
+      - Si preguntan por `verificar`: corre en el contenedor del agente porque
+        comprueba las dos mitades, y la única que puede alcanzar las dos es
+        ésta.
+
   - id: s1-lab-retos
     tipo: tabla
     titulo: Y a dónde te manda cada reto

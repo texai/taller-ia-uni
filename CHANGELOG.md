@@ -5,6 +5,43 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-08
 
+### Qué significa «construir features», dicho de una vez
+- La lámina de `modelo.py` llegaba **sin que nadie hubiera dicho qué es una
+  feature**, y lo único que explicaba la cadena `.shift(1).rolling(7).mean()`
+  eran las notas privadas. Otra vez lo mismo: la idea buena, donde la clase no
+  la ve.
+- Cuatro términos nuevos —`feature`, `rezago`, `media móvil`, `fuga de
+  datos`— y **una fila real de bebidas en Miraflores**, columna por columna:
+  el modelo no sabe qué día es ni dónde está, ve trece números y devuelve uno.
+- **La cadena desmontada sobre esos mismos números**, con la aritmética
+  comprobable: `shift(1)` corre uno, `rolling(7)` agrupa, `mean()` promedia →
+  604.71. Sin el `shift(1)`, el 1,092.16 del día que se predice entra en su
+  propia media.
+- Y una pregunta que comprueba lo único que hay que llevarse: **¿este número
+  existe la mañana en que hay que predecir?**
+- **Eran trece features, no doce.** Lo decía mal la lámina y lo dice bien
+  ahora: contadas ejecutando `COLUMNAS`.
+
+### El mapa de entradas y salidas, en cuatro láminas
+- Faltaba lo más simple: **qué archivo lee y escribe cada comando**. Se veían
+  las recetas del `Makefile` y la salida de cada uno, nunca el flujo.
+- `make seed` paso a paso —cada uno lee lo que escribió el anterior—; `romper`
+  y `reparar` con **la ausencia que es el punto del taller**, ningún `.joblib`
+  en ninguna línea; los tres servicios con su puerto y de qué archivo sale cada
+  endpoint; y los comandos del agente con **la única puerta que tienen**.
+- La última se apoya en el `docker-compose.yml`: el servicio del agente **no
+  monta `datos:/datos`**. No es una convención que se pueda saltar por
+  descuido — la ruta no existe en su contenedor.
+
+### La pauta dice ahora en qué lámina va cada comando
+- El curso llegaba a la pauta por su comando y no había camino de vuelta:
+  tecleando una línea, no se sabía qué estaba proyectado.
+- Marca `# ← s1-xxx` al final de cada línea que se dicta —las sondas no la
+  llevan, que son del ensayo—, y las **29 láminas con comando** citadas.
+- Lo vigila `validar-pauta`, y por eso entró: al comprobarlo aparecieron **dos
+  bloques citando ítems renombrados hace tiempo** (`s1-r3-correr`,
+  `s2-r4-correr`) y cuatro láminas que la pauta no nombraba.
+
 ### «Registrar sus versiones» era falso, y la carátula no tenía nombre
 - La caja de MLflow del repaso decía **«registrar sus versiones»**, y eso es
   justo lo que MLflow **no** hace acá: numerar versiones y promoverlas a
