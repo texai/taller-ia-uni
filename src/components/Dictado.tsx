@@ -18,7 +18,6 @@ import {
   buscarPorId,
   indiceDeItem,
   itemEn,
-  minutosDeUnidad,
   pasosDe,
   posicionDeIndice,
   retroceder,
@@ -673,17 +672,15 @@ export function Dictado({
                 }}
               >
                 {/*
-                  Los minutos son del docente, y desde que las ventanas de
-                  lectura conservan los suyos —son la instrucción a la clase, no
-                  el plan— la suma que llega al alumno es PARCIAL. Un total
-                  parcial es peor que ninguno: «reto · 12 min» sobre una unidad
-                  de cien es un número que miente. Se muestra solo en modo
-                  docente, que es donde está completo.
+                  Sin minutos. La barra es para saber DÓNDE se está, no cuánto
+                  falta: eso lo llevan el reloj de la lámina y la escaleta del
+                  mando, que es donde el número está completo y se puede mirar
+                  sin proyectarlo. Aquí solo restaban — el docente los leía como
+                  un plan que ya iba tarde, y al alumno le llegaban a medias
+                  (§3 se lleva los de casi todos los ítems), así que las dos
+                  barras nunca decían lo mismo.
                 */}
                 {u.tipo}
-                {modoDocente && minutosDeUnidad(u) > 0
-                  ? ` · ${minutosDeUnidad(u)} min`
-                  : ""}
               </p>
               <p
                 className="px-3 pb-1.5 text-sm font-semibold"
@@ -754,14 +751,6 @@ export function Dictado({
                         <span className="truncate">
                           {it.titulo ?? it.id}
                         </span>
-                        {it.minutos ? (
-                          <span
-                            className="ml-auto shrink-0 text-[11px] tabular-nums"
-                            style={{ color: "var(--tinta-suave)" }}
-                          >
-                            {it.minutos}′
-                          </span>
-                        ) : null}
                       </button>
                     </li>
                   );

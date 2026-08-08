@@ -5,6 +5,19 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-08
 
+### Fuera los minutos de la barra lateral
+- Quedaban dos sitios: el `· 12 min` del rótulo de la unidad —solo en modo
+  docente— y el `3′` al final de cada ítem con tiempo, que **sí veían los dos**.
+- Las dos barras nunca decían lo mismo. §3 se lleva los minutos de casi todos
+  los ítems camino del alumno, y sobreviven los de `lectura` y `receso` porque
+  son la instrucción a la clase; el resultado era una lista con tres números
+  sueltos frente a otra con veinte.
+- Y al docente le restaban más que sumar: la barra es para saber **dónde se
+  está**, no cuánto falta. El cuánto falta lo llevan el reloj de la lámina y la
+  escaleta del mando, que es donde el número está completo y se mira sin
+  proyectarlo.
+- Los títulos se leen mejor con esos once píxeles de vuelta.
+
 ### Un botón para copiar cada comando
 - Los comandos de los retos se teclean **desde otra ventana**: la clase mira la
   lámina, cambia a la terminal y escribe `make verificar ARGS="--reto 1"` o
