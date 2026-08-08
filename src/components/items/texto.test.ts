@@ -19,9 +19,7 @@ import { Markdown, Prosa } from "./texto";
 
 test("un enlace externo abre en pestaña nueva", () => {
   const html = renderToStaticMarkup(
-    createElement(Markdown, {
-      children: "[GitHub](https://github.com/texai/)",
-    }),
+    createElement(Markdown, null, "[GitHub](https://github.com/texai/)"),
   );
   assert.match(html, /target="_blank"/);
   assert.match(html, /rel="noopener noreferrer"/);
@@ -29,7 +27,7 @@ test("un enlace externo abre en pestaña nueva", () => {
 
 test("y también dentro de `Prosa`, que es el otro sitio donde hay markdown", () => {
   const html = renderToStaticMarkup(
-    createElement(Prosa, { children: "ver [el repo](https://github.com/x)" }),
+    createElement(Prosa, null, "ver [el repo](https://github.com/x)"),
   );
   assert.match(html, /target="_blank"/);
 });
@@ -37,7 +35,7 @@ test("y también dentro de `Prosa`, que es el otro sitio donde hay markdown", ()
 test("un ancla interna NO abre pestaña", () => {
   // Sería peor que el problema que se está resolviendo.
   const html = renderToStaticMarkup(
-    createElement(Markdown, { children: "[abajo](#seccion)" }),
+    createElement(Markdown, null, "[abajo](#seccion)"),
   );
   assert.ok(!html.includes("target="), "un enlace interno abre pestaña");
 });
