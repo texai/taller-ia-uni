@@ -176,8 +176,21 @@ function main(): void {
   // suelto a propósito — el identificador también sale en las cabeceras
   // `# id:` de los bloques, y esas describen el bloque entero. Lo que cierra
   // el círculo es la marca pegada a la línea que se teclea.
+  // La marca lleva el número de lámina delante —`← lámina S1·40 · s1-levantar`—
+  // y el número lo reescribe `numerar-pauta` cada vez que el contenido se
+  // mueve. Así que no se busca una cadena literal: se recogen los ítems
+  // citados troceando por `·` toda línea que tenga una flecha. Da igual el
+  // formato del número mientras el identificador esté ahí.
+  const citados = new Set(
+    pauta
+      .split("\n")
+      .filter((l) => l.includes("←"))
+      .flatMap((l) => l.slice(l.indexOf("←") + 1).split("·"))
+      .map((t) => t.trim())
+      .filter((t) => /^s\d-[a-z0-9-]+$/.test(t)),
+  );
   const sinReferencia = [...new Set(comandos.map((c) => c.id))].filter(
-    (id) => !pauta.includes(`← ${id}`),
+    (id) => !citados.has(id),
   );
 
   // Las sondas: cada bloque que corre un comando que mueve el mundo tiene que

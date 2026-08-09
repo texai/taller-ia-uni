@@ -20,8 +20,13 @@
 #      # sonda · despues      LA MISMA LÍNEA, para ver qué cambió
 #      # 💼 NEGOCIO           qué gana o qué pierde la cadena de retail
 #
-#  Esa marca lleva el identificador del ítem del curso: mirando la línea
-#  que toca teclear se sabe qué hay proyectado.
+#  La marca lleva **el número de lámina** y el identificador. El número es el
+#  que sirve para moverse: se teclea en el salto rápido del mando y la clase
+#  entera va ahí. El identificador está detrás porque no cambia nunca, y el
+#  número sí — la sesión tiene 143 láminas hoy, y si mañana entra una en
+#  medio, todos los de después corren uno.
+#
+#  Para regenerarlos:  npm run numerar-pauta
 #
 #  El 💼 es lo que esta pauta añade sobre la otra. Un comando produce números,
 #  y los números no deciden nada solos: «sesgo +4.8%» es una cifra hasta que
@@ -119,7 +124,7 @@ make senales
 # ═════════════════════════════════════════════════════════════════════════════
 
 # ── S2·U1 · el repaso de pandas del reto 1 ───────────────────────────────────
-# id: s2-repaso-pandas
+# id: 5 s2-repaso-pandas
 # estado de partida: SANO · deja el mundo: SANO
 #
 # No se dicta: se proyecta por si alguien quiere reproducir el reto 1, o para
@@ -129,8 +134,8 @@ make senales
 make senales
 #   → 13.8 / +0.8 / 10 de 192
 
-make romper ESCENARIO=campana_promocional   # ← s2-repaso-pandas · ⏱ ~40 s
-make consola                                # ← s2-repaso-pandas
+make romper ESCENARIO=campana_promocional   # ← lámina 5 · s2-repaso-pandas · ⏱ ~40 s
+make consola                                # ← lámina 5 · s2-repaso-pandas
 #   → se pegan los dos bloques de la lámina:
 #     bloque 1 · bebidas 31.6 / −33.7, y las otras siete entre 11.9 y 15.4
 #     bloque 2 · chorrillos 59.9 · magdalena 49.6 · jesus-maria 48.0
@@ -138,7 +143,7 @@ make consola                                # ← s2-repaso-pandas
 #     NameError: name 'u' is not defined — es el fallo del sábado
 # exit()
 
-make reparar                                # ← s2-repaso-pandas · ⏱ ~40 s
+make reparar                                # ← lámina 5 · s2-repaso-pandas · ⏱ ~40 s
 
 # sonda · despues
 make senales
@@ -158,10 +163,10 @@ make senales
 # ═════════════════════════════════════════════════════════════════════════════
 
 # ── S2·R2 · contra qué se calibra ────────────────────────────────────────────
-# id: s1-r2-antes
+# id: 32 s1-r2-antes
 # estado de partida: SANO · deja el mundo: SANO
 
-make senales                                # ← s1-r2-antes
+make senales                                # ← lámina 32 · s1-r2-antes
 #   → MAPE 13.8 · sesgo +0.7 · cobertura ~0.88 · 10 de 192 · ~5,700
 #   → los cinco números se anotan y se dejan a la vista todo el reto
 
@@ -173,7 +178,7 @@ make senales                                # ← s1-r2-antes
 
 
 # ── S2·R2 · la ventana de trabajo, y comprobarla ─────────────────────────────
-# id: s1-r2-taller · s1-r2-verificar · s1-r2-verificar-salida
+# id: 36 s1-r2-taller · 37 s1-r2-verificar · 38 s1-r2-verificar-salida
 # ⏱ ~60 s el verificador
 # estado de partida: SANO
 
@@ -181,9 +186,9 @@ make senales                                # ← s1-r2-antes
 make senales
 #   → 13.8 / +0.8 / 10 de 192
 
-make reparar                                # ← s1-r2-taller · ⏱ ~40 s
-make verificar ARGS="--reto 2"              # ← s1-r2-taller · ⏱ ~60 s
-docker compose run --rm agente python -m retos.verificar --reto 2  # ← s1-r2-verificar · s1-r2-verificar-salida
+make reparar                                # ← lámina 36 · s1-r2-taller · ⏱ ~40 s
+make verificar ARGS="--reto 2"              # ← lámina 36 · s1-r2-taller · ⏱ ~60 s
+docker compose run --rm agente python -m retos.verificar --reto 2  # ← láminas 37 y 38 · s1-r2-verificar · s1-r2-verificar-salida
 #   → 8 comprobaciones, y la última línea: "Regenerando los datos limpios"
 #   ⚠️ el verificador ROMPE el mundo para comprobar cada escenario y lo repara
 #     al final. Si alguien lo corta a medias, queda en feed_caido.
@@ -206,10 +211,10 @@ make senales
 # ═════════════════════════════════════════════════════════════════════════════
 
 # ── S2·R3 · ¿responde la llave? ──────────────────────────────────────────────
-# id: s1-r3-llave · 🔑
+# id: 44 s1-r3-llave · 🔑
 # estado de partida: SANO
 
-make verificar ARGS="--reto 3"              # ← s1-r3-llave
+make verificar ARGS="--reto 3"              # ← lámina 44 · s1-r3-llave
 #   → ✓ la llave responde · si sale ✗, PROVEEDOR_LLM=mock y seguir
 
 # 💼 NEGOCIO: nada todavía. Es la comprobación de que hay presupuesto de
@@ -217,18 +222,18 @@ make verificar ARGS="--reto 3"              # ← s1-r3-llave
 
 
 # ── S2·R3 · romper el silencioso · el antes y el después ─────────────────────
-# id: s1-r3-antes-despues
+# id: 48 s1-r3-antes-despues
 # estado de partida: SANO · deja el mundo: sesgo_silencioso
 # ⚠️ ES EL COMANDO MÁS IMPORTANTE DE LAS DOS SESIONES
 
 # sonda · antes
-make senales                                # ← s1-r3-antes-despues
+make senales                                # ← lámina 48 · s1-r3-antes-despues
 #   → MAPE 13.8 · sesgo +0.7 · 10 de 192 · ~5,700 unidades de mas
 
-make romper ESCENARIO=sesgo_silencioso      # ← s1-r3-antes-despues · ⏱ ~40 s
+make romper ESCENARIO=sesgo_silencioso      # ← lámina 48 · s1-r3-antes-despues · ⏱ ~40 s
 
 # sonda · despues
-make senales                                # ← s1-r3-antes-despues
+make senales                                # ← lámina 48 · s1-r3-antes-despues
 #   → MAPE 14.5 (+0.7) · sesgo +4.7 (x6.5) · 16 de 192 · ~37,000 (x6.5)
 
 # 💼 NEGOCIO: **treinta mil unidades de más en almacén**, contra un ruido
@@ -241,7 +246,7 @@ make senales                                # ← s1-r3-antes-despues
 
 
 # ── S2·R3 · el bucle plano, tres veces ───────────────────────────────────────
-# id: s1-r3-lectura · s1-r3-ejecutar · s1-r3-tres-veces
+# id: 47 s1-r3-lectura · 50 s1-r3-ejecutar · 52 s1-r3-tres-veces
 # 🔑 tres ejecuciones · ⏱ ~1 min cada una
 # estado de partida: sesgo_silencioso
 
@@ -249,10 +254,10 @@ make senales                                # ← s1-r3-antes-despues
 make senales
 #   → 14.5 / +4.8 / 16 de 192
 
-make plano ARGS="--verboso"                 # ← s1-r3-lectura · 🔑
-docker compose run --rm agente python -m agente plano --verboso  # ← s1-r3-ejecutar
-make plano ARGS="--verboso"                 # ← s1-r3-tres-veces · 🔑 (2.ª)
-make plano ARGS="--verboso"                 # ← s1-r3-tres-veces · 🔑 (3.ª)
+make plano ARGS="--verboso"                 # ← lámina 47 · s1-r3-lectura · 🔑
+docker compose run --rm agente python -m agente plano --verboso  # ← lámina 50 · s1-r3-ejecutar
+make plano ARGS="--verboso"                 # ← lámina 52 · s1-r3-tres-veces · 🔑 (2.ª)
+make plano ARGS="--verboso"                 # ← lámina 52 · s1-r3-tres-veces · 🔑 (3.ª)
 #   → tres salidas DISTINTAS sobre el mismo mundo, con temperatura 0
 
 # sonda · despues
@@ -282,16 +287,16 @@ make senales
 # ═════════════════════════════════════════════════════════════════════════════
 
 # ── S2·R4 · el grafo, contra el mundo sano ───────────────────────────────────
-# id: s2-r4-lectura · s2-r4-salida · 🔑 · ⏱ ~1 min
+# id: 85 s2-r4-lectura · 106 s2-r4-salida · 🔑 · ⏱ ~1 min
 # estado de partida: sesgo_silencioso · deja el mundo: SANO
 
 # sonda · antes
 make senales
 #   → 14.5 / +4.8 / 16 de 192
 
-make reparar                                # ← s2-r4-lectura · ⏱ ~40 s
-make agente ARGS="--verboso"                # ← s2-r4-lectura · 🔑
-docker compose run --rm agente python -m agente run --verboso  # ← s2-r4-salida
+make reparar                                # ← lámina 85 · s2-r4-lectura · ⏱ ~40 s
+make agente ARGS="--verboso"                # ← lámina 85 · s2-r4-lectura · 🔑
+docker compose run --rm agente python -m agente run --verboso  # ← lámina 106 · s2-r4-salida
 #   → sin_hallazgos, severidad baja. Una guardia tranquila.
 
 # sonda · despues
@@ -305,10 +310,10 @@ make senales
 
 
 # ── S2·R4 · la memoria ───────────────────────────────────────────────────────
-# id: s2-r4-memoria-comando
+# id: 99 s2-r4-memoria-comando
 # estado de partida: SANO
 
-docker compose run --rm agente python -m agente memoria  # ← s2-r4-memoria-comando
+docker compose run --rm agente python -m agente memoria  # ← lámina 99 · s2-r4-memoria-comando
 #   → los diagnósticos de las ejecuciones anteriores, con su alcance
 #   → si sale vacía, es que solo se corrió con mock: no hubo diagnóstico
 
@@ -319,31 +324,31 @@ docker compose run --rm agente python -m agente memoria  # ← s2-r4-memoria-com
 
 
 # ── S2·R4 · LA TRAMPA · una tienda que dejó de reportar ──────────────────────
-# id: s2-r4-antes-despues · s2-r4-ejecutar · s2-r4-salida-2 · 🔑
+# id: 104 s2-r4-antes-despues · 105 s2-r4-ejecutar · 107 s2-r4-salida-2 · 🔑
 # estado de partida: SANO · deja el mundo: SANO
 # ⚠️ ES EL CRITERIO DE ACEPTACIÓN DEL RETO
 
 # sonda · antes
-make senales                                # ← s2-r4-antes-despues
+make senales                                # ← lámina 104 · s2-r4-antes-despues
 #   → Flota · 192 modelos · MAPE 13.8 · sesgo +0.7 · 10 de 192 · ~5,700
 
-make romper ESCENARIO=feed_caido            # ← s2-r4-antes-despues · ⏱ ~40 s
+make romper ESCENARIO=feed_caido            # ← lámina 104 · s2-r4-antes-despues · ⏱ ~40 s
 
 # sonda · despues
-make senales                                # ← s2-r4-antes-despues
+make senales                                # ← lámina 104 · s2-r4-antes-despues
 #   → Flota · 184 modelos  ← LO ÚNICO QUE CAMBIA
 #   → MAPE 13.8 · sesgo +0.8 · IDÉNTICOS al mundo sano
 #   → 9 de 184 · ~5,800 unidades de mas
 #   ⚠️ dejar la pantalla veinte segundos y preguntar qué cambió. La sala mira
 #     MAPE y sesgo, no ve nada, y ahí es cuando el denominador salta.
 
-make agente ARGS="--verboso"                # ← s2-r4-ejecutar · 🔑
-docker compose run --rm agente python -m agente run --verboso  # ← s2-r4-salida-2
+make agente ARGS="--verboso"                # ← lámina 105 · s2-r4-ejecutar · 🔑
+docker compose run --rm agente python -m agente run --verboso  # ← lámina 107 · s2-r4-salida-2
 #   → anomalia · tienda:arequipa · y NO recomienda reentrenar
 #   → si dice `deriva`, esa es la conversación: no distinguió una tienda muda
 #     de una degradación. Sirve igual, y sirve más.
 
-make reparar                                # ← s2-r4-ejecutar · ⏱ ~40 s
+make reparar                                # ← lámina 105 · s2-r4-ejecutar · ⏱ ~40 s
 
 # 💼 NEGOCIO: **faltan 168 filas de telemetría porque una tienda entera dejó
 #    de reportar durante 21 días.** No hay un problema de demanda: hay un
@@ -361,7 +366,7 @@ make reparar                                # ← s2-r4-ejecutar · ⏱ ~40 s
 # ═════════════════════════════════════════════════════════════════════════════
 
 # ── S2·R5 · sobre deriva, reentrena ──────────────────────────────────────────
-# id: s2-r5-deriva · s2-r5-comando · 🔑 · ⏱ ~2 min
+# id: 124 s2-r5-deriva · 123 s2-r5-comando · 🔑 · ⏱ ~2 min
 # estado de partida: SANO · deja el mundo: sesgo_silencioso
 # ⚠️ ES EL ÚNICO BLOQUE DEL TALLER QUE ESCRIBE MODELOS DE VERDAD
 
@@ -369,9 +374,9 @@ make reparar                                # ← s2-r4-ejecutar · ⏱ ~40 s
 curl -s "http://localhost:8000/v1/reentrenamientos"
 #   → []  · la bitácora está vacía
 
-make reparar && make romper ESCENARIO=sesgo_silencioso   # ← s2-r5-deriva · ⏱ ~80 s
-make actuar ARGS="--verboso"                # ← s2-r5-deriva · 🔑
-docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso  # ← s2-r5-comando
+make reparar && make romper ESCENARIO=sesgo_silencioso   # ← lámina 124 · s2-r5-deriva · ⏱ ~80 s
+make actuar ARGS="--verboso"                # ← lámina 124 · s2-r5-deriva · 🔑
+docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso  # ← lámina 123 · s2-r5-comando
 #   → diagnóstico `deriva` · la política DEJA PASAR · 24 modelos reentrenados
 
 # sonda · despues
@@ -391,7 +396,7 @@ curl -s "http://localhost:8000/v1/reentrenamientos"
 
 
 # ── S2·R5 · sobre anomalía, se frena ─────────────────────────────────────────
-# id: s2-r5-anomalia · s2-r5-lectura · 🔑 · ⏱ ~2 min
+# id: 125 s2-r5-anomalia · 122 s2-r5-lectura · 🔑 · ⏱ ~2 min
 # estado de partida: sesgo_silencioso · deja el mundo: feed_caido
 # ⚠️ ES EL CRITERIO DE ACEPTACIÓN DEL RETO Y DEL DÍA
 
@@ -399,8 +404,8 @@ curl -s "http://localhost:8000/v1/reentrenamientos"
 curl -s "http://localhost:8000/v1/reentrenamientos"
 #   → un registro, el del bloque anterior
 
-make reparar && make romper ESCENARIO=feed_caido   # ← s2-r5-anomalia · s2-r5-lectura · ⏱ ~80 s
-make actuar ARGS="--verboso"                # ← s2-r5-anomalia · 🔑
+make reparar && make romper ESCENARIO=feed_caido   # ← láminas 125 y 122 · s2-r5-anomalia · s2-r5-lectura · ⏱ ~80 s
+make actuar ARGS="--verboso"                # ← lámina 125 · s2-r5-anomalia · 🔑
 #   → diagnóstico `anomalia` · la política NO EJECUTA NADA, y dice por qué
 #   → ese texto no lo escribió el LLM: es la regla explicándose
 
@@ -420,10 +425,10 @@ curl -s "http://localhost:8000/v1/reentrenamientos"
 
 
 # ── S2·R5 · la interfaz, de punta a punta ────────────────────────────────────
-# id: s2-r5-panel · 🔑 la ejecución del panel
+# id: 135 s2-r5-panel · 🔑 la ejecución del panel
 # estado de partida: cualquiera · deja el mundo: igual
 
-docker compose up -d ui                     # ← s2-r5-panel
+docker compose up -d ui                     # ← lámina 135 · s2-r5-panel
 #   → abrir http://localhost:8501
 #   → 1 · pestaña «El agente» → botón «Correr el agente», en vivo
 #   → 2 · más abajo: Reflexion · Recomendaciones · Accion

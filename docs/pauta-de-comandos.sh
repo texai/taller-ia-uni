@@ -21,13 +21,19 @@
 #  Cada bloque tiene tres clases de línea y se distinguen a la vista:
 #
 #      # sonda · antes        el estado ANTES, para poder comparar
-#      <comando>  # ← s1-x    lo que el curso dicta, y EN QUÉ LÁMINA sale
+#      <comando>  # ← lámina S1·40 · id      lo que el curso dicta, y DÓNDE sale
 #      # sonda · despues      LA MISMA LÍNEA, para ver qué cambió
 #
-#  La marca `# ← s1-xxx` es el identificador del ítem del curso, y se lee al
-#  revés que la escaleta: mirando la línea que toca teclear, saber qué está
-#  proyectado en ese momento. Las sondas NO la llevan —no se dictan, son del
-#  ensayo—, y la cabecera `# id:` de cada bloque lista las láminas que cubre.
+#  La marca se lee al revés que la escaleta: mirando la línea que toca teclear,
+#  saber qué está proyectado. **El número es lo que se busca** — se teclea en
+#  el salto rápido del mando y la clase entera va ahí; `S1·40` es la lámina 40
+#  de la sesión 1. El identificador va detrás porque no cambia nunca y el
+#  número sí: una lámina nueva en medio corre todas las de después.
+#
+#  Para regenerarlos:  npm run numerar-pauta
+#
+#  Las sondas NO llevan marca —no se dictan, son del ensayo—, y la cabecera
+#  `# id:` de cada bloque lista las láminas que cubre.
 #
 #  La sonda de después es la misma de antes, literal. Si una lista archivos y
 #  la otra cuenta filas, hay dos hechos y ninguna comparación.
@@ -94,7 +100,7 @@ fi
 docker compose ps
 #   → vacío
 
-make arriba                        # ← s1-levantar · ⏱ ~5 min la primera vez
+make arriba                        # ← lámina S1·40 · s1-levantar · ⏱ ~5 min la primera vez
 
 # sonda · despues
 docker compose ps
@@ -108,13 +114,13 @@ docker compose ps
 # estado de partida: entorno levantado, `/datos` vacío
 
 # sonda · antes
-make archivos                      # ← s1-caso-estado
+make archivos                      # ← lámina S1·15 · s1-caso-estado
 #   → «/datos está vacío. Corre:  make seed»
 
-make seed                          # ← s1-seed · ⏱ ~30 s
+make seed                          # ← lámina S1·41 · s1-seed · ⏱ ~30 s
 
 # sonda · despues — y es la lámina, no solo una sonda
-make archivos                      # ← s1-caso-estado
+make archivos                      # ← lámina S1·15 · s1-caso-estado
 #   → ventas.csv 76,800 filas · modelos/ 193 archivos (192 + registro.json)
 #     predicciones.csv y metricas.csv 17,472 filas · ejecuciones_job.csv 1 fila
 #     mlruns/ 2,881 archivos — MLflow escribe desde el primer entrenamiento,
@@ -122,14 +128,14 @@ make archivos                      # ← s1-caso-estado
 
 # ⚠️ ESTA es la respuesta a «hice make seed y `ls` no muestra nada»: /datos es
 #    un volumen de Docker, no una carpeta del disco. Sale en cada clase.
-make archivos ARGS="--ver metricas.csv"      # ← s1-datos-sin-make
+make archivos ARGS="--ver metricas.csv"      # ← lámina S1·16 · s1-datos-sin-make
 #   → cabecera + 5 filas de telemetría
 
 # y los dos de la lámina siguiente, que son los mismos sin atajo. `ls` y `head`
 # son los de toda la vida; lo unico que hay que aprender es el prefijo.
-docker compose run --rm plataforma ls -lh /datos              # ← s1-datos-sin-make
+docker compose run --rm plataforma ls -lh /datos              # ← lámina S1·16 · s1-datos-sin-make
 #   → las seis entradas, con tamaño y fecha
-docker compose run --rm plataforma head -3 /datos/metricas.csv  # ← s1-datos-sin-make
+docker compose run --rm plataforma head -3 /datos/metricas.csv  # ← lámina S1·16 · s1-datos-sin-make
 #   → cabecera + 2 filas
 #   ⚠️ head y NO cat: metricas.csv son 17,472 líneas y se lleva la terminal
 
@@ -166,7 +172,7 @@ make reparar && make senales
 # sonda · antes
 docker compose ps
 
-docker compose up -d plataforma ui                            # ← s1-levantar
+docker compose up -d plataforma ui                            # ← lámina S1·40 · s1-levantar
 
 # sonda · despues
 docker compose ps
@@ -177,14 +183,14 @@ docker compose ps
 # id: s1-seed · en clase NO se corre; se lee. Acá se ensaya que funciona
 # ⏱ ~30 s
 
-docker compose run --rm plataforma python -m plataforma seed  # ← s1-seed
+docker compose run --rm plataforma python -m plataforma seed  # ← lámina S1·41 · s1-seed
 #   → 1/4 … 4/4 · "192 modelos con 17,472 dias-modelo de telemetria."
 
 
 # ── S1·U3 · los 192 en disco ─────────────────────────────────────────────────
 # id: s1-artefactos
 
-docker compose run --rm plataforma ls -la /datos/modelos | head  # ← s1-artefactos
+docker compose run --rm plataforma ls -la /datos/modelos | head  # ← lámina S1·44 · s1-artefactos
 #   → dem-abarrotes-arequipa.joblib … 1025 bytes cada uno
 docker compose run --rm plataforma sh -c 'ls /datos/modelos | wc -l; du -sh /datos/modelos'
 #   → 193 · 856K
@@ -193,7 +199,7 @@ docker compose run --rm plataforma sh -c 'ls /datos/modelos | wc -l; du -sh /dat
 # ── S1·U3 · el mundo por dentro ──────────────────────────────────────────────
 # id: s1-mundo-crudo
 
-docker compose run --rm plataforma head -1 /datos/ventas.csv  # ← s1-mundo-crudo
+docker compose run --rm plataforma head -1 /datos/ventas.csv  # ← lámina S1·50 · s1-mundo-crudo
 #   → fecha,tienda,region,categoria,unidades,unidades_demandadas,en_promocion,quiebre_stock
 docker compose run --rm plataforma sh -c "awk -F, '\$8+0==1' /datos/ventas.csv | head -3"
 #   → tres días con quiebre: `unidades` por debajo de `unidades_demandadas`
@@ -208,7 +214,7 @@ docker compose run --rm plataforma sh -c "awk -F, '\$8+0==1' /datos/ventas.csv |
 docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/modelos/registro.json | head -1"
 #   → "version": 1  en un mundo recién sembrado
 
-docker compose run --rm plataforma python -m plataforma entrenar  # ← s1-entrenar
+docker compose run --rm plataforma python -m plataforma entrenar  # ← lámina S1·65 · s1-entrenar
 
 # sonda · despues
 docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/modelos/registro.json | head -1"
@@ -227,7 +233,7 @@ docker compose run --rm plataforma sh -c "grep -o '\"version\": [0-9]*' /datos/m
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5000
 #   → 000 (no está levantado: tiene `profiles`, y `make arriba` no lo toca)
 
-make mlflow                        # ← s1-mlflow-ui · ⏱ ~20 s la primera vez
+make mlflow                        # ← lámina S1·75 · s1-mlflow-ui · ⏱ ~20 s la primera vez
 
 # sonda · despues
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5000
@@ -240,7 +246,7 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5000
 # sonda · antes
 docker compose ps
 
-docker compose up -d ui                                       # ← s1-demo-ui
+docker compose up -d ui                                       # ← lámina S1·59 · s1-demo-ui
 
 # sonda · despues
 docker compose ps
@@ -252,34 +258,34 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8501
 # ── S1·U4 · el laboratorio, entero ───────────────────────────────────────────
 # id: s1-lab-arbol · s1-lab-ayuda · s1-lab-lectura · se evidencian solos
 
-ls                                                            # ← s1-lab-arbol
+ls                                                            # ← lámina S1·83 · s1-lab-arbol
 #   → cuatro carpetas: plataforma/ agente/ ui/ retos/ · más Makefile y compose
 
-make ayuda                                                    # ← s1-lab-ayuda
+make ayuda                                                    # ← lámina S1·87 · s1-lab-ayuda
 #   → los 22 atajos, con su descripción. Sale del propio Makefile
 
-make senales                                                    # ← s1-lab-lectura
+make senales                                                    # ← lámina S1·88 · s1-lab-lectura
 #   → la sonda, presentada acá por primera vez: 13.8 / +0.8 / 8 de 192
 
 
 # ── S1·U5 · ¿estoy en condiciones de empezar? ────────────────────────────────
 # id: s1-r1-listo · estado de partida: mundo SANO
 
-make verificar ARGS="--reto 1"                                  # ← s1-r1-listo
+make verificar ARGS="--reto 1"                                  # ← lámina S1·96 · s1-r1-listo
 #   → ✓ 192 modelos en produccion · ✓ hay telemetria suficiente
 
 
 # ── S1·U5 · la telemetría por la API ─────────────────────────────────────────
 # id: s1-r1-api · s1-r1-lectura · s1-r1-swagger · se evidencian solos
 
-curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"  # ← s1-r1-api
+curl -s "http://localhost:8000/v1/metricas?categoria=bebidas&desde=2026-07-01"  # ← lámina S1·100 · s1-r1-api
 #   → 912 filas de JSON. Con `| head` para no llenar la terminal
-curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head  # ← s1-r1-lectura
+curl -s "http://localhost:8000/v1/metricas?categoria=bebidas" | head  # ← lámina S1·105 · s1-r1-lectura
 #   → una fila por modelo y día, con unidades además de porcentajes
 
 # la lámina de Swagger no teclea nada: se abre en el navegador. Esto solo
 # comprueba, en el ensayo, que la interfaz responde antes de proyectarla.
-curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8000/docs   # ← s1-r1-swagger
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8000/docs   # ← lámina S1·99 · s1-r1-swagger
 #   → 200 · abrir http://localhost:8000/docs y probar GET /v1/metricas
 #     con «Try it out». Debajo sale el curl equivalente, ya escrito
 
@@ -292,8 +298,8 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8000/docs   # ← s1-r
 make senales
 #   → 13.8 / +0.8 / 8 de 192 · 6,532 unidades de más
 
-docker compose run --rm plataforma python -m plataforma escenario --nombre campana_promocional  # ← s1-r1-romper
-make romper ESCENARIO=campana_promocional   # ← s1-r1-lectura · ⏱ ~40 s
+docker compose run --rm plataforma python -m plataforma escenario --nombre campana_promocional  # ← lámina S1·102 · s1-r1-romper
+make romper ESCENARIO=campana_promocional   # ← lámina S1·105 · s1-r1-lectura · ⏱ ~40 s
 #   (la primera línea es la etapa 1 de las tres de `romper`; el atajo las corre
 #    las tres. En el ensayo vale correr solo el atajo)
 
@@ -312,7 +318,7 @@ make senales
 # comando y volver. Conviene ensayarlo: se sale con exit(), y si se olvida, la
 # terminal se queda dentro y el siguiente comando de la pauta no hace nada.
 
-make consola                                                    # ← s1-r1-a-mano
+make consola                                                    # ← lámina S1·108 · s1-r1-a-mano
 #   → Python 3.12 · pandas puesto · /datos montado
 
 # Y dentro, el bloque de la lamina. Se pega entero y se pulsa Enter dos veces:
@@ -357,15 +363,15 @@ make consola                                                    # ← s1-r1-a-ma
 make senales
 #   → 13.8 / +0.8 / 10 de 192 · 6,569 unidades de mas
 
-make romper ESCENARIO=campana_promocional   # ← s2-repaso-pandas · ⏱ ~40 s
-make consola                                                # ← s2-repaso-pandas
+make romper ESCENARIO=campana_promocional   # ← lámina S2·5 · s2-repaso-pandas · ⏱ ~40 s
+make consola                                                # ← lámina S2·5 · s2-repaso-pandas
 #   → se pegan los dos bloques de la lamina anterior de esta pauta
 #   → bloque 1: bebidas 31.6 / −33.7, y las otras siete entre 11.9 y 15.4
 #   → bloque 2: chorrillos 59.9 · magdalena 49.6 · jesus-maria 48.0
 #   ⚠ el segundo bloque necesita el `u` del primero. Pegado solo, da
 #     NameError: name 'u' is not defined -- es el fallo del sabado
 # exit()
-make reparar                                # ← s2-repaso-pandas · ⏱ ~40 s
+make reparar                                # ← lámina S2·5 · s2-repaso-pandas · ⏱ ~40 s
 #   → obligatorio: el reto 2 empieza midiendo contra la flota sana
 
 # sonda · despues
@@ -381,7 +387,7 @@ make senales
 make senales
 #   → 16.0 / −10.6
 
-make reparar && make romper ESCENARIO=sesgo_silencioso  # ← s1-r1-silencioso · ⏱ ~80 s
+make reparar && make romper ESCENARIO=sesgo_silencioso  # ← lámina S1·112 · s1-r1-silencioso · ⏱ ~80 s
 # Windows:  .\taller.ps1 reparar; .\taller.ps1 romper sesgo_silencioso
 
 # sonda · despues
@@ -403,14 +409,14 @@ make senales
 make senales
 #   → 14.5 / +4.7
 
-make reparar                       # ← s1-r2-taller · ⏱ ~40 s
+make reparar                       # ← lámina S2·36 · s1-r2-taller · ⏱ ~40 s
 
 # sonda · despues
 make senales
 #   → 13.8 / +0.8 / 8 · vuelve EXACTO. Por eso sirve de sonda
 
-make verificar ARGS="--reto 2"     # ← s1-r2-taller · ⏱ ~60 s
-docker compose run --rm agente python -m retos.verificar --reto 2  # ← s1-r2-verificar
+make verificar ARGS="--reto 2"     # ← lámina S2·36 · s1-r2-taller · ⏱ ~60 s
+docker compose run --rm agente python -m retos.verificar --reto 2  # ← lámina S2·37 · s1-r2-verificar
 #   → las 8 comprobaciones, y al final "Regenerando los datos limpios"
 
 # sonda · despues                     ⚠️ el verificador deja el mundo roto
@@ -423,7 +429,7 @@ make reparar && make senales
 # ── S1·U7 · ¿responde mi llave? ──────────────────────────────────────────────
 # id: s1-r3-llave · 🔑
 
-make verificar ARGS="--reto 3"                                  # ← s1-r3-llave
+make verificar ARGS="--reto 3"                                  # ← lámina S2·44 · s1-r3-llave
 #   → ✓ 7 herramientas expuestas · ✓ <proveedor> responde y sabe llamar herramientas
 #   → sin llave: "· proveedor mock: no se comprueba el razonamiento"
 
@@ -432,15 +438,15 @@ make verificar ARGS="--reto 3"                                  # ← s1-r3-llav
 # id: s1-r3-lectura · s1-r3-ejecutar · 🔑 tres ejecuciones · ⏱ ~1 min cada una
 # estado de partida: mundo SANO
 
-make romper ESCENARIO=sesgo_silencioso   # ← s1-r3-lectura · ⏱ ~40 s
+make romper ESCENARIO=sesgo_silencioso   # ← lámina S2·47 · s1-r3-lectura · ⏱ ~40 s
 
 # sonda · antes
 make memoria
 #   → [] o lo que hubiera de antes
 
-make plano ARGS="--verboso"   # ← s1-r3-lectura
-docker compose run --rm agente python -m agente plano --verboso  # ← s1-r3-ejecutar
-make plano ARGS="--verboso"   # ← s1-r3-lectura
+make plano ARGS="--verboso"   # ← lámina S2·47 · s1-r3-lectura
+docker compose run --rm agente python -m agente plano --verboso  # ← lámina S2·50 · s1-r3-ejecutar
+make plano ARGS="--verboso"   # ← lámina S2·47 · s1-r3-lectura
 #   → tres diagnósticos. Comparar qué herramientas llamó cada uno, en qué
 #     orden, y qué severidad puso. Con temperatura 0, y no coinciden
 
@@ -481,14 +487,14 @@ make senales
 make memoria
 #   → lo que dejó ayer el reto 3
 
-make agente ARGS="--verboso"                                    # ← s2-r4-lectura
-docker compose run --rm agente python -m agente run --verboso   # ← s2-r4-salida
+make agente ARGS="--verboso"                                    # ← lámina S2·85 · s2-r4-lectura
+docker compose run --rm agente python -m agente run --verboso   # ← lámina S2·106 · s2-r4-salida
 #   → percepción, diagnóstico, REFLEXIÓN con su veredicto, recomendaciones
 
 # sonda · despues
 make memoria
 #   → una entrada más. El grafo SÍ escribe: esa es la diferencia con ayer
-docker compose run --rm agente python -m agente memoria         # ← s2-r4-memoria-comando
+docker compose run --rm agente python -m agente memoria         # ← lámina S2·99 · s2-r4-memoria-comando
 #   → lo mismo, sin el atajo
 
 
@@ -499,7 +505,7 @@ docker compose run --rm agente python -m agente memoria         # ← s2-r4-memo
 docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'
 #   → 17473 (17,472 + cabecera)
 
-make romper ESCENARIO=feed_caido   # ← s2-r4-ejecutar · ⏱ ~40 s
+make romper ESCENARIO=feed_caido   # ← lámina S2·105 · s2-r4-ejecutar · ⏱ ~40 s
 
 # sonda · despues
 docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'
@@ -511,7 +517,7 @@ make senales
 #     Vale la pena señalarlo con el dedo: la degradación no siempre se ve en
 #     la métrica, a veces se ve en cuántas filas quedaron para calcularla.
 
-make agente ARGS="--verboso"                                    # ← s2-r4-lectura
+make agente ARGS="--verboso"                                    # ← lámina S2·85 · s2-r4-lectura
 #   → tipo: anomalia · alcance: tienda:arequipa · y NO recomienda reentrenar
 
 # deja el mundo: feed_caido
@@ -529,8 +535,8 @@ curl -s http://localhost:8000/v1/reentrenamientos
 docker compose run --rm plataforma sh -c 'ls -l --time-style=+%H:%M /datos/modelos | head -3'
 #   → la hora de los artefactos
 
-make actuar ARGS="--verboso"                                    # ← s2-r5-lectura
-docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso  # ← s2-r5-comando
+make actuar ARGS="--verboso"                                    # ← lámina S2·122 · s2-r5-lectura
+docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso  # ← lámina S2·123 · s2-r5-comando
 #   → ✓ reentrenar → categoria:bebidas · 24 modelos
 
 # sonda · despues
@@ -551,7 +557,7 @@ make reparar && make romper ESCENARIO=feed_caido    # ⏱ ~80 s
 curl -s http://localhost:8000/v1/reentrenamientos | tail -c 200
 #   → la última entrada, la de bebidas
 
-make actuar ARGS="--verboso"                                    # ← s2-r5-lectura
+make actuar ARGS="--verboso"                                    # ← lámina S2·122 · s2-r5-lectura
 #   → ✗ no se ejecutó: el diagnostico es una anomalia de datos: reentrenar
 #     aqui contaminaria modelos sanos
 #     ESE TEXTO NO LO ESCRIBIÓ EL LLM. Está en agente/accion.py, literal
