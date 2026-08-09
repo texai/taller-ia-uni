@@ -5,6 +5,30 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-09 · tarde
 
+### El grafo, dibujado
+- El cableado del reto 4 se enseñaba **solo como código** —quince líneas de
+  `add_node` y `add_edge`— y el único dibujo del grafo estaba en la apertura,
+  a dos horas de distancia y sin decir qué escribe cada nodo.
+- Lámina nueva **inmediatamente después del cableado**: el mismo grafo,
+  dibujado. Primero se ve que es código, y recién entonces el dibujo — al
+  revés parece un diagrama de arquitectura que nadie escribió nunca.
+- **Cada caja dice qué clave del estado escribe.** Esa columna es la que hace
+  el dibujo comprobable: al terminar la ejecución, el expediente tiene que
+  tener exactamente esos campos rellenos.
+- **Las tres flechas punteadas van hacia atrás y no son lo mismo**:
+  `herramientas` es el bucle ReAct del sábado, `reflexion → percepcion` es
+  «me falta evidencia», `reflexion → revision` es «la crítica quedó en pie».
+  Solo la tercera es nueva.
+
+### Dos cosas que el tope no decía
+- `MAX_VUELTAS = 2` se explicaba como «hay que emitir en algún momento», sin
+  decir la consecuencia: **solo cabe una vuelta atrás**. El contador lo
+  incrementa `reflexion`, no `percepcion`, así que en la primera vale 1 y
+  deja volver, y en la segunda vale 2 y el único destino ya es `revision`.
+- Y el otro bucle, el de `herramientas`, **no tiene tope**: gira mientras el
+  LLM siga pidiendo. Es el único punto del grafo sin freno, y queda dicho en
+  la pauta como siembra del reto 5.
+
 ### La arquitectura cognitiva, al minuto cinco
 - Un alumno la pidió el sábado y **existir, existía** —`s2-el-grafo`, en el
   repaso—, pero con los retos 2 y 3 delante cae a **dos horas y media de

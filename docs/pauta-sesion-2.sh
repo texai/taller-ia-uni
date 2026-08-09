@@ -294,9 +294,9 @@ make senales
 make senales
 #   → 14.5 / +4.8 / 16 de 192
 
-make reparar                                # ← lámina 85 · s2-r4-lectura · ⏱ ~40 s
-make agente ARGS="--verboso"                # ← lámina 85 · s2-r4-lectura · 🔑
-docker compose run --rm agente python -m agente run --verboso  # ← lámina 106 · s2-r4-salida
+make reparar                                # ← lámina 86 · s2-r4-lectura · ⏱ ~40 s
+make agente ARGS="--verboso"                # ← lámina 86 · s2-r4-lectura · 🔑
+docker compose run --rm agente python -m agente run --verboso  # ← lámina 110 · s2-r4-salida
 #   → sin_hallazgos, severidad baja. Una guardia tranquila.
 
 # sonda · despues
@@ -313,7 +313,7 @@ make senales
 # id: 99 s2-r4-memoria-comando
 # estado de partida: SANO
 
-docker compose run --rm agente python -m agente memoria  # ← lámina 99 · s2-r4-memoria-comando
+docker compose run --rm agente python -m agente memoria  # ← lámina 103 · s2-r4-memoria-comando
 #   → los diagnósticos de las ejecuciones anteriores, con su alcance
 #   → si sale vacía, es que solo se corrió con mock: no hubo diagnóstico
 
@@ -329,26 +329,26 @@ docker compose run --rm agente python -m agente memoria  # ← lámina 99 · s2-
 # ⚠️ ES EL CRITERIO DE ACEPTACIÓN DEL RETO
 
 # sonda · antes
-make senales                                # ← lámina 104 · s2-r4-antes-despues
+make senales                                # ← lámina 108 · s2-r4-antes-despues
 #   → Flota · 192 modelos · MAPE 13.8 · sesgo +0.7 · 10 de 192 · ~5,700
 
-make romper ESCENARIO=feed_caido            # ← lámina 104 · s2-r4-antes-despues · ⏱ ~40 s
+make romper ESCENARIO=feed_caido            # ← lámina 108 · s2-r4-antes-despues · ⏱ ~40 s
 
 # sonda · despues
-make senales                                # ← lámina 104 · s2-r4-antes-despues
+make senales                                # ← lámina 108 · s2-r4-antes-despues
 #   → Flota · 184 modelos  ← LO ÚNICO QUE CAMBIA
 #   → MAPE 13.8 · sesgo +0.8 · IDÉNTICOS al mundo sano
 #   → 9 de 184 · ~5,800 unidades de mas
 #   ⚠️ dejar la pantalla veinte segundos y preguntar qué cambió. La sala mira
 #     MAPE y sesgo, no ve nada, y ahí es cuando el denominador salta.
 
-make agente ARGS="--verboso"                # ← lámina 105 · s2-r4-ejecutar · 🔑
-docker compose run --rm agente python -m agente run --verboso  # ← lámina 107 · s2-r4-salida-2
+make agente ARGS="--verboso"                # ← lámina 109 · s2-r4-ejecutar · 🔑
+docker compose run --rm agente python -m agente run --verboso  # ← lámina 111 · s2-r4-salida-2
 #   → anomalia · tienda:arequipa · y NO recomienda reentrenar
 #   → si dice `deriva`, esa es la conversación: no distinguió una tienda muda
 #     de una degradación. Sirve igual, y sirve más.
 
-make reparar                                # ← lámina 105 · s2-r4-ejecutar · ⏱ ~40 s
+make reparar                                # ← lámina 109 · s2-r4-ejecutar · ⏱ ~40 s
 
 # 💼 NEGOCIO: **faltan 168 filas de telemetría porque una tienda entera dejó
 #    de reportar durante 21 días.** No hay un problema de demanda: hay un
@@ -374,9 +374,9 @@ make reparar                                # ← lámina 105 · s2-r4-ejecutar 
 curl -s "http://localhost:8000/v1/reentrenamientos"
 #   → []  · la bitácora está vacía
 
-make reparar && make romper ESCENARIO=sesgo_silencioso   # ← lámina 124 · s2-r5-deriva · ⏱ ~80 s
-make actuar ARGS="--verboso"                # ← lámina 124 · s2-r5-deriva · 🔑
-docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso  # ← lámina 123 · s2-r5-comando
+make reparar && make romper ESCENARIO=sesgo_silencioso   # ← lámina 129 · s2-r5-deriva · ⏱ ~80 s
+make actuar ARGS="--verboso"                # ← lámina 129 · s2-r5-deriva · 🔑
+docker compose run --rm -e EJECUTAR_ACCIONES=1 agente python -m agente run --verboso  # ← lámina 128 · s2-r5-comando
 #   → diagnóstico `deriva` · la política DEJA PASAR · 24 modelos reentrenados
 
 # sonda · despues
@@ -404,8 +404,8 @@ curl -s "http://localhost:8000/v1/reentrenamientos"
 curl -s "http://localhost:8000/v1/reentrenamientos"
 #   → un registro, el del bloque anterior
 
-make reparar && make romper ESCENARIO=feed_caido   # ← láminas 125 y 122 · s2-r5-anomalia · s2-r5-lectura · ⏱ ~80 s
-make actuar ARGS="--verboso"                # ← lámina 125 · s2-r5-anomalia · 🔑
+make reparar && make romper ESCENARIO=feed_caido   # ← láminas 130 y 126 · s2-r5-anomalia · s2-r5-lectura · ⏱ ~80 s
+make actuar ARGS="--verboso"                # ← lámina 130 · s2-r5-anomalia · 🔑
 #   → diagnóstico `anomalia` · la política NO EJECUTA NADA, y dice por qué
 #   → ese texto no lo escribió el LLM: es la regla explicándose
 
@@ -428,7 +428,7 @@ curl -s "http://localhost:8000/v1/reentrenamientos"
 # id: 135 s2-r5-panel · 🔑 la ejecución del panel
 # estado de partida: cualquiera · deja el mundo: igual
 
-docker compose up -d ui                     # ← lámina 135 · s2-r5-panel
+docker compose up -d ui                     # ← lámina 140 · s2-r5-panel
 #   → abrir http://localhost:8501
 #   → 1 · pestaña «El agente» → botón «Correr el agente», en vivo
 #   → 2 · más abajo: Reflexion · Recomendaciones · Accion

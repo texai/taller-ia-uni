@@ -328,6 +328,44 @@ items:
       siempre vuelve a `percepcion`: ese es el mini-bucle ReAct de ayer,
       ahora encerrado dentro de un solo nodo del grafo grande.
 
+  # Las quince líneas de la lámina anterior, dibujadas. Va inmediatamente
+  # después y no antes: primero se ve que el grafo es código —siete
+  # `add_node` y ocho `add_edge`— y recién entonces el dibujo, que si no
+  # parece un diagrama de arquitectura de los que nadie escribió nunca.
+  #
+  # Cada caja dice qué clave del estado escribe. Esa columna es la que
+  # convierte el dibujo en algo comprobable: al terminar la ejecución, el
+  # expediente tiene que tener exactamente esos campos rellenos.
+  - id: s2-r4-grafo-dibujado
+    tipo: diagrama
+    titulo: El mismo grafo, dibujado
+    entradilla: Siete nodos, y las tres flechas que van hacia atrás
+    clase: flujo
+    minutos: 3
+    contenido: |
+      flowchart TD
+        INI(["START"]) --> P["percepcion<br/>escribe · mensajes"]
+        P -->|"pide herramientas"| H["herramientas · ToolNode<br/>sin LLM"]
+        H -.-> P
+        P -->|"ya no pide: tiene evidencia"| D["diagnostico<br/>escribe · hipotesis, evidencia"]
+        D --> R["reflexion<br/>escribe · critica, vueltas+1"]
+        R -.->|"insuficiente, y queda vuelta"| P
+        R -.->|"insuficiente, y no quedan vueltas"| V["revision<br/>reescribe · hipotesis"]
+        R -->|"confirmado"| C["recomendacion<br/>escribe · recomendaciones"]
+        V --> C
+        C --> A["accion<br/>escribe · acciones · sin LLM"]
+        A --> FIN(["END"])
+    notas: |
+      **Es el dibujo de la lámina anterior, no otra arquitectura.**
+      Recorrerlo entero una vez y después señalar tres cosas.
+      - **Las tres punteadas vuelven, y no son lo mismo**: `herramientas` es
+        el bucle de ayer; `reflexion → percepcion` es «me falta evidencia»;
+        `reflexion → revision` es «la crítica quedó en pie». **Solo la
+        tercera es nueva.**
+      - **Las dos bifurcaciones las decide un `if`**, no el LLM.
+      - **Cada caja dice qué clave escribe**: o la dejó o no la dejó.
+      - Sin LLM hay dos: la que toca los datos y la que toca el mundo.
+
   - id: s2-guia-agente
     tipo: archivo
     titulo: "Guía 5 · Anatomía del agente"
@@ -428,12 +466,22 @@ items:
       puede objetar algo. El tope no es una limitación técnica, es la
       decisión de que en algún momento hay que emitir.
 
+      Con el 2, **solo cabe una vuelta atrás**. El contador lo incrementa
+      `reflexion`, no `percepcion`: en la primera reflexión vale 1 y
+      `1 < 2` deja volver; en la segunda vale 2 y el único destino posible
+      ya es el nodo siguiente.
+
       Y cuando el tope se agota con la crítica todavía viva, hace falta
-      alguien que se haga cargo. De ahí sale el nodo siguiente.
+      alguien que se haga cargo. De ahí sale ese nodo.
     notas: |
-      Buen momento para preguntar cuántas vueltas pondrían ellos. La
-      respuesta honesta es que dos alcanzan porque la reflexión ya vio la
-      evidencia; más vueltas suelen ser el agente buscando permiso.
+      - **Preguntar cuántas vueltas pondrían ellos.** Dos alcanzan porque
+        la reflexión ya vio la evidencia; más suelen ser el agente
+        buscando permiso.
+      - **El otro bucle, el de `herramientas`, no tiene tope**: gira
+        mientras el LLM siga pidiendo. Es el único punto del grafo sin
+        freno.
+      - Con eso queda sembrado el reto 5: **los frenos se ponen a mano, uno
+        por uno, y siempre falta alguno.**
 
   - id: s2-glosario-diagnostico
     tipo: glosario
