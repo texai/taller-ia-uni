@@ -363,6 +363,45 @@ items:
         más adelante.
       - **Leer «qué significa» antes de la ventana**: ver un freno vale más que ver una acción.
 
+  # El reto 5 mostraba la política —quién decide— y no la ejecución —quién
+  # escribe—. Es la única función del taller que le manda un POST a la
+  # plataforma, y merece verse entera.
+  - id: s2-r5-ejecutar-codigo
+    tipo: codigo
+    titulo: Y la función que sí escribe
+    entradilla: Lo único del agente que toca un modelo. Diez líneas, y todas cuelgan de un `if`.
+    lenguaje: python
+    ruta: agente/accion.py
+    numeros: ["141-148", "160-167"]
+    minutos: 4
+    contenido: |2
+      def ejecutar(hipotesis: dict, recomendaciones: list[dict]) -> list[dict]:
+          """Aplica la politica y dispara lo que sobrevive a ella."""
+          resultados = []
+          for decision in evaluar(hipotesis, recomendaciones):
+              if not decision.get("ejecutable"):
+                  resultados.append(decision)
+                  continue
+              try:
+                  resultados.append(
+                      {
+                          "accion": decision["accion"],
+                          "objetivo": decision["objetivo"],
+                          "ejecutada": True,
+                          "modelos_reentrenados": cuerpo.get("modelos"),
+                          "duracion_s": cuerpo.get("duracion_s"),
+                      }
+    notas: |
+      **Señalar el `if` resaltado y contar las líneas que hay debajo.** Todo
+      lo que el agente puede hacerle al mundo cuelga de esa condición.
+      - **`evaluar` decide, `ejecutar` obedece**, y están separadas a
+        propósito: se puede probar la política sin gastar una llamada al
+        modelo ni tocar un artefacto.
+      - **`decision["filtro"]`, no el texto del LLM.** Lo que viaja en el POST
+        son campos que la política construyó, no una frase que el modelo
+        redactó. Es la diferencia entre acotar y confiar.
+      - **`motivo` es lo que queda en la bitácora** para enero.
+
   - id: s2-r5-comando
     tipo: comando-anotado
     titulo: Ejecutarlo con permiso para actuar

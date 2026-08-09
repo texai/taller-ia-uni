@@ -497,6 +497,54 @@ items:
       sesgo silencioso, y es lo que hace que el criterio de aceptación pida
       "las 8 categorías" y no "bebidas".
 
+  # El nodo que sostiene la unidad y no tenía código. Se hablaba de él en
+  # prosa —qué se pregunta, por qué existe— y nunca se veía. El sábado hubo
+  # que abrir GitHub en vivo para enseñar `plano.py`; esto es para no repetirlo.
+  - id: s2-r4-reflexion-codigo
+    tipo: codigo
+    titulo: El nodo que se cuestiona, entero
+    entradilla: Cuatro preguntas y un veredicto de dos valores. Eso es toda la reflexión.
+    lenguaje: python
+    ruta: agente/grafo.py
+    numeros: ["215-216", "224-231", "234-239", "246-251"]
+    minutos: 5
+    contenido: |2
+      def reflexion(estado: Estado) -> dict:
+          """Intenta refutar la propia hipotesis antes de emitirla."""
+      Preguntate:
+      - La evidencia que citas, ¿sostiene de verdad esta conclusion, o la estas
+        forzando?
+      - ¿Confundiste una anomalia de datos con una deriva del modelo?
+      - El alcance que declaraste, ¿es el correcto? ¿Miraste si el patron aparece
+        tambien en otras categorias, tiendas o regiones?
+      - ¿Hay alguna herramienta que no llamaste y que cambiaria la conclusion?
+      
+      {{
+        "veredicto": "confirmado | insuficiente",
+        "objeciones": ["objecion concreta", "otra"],
+        "que_falta_mirar": "si el veredicto es insuficiente, que herramienta llamar y por que"
+      }}
+      
+          )
+          return {
+              "critica": critica,
+              "vueltas": estado.get("vueltas", 0) + 1,
+              "mensajes": [peticion, respuesta],
+          }
+      
+    notas: |
+      **Abrir el archivo de verdad al lado.** La ruta del encabezado enlaza a
+      estas líneas en el laboratorio.
+      - **Las cuatro preguntas son el nodo.** No es «sé crítico»: son cuatro
+        cosas concretas, y la segunda —anomalía contra deriva— es la que salva
+        el `feed_caido` de después del receso.
+      - **`veredicto` solo tiene dos valores**, y por eso se puede cablear una
+        arista con él. Un «sé exigente» en el prompt no se puede cablear.
+      - **`estado["mensajes"] + [peticion]`**: se critica a sí mismo con toda
+        la conversación delante, no con un resumen.
+      - **`vueltas + 1`** es lo que impide el bucle infinito. Sale en la lámina
+        del tope.
+
   - id: s2-r4-reflexion-que-es
     tipo: markdown
     titulo: Qué le pregunta la reflexión a su propio diagnóstico
@@ -584,6 +632,63 @@ items:
           razon: >-
             Vuelve mientras le queden vueltas. La pregunta es justamente qué
             pasa cuando se acaban.
+
+  # La otra mitad de la tesis, y tampoco tenía código. «Cuestionarse sin poder
+  # corregirse no sirve de nada» se decía tres veces en prosa y nunca se veía
+  # el nodo que corrige.
+  - id: s2-r4-revision-codigo
+    tipo: codigo
+    titulo: Y el nodo que corrige, entero
+    entradilla: Reescribe con las objeciones delante. Y NO mira evidencia nueva — eso es lo que lo hace honesto.
+    lenguaje: python
+    ruta: agente/grafo.py
+    numeros: ["267-268", "271", "279-289", "294-295"]
+    minutos: 5
+    contenido: |2
+      def revision(estado: Estado) -> dict:
+          """Reescribe el diagnostico haciendose cargo de sus propias objeciones."""
+              content=f"""Tu propia critica dejo tu diagnostico en pie de guerra.
+      Reescribelo haciendote cargo de ellas. Ya no vas a mirar mas evidencia: con
+      la que tienes alcanza, y es la misma que sostiene tus objeciones.
+      
+      - Si la critica dice que declaraste "sin_hallazgos" habiendo hallazgos,
+        corrige el tipo. Que no sepas la causa ultima no significa que no haya nada:
+        una deriva confirmada es un hallazgo aunque su origen quede abierto.
+      - Si dice que el alcance estaba mal, corrigelo. Si una senal aparece en todos
+        los grupos, el alcance es la flota.
+      - Si dice que exageraste, baja la severidad.
+      
+      Responde SOLO con el JSON del diagnostico, en el mismo formato de antes."""
+              "mensajes": [peticion, respuesta],
+          }
+      
+      
+    notas: |
+      **La frase resaltada es la tesis del reto**: *ya no vas a mirar más
+      evidencia; con la que tienes alcanza.*
+      - **Por qué importa**: si revisión pudiera volver a mirar, sería otra
+        vuelta de percepción y el agente nunca cerraría. Corrige el
+        razonamiento, no los datos.
+      - **Las tres reglas de abajo son las tres formas de equivocarse** que
+        salieron construyendo esto: negar el hallazgo, exagerar el alcance,
+        exagerar la severidad.
+      - **El `estado["hipotesis"]` como valor por defecto**: si el modelo
+        devuelve basura, se queda el diagnóstico anterior. Nunca se pierde.
+
+  - id: s2-r4-pausa-tesis
+    tipo: pausa-preguntas
+    titulo: Pausa · los dos nodos que sostienen la unidad
+    minutos: 2
+    disparadores:
+      - ¿Se les ocurre una quinta pregunta para la reflexión?
+      - ¿Por qué revisión NO puede volver a mirar evidencia?
+      - ¿Dónde pondrían ustedes un nodo así en su propio sistema?
+    notas: |
+      **Dos minutos, y justo acá**: acaban de ver el código de los dos nodos
+      de los que cuelga el reto.
+      - La segunda es la que comprueba si entendieron: **si revisión mirara
+        más evidencia, sería otra vuelta de percepción y no cerraría nunca.**
+      - Si nadie dice nada, seguir. La demo de después lo enseña solo.
 
   - id: s2-r4-por-que-revision
     tipo: markdown
