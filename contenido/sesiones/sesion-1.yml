@@ -22,5 +22,14 @@ unidades:
   - archivo: unidades/s01-u03-flota-telemetria.yml
   - archivo: unidades/s01-u04-el-laboratorio.yml
   - archivo: unidades/s01-u05-reto1-a-mano.yml
-  - archivo: unidades/s01-u06-reto2-percepcion.yml
-  - archivo: unidades/s01-u07-reto3-react-plano.yml
+
+# Los retos 2 y 3 se dictan el domingo, no el sábado.
+#
+# El sábado 8 la sesión llegó hasta el final del reto 1 —la segunda asistencia,
+# después del receso— y ahí se cerró. Sus dos unidades pasan a `sesion-2.yml`,
+# delante del repaso, porque el reto 4 se construye sobre el bucle plano del 3.
+#
+# Los archivos CONSERVAN el prefijo `s01-` y sus ítems el `s1-`. El orden lo
+# fija esta lista, no el nombre del archivo; renombrarlos habría roto las 29
+# referencias de la pauta y los identificadores que la clase ya tiene en su
+# historial. Es una mentira del nombre, y sale más barata que la alternativa.

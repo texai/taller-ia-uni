@@ -93,6 +93,19 @@ items:
         números.
       - Acá basta con decir qué compara. El detalle está en el glosario.
 
+  # La primera asistencia del domingo, y está acá por aritmética. Los minutos
+  # de las láminas corren largos —el sábado se dictaron 374 en 240 reales—, así
+  # que al final de la apertura caía en el minuto 8 de reloj y no en el 15 que
+  # pide la coordinación. Acá cae sobre los 15 de verdad, y es la última
+  # costura antes de la ventana de trabajo.
+  - id: s2-asistencia
+    tipo: asistencia
+    titulo: Tomar asistencia
+    nota: >-
+      Primera de las dos de hoy; la segunda es al volver del receso. Uno por
+      uno y en voz alta, con micrófono: no vale el chat de Zoom. Anotar
+      también a quien no vino ayer.
+
   - id: s1-glosario-estadistica
     tipo: glosario
     titulo: Y cuatro de estadística, porque las tres trampas son de ahí

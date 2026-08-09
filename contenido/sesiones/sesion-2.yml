@@ -17,6 +17,11 @@ horaFin: "13:00"
 unidades:
   - archivo: unidades/s02-u01-apertura.yml
   - archivo: unidades/s02-u02-caso-retail-192.yml
+  # Los dos retos que no cupieron el sábado. Van acá y no al final porque el
+  # reto 4 se construye sobre el bucle plano del 3: sin él, el repaso de las
+  # patologías no tiene de qué hablar. Ver la nota en `sesion-1.yml`.
+  - archivo: unidades/s01-u06-reto2-percepcion.yml
+  - archivo: unidades/s01-u07-reto3-react-plano.yml
   - archivo: unidades/s02-u03-repaso-patologias.yml
   - archivo: unidades/s02-u04-reto4-arquitectura-cognitiva.yml
   - archivo: unidades/s02-u05-reto5-accion-y-frenos.yml

@@ -13,6 +13,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   mkdtempSync,
+  readdirSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
@@ -964,12 +965,18 @@ items:
   );
 });
 
-test("el curso real vive en archivos por unidad, y el orden es el del nombre", () => {
+test("el curso real vive en archivos por unidad, uno por unidad", () => {
   // La versión anterior fijaba «6 unidades por sesión» a mano, y se rompió el
-  // día que entró una séptima. El número no es la invariante: lo son el
-  // reparto en archivos y que el listado alfabético SEA el orden del dictado
-  // (§1). Eso último es lo que hace que insertar una unidad en medio cueste un
-  // renombrado y no una revisión de todo el archivo de sesión.
+  // día que entró una séptima. La invariante es el reparto en archivos: una
+  // unidad, un archivo, y el orden lo manda la lista de la sesión.
+  //
+  // Hasta el 8 de agosto esto además exigía que la lista estuviera en orden
+  // alfabético, porque el prefijo `sNN-uNN` bastaba para saber cuándo se
+  // dictaba cada unidad. **Dejó de ser cierto ese sábado**: la sesión llegó
+  // hasta el reto 1 y los retos 2 y 3 pasaron al domingo sin renombrarse, para
+  // no romper las referencias de la pauta ni los identificadores que la clase
+  // ya tenía. Un taller que se dicta en vivo se reordena; lo que no puede
+  // cambiar es que cada unidad viva en su archivo.
   const curso = mod.cargarCurso();
   const dir = join(process.cwd(), "contenido", "sesiones");
 
@@ -982,12 +989,24 @@ test("el curso real vive en archivos por unidad, y el orden es el del nombre", (
       sesion.unidades.length,
       `${sesion.id}: una unidad, un archivo`,
     );
-    assert.deepEqual(
-      rutas,
-      [...rutas].sort(),
-      `${sesion.id}: las unidades no están en orden alfabético`,
+    assert.equal(
+      new Set(rutas).size,
+      rutas.length,
+      `${sesion.id}: un archivo listado dos veces`,
     );
   }
+
+  // Y que ningún archivo de unidad se quede fuera de las dos sesiones: al
+  // mover unidades de una a otra, olvidarse una es exactamente el error que
+  // nadie ve hasta que falta media hora de clase.
+  const listadas = curso.sesiones.flatMap((s) => s.unidades.length);
+  assert.equal(
+    listadas.reduce((a, b) => a + b, 0),
+    readdirSync(join(process.cwd(), "contenido", "unidades")).filter((f) =>
+      f.endsWith(".yml"),
+    ).length,
+    "hay archivos de unidad que ninguna sesión lista",
+  );
 
   assert.equal(curso.sesiones[0]?.unidades[0]?.id, "s1-apertura");
   assert.equal(curso.sesiones[1]?.unidades.at(-1)?.id, "s2-cierre");

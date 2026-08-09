@@ -17,33 +17,41 @@ items:
 
   - id: s2-portada
     tipo: titulo
-    titulo: La arquitectura cognitiva
-    entradilla: Hoy construimos lo que le faltaba al bucle
+    titulo: El agente, de cero a que se pueda creer
+    entradilla: Hoy se construye el bucle, y después lo que le falta
     minutos: 2
     notas: |
       Antes de empezar: `make arriba`. Nadie necesita haber dejado nada
       levantado de ayer, y quien viene por primera vez arranca igual.
+      - **Decir el plan del día en una frase**: primero los ojos del agente,
+        después el agente más simple que existe, y **cuando lo veamos divagar**,
+        las capas que lo arreglan.
 
+  # El sábado se llegó hasta el final del reto 1. Este dibujo decía «lo que
+  # construimos ayer: 3 herramientas + un LLM + 20 líneas de ReAct», y nada de
+  # eso ocurrió: se construye hoy, en las dos primeras horas. Proyectarlo tal
+  # cual habría abierto el domingo con una lámina que la sala sabe falsa.
   - id: s2-recap
     tipo: diagrama
-    titulo: Lo que construimos ayer
-    entradilla: Cuatro horas, y la misma forma de dibujo que abrió el sábado
+    titulo: Dónde nos quedamos ayer
+    entradilla: Cuatro horas, y una pregunta que quedó sin responder
     clase: componentes
     minutos: 4
     contenido: |
       flowchart LR
-        H["3 herramientas<br/>de percepcion"] --> B
-        L["un LLM<br/>con temperatura 0"] --> B
-        R["20 lineas<br/>de bucle ReAct"] --> B
-        B[("el agente de ayer:<br/>diagnostica, y<br/>suena convincente")] --> Q{"y ahora,<br/>se puede confiar?"}
-        Q --> NO["hoy: 4 patologias,<br/>ninguna del modelo"]
-        Q -.->|las proximas 4 horas| CAP["reflexion, revision,<br/>memoria, accion"]
+        M["192 modelos<br/>en produccion"] --> T
+        D["4 escenarios que<br/>degradan el mundo"] --> T
+        T[("la telemetria:<br/>17,472 filas que<br/>nadie mira")] --> Q{"y quien<br/>los mira?"}
+        Q --> AYER["ayer: a mano, con pandas.<br/>funciona una vez"]
+        Q -.->|las proximas 4 horas| HOY["hoy: herramientas, un agente,<br/>y las capas que lo hacen creible"]
     notas: |
-      **Decir en voz alta: es el mismo dibujo del sábado, con otras cajas.**
-      - **Señalar el rombo.** Ayer la pregunta era *quién los mira*; hoy es
-        **si se puede confiar en el que los mira**. Todo el domingo cuelga ahí.
-      - Para quien no vino: no hace falta haber estado. El bucle de ayer está
-        en `agente/plano.py` y se ejecuta con `make plano`.
+      **Es el dibujo del sábado con una caja más: la respuesta a mano.**
+      - **Señalar el rombo**: la pregunta sigue siendo *quién los mira*. Ayer
+        la contestamos con las manos y **costó lo que costó**; hoy se contesta
+        con un agente.
+      - **Recordar el 13.8 / +0.8**, que es contra lo que se compara todo.
+      - Para quien no vino: no hace falta haber estado. Se arranca con
+        `make arriba && make seed` y el reto 2 no supone nada del reto 1.
 
   - id: s2-guias
     tipo: descargas
@@ -56,7 +64,7 @@ items:
         descripcion: La de hoy. Del bucle plano al grafo, y por qué la diferencia importa
       - archivo: archivos/guias/04-las-siete-herramientas.pdf
         titulo: 4 · Las siete herramientas
-        descripcion: Los ojos del agente. De ayer, y hoy se dan por sabidas
+        descripcion: Los ojos del agente. Es la primera de hoy, y se usa en dos horas
       - archivo: archivos/guias/06-si-algo-falla.pdf
         titulo: 6 · Si algo falla
         descripcion: Las trece cosas que se rompieron montando esto
@@ -70,8 +78,10 @@ items:
         titulo: 3 · Romper el mundo
         descripcion: Los cuatro escenarios, que hoy se usan los cuatro
     notas: |
-      **2 min** · el orden cambia: primero la 5, que es la de hoy.
+      **2 min** · hoy se usan **tres**: la 4 en el reto 2, la 5 en el 4 y la 3
+      en los dos.
       - **Esta lámina es para quien llega hoy.** Quien vino ayer pasa de largo.
       - La 1 y la 2 son el contexto que se perdió: leerlas en el receso alcanza.
-      - **Señalar la 5 aparte**: es el mapa del domingo. Tenerla abierta durante
-        la lectura del grafo ahorra la mitad de las preguntas.
+      - **Señalar la 4 primero**, que es la que se abre en una hora, y la 5
+        aparte: tenerla puesta durante la lectura del grafo ahorra la mitad de
+        las preguntas.

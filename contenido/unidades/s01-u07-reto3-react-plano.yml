@@ -4,7 +4,7 @@ titulo: El primer agente, sin arquitectura
 objetivos:
   - Ver funcionar un ReAct plano, y verlo divagar
   - Nombrar las cuatro patologías de un bucle sin arquitectura
-  - Llegar al domingo con una pregunta abierta, no con una respuesta
+  - Salir de acá con una pregunta abierta, no con una respuesta
   - "Conceptos: ReAct, y determinismo del muestreo contra determinismo del sistema"
 requisitos:
   - Tener herramientas de percepción que no alarmen sobre lo normal
@@ -520,17 +520,23 @@ items:
       - ¿Qué harían ustedes para que dos ejecuciones del mismo día coincidieran?
       - ¿Dónde más han visto un número real usado para decir algo falso?
 
+  # Era el cierre del sábado —«nos vemos mañana a las 09:00»— y el sábado
+  # terminó en el reto 1. Ahora este tramo cae a media mañana del domingo, así
+  # que la lámina pasa a ser la bisagra hacia el repaso de patologías.
   - id: s1-cierre
     tipo: transicion
-    titulo: Cierre, y qué viene mañana
+    titulo: Y acá se acaba lo fácil
     vimos: >-
       Un mundo que se degrada en silencio, herramientas que sí lo detectan,
       y un agente que las usa bien y aun así divaga
     viene: >-
-      Las capas que convierten ese bucle en algo que se puede creer:
-      percepción, diagnóstico, reflexión, revisión, acción y memoria
+      Las cuatro patologías con nombre, y las capas que las arreglan:
+      reflexión, revisión, memoria y acción
     minutos: 3
     notas: |
-      Recordar la hora de mañana —09:00— y que no hace falta traer nada
-      levantado: se arranca con `make arriba`. Quien no vino hoy puede
-      seguir igual.
+      **La bisagra del día.** Hasta acá se construyó; de acá en adelante se
+      arregla.
+      - **Dejar la pregunta abierta y no contestarla**: el bucle funciona y no
+        se puede creer. Eso es lo que ocupa el resto de la mañana.
+      - Buen momento para mirar el reloj. Si va justo, el repaso de patologías
+        se lee en la mitad de tiempo. **El reto 4 no.**

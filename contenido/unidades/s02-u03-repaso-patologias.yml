@@ -1,13 +1,13 @@
 id: s2-repaso
 tipo: repaso
-titulo: Qué le faltaba al bucle de ayer
+titulo: Qué le faltaba a ese bucle
 objetivos:
-  - Emparejar cada patología de ayer con la capa que la resuelve
+  - Emparejar cada patología del reto 3 con la capa que la resuelve
   - Ver el grafo completo una vez, antes de construirlo
 items:
   - id: s2-donde-quedamos
     tipo: transicion
-    titulo: Dónde quedamos
+    titulo: Dónde estamos
     vimos: >-
       Un agente que funciona, llama herramientas y aun así divaga: cuatro
       patologías, ninguna del modelo
@@ -15,17 +15,6 @@ items:
       Las capas que lo arreglan, que no son un prompt más largo sino
       sitios donde algo pueda pasar
     minutos: 2
-
-  # Al minuto 14 de la sesión, que es lo más cerca que hay de los 15 que pide
-  # el correo de coordinación. Estaba en la lámina dos —minuto uno— y ahí un
-  # domingo a las 09:01 se marca ausente a media clase.
-  - id: s2-asistencia
-    tipo: asistencia
-    titulo: Tomar asistencia
-    nota: >-
-      Primera de las dos de hoy; la segunda es al volver del receso. Uno por
-      uno y en voz alta, con micrófono: no vale el chat de Zoom. Anotar
-      también a quien no vino ayer.
 
   - id: s2-patologias
     tipo: tabla
@@ -152,3 +141,39 @@ items:
           razon: >-
             Arregla una, y es la única sin sustituto. Buena respuesta si
             fue la suya — pero cubre una patología, no dos.
+
+  - id: s2-pausa-antes-del-receso
+    tipo: pausa-preguntas
+    titulo: Lo que quede, antes del corte
+    minutos: 3
+    disparadores:
+      - ¿Alguna de las cuatro patologías les suena de algo suyo?
+      - ¿Qué capa del grafo les parece la más difícil de justificar?
+      - ¿Hay algo del reto 2 o del 3 que quedó a medias?
+    notas: |
+      **Van 2h30 de mañana y viene el corte.** Es el momento de recoger lo que
+      quedó suelto, no de abrir tema nuevo.
+      - Si nadie dice nada, la tercera siempre saca algo: **los dos retos de la
+        mañana fueron densos y alguien se quedó atrás sin decirlo.**
+      - Si aparece una duda grande, **anotarla y contestarla después del
+        receso**. Alargar acá se come el descanso.
+
+  # El receso del domingo, movido acá cuando los retos 2 y 3 pasaron a esta
+  # sesión. Dentro del reto 4 quedaba al 59% de la mañana; acá cae en la mitad
+  # y sobre la mejor costura que hay: detrás de las cuatro patologías con
+  # nombre y delante de construir lo que las arregla. La segunda mitad es la
+  # difícil, y **90 min seguidos de grafo no los aguanta nadie**.
+  - id: s2-receso
+    tipo: receso
+    titulo: Receso
+    minutos: 20
+
+  # La «después del receso» que pide el correo de coordinación. Es la última
+  # que se toma en el programa: pasada esta, el acta ya no cambia.
+  - id: s2-asistencia-2
+    tipo: asistencia
+    titulo: Asistencia, la segunda
+    nota: >-
+      La última de las cuatro del taller. Uno por uno y en voz alta, con
+      micrófono: no vale el chat de Zoom. Si alguien no volvió del receso,
+      queda ausente en esta.

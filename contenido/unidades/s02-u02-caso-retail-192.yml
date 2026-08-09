@@ -1,6 +1,6 @@
-# El mismo caso del sábado, leído del mismo archivo. Va antes del repaso y no
-# después: quien no vino necesita el marco para que "dónde quedamos" quiera
-# decir algo.
+# El mismo caso del sábado, leído del mismo archivo. Va antes de los retos y
+# no después: quien no vino necesita el marco para que «la flota» quiera decir
+# algo. Y acá cierra la asistencia, que es la última costura antes del reto 2.
 id: s2-caso
 tipo: caso
 titulo: El caso
@@ -15,4 +15,4 @@ items:
       **3 min cronometrados.** El mismo caso del sábado, sin una palabra
       distinta — es lo que hace que quien no vino pueda seguir.
       - Quien no estuvo no necesita el relato de ayer, necesita el caso.
-      - Lo construido ayer va en la unidad siguiente. No adelantarlo.
+      - Detrás va el reto 2 directo. **No adelantarlo acá.**

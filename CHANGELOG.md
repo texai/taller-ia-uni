@@ -3,6 +3,32 @@
 Resumen de cambios por fecha, más reciente arriba. El detalle batch por batch
 vive en [`docs/DONE.md`](docs/DONE.md).
 
+## 2026-08-09
+
+### Los retos 2 y 3 pasan al domingo
+- El sábado 8 la sesión llegó **hasta el final del reto 1** —receso y segunda
+  asistencia incluidos— y ahí se cerró. Sus dos unidades se mueven a la
+  sesión 2, **delante del repaso de patologías**, porque el reto 4 se
+  construye sobre el bucle plano del 3.
+- **Los archivos conservan su prefijo `s01-` y los ítems su `s1-`.** El orden
+  lo manda la lista de la sesión, no el nombre; renombrarlos habría roto las
+  29 referencias de la pauta y los identificadores que la clase ya tiene en su
+  historial. La prueba que exigía orden alfabético se reescribió: lo que se
+  fija ahora es que ninguna unidad se quede fuera de las dos sesiones.
+- **Tres láminas mentían y se corrigieron.** «Lo que construimos ayer»
+  dibujaba tres herramientas y un bucle ReAct que **se construyen hoy**; la
+  portada prometía «lo que le faltaba al bucle» antes de que el bucle
+  exista; y el cierre del sábado se despedía hasta mañana a media mañana del
+  domingo. Ahora el repaso muestra la telemetría y la respuesta a mano, y el
+  cierre es la bisagra entre construir y arreglar.
+- **El receso y las dos asistencias del domingo, recolocados por reloj.** Los
+  minutos de las láminas corren ~1.6× largos —el sábado se dictaron 374 en 240
+  reales—, así que la primera asistencia caía al minuto 8 y el receso al 59%
+  de la mañana. Ahora: asistencia a los **14 min reales**, receso al **46%**,
+  y detrás la segunda. Los del sábado no se tocaron: ya se tomaron.
+- Una pausa de preguntas antes del receso, que el tramo del repaso pasó de 21
+  a 41 minutos y se quedó sin respiro.
+
 ## 2026-08-08
 
 ### Las interfaces web: cuándo abrirlas, qué pestaña y qué mirar
