@@ -624,6 +624,33 @@ items:
       - Se vuelve a esta sonda al terminar. Si sale distinto, alguien se dejó
         un `make reparar`.
 
+  # Sale de ensayar la pauta dos días seguidos: los mismos comandos sobre el
+  # mismo escenario dieron 5,717 y 6,569 unidades de más. No es un fallo —el
+  # mundo se genera contra la fecha— pero en clase iba a salir igual, porque
+  # hay gente con la siembra del sábado y gente que sembró hoy. Sin esta
+  # lámina, cada número distinto es una duda; con ella, es la lección.
+  - id: s1-r2-reproducible
+    tipo: tabla
+    titulo: Y si a ti te sale otro número
+    entradilla: La misma sonda, dos siembras con un día de diferencia. Cuatro columnas aguantan y una no.
+    minutos: 3
+    columnas: [La sonda, Siembra del 8, Siembra del 9, ¿Sirve de referencia?]
+    filas:
+      - ["MAPE medio", "13.8 %", "13.8 %", "**Sí.** Es una media de porcentajes"]
+      - ["Sesgo de la flota", "+0.8 %", "+0.7 %", "**Sí**, al primer decimal"]
+      - ["Sobre el umbral", "10 de 192", "10 de 192", "**Sí.** El conteo es estable"]
+      - ["Unidades de más", "6,569", "5,717", "**No.** Se mueve un 13 %"]
+    resaltar: [4]
+    notas: |
+      **Va a pasar hoy**: quien sembró ayer y quien sembró esta mañana no ven
+      el mismo número. Decirlo antes de que lo pregunten.
+      - **Por qué**: el mundo se genera contra la fecha, así que la ventana de
+        14 días cae sobre otros días. Es el laboratorio, no un fallo.
+      - **La lección es la del reto**: un umbral no se calibra contra el número
+        de una lámina, sino contra **tu línea base**, medida hoy.
+      - **Las proporciones sí se repiten**: el sesgo silencioso multiplica las
+        unidades de más por seis y medio las dos veces.
+
   - id: s1-r2-pausa-taller
     tipo: pausa-preguntas
     titulo: Pausa · antes de abrir el archivo
