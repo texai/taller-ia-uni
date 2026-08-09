@@ -5,6 +5,19 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-09
 
+### El cierre, a la mitad
+- De **48 min a 26**, para hacer sitio a los dos retos que se mudaron.
+- Queda **la cadena del argumento y nada más**: se pregunta cuántos de los
+  nueve errores estaban en el modelo, se enseña la tabla, se deja el **cero**
+  en pantalla, y se remata con la tesis y con qué hacer el lunes. Cada pieza
+  sostiene la siguiente.
+- Sale lo que era corroboración: la introducción a los nueve —la pregunta ya
+  la hace—, la pausa de en medio —hay otra al final—, las dos citas del agente
+  acusándose a sí mismo, las trece incidencias del entorno, y el enlace al
+  repositorio, que ya sale otras dos veces.
+- La pausa final dice ahora que **si la sala pregunta, se estira**: es mejor
+  destino para esos minutos que las láminas que se quitaron.
+
 ### Los retos 2 y 3 pasan al domingo
 - El sábado 8 la sesión llegó **hasta el final del reto 1** —receso y segunda
   asistencia incluidos— y ahí se cerró. Sus dos unidades se mueven a la
