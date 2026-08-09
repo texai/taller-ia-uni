@@ -438,7 +438,7 @@ make verificar ARGS="--reto 3"                                  # ← lámina S2
 # id: s1-r3-lectura · s1-r3-ejecutar · 🔑 tres ejecuciones · ⏱ ~1 min cada una
 # estado de partida: mundo SANO
 
-make romper ESCENARIO=sesgo_silencioso   # ← lámina S2·47 · s1-r3-lectura · ⏱ ~40 s
+make romper ESCENARIO=sesgo_silencioso   # ← láminas S2·47 y S2·48 · s1-r3-lectura · s1-r3-antes-despues · ⏱ ~40 s
 
 # sonda · antes
 make memoria
@@ -505,7 +505,7 @@ docker compose run --rm agente python -m agente memoria         # ← lámina S2
 docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'
 #   → 17473 (17,472 + cabecera)
 
-make romper ESCENARIO=feed_caido   # ← lámina S2·105 · s2-r4-ejecutar · ⏱ ~40 s
+make romper ESCENARIO=feed_caido   # ← láminas S2·105 y S2·104 · s2-r4-ejecutar · s2-r4-antes-despues · ⏱ ~40 s
 
 # sonda · despues
 docker compose run --rm plataforma sh -c 'wc -l < /datos/metricas.csv'

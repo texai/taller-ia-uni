@@ -428,12 +428,33 @@ export function SalidaAnotada({
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
       {item.comando && (
-        <p
-          className="mb-2 font-mono text-sm"
-          style={{ color: "var(--tinta-suave)" }}
-        >
-          $ {item.comando}
-        </p>
+        <div className="mb-2 flex items-baseline gap-3">
+          <p
+            className="min-w-0 flex-1 font-mono text-sm"
+            style={{ color: "var(--tinta-suave)" }}
+          >
+            $ {item.comando}
+          </p>
+          {/*
+            Botón solo cuando la línea se puede teclear tal cual.
+
+            Se quedan fuera dos clases. Las llamadas a herramienta del agente
+            —`→ estado_del_job()`— no son comandos de shell: copiarlas sería
+            entregar algo que falla. Y las cadenas de sonda —`make senales ·
+            make romper … · make senales`— son TRES comandos con una lectura
+            en medio; pegarlas juntas se salta justo la comparación por la que
+            existe la lámina.
+
+            El resto sí: `make senales`, `make verificar ARGS="--reto 3"`, el
+            `docker compose run` entero. Es la misma lección del bloque de
+            pandas del sábado — lo que hay que teclear tiene que poder
+            copiarse, o se teclea mal.
+          */}
+          {!/^\s*(#|→|…)/.test(item.comando) &&
+            !item.comando.includes(" · ") && (
+              <Copiar texto={item.comando} etiqueta="Copiar el comando" />
+            )}
+        </div>
       )}
 
       <BloqueAnotado

@@ -889,17 +889,17 @@ items:
     tipo: salida-anotada
     titulo: La trampa, en cinco números
     entradilla: La misma sonda, antes y después de romper. Cuatro números no se mueven, y el quinto es todo.
-    comando: make senales · make romper ESCENARIO=feed_caido · make senales
+    comando: make romper ESCENARIO=feed_caido
     minutos: 4
     salida: |
-      ANTES · mundo sano
+      $ make senales          # ANTES · mundo sano
         Flota · ultimos 14 dias · 192 modelos
         MAPE medio            13.8 %
         Sesgo de la flota     +0.8 %
         Sobre el umbral         10 de 192 modelos
         Unidades de mas      6,569
 
-      DESPUES · feed_caido
+      $ make senales          # DESPUES · feed_caido
         Flota · ultimos 14 dias · 184 modelos
         MAPE medio            13.8 %      igual
         Sesgo de la flota     +0.8 %      igual
@@ -920,6 +920,11 @@ items:
         explicacion: >-
           También idéntico. **Los dos números en los que confiaste toda la
           sesión anterior están ciegos acá**, y ese es el punto del escenario.
+    significa:
+      negocio: >-
+        Una tienda entera lleva 21 días sin reportar. Arequipa decide su stock a ciegas y el tablero de la central no lo sabe.
+      modelo: >-
+        Los 8 modelos de arequipa están sanos: faltan sus datos, no su calidad. Por eso MAPE y sesgo no se mueven y solo cae el denominador.
     notas: |
       **La lámina que hace posible el reto. Proyectarla y callarse veinte
       segundos.**

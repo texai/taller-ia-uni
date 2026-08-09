@@ -228,16 +228,16 @@ items:
     tipo: salida-anotada
     titulo: Qué le acabas de hacer al mundo
     entradilla: La misma sonda, antes y después de romper. Cinco números, y solo dos se mueven de verdad.
-    comando: make senales · make romper ESCENARIO=sesgo_silencioso · make senales
+    comando: make romper ESCENARIO=sesgo_silencioso
     minutos: 4
     salida: |
-      ANTES · mundo sano
+      $ make senales          # ANTES · mundo sano
         MAPE medio            13.8 %
         Sesgo de la flota     +0.8 %
         Sobre el umbral         10 de 192 modelos
         Unidades de mas      6,569
 
-      DESPUES · sesgo_silencioso
+      $ make senales          # DESPUES · sesgo_silencioso
         MAPE medio            14.5 %      +0.7
         Sesgo de la flota     +4.8 %      x6
         Sobre el umbral         16 de 192 modelos
@@ -257,6 +257,11 @@ items:
         explicacion: >-
           **Lo que cuesta, en unidades.** Treinta mil de más en almacén frente
           al ruido normal de seis mil. Eso es el sobre-stock que nadie pidió.
+    significa:
+      negocio: >-
+        Treinta mil unidades de más en almacén frente al ruido normal de seis mil. Es sobre-stock que nadie pidió, y ningún tablero de MAPE lo habría visto.
+      modelo: >-
+        Los 192 modelos son los mismos de hace un minuto. Lo que cambió es el mundo contra el que se miden, y el sesgo es la única señal con dirección.
     notas: |
       **Es la lámina que justifica el escenario. Proyectar los dos bloques
       juntos y dejar que la sala encuentre la diferencia.**
