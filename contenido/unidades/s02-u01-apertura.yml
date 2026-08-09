@@ -53,6 +53,54 @@ items:
       - Para quien no vino: no hace falta haber estado. Se arranca con
         `make arriba && make seed` y el reto 2 no supone nada del reto 1.
 
+  # Sale de una pregunta de un alumno el sábado: quería ver la arquitectura
+  # cognitiva entera. Existir, existía —`s2-el-grafo`, en el repaso—, pero cae
+  # a dos horas y media de empezar. Preguntar «a dónde vamos» y que la
+  # respuesta sea «a media mañana lo ves» es tener el hueco.
+  #
+  # Esta lámina es esa misma arquitectura, adelantada al minuto cinco y con
+  # UNA cosa más: qué reto abre cada pieza. No explica ningún nodo —eso sigue
+  # siendo del reto 4— y no amplía el alcance de nada: son las piezas que ya
+  # están escritas en el laboratorio.
+  - id: s2-mapa-cognitivo
+    tipo: diagrama
+    titulo: A dónde vamos hoy
+    entradilla: La arquitectura completa, y qué reto abre cada pieza. No hay que entenderla todavía.
+    clase: flujo
+    minutos: 4
+    contenido: |
+      flowchart TD
+        subgraph OJOS["RETO 2 · los ojos"]
+          H["7 herramientas de percepcion"]
+        end
+        subgraph GRAFO["RETO 4 · la arquitectura cognitiva"]
+          direction TB
+          P["percepcion"] --> D["diagnostico"]
+          D --> R["reflexion"]
+          R -.->|falta evidencia| P
+          R -.->|la critica quedo en pie| V["revision"]
+          R -.->|confirmado| C["recomendacion"]
+          V --> C
+          M[("memoria")] -.->|lee antes, escribe despues| D
+        end
+        subgraph ACCION["RETO 5 · el freno"]
+          A["politica · 12 lineas de Python"]
+        end
+        H --> B["RETO 3 · un LLM con esas herramientas<br/>y 20 lineas de bucle. Funciona, y divaga"]
+        B -->|"no alcanza: hoy le damos sitios"| P
+        C --> A
+    notas: |
+      **Sale de una pregunta de ayer y se contesta sin explicar un solo
+      nodo.** Lo que se lleva la sala es el mapa.
+      - **Nombrar cada caja de un tirón y no detenerse.** El reto 4 la recorre
+        entera; adelantarla le quita el efecto.
+      - **Señalar las flechas punteadas del recuadro grande**: son las que
+        vuelven hacia atrás, y son la diferencia con el bucle del reto 3.
+      - **El reto 5 está FUERA del recuadro a propósito**: la política no
+        razona, son doce líneas de Python.
+      - Si preguntan por el «no alcanza»: el bucle plano **también funciona**.
+        Lo que no se puede es creerle.
+
   # El reto 1 se dictó ayer entero; esto no lo repite. Son solo los dos
   # bloques de pandas que se pegaron a mano, para quien quiera reproducirlos
   # y para quien no vino. Con botón de copiar, que es lo que faltó el sábado.

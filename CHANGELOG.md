@@ -5,6 +5,19 @@ vive en [`docs/DONE.md`](docs/DONE.md).
 
 ## 2026-08-09 · tarde
 
+### La arquitectura cognitiva, al minuto cinco
+- Un alumno la pidió el sábado y **existir, existía** —`s2-el-grafo`, en el
+  repaso—, pero con los retos 2 y 3 delante cae a **dos horas y media de
+  empezar**. Preguntar «a dónde vamos» y que la respuesta sea «a media mañana
+  lo ves» es tener el hueco.
+- Lámina nueva en la apertura: la misma arquitectura, **y qué reto abre cada
+  pieza**. Reto 2 los ojos, reto 3 el bucle que funciona y divaga, reto 4 los
+  seis nodos con sus vueltas hacia atrás, reto 5 el freno — **fuera del
+  recuadro a propósito**, porque la política no razona.
+- **No explica un solo nodo y no amplía ningún reto**: son las piezas que ya
+  están escritas en el laboratorio, puestas en orden. El recorrido sigue
+  siendo del reto 4.
+
 ### El antes y el después de cada reto, medidos
 - Los retos del domingo rompían el mundo y **nunca se veía qué cambiaba**:
   `make senales` —la sonda del taller— no aparecía ni una vez en los cuatro.
