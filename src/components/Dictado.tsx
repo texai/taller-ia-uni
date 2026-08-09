@@ -235,7 +235,13 @@ function simboloDeSeñal(tipo: TipoItem): string {
   // `▶` para lo que se ejecuta y `▦` para lo que se mira. Se eligieron por
   // silueta y no por bonitos: en una lista de doscientas líneas lo que se
   // reconoce de reojo es la forma, no el detalle.
-  if (s === "ejecutar") return "▶";
+  // `▶` es la demo en vivo y va sola: es el punto donde el docente teclea
+  // delante de la sala, y el que hay que poder encontrar de reojo al
+  // prepararse. `▸`, más pequeño, es un comando o una salida para leer. `▦`
+  // lo que se mira. Se eligieron por silueta y no por bonitos: en una lista
+  // de doscientas líneas lo que se reconoce de lejos es la forma.
+  if (s === "demo") return "▶";
+  if (s === "ejecutar") return "▸";
   if (s === "grafico") return "▦";
   return "•";
 }
@@ -243,7 +249,8 @@ function simboloDeSeñal(tipo: TipoItem): string {
 function colorDeSeñal(tipo: TipoItem): string {
   if (FAMILIA[tipo] === "dictado") return "var(--color-aviso)";
   const s = señalDe(tipo);
-  if (s === "ejecutar") return "var(--color-acento)";
+  if (s === "demo") return "var(--color-acento)";
+  if (s === "ejecutar") return "var(--tinta-suave)";
   if (s === "grafico") return "var(--tinta)";
   return "var(--tinta-suave)";
 }
@@ -251,7 +258,8 @@ function colorDeSeñal(tipo: TipoItem): string {
 function nombreDeSeñal(tipo: TipoItem): string {
   if (FAMILIA[tipo] === "dictado") return "pausa";
   const s = señalDe(tipo);
-  if (s === "ejecutar") return "se ejecuta un comando";
+  if (s === "demo") return "demo en vivo: acá se teclea";
+  if (s === "ejecutar") return "un comando o su salida, para leer";
   if (s === "grafico") return "diagrama o captura";
   return "";
 }
@@ -624,13 +632,15 @@ export function Dictado({
             {sesion.horaInicio}–{sesion.horaFin} · {total} ítems
           </p>
 
-          {/* La leyenda. Tres símbolos sin explicar son tres símbolos que cada
-              uno interpreta a su manera, y ocupa una línea. */}
+          {/* La leyenda. Cuatro símbolos sin explicar son cuatro símbolos que
+              cada uno interpreta a su manera, y ocupan una línea. `demo` va
+              primero porque es el que se busca. */}
           <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px]">
             {(
               [
+                ["▶", "demo en vivo", "var(--color-acento)"],
                 ["◆", "pausa", "var(--color-aviso)"],
-                ["▶", "se ejecuta", "var(--color-acento)"],
+                ["▸", "comando", "var(--tinta-suave)"],
                 ["▦", "gráfico", "var(--tinta)"],
               ] as const
             ).map(([simbolo, nombre, color]) => (

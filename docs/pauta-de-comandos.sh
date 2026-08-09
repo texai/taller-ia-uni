@@ -345,6 +345,34 @@ make consola                                                    # ← s1-r1-a-ma
 # deja el mundo: campana_promocional
 
 
+# ── S2 · el repaso de pandas del domingo ─────────────────────────────────────
+# id: s2-repaso-pandas · el mismo bloque de arriba, condensado en una lamina
+# estado de partida: mundo SANO · deja el mundo: SANO
+#
+# No se dicta: se proyecta por si alguien quiere reproducir el reto 1, o para
+# quien no vino el sabado. Los dos bloques de Python son los MISMOS de arriba
+# y van con un solo boton de copiar cada uno -- que es lo que falto el sabado.
+
+# sonda · antes
+make senales
+#   → 13.8 / +0.8 / 10 de 192 · 6,569 unidades de mas
+
+make romper ESCENARIO=campana_promocional   # ← s2-repaso-pandas · ⏱ ~40 s
+make consola                                                # ← s2-repaso-pandas
+#   → se pegan los dos bloques de la lamina anterior de esta pauta
+#   → bloque 1: bebidas 31.6 / −33.7, y las otras siete entre 11.9 y 15.4
+#   → bloque 2: chorrillos 59.9 · magdalena 49.6 · jesus-maria 48.0
+#   ⚠ el segundo bloque necesita el `u` del primero. Pegado solo, da
+#     NameError: name 'u' is not defined -- es el fallo del sabado
+# exit()
+make reparar                                # ← s2-repaso-pandas · ⏱ ~40 s
+#   → obligatorio: el reto 2 empieza midiendo contra la flota sana
+
+# sonda · despues
+make senales
+#   → 13.8 / +0.8 / 10 de 192 · vuelve EXACTO. Si no, el reparar no corrio
+
+
 # ── S1·U5 · repararlo y romperlo otra vez · el silencioso ────────────────────
 # id: s1-r1-silencioso · ES EL COMANDO MÁS IMPORTANTE DEL TALLER
 # estado de partida: campana_promocional

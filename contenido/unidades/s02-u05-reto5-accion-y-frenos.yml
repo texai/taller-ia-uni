@@ -301,6 +301,31 @@ items:
       - **Señalar el `return None`**: si el objetivo no identifica modelos
         concretos, no se ejecuta. **En caso de duda, no.**
 
+  # El único reto con ventana de trabajo y sin «cuándo terminaste». Y es el
+  # que más lo necesita: acá el criterio no es que algo funcione, es que algo
+  # NO ocurra, y eso hay que decirlo o se lee como un fallo.
+  - id: s2-r5-criterios
+    tipo: criterios
+    titulo: Cuándo terminaste
+    entradilla: Dos ejecuciones, y en una de las dos el agente no hace nada. Eso es aprobar.
+    minutos: 2
+    criterios:
+      - texto: "Sobre deriva ejecuta: 24 modelos de una categoría, y queda en la bitácora"
+        pista: Una categoría son 24 tiendas. Acotado, reversible, y con el motivo escrito
+      - texto: "Sobre anomalía NO ejecuta, y la política dice por qué"
+        pista: Ese texto no lo escribió el LLM. Es la regla explicándose
+      - texto: Sabes decir qué línea de Python lo frenó
+        pista: No es el prompt, no es el modelo. Son doce líneas en `accion.py`
+      - texto: Sin `EJECUTAR_ACCIONES=1` no pasa nada, y también es correcto
+        pista: Viene apagado a propósito. El permiso es del operador, no del agente
+    notas: |
+      **El criterio raro del taller: la mitad de aprobar es que no ocurra
+      nada.** Decirlo antes de la ventana o alguien va a creer que se le rompió.
+      - **El segundo es el criterio de aceptación de verdad.** Si el agente
+        reentrena sobre `feed_caido`, la política no sirve.
+      - Si alguien pregunta cómo comprobar el cuarto: quitar el `-e` del
+        comando y verlo salir con `✗ no se ejecutó`.
+
   - id: s2-r5-lectura
     tipo: lectura
     titulo: La política, en su archivo

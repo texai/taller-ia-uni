@@ -53,6 +53,66 @@ items:
       - Para quien no vino: no hace falta haber estado. Se arranca con
         `make arriba && make seed` y el reto 2 no supone nada del reto 1.
 
+  # El reto 1 se dictó ayer entero; esto no lo repite. Son solo los dos
+  # bloques de pandas que se pegaron a mano, para quien quiera reproducirlos
+  # y para quien no vino. Con botón de copiar, que es lo que faltó el sábado.
+  - id: s2-repaso-pandas
+    tipo: demo
+    titulo: Cómo lo buscamos a mano, ayer
+    entradilla: Los dos bloques del reto 1, sin volver a contarlo. Para reproducirlo hoy en dos minutos.
+    minutos: 4
+    pasos:
+      - comando: make romper ESCENARIO=campana_promocional
+        esperado: "el mundo de ayer, otra vez · ⏱ ~40 s"
+      - comando: make consola
+        esperado: Python con pandas y /datos montado
+      - comando: "# 1 · dónde está el problema: por categoría"
+      - comando: |
+          import pandas as pd
+          m = pd.read_csv("/datos/metricas.csv", parse_dates=["fecha"])
+          u = m[m["fecha"] >= m["fecha"].max() - pd.Timedelta(days=13)]
+          por = u.groupby("categoria").agg(
+              mape=("mape", "mean"),
+              pronosticado=("unidades_pronosticadas", "sum"),
+              real=("unidades_reales", "sum"),
+          )
+          por["sesgo_pct"] = (por.pronosticado - por.real) / por.real * 100
+          por[["mape", "sesgo_pct"]].round(1).sort_values("mape", ascending=False)
+        esperado: |
+          bebidas   31.6  -33.7   ← se despega sola
+          panaderia 15.4   +6.7
+          lacteos   15.0   +2.5   … y las otras cinco, entre 11.9 y 14.8
+      - comando: "# 2 · ¿es una tienda, o es la categoría entera?"
+      - comando: |
+          b = u[u.categoria == "bebidas"]
+          b.groupby("tienda")["mape"].mean().round(1).sort_values().tail()
+        esperado: |
+          cusco 44.0 · huancayo 45.7 · jesus-maria 48.0
+          magdalena 49.6 · chorrillos 59.9   ← están mal TODAS
+      - comando: exit()
+      - comando: make reparar
+        esperado: "el mundo sano otra vez, antes del reto 2"
+    observar: >-
+      **El primer bloque contesta dónde y el segundo contesta de quién.**
+      Bebidas se despega sola —31.6 contra 15.4 de la siguiente— y el sesgo es
+      **negativo**: se pronosticó de MENOS, así que es venta perdida, no
+      sobre-stock. Y en el segundo, las cinco peores tiendas están todas mal:
+      **no es una tienda, es la categoría.** Esa distinción es la que decide
+      qué se reentrena, y es la que el agente tendrá que hacer solo.
+    respaldo: >-
+      Si pandas se atraviesa, la interfaz de :8501 ordena por MAPE con un clic.
+      Y los números están acá: no hace falta ejecutarlo para seguir el día.
+    notas: |
+      **No es una lámina para dictar: es para que la copien.** Dos minutos, y
+      solo si alguien lo pide o si hay gente nueva.
+      - **El bloque se copia entero con su botón** y se pega de una vez. El
+        sábado esto no tenía botón y hubo que arrastrar el ratón — es la razón
+        por la que falló.
+      - **El segundo bloque necesita el `u` del primero.** Si sale
+        `NameError: name 'u' is not defined`, es que se pegó solo el segundo.
+      - `make reparar` al final **no es opcional**: el reto 2 empieza midiendo
+        contra la flota sana.
+
   - id: s2-guias
     tipo: descargas
     titulo: Las seis guías, otra vez

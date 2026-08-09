@@ -701,21 +701,27 @@ export type TipoItem = Item["tipo"];
  * clase** — que es lo que hay que localizar de un vistazo cuando se prepara,
  * y lo que el alumno quiere encontrar cuando vuelve al material el lunes.
  *
- * Tres señales, y las tres responden a una pregunta distinta:
+ * Cuatro señales, y cada una responde a una pregunta distinta:
  *
- * - **`ejecutar`** — acá corre algo. Un comando, una demo en vivo, una
- *   herramienta que hay que levantar en su puerto.
+ * - **`demo`** — **el docente teclea acá, delante de la sala.** Es la señal
+ *   más fuerte de la barra y se separó de `ejecutar` a propósito: son los
+ *   puntos que hay que localizar al preparar, porque cada uno exige contar el
+ *   estado de antes y el de después. Un reto tiene varios, no uno.
+ * - **`ejecutar`** — acá hay un comando o su salida, para leer. No se teclea
+ *   necesariamente: se explica.
  * - **`grafico`** — acá hay un dibujo o una captura. Es lo que se busca
  *   cuando uno recuerda la forma y no el título.
  * - **`dictado`** (la familia) — acá se para la clase.
  */
-export type Señal = "ejecutar" | "grafico" | null;
+export type Señal = "demo" | "ejecutar" | "grafico" | null;
 
 export function señalDe(tipo: TipoItem): Señal {
   switch (tipo) {
-    // Se teclea o se levanta algo. `salida-anotada` entra porque es lo que
-    // el comando acaba de escupir: sin ella la demo queda a medias.
+    // El único tipo en el que el docente ejecuta en vivo. Su marca es aparte.
     case "demo":
+      return "demo";
+    // Se lee un comando o su salida. `salida-anotada` entra porque es lo que
+    // el comando acaba de escupir: sin ella la demo queda a medias.
     case "terminal":
     case "comando-anotado":
     case "salida-anotada":

@@ -797,6 +797,11 @@ items:
           una decisión de diseño de percepción, la misma del reto 2: se
           entrega una lectura, no un volcado. Sesenta y seis ejecuciones
           enteras en el prompt no caben, y no harían falta.
+    significa:
+      negocio: >-
+        Si el job no corrió, no hay pronósticos nuevos y el almacén decide a ciegas. Es una avería de operación, no de modelado.
+      modelo: >-
+        Ningún modelo está mal. Sin esta herramienta el agente vería métricas viejas y diagnosticaría deriva donde solo hubo un pipeline parado.
     notas: |
       **Paga una promesa que el curso hace tres veces**: se viene diciendo
       desde el sábado que un modelo puede estar sano y el job caído.
@@ -876,6 +881,55 @@ items:
         pista: Si dice "bebidas" leyó mal la forma del problema
       - texto: "feed_caido → anomalia, tienda:arequipa, y NO reentrenar"
         pista: Esta es la trampa. La flota se ve impecable.
+
+  # La nota de la demo pedía «señalar el denominador, 184 y no 192» y ese
+  # número sale de `make senales`, que ninguna lámina ejecutaba. Acá está,
+  # medido, y es la trampa entera: MAPE y sesgo IDENTICOS al mundo sano.
+  - id: s2-r4-antes-despues
+    tipo: salida-anotada
+    titulo: La trampa, en cinco números
+    entradilla: La misma sonda, antes y después de romper. Cuatro números no se mueven, y el quinto es todo.
+    comando: make senales · make romper ESCENARIO=feed_caido · make senales
+    minutos: 4
+    salida: |
+      ANTES · mundo sano
+        Flota · ultimos 14 dias · 192 modelos
+        MAPE medio            13.8 %
+        Sesgo de la flota     +0.8 %
+        Sobre el umbral         10 de 192 modelos
+        Unidades de mas      6,569
+
+      DESPUES · feed_caido
+        Flota · ultimos 14 dias · 184 modelos
+        MAPE medio            13.8 %      igual
+        Sesgo de la flota     +0.8 %      igual
+        Sobre el umbral          9 de 184 modelos
+        Unidades de mas      6,431
+    anotaciones:
+      - texto: "Flota · ultimos 14 dias · 184 modelos"
+        explicacion: >-
+          **Ocho modelos han desaparecido, y es lo único que lo delata.**
+          Arequipa entera dejó de reportar: 8 categorías × 21 días = 168 filas
+          que **no existen**. No son ceros, es ausencia.
+      - texto: "MAPE medio            13.8 %      igual"
+        explicacion: >-
+          **Idéntico al mundo sano.** Y tiene que serlo: los modelos que
+          quedan están perfectamente. La media de lo que sí reporta no se
+          entera de lo que falta.
+      - texto: "Sesgo de la flota     +0.8 %      igual"
+        explicacion: >-
+          También idéntico. **Los dos números en los que confiaste toda la
+          sesión anterior están ciegos acá**, y ese es el punto del escenario.
+    notas: |
+      **La lámina que hace posible el reto. Proyectarla y callarse veinte
+      segundos.**
+      - **Preguntar antes de anotar nada: ¿qué cambió?** La sala mira MAPE y
+        sesgo, no ve nada, y ahí es cuando el denominador salta.
+      - **192 → 184 es la única señal**, y ningún tablero de umbrales la
+        tiene: los tableros miran los modelos que reportan.
+      - De acá sale la decisión cara del reto 5: **reentrenar con datos que
+        faltan mete el hueco dentro del modelo.**
+      - Al terminar el reto, `make reparar` devuelve los 192.
 
   - id: s2-r4-ejecutar
     tipo: demo

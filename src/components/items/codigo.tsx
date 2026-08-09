@@ -56,11 +56,31 @@ function EnWindows({ html, texto }: { html: string; texto?: string }) {
 export function Codigo({ item }: { item: ItemCodigo }) {
   // Si falta el resaltado, el código se muestra igual, sin color. Una lámina
   // sin colores es un contratiempo; una lámina en blanco es una clase parada.
-  const html =
-    item.html ?? comoTextoPlano(recortar(item.contenido ?? "", item.lineas));
+  const fuente = recortar(item.contenido ?? "", item.lineas);
+  const html = item.html ?? comoTextoPlano(fuente);
+
+  /**
+   * Botón de copiar, y solo cuando hay algo que pegar.
+   *
+   * La mayoría de estos bloques son **una cita de un archivo**: se leen, no se
+   * copian, y un botón ahí es ruido. Pero unos pocos son código que la clase
+   * tiene que pegar en `make consola`, y esos se distinguen porque **no
+   * declaran `ruta`**: no citan un archivo, traen trabajo.
+   *
+   * La diferencia no es cosmética. El sábado, las diez líneas de pandas del
+   * reto 1 eran el único bloque del taller que había que pegar y el único sin
+   * botón: hubo que arrastrar el ratón por encima de un `<pre>` con resaltado
+   * de sintaxis, que es como se pierde una línea sin enterarse.
+   */
+  const paraPegar = !item.ruta && fuente.trim().length > 0;
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
+      {paraPegar && (
+        <div className="mb-2 flex justify-end">
+          <Copiar texto={fuente.trimEnd()} etiqueta="Copiar el bloque" />
+        </div>
+      )}
       <div
         className="overflow-hidden rounded-xl border"
         style={{ borderColor: "var(--borde)" }}
@@ -529,6 +549,23 @@ export function Demo({ item }: { item: ItemDemo }) {
 
   return (
     <Marco titulo={item.titulo} entradilla={item.entradilla} ancho="ancho">
+      {/*
+        La banda. `En vivo` en gris pequeño se confundía con las etiquetas de
+        las otras láminas, y estos son los únicos momentos en que el docente
+        teclea delante de la sala: los que hay que localizar al preparar y los
+        que exigen contar el estado de antes y el de después. Lleva el mismo
+        `▶` que la barra lateral, para que se reconozcan como lo mismo.
+      */}
+      <div
+        className="mb-3 flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em]"
+        style={{
+          background: "color-mix(in srgb, var(--color-acento) 14%, transparent)",
+          color: "var(--color-acento)",
+        }}
+      >
+        <span aria-hidden>▶</span>
+        Demo en vivo · se teclea acá
+      </div>
       <Caja tono="acento">
         <Etiqueta>En vivo</Etiqueta>
         <ol className="mt-4 space-y-4">

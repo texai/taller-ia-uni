@@ -158,6 +158,31 @@ items:
       - Que exista escrita cambia cómo se siente quien levanta la mano: **es un
         caso previsto, no quedarse atrás.**
 
+  # Los otros retos tienen su «cuándo terminaste» y este no lo tenía, porque
+  # acá no se construye nada. Pero sin criterio la ventana de lectura no tiene
+  # final: el alumno no sabe si ya vio lo que había que ver.
+  - id: s1-r3-criterios
+    tipo: criterios
+    titulo: Cuándo terminaste
+    entradilla: Este reto no se aprueba escribiendo código. Se aprueba habiendo visto cuatro cosas.
+    minutos: 2
+    criterios:
+      - texto: Sabes decir qué hacen las veinte líneas, sin leerlas
+        pista: Pide herramienta, la ejecuta, mete el resultado en la conversación, repite
+      - texto: Lo ejecutaste tres veces contra el MISMO mundo
+        pista: Mismo escenario, misma temperatura 0, mismo prompt
+      - texto: Puedes nombrar en qué se diferencian las tres salidas
+        pista: >-
+          No en el estilo: en qué herramientas llamó y en qué concluyó
+      - texto: Puedes nombrar las cuatro patologías, y ninguna es del modelo
+        pista: Concluye pronto, ordena por lo ruidoso, dramatiza, y mañana lo redescubre
+    notas: |
+      **Es el único reto sin código que escribir, y por eso necesita criterio.**
+      - **El segundo es el que la gente se salta**: ejecutar una vez y creer
+        que ya está. La divergencia solo se ve con tres.
+      - Si alguien acaba pronto: que lo corra una cuarta vez, o que cambie el
+        escenario y mire si las patologías son las mismas. **Lo son.**
+
   - id: s1-r3-lectura
     tipo: lectura
     titulo: El bucle, en su archivo
@@ -194,6 +219,53 @@ items:
       - **No saltarse la primera ejecución**: las tres de la lámina siguiente
         se comparan contra esta.
       - **Leer «qué significa» antes de ejecutar**: lo que cambia no es el dato, es quién lo mira.
+
+  # El reto rompe el mundo dentro de la ventana de trabajo y hasta ahora nadie
+  # veía qué había cambiado: se pasaba de «mundo sano» a «ejecuta el agente»
+  # sin la cifra en medio. Esta lámina es el antes/después del comando, que es
+  # lo único que convierte «te digo que se degradó» en «míralo».
+  - id: s1-r3-antes-despues
+    tipo: salida-anotada
+    titulo: Qué le acabas de hacer al mundo
+    entradilla: La misma sonda, antes y después de romper. Cinco números, y solo dos se mueven de verdad.
+    comando: make senales · make romper ESCENARIO=sesgo_silencioso · make senales
+    minutos: 4
+    salida: |
+      ANTES · mundo sano
+        MAPE medio            13.8 %
+        Sesgo de la flota     +0.8 %
+        Sobre el umbral         10 de 192 modelos
+        Unidades de mas      6,569
+
+      DESPUES · sesgo_silencioso
+        MAPE medio            14.5 %      +0.7
+        Sesgo de la flota     +4.8 %      x6
+        Sobre el umbral         16 de 192 modelos
+        Unidades de mas     37,297        x5.7
+    anotaciones:
+      - texto: "MAPE medio            14.5 %      +0.7"
+        explicacion: >-
+          **Siete décimas.** Ese es el motivo del nombre: un tablero con
+          umbral en el MAPE no se entera. Si mañana alguien pregunta por qué
+          no saltó ninguna alarma, la respuesta está en esta línea.
+      - texto: "Sesgo de la flota     +4.8 %      x6"
+        explicacion: >-
+          **Por seis, y hacia arriba.** El sesgo sí lo ve, porque tiene
+          dirección: se está pronosticando de MÁS, sistemáticamente y en las
+          ocho categorías a la vez.
+      - texto: "Unidades de mas     37,297        x5.7"
+        explicacion: >-
+          **Lo que cuesta, en unidades.** Treinta mil de más en almacén frente
+          al ruido normal de seis mil. Eso es el sobre-stock que nadie pidió.
+    notas: |
+      **Es la lámina que justifica el escenario. Proyectar los dos bloques
+      juntos y dejar que la sala encuentre la diferencia.**
+      - **La pregunta que hay que hacer en voz alta**: ¿cuál de los cuatro
+        números dispararía tu tablero de hoy? Casi siempre: ninguno.
+      - **MAPE +0.7 contra sesgo ×6** es el par que resume las dos sesiones.
+        Ya salió en el reto 1; acá vuelve medido sobre la flota entera.
+      - Si a alguien le salen otros números, que compare las **proporciones**,
+        no las cifras: el mundo se genera contra la fecha del día.
 
   - id: s1-r3-que-hace-bien
     tipo: markdown

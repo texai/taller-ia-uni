@@ -189,6 +189,11 @@ items:
           Y encima le da el candidato. La siguiente llamada acierta. **Esto es
           diseño de herramienta, no cortesía**: el LLM no tiene ninguna otra
           fuente sobre este mundo que lo que devuelven las herramientas.
+    significa:
+      negocio: >-
+        Un identificador mal escrito no cuesta un error de sistema: cuesta que el agente se invente el modelo que no encontró.
+      modelo: >-
+        La herramienta devuelve los nombres válidos, así que el LLM se corrige solo en la vuelta siguiente. El mensaje de error ES parte del prompt.
     notas: |
       **Enganchar con la anterior**: si la docstring es prompt, el valor de
       retorno también — y el de error más que ninguno.
@@ -527,6 +532,11 @@ items:
           CENTRO también son ocho modelos, y está en el otro extremo. **Los dos
           grupos chicos ocupan los dos bordes de la tabla.** Esa es toda la
           lección: el ruido no tiene signo, tiene tamaño de muestra.
+    significa:
+      negocio: >-
+        Región NORTE se despega: es donde el escenario golpeó. Y el recuento va primero, para que nadie alarme sobre dos modelos.
+      modelo: >-
+        La herramienta entrega ordenado y con el recuento delante. Lo que decide qué mira el agente no es su criterio: es el orden en que se lo damos.
     notas: |
       **Decirlo: es la herramienta que produjo la tabla de umbrales.** Los
       números no salieron de la intuición de nadie.
@@ -573,6 +583,46 @@ items:
     notas: |
       De ahí que el umbral de sesgo sea de un dígito y el de MAPE de dos.
       No están en la misma escala porque no parten del mismo sitio.
+
+  # La sonda de partida. El reto se juzga contra este mundo: si la herramienta
+  # enciende una bandera sobre ESTOS números, está mal calibrada. Sin la
+  # lámina, «la flota sana» era una idea; acá son cinco cifras en pantalla.
+  - id: s1-r2-antes
+    tipo: salida-anotada
+    titulo: Contra qué se calibra
+    entradilla: El mundo sano, medido. Es el examen de tu herramienta, y hay que verlo antes de escribirla.
+    comando: make senales
+    minutos: 3
+    salida: |
+      Flota · ultimos 14 dias · 192 modelos
+        MAPE medio            13.8 %
+        Sesgo de la flota     +0.8 %
+        Cobertura media      0.883
+        Sobre el umbral         10 de 192 modelos
+        Unidades de mas      6,569
+    anotaciones:
+      - texto: "Sesgo de la flota     +0.8 %"
+        explicacion: >-
+          **Ocho décimas, y ese es todo el margen que tienes.** Una flota sana
+          no tiene sesgo. Si tu umbral marca esto, mañana marcará todos los
+          días y nadie volverá a mirarlo.
+      - texto: "Sobre el umbral         10 de 192 modelos"
+        explicacion: >-
+          Diez modelos malos **en un mundo sano**. No es un fallo: unos son
+          peores que otros y siempre lo fueron. Un umbral que pretenda dejar
+          esto en cero está persiguiendo un mundo que no existe.
+      - texto: "Unidades de mas      6,569"
+        explicacion: >-
+          El ruido de fondo del negocio, en unidades. Cualquier alarma tiene
+          que valer **más** que esto para que alguien se levante a mirarla.
+    notas: |
+      **Anotar los cinco números y dejarlos a la vista todo el reto.**
+      - **El criterio del reto es este mundo con cero banderas.** No «pocas»:
+        cero.
+      - **El 10 de 192 es la lámina.** Calibrar no es llevar los errores a
+        cero, es distinguir el ruido normal de un cambio.
+      - Se vuelve a esta sonda al terminar. Si sale distinto, alguien se dejó
+        un `make reparar`.
 
   - id: s1-r2-pausa-taller
     tipo: pausa-preguntas

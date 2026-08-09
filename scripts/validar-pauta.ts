@@ -85,6 +85,14 @@ export function comandosDelCurso(): { id: string; comando: string }[] {
       for (const crudo of crudos) {
         const comando = sinColetilla(crudo.trim());
         if (!comando) continue;
+        // Un bloque de varias líneas no es un comando de shell: es código que
+        // se **pega** dentro de un intérprete, y por eso el paso lo trae
+        // entero —con un solo botón de copiar— en vez de partido en líneas.
+        // La pauta lo documenta como prosa bajo su `make consola`, que es
+        // donde de verdad se ensaya; exigir aquí una coincidencia literal
+        // obligaría a escribirlo colapsado en una línea, que no se puede
+        // pegar.
+        if (comando.includes("\n")) continue;
         if (NO_SE_TECLEAN.some((m) => comando.includes(m))) continue;
         if (vistos.has(comando)) continue;
         vistos.add(comando);

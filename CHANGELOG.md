@@ -3,6 +3,49 @@
 Resumen de cambios por fecha, más reciente arriba. El detalle batch por batch
 vive en [`docs/DONE.md`](docs/DONE.md).
 
+## 2026-08-09 · tarde
+
+### El antes y el después de cada reto, medidos
+- Los retos del domingo rompían el mundo y **nunca se veía qué cambiaba**:
+  `make senales` —la sonda del taller— no aparecía ni una vez en los cuatro.
+  Existía solo en la pauta privada.
+- Tres láminas nuevas con la sonda, y **los números están medidos**, no
+  supuestos: se sembró un mundo virgen, se aplicó cada escenario y se corrió
+  `senales` contra los cuatro.
+  - **Reto 2** · contra qué se calibra: 13.8 / +0.8 / 10 de 192. El criterio
+    del reto es este mundo con cero banderas, y ahora se ve.
+  - **Reto 3** · antes y después de `sesgo_silencioso`: MAPE **+0.7**, sesgo
+    **×6**, unidades de más **×5.7**. Ese par es el taller entero.
+  - **Reto 4** · antes y después de `feed_caido`: MAPE y sesgo **idénticos**,
+    y la flota pasa de **192 a 184 modelos**. La nota pedía señalar ese 184 y
+    ninguna lámina lo mostraba.
+- **Criterios de aceptación** para los retos 3 y 5, que eran los únicos sin
+  ellos. El del 5 es el raro del taller: *la mitad de aprobar es que el agente
+  no haga nada*, y hay que decirlo o se lee como un fallo.
+- `significa` en las tres salidas de herramienta que lo pedían y el validador
+  no veía, porque sus «comandos» son `→ estado_del_job()` y no un `make`.
+
+### Las demos, marcadas como lo que son
+- La barra distinguía «se ejecuta» de todo lo demás, y ahí caían por igual una
+  demo en vivo y una salida para leer. **Son cosas distintas**: la demo es
+  donde el docente teclea delante de la sala y tiene que contar el antes y el
+  después.
+- Cuatro señales ahora: **▶ demo en vivo** (acento, la que se busca), ◆ pausa,
+  **▸ comando** (gris, para leer) y ▦ gráfico.
+- Y en la lámina, una banda: **▶ DEMO EN VIVO · SE TECLEA ACÁ**.
+- Son **seis puntos** en el domingo: uno en el reto 3, uno en el 4, **tres en
+  el 5** y el repaso de pandas. No es uno por reto.
+
+### El bloque de pandas ya se puede copiar
+- El sábado falló pegarlo, y la causa estaba en el material: **era el único
+  código del taller que había que pegar y el único sin botón de copiar**.
+  `codigo` no lo tenía. Ahora lo lleva, y solo cuando el bloque **no cita un
+  archivo** — los que citan se leen, no se copian.
+- Lámina nueva en la apertura del domingo con **los dos bloques del reto 1** y
+  nada más: los comandos, su salida real medida con la campaña aplicada, y el
+  aviso de que el segundo necesita el `u` del primero. Que es exactamente el
+  `NameError` que se llevó el intento del sábado.
+
 ## 2026-08-09
 
 ### El cierre, a la mitad
