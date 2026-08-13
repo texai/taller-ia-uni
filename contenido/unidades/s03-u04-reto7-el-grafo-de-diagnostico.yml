@@ -1,0 +1,303 @@
+# Unidad 4 de la sesión 3 · reto 7. El corazón de la sesión.
+#
+# Es el equivalente del reto 4 del domingo: allí se construyó la arquitectura
+# cognitiva, acá se ve la misma forma resistiendo un dominio donde nadie sabe
+# la respuesta. La idea de la que cuelga la unidad es la misma que allí —una
+# reflexión que no puede corregir es decorativa— con una vuelta de tuerca que
+# el laboratorio no tenía: acá el crítico **no recuerda**, a propósito, y eso
+# va en contra del ahorro.
+#
+# El receso va al final de esta unidad, como en las dos sesiones anteriores.
+#
+# PENDIENTE del batch de contenido: `s3-r7-grafo` está declarado como
+# `diagrama` y debería ser `diagrama-secuencia` con su fuente PlantUML bajo
+# `contenido/puml/`, recorrible mensaje a mensaje como el del reto 4. Se
+# escribe con la unidad; acá solo se reserva el sitio y los minutos.
+id: s3-reto-7
+tipo: reto
+titulo: El grafo de diagnóstico
+objetivos:
+  - Recorrer un grafo de cinco nodos donde el flujo de control es código
+  - Entender qué lleva dentro una vuelta atrás para que no sea «mira otra vez»
+  - Ver por qué el crítico no debe recordar, aunque recordar sea más barato
+  - "Conceptos: nodo adversario, tope de turnos, vuelta de reflexión"
+requisitos:
+  - El reto 6. Un nodo y su contrato.
+items:
+  - id: s3-r7-titulo
+    tipo: titulo
+    titulo: "Reto 7 · El grafo de diagnóstico"
+    entradilla: Cinco nodos, y uno cuyo trabajo es encontrar el error de los otros
+    minutos: 2
+    notas: |
+      **50 min + receso al final.** El reto más largo de la sesión.
+      - **Avisar que el receso va al cierre de esta unidad**, para que nadie
+        calcule mal su ritmo.
+
+  - id: s3-r7-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Cincuenta minutos, cinco pasos, y el receso al final
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · los cinco nodos<br/>y su reparto de modelos"] --> B["2 · el bucle:<br/>tres salidas del critico"]
+        B --> C["3 · que lleva dentro<br/>una vuelta atras"]
+        C --> D["4 · por que el critico<br/>no recuerda"]
+        D --> E["5 · el plan, y lo unico<br/>que cruza la parada"]
+        E --> F{{"criterio: escribir cinco objeciones<br/>que no sean genericas"}}
+    notas: |
+      - **El paso 4 es el difícil** y es el que se llevan: una decisión que va
+        en contra del ahorro, tomada a propósito.
+
+  - id: s3-r7-los-cinco
+    tipo: tabla
+    titulo: Los cinco nodos
+    entradilla: Su único trabajo, y con qué corre cada uno
+    minutos: 4
+    columnas: [Nodo, Su único trabajo, Modelo]
+    filas:
+      - ["percepción", "Sigue el rastro y reúne evidencia. No concluye.", "el del bucle"]
+      - ["hipótesis", "Convierte la evidencia en causa raíz, con su confianza.", "el del bucle"]
+      - ["reflexión", "Intenta refutarla. Si falta evidencia, devuelve el control.", "**el más fuerte**"]
+      - ["revisión", "Si la crítica queda en pie y no hay vueltas, corrige.", "estándar"]
+      - ["plan", "Traduce la hipótesis a repositorios, ramas y cambios.", "estándar"]
+    resaltar: [2]
+    notas: |
+      **La fila resaltada es la única con el modelo más caro.** Es la lección
+      del reparto.
+      - **El porqué**: un crítico flojo confirma todo, y una reflexión que
+        siempre dice «confirmada» convierte la arquitectura cognitiva en un
+        prompt largo con pasos.
+      - **Los dos primeros están DENTRO del bucle**: no se pagan una vez, se
+        pagan una por vuelta.
+
+  - id: s3-r7-grafo
+    tipo: diagrama
+    titulo: El grafo, con las tres salidas del crítico
+    entradilla: Y la parada donde el agente se detiene a esperar
+    clase: flujo
+    minutos: 5
+    contenido: |
+      flowchart TD
+        PREP["preparar<br/>sin LLM"] --> PERC["percepcion<br/>unico nodo con herramientas"]
+        PERC --> HIP["hipotesis"]
+        HIP --> REF{"reflexion<br/>el adversario"}
+        REF -->|confirmado| PLAN["plan"]
+        REF -.->|insuficiente y quedan vueltas| PERC
+        REF -.->|insuficiente y no quedan| REV["revision"]
+        REV --> PLAN
+        PLAN --> STOP{{"PARADA<br/>espera aprobacion"}}
+    notas: |
+      - **Señalar las dos flechas punteadas**: son las que vuelven, y son la
+        diferencia con un prompt encadenado.
+      - **La parada no es una advertencia, es el final del comando.** No existe
+        ningún clon hasta que una persona apruebe.
+      - `preparar` no usa modelo: trae el ticket y sus adjuntos y nada más.
+
+  - id: s3-r7-pregunta-critico
+    tipo: pregunta
+    titulo: El reparto de modelos
+    minutos: 4
+    segundos: 60
+    pregunta: >-
+      Hay que recortar el gasto del diagnóstico a la mitad. ¿De qué nodo
+      bajarías el modelo primero?
+    opciones:
+      - Percepción, que es el que más tarda
+      - Reflexión, que corre en cada vuelta
+      - Plan, que solo transcribe decisiones ya tomadas
+    respuesta: 2
+    solucion: >-
+      Plan. Corre una sola vez y solo transcribe decisiones ya tomadas.
+      Percepción es cara pero es la que reúne la evidencia, y la reflexión es
+      justo la que no se abarata: si el crítico deja de encontrar el error, las
+      vueltas que ahorra en modelo se gastan en un diagnóstico que no vale.
+    notas: |
+      **Decisión de diseño (§17).** La sala se divide entre 0 y 1.
+      - **La trampa está en «el que más tarda»**: tardar y costar no son lo
+        mismo, y ninguno de los dos es «lo que se puede perder».
+
+  - id: s3-r7-reflexion-prompt
+    tipo: codigo
+    titulo: Qué se le pide al crítico
+    entradilla: prompts/diagnostico/reflexion.md — ocho objeciones, ninguna genérica
+    lenguaje: markdown
+    minutos: 5
+    contenido: |
+      Critica este diagnóstico. Sé exigente: tu trabajo es **encontrar el
+      error**, no aprobarlo.
+
+      1. **¿Se resolvieron las DOS cosas —qué shelltool y qué rama de ese
+         shelltool— con una comprobación de verdad?** Exige ver **cómo** se
+         comprobó, no que se afirme.
+      2. **¿La causa está en el shelltool o en el repo que reportó?** El
+         síntoma aparece donde no vive la causa.
+      ...
+      8. **¿Se afirmó algo como dato que era lectura?** Contrástalo con la
+         evidencia antes de objetarlo: acusar de inventar algo que sí estaba
+         cuesta una vuelta entera y no corrige nada.
+    notas: |
+      - **Ninguna objeción es genérica.** Cada una es la cicatriz de un
+        diagnóstico que salió mal.
+      - **La 8 es la contraria**: protege contra un crítico demasiado agresivo.
+      - Un crítico que dice «revisa si hay errores» no encuentra nada.
+
+  - id: s3-r7-vuelta
+    tipo: codigo
+    titulo: Qué lleva dentro una vuelta
+    entradilla: El encargo concreto, y el tope recortado
+    lenguaje: python
+    minutos: 5
+    contenido: |
+      if vueltas < config.MAX_VUELTAS:
+          encargo = (
+              "## Vuelta de reflexión\n\n"
+              "Ya recorriste esto una vez y tu propia crítica encontró un "
+              f"hueco:\n\n{critica.get('que_falta_mirar') or motivo}\n\n"
+              "Ve a por ESO. No repitas el recorrido entero."
+          )
+          continue
+
+      # y el tope baja de 50 a 15 en la vuelta:
+      nodo_percepcion = replace(PERCEPCION, max_turnos=15)
+    notas: |
+      - **La vuelta no es «mira otra vez».** Volver a percibir sin decir qué
+        falta es pagar la misma búsqueda dos veces para obtener lo mismo.
+      - **Por eso el esquema obliga a que `que_falta_mirar` sea accionable**:
+        el comando concreto, no «investigar más».
+      - **15 y no 50**: en la vuelta ya no se explora, se va a por un hueco.
+
+  - id: s3-r7-no-recuerda
+    tipo: markdown
+    titulo: El crítico no recuerda
+    minutos: 4
+    contenido: |
+      Todos los nodos continúan su conversación cuando el bucle los devuelve a
+      la vida. Es más fiel y **es más barato**: reanudar lee el prefijo de
+      caché en vez de recrearlo.
+
+      El adversario no. Estrena conversación en cada vuelta, y eso está
+      declarado en una línea:
+
+      `recuerda=False`
+
+      Un crítico que recuerda haber objetado —o haber aprobado— **ya está
+      anclado**: juzga su criterio anterior en vez de la evidencia nueva.
+    notas: |
+      - **Es una decisión que va en contra del ahorro**, tomada a propósito.
+        Decirlo así.
+      - **El sesgo tiene nombre fuera de la IA**: quien ya emitió un juicio
+        tiende a defenderlo. Preguntar a la sala si les suena de alguna
+        reunión.
+
+  - id: s3-r7-turnos-vueltas
+    tipo: comparacion
+    titulo: Un turno y una vuelta no son lo mismo
+    entradilla: Dos topes distintos, y se confunden con facilidad
+    minutos: 5
+    izquierda: |
+      **Turno**
+
+      - una llamada a herramienta
+      - vive **dentro** de una invocación
+      - lo limita `--max-turns`, hoy en 50
+      - cada turno reenvía la conversación entera
+      - el consumo crece con el **cuadrado**
+    derecha: |
+      **Vuelta**
+
+      - que la reflexión devuelva el control
+      - vive **en el grafo**, en Python
+      - lo limita `MAX_VUELTAS`, hoy en 1
+      - cada vuelta repaga percepción e hipótesis enteras
+      - es el parámetro que más mueve el reloj
+    notas: |
+      - **La confusión es la lámina.** Preguntar cuál de los dos cuesta más y
+        dejar que se equivoquen.
+      - **`MAX_VUELTAS=0` no es «sin reflexión»**: quita la arista hacia atrás,
+        pero el crítico corre igual y `revision` corrige. No hay forma de
+        saltárselo, y es deliberado.
+
+  - id: s3-r7-cuadratico
+    tipo: metrica
+    titulo: Lo que pasó sin tope
+    minutos: 3
+    valor: "4.7"
+    unidad: millones de tokens
+    contexto: >-
+      Y nueve minutos, en una sola pasada de percepción antes de que existiera
+      el tope. Cada turno reenvía la conversación entera: un `Read` que
+      devuelve 200 KB no cuesta 200 KB, cuesta 200 KB por cada turno que quede.
+    tono: alerta
+    notas: |
+      - **Leer el número antes de explicarlo.** 4.7 millones para diagnosticar
+        un ticket.
+      - **El argumento para subir de 25 a 50**: un tope no cuesta nada en las
+        ejecuciones que no lo alcanzan. La pregunta no es cuánto cuesta
+        subirlo, sino qué pasa hoy en los runs que se quedan cortos — y lo que
+        pasa es que **la evidencia se corta y el diagnóstico sigue igual de
+        convencido**.
+
+  - id: s3-r7-pausa
+    tipo: pausa-preguntas
+    minutos: 3
+    disparadores:
+      - ¿Su reflexión del domingo confirmaba casi siempre? ¿Con qué modelo corría?
+      - ¿Qué pasaría si le dieran memoria al crítico entre vueltas?
+
+  - id: s3-r7-plan
+    tipo: codigo
+    titulo: Lo único que cruza la parada
+    entradilla: esquemas/plan.json
+    lenguaje: json
+    minutos: 4
+    contenido: |
+      {
+        "required": ["repositorios"],
+        "properties": {
+          "repositorios": {
+            "type": "array",
+            "items": {
+              "required": ["repo", "rama", "rama_base", "cambio"]
+            }
+          },
+          "sin_cambio_de_codigo": { "type": ["boolean", "null"] },
+          "riesgo": { "type": ["string", "null"] },
+          "jira": { "type": ["object", "null"] }
+        }
+      }
+    notas: |
+      - **Es un archivo de texto editable a mano**: quitar un repositorio o
+        corregir una rama antes del paso siguiente es abrirlo y guardarlo.
+      - **El campo `jira` lleva un título y un comentario SUGERIDOS**, no
+        aplicados: el ticket es de otra persona.
+      - **Un requisito que no está en el plan no se implementa**, y no se ve
+        hasta que devuelven el ticket.
+
+  - id: s3-r7-criterios
+    tipo: criterios
+    titulo: Con qué se sale de este reto
+    minutos: 3
+    criterios:
+      - Cinco objeciones escritas para un dominio propio, ninguna genérica
+      - Un criterio de corte que distinga una objeción que obliga a volver de un matiz
+      - El esquema de salida del crítico, con `veredicto` como enumeración
+      - Una respuesta escrita a si ese crítico debe recordar entre vueltas
+    notas: |
+      **Se hace en papel o en un archivo propio.** El laboratorio no se toca.
+      - **El criterio real es el segundo**: sin él, el crítico devuelve el
+        control siempre y el bucle no termina.
+
+  - id: s3-r7-transicion
+    tipo: transicion
+    minutos: 1
+    vimos: Un grafo de cinco nodos, un crítico que no recuerda, y dos topes que no son lo mismo
+    viene: Receso, y después el único grafo que escribe código
+
+  - id: s3-r7-receso
+    tipo: receso
+    minutos: 15
+    notas: |
+      **15 min.** Al volver empieza el reto 8.

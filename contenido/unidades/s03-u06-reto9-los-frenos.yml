@@ -1,0 +1,213 @@
+# Unidad 6 de la sesión 3 · reto 9.
+#
+# Cierra la promesa de la pregunta de apertura (`s3-pregunta-confiar`), donde
+# la sala apostó por «el prompt» y se dejó sin corregir. Acá se cobra.
+#
+# Es el reto más corto de la sesión y el que más se puede reimplementar sin
+# nada montado: un hook es un script que lee JSON por stdin y sale 0 o 2.
+#
+# PENDIENTE del batch de contenido: `s3-r9-pruebas` está declarado como
+# `terminal` y debería ser `salida-anotada` — la salida de la suite son
+# sesenta y siete líneas y lo que enseña es cómo se lee, no que salió verde.
+id: s3-reto-9
+tipo: reto
+titulo: Los frenos
+objetivos:
+  - Distinguir las tres capas de límites y de qué depende cada una
+  - Escribir un hook que intercepte antes de ejecutar y falle cerrado
+  - Elegir entre lista blanca y lista negra con un criterio, no por costumbre
+  - "Conceptos: hook, fallar cerrado, parada del sistema"
+requisitos:
+  - El reto 8. El agente ya escribe archivos.
+items:
+  - id: s3-r9-titulo
+    tipo: titulo
+    titulo: "Reto 9 · Los frenos"
+    entradilla: La pregunta de la primera hora, contestada
+    minutos: 2
+    notas: |
+      **25 min.** Recordar la apuesta de la apertura antes de empezar.
+      - **Volver a contar las manos** de quienes dijeron «el prompt».
+
+  - id: s3-r9-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Veinticinco minutos, cuatro pasos
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · las tres capas,<br/>de mas blanda a mas dura"] --> B["2 · el hook:<br/>contrato y fallar cerrado"]
+        B --> C["3 · lista blanca<br/>o lista negra"]
+        C --> D["4 · donde para<br/>el sistema"]
+        D --> E{{"criterio: un hook propio<br/>con pruebas que bloquean Y permiten"}}
+
+  - id: s3-r9-tres-capas
+    tipo: diagrama
+    titulo: Las tres capas
+    entradilla: Y de qué depende cada una
+    clase: flujo
+    minutos: 4
+    contenido: |
+      flowchart TD
+        N["el nodo quiere<br/>ejecutar algo"] --> C1["1 - el prompt<br/>depende de que el modelo colabore"]
+        C1 --> C2["2 - las banderas<br/>depende de que la lista este completa"]
+        C2 --> C3{"3 - el hook<br/>PreToolUse - falla cerrado"}
+        C3 -->|exit 0| OK["se ejecuta"]
+        C3 -->|exit 2| NO["bloqueado, y el motivo<br/>vuelve al modelo"]
+    notas: |
+      - **Las dos primeras se pueden eludir. La tercera intercepta la llamada
+        antes de ejecutarla.**
+      - **Que el motivo vuelva al modelo importa**: un bloqueo silencioso hace
+        que reintente en bucle; uno explicado le hace cambiar de estrategia.
+      - **Están duplicadas a propósito** entre la capa 2 y la 3. No es
+        descuido, es defensa en profundidad.
+
+  - id: s3-r9-hook
+    tipo: codigo
+    titulo: El contrato, y fallar cerrado
+    entradilla: .claude/hooks/guardia.sh
+    lenguaje: bash
+    minutos: 4
+    contenido: |
+      # entrada: JSON por stdin con .tool_name y .tool_input
+      # salida 0  -> se permite
+      # salida 2  -> se BLOQUEA, y stderr vuelve al modelo como motivo
+      #
+      # FALLA CERRADO. Si algo sale mal aquí dentro —jq ausente, JSON raro— se
+      # bloquea. Un guardia que se cae y deja pasar no es un guardia.
+
+      bloquear() {
+        echo "BLOQUEADO por la política del agente: $1" >&2
+        exit 2
+      }
+    notas: |
+      - **«Un guardia que se cae y deja pasar no es un guardia.»** Es la frase.
+      - **El alcance se declara honesto** en el propio archivo: reconoce
+        comandos peligrosos y valida rutas, **no es un sandbox**. Un documento
+        que promete más de lo que la herramienta hace produce confianza
+        injustificada.
+      - **La escritura se valida por RUTA**; `Bash`, por lista de comandos.
+
+  - id: s3-r9-pruebas
+    tipo: salida-anotada
+    titulo: La suite que no cuesta dinero
+    entradilla: Alimenta al hook con el mismo JSON que le manda la CLI
+    minutos: 4
+    comando: make test SOLO=guardia
+    salida: |
+      git
+        ok    git push
+        ok    git push encadenado tras &&
+        ok    git push con -C
+        ok    git checkout -- .
+        ok    git status
+        ok    git diff
+      borrar y mover
+        ok    rm -rf en un clon ajeno
+        ok    rm dentro del ticket
+      rutas de escritura
+        ok    escribe dentro del ticket
+        ok    escribe en un clon ajeno
+
+      67 ok · 0 fallos
+    significa:
+      negocio: >-
+        Es lo que permite dejar al agente suelto sobre 1644 repositorios sin
+        mirarlo. Sin esta suite, los límites son una promesa escrita en un
+        prompt; con ella, son una propiedad comprobada en cada cambio.
+      modelo: >-
+        Nada, y ese es el punto: no se invoca al modelo ni una vez. Por eso
+        corre en cada cambio y no cuesta un centavo — al revés que la prueba
+        de humo, que sí invoca y por eso no entra en el `make test` de cada rato.
+    anotaciones:
+      - texto: "git push con -C"
+        explicacion: >-
+          **Este caso salió de un agujero real.** `git` acepta banderas antes
+          del subcomando, y dos llevan valor suelto: `-C <ruta>` y
+          `-c <clave=valor>`. La expresión original solo miraba `git push`, así
+          que `git -C repos/x push` pasaba limpio.
+      - texto: "git checkout -- ."
+        explicacion: >-
+          No mueve historia —por eso no estaba con `rebase`— pero es el que de
+          verdad destruye: en el clon equivocado se lleva una tarde de trabajo
+          y **no deja ni reflog**.
+      - texto: "git status"
+        explicacion: >-
+          Una prueba que **permite**. Cada regla tiene dos, y esta es la mitad
+          que casi nadie escribe: sin ella, la forma más fácil de pasar la
+          suite es bloquear todo.
+      - texto: escribe en un clon ajeno
+        explicacion: >-
+          `Write` y `Edit` no se juzgan por comando sino **por ruta**: se
+          normaliza sin exigir que exista —el archivo puede ser nuevo— y tiene
+          que caer bajo el directorio del ticket.
+      - texto: 67 ok · 0 fallos
+        explicacion: >-
+          Sesenta y siete casos y **ni una invocación al modelo**. Por eso
+          corre en cada cambio.
+    notas: |
+      - **No invoca al modelo**: es la prueba más importante del repositorio y
+        es gratis.
+      - **Cada regla tiene DOS pruebas**: una que bloquea lo peligroso y otra
+        que deja pasar lo legítimo. Sin la segunda, la forma más fácil de pasar
+        la suite es bloquear todo — y un guardia que bloquea todo se desactiva
+        el primer día.
+      - **Encontró agujeros reales**: `git -C <ruta> push` se escapaba de la
+        expresión, y `curl -X POST` con el método antes de la URL pasaba.
+
+  - id: s3-r9-blanca-negra
+    tipo: comparacion
+    titulo: Lista blanca o lista negra
+    entradilla: Las dos están en el mismo archivo, y no es incoherencia
+    minutos: 4
+    izquierda: |
+      **Lista negra** — git, gh, jira, terraform
+
+      - se enumera lo prohibido
+      - el conjunto peligroso es pequeño y **enumerable**
+      - `push`, `commit`, `tag`, `remote`, `rebase`, `checkout`
+      - riesgo: un verbo nuevo no está en la lista
+    derecha: |
+      **Lista blanca** — AWS
+
+      - se enumera lo permitido
+      - miles de subcomandos, y **crecen solos**
+      - `describe-*`, `get-*`, `list-*`, `head-*`… lo demás se bloquea
+      - riesgo: bloquea algo legítimo hasta que se agregue
+    notas: |
+      - **La regla de decisión**: si el conjunto peligroso es enumerable, lista
+        negra; si crece solo, lista blanca.
+      - **Con AWS cualquier lista negra se queda corta** el día que sale un
+        servicio nuevo.
+
+  - id: s3-r9-paradas
+    tipo: tabla
+    titulo: Dónde para el sistema
+    entradilla: Tres paradas, y ninguna es una advertencia
+    minutos: 3
+    columnas: [Parada, Qué queda hecho, Qué es de la persona]
+    filas:
+      - ["Tras el diagnóstico", "Un análisis y un plan editable", "Aprobar, y teclear el comando siguiente"]
+      - ["Tras preparar", "El clon y la rama", "Los cambios, los commits y los PRs"]
+      - ["Lo que sale hacia fuera", "El texto redactado", "Publicarlo"]
+    notas: |
+      - **Son el final de un comando, no un aviso.** No existe ningún clon
+        hasta que alguien aprueba.
+      - **La tercera tiene una razón que no es técnica**: el ticket es de otra
+        persona, así que la aclaración va por comentario y nunca editando su
+        descripción.
+      - En AWS: solo lectura. **Una autorización no se extiende a la siguiente
+        vez.**
+
+  - id: s3-r9-pausa
+    tipo: pausa-preguntas
+    minutos: 1
+    disparadores:
+      - ¿Qué haría falta bloquear en el agente que escribieron el domingo?
+
+  - id: s3-r9-transicion
+    tipo: transicion
+    minutos: 1
+    vimos: Tres capas, un hook que falla cerrado, y las tres paradas del sistema
+    viene: El cierre — lo que se mide, lo que se recuerda y lo que se aprende

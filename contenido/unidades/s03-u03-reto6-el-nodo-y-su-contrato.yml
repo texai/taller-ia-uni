@@ -1,0 +1,271 @@
+# Unidad 3 de la sesión 3 · reto 6.
+#
+# Numerado 6 porque continúa los cinco del laboratorio, aunque su trabajo sea
+# otro: acá no se construye desde cero, se lee código de producción y se
+# reimplementa el patrón en archivos propios. `taller-ia-uni-lab` no se toca.
+#
+# El orden es deliberado: primero la pieza (el nodo), después el grafo que la
+# usa (reto 7). Al revés, el grafo se explicaría con una caja negra dentro.
+id: s3-reto-6
+tipo: reto
+titulo: El nodo y su contrato
+objetivos:
+  - Ver un nodo declarado como datos, no como clase con lógica
+  - Entender por qué el contexto se cita por ruta y no se incrusta
+  - Validar la salida contra un esquema en el borde, y reintentar con el error como pista
+  - "Conceptos: esquema de salida, contrato de nodo"
+requisitos:
+  - Haber visto el grafo del reto 4.
+items:
+  - id: s3-r6-titulo
+    tipo: titulo
+    titulo: "Reto 6 · El nodo y su contrato"
+    entradilla: La pieza más pequeña, y la que sostiene todo lo demás
+    minutos: 2
+    notas: |
+      **40 min.** Avisar que este reto **no se ejecuta**: se lee.
+      - El laboratorio queda cerrado en la sesión 2; lo de hoy se reimplementa
+        en archivos propios.
+
+  - id: s3-r6-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Cuarenta minutos, cuatro pasos
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · un nodo declarado<br/>como datos"] --> B["2 · el contexto:<br/>rutas, no contenido"]
+        B --> C["3 · el contrato:<br/>esquema y reintento"]
+        C --> D["4 · las herramientas,<br/>y el hueco que tenian"]
+        D --> E{{"criterio: escribir un nodo<br/>con su esquema y su reintento"}}
+    notas: |
+      Gramática de mapa de reto (§16), igual que los cinco anteriores.
+      - **El paso 4 es el que sorprende**: un error real donde el código y la
+        documentación decían lo mismo y el sistema hacía otra cosa.
+
+  - id: s3-r6-un-nodo
+    tipo: markdown
+    titulo: Datos, no comportamiento
+    minutos: 3
+    contenido: |
+      En el laboratorio cada nodo era una función. Acá un nodo es **una fila de
+      una tabla**: nombre, prompt, esquema, documentos, herramientas, modelo.
+
+      Añadir un nodo al sistema no es escribir código. Y la consecuencia
+      importa más de lo que parece: **el grafo entero se lee como una tabla de
+      nodos y aristas**, así que cabe en una pantalla y un cambio se ve en el
+      diff.
+    notas: |
+      - **La frase corta**: si añadir un nodo es escribir una clase, el grafo
+        deja de poder leerse de un vistazo.
+
+  - id: s3-r6-dataclass
+    tipo: codigo
+    titulo: La declaración de un nodo
+    entradilla: agente/nodo.py
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      @dataclass
+      class Nodo:
+          nombre: str
+          prompt: str                      # ruta relativa dentro de prompts/
+          esquema: str | None = None       # ruta relativa dentro de esquemas/
+          documentos: list[str] = field(default_factory=list)
+          herramientas: list[str] = field(default_factory=list)
+          modelo: str | None = None
+          esfuerzo: str | None = None
+          max_turnos: int | None = None
+          recuerda: bool = True
+    notas: |
+      - **Señalar `recuerda`**: se cobra en el reto 7. Es lo que hace que el
+        crítico no se ancle.
+      - **`modelo` y `esfuerzo` son dos diales distintos**: de qué es capaz, y
+        cuánto se lo trabaja antes de responder.
+      - No leer campo por campo. **Los cinco que afectan al costo** son los
+        interesantes: modelo, esfuerzo, max_turnos, herramientas, documentos.
+
+  - id: s3-r6-sistema
+    tipo: codigo
+    titulo: El contexto se cita, no se incrusta
+    entradilla: El mensaje de sistema es igual para todos los nodos
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      def _sistema(nodo: Nodo) -> str:
+          partes = [
+              _leer_prompt("comun/identidad.md"),
+              _leer_prompt("comun/limites.md"),
+          ]
+          if nodo.documentos:
+              listado = "\n".join(f"- {config.DOCS / d}" for d in nodo.documentos)
+              partes.append(
+                  "## Contexto de dominio\n\n"
+                  "Lee estos documentos antes de responder...\n\n"
+                  f"{listado}\n"
+              )
+          return "\n\n---\n\n".join(partes)
+    notas: |
+      - **Lo que viaja son rutas, no contenido.** El nodo abre lo que necesita.
+      - **El porqué**: son ~1650 líneas de contexto. Mandarlas enteras es caro
+        y además **empeora el razonamiento** — el nodo que redacta un mensaje
+        de commit no necesita los doce branching models.
+
+  - id: s3-r6-docs
+    tipo: tabla
+    titulo: Qué documentos declara cada nodo
+    entradilla: Y por qué ninguno los declara todos
+    minutos: 3
+    columnas: [Nodo, Documentos]
+    filas:
+      - ["percepción", "01 · 02 · 03"]
+      - ["hipótesis", "03 · 05"]
+      - ["reflexión", "03 · 05"]
+      - ["revisión", "03"]
+      - ["plan", "03 · 05"]
+    notas: |
+      - **`revision` solo declara uno.** Es el nodo más acotado: corrige una
+        hipótesis con objeciones concretas delante.
+      - Preguntar a la sala qué pasaría si todos declararan los cinco.
+
+  - id: s3-r6-esquema
+    tipo: codigo
+    titulo: El contrato de salida
+    entradilla: esquemas/reflexion-diagnostico.json
+    lenguaje: json
+    minutos: 3
+    contenido: |
+      {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["veredicto", "objeciones"],
+        "properties": {
+          "veredicto": { "enum": ["confirmado", "insuficiente"] },
+          "objeciones": { "type": "array", "items": { "type": "string" } },
+          "que_falta_mirar": { "type": ["string", "null"] }
+        }
+      }
+    notas: |
+      - **El `enum` de dos valores es lo que permite que Python escriba
+        `if critica["veredicto"] != "insuficiente"`** sin miedo.
+      - Sin esquema, el modelo puede devolver «Insuficiente», «INSUFICIENTE» o
+        «parcialmente insuficiente», y el `if` falla distinto cada vez.
+
+  - id: s3-r6-pregunta
+    tipo: pregunta
+    titulo: Un nodo sin herramientas
+    minutos: 4
+    segundos: 45
+    pregunta: >-
+      Un nodo se declara con `herramientas=[]` — lista vacía. ¿Qué herramientas
+      puede usar ese nodo?
+    opciones:
+      - Ninguna, la lista está vacía
+      - Todas las que la CLI permite por omisión
+      - Solo las de lectura
+    respuesta: 1
+    solucion: >-
+      Todas. La bandera `--allowedTools` solo se añadía si la lista tenía algo,
+      y sin esa bandera la CLI permite su conjunto por omisión. Nueve nodos que
+      el código y la documentación describían como «sin herramientas» podían
+      ejecutar `Bash`, `Edit` y `Write`. Y una lista blanca vacía tampoco
+      sirve: se comprobó contra la CLI y el nodo leyó un archivo igual.
+    notas: |
+      **Pregunta de intuición equivocada.** Casi toda la sala contesta 0.
+      - **No adelantar la solución**: la lámina siguiente es el arreglo.
+      - **Contar las manos** antes de revelar.
+
+  - id: s3-r6-sin-herramientas
+    tipo: codigo
+    titulo: La única forma de decir «ninguna»
+    entradilla: Enumerarlas para denegarlas
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      SIN_HERRAMIENTAS = [
+          "Task", "Bash", "Glob", "Grep", "Read", "Edit", "Write", "NotebookEdit",
+          "TodoWrite", "BashOutput", "KillShell", "SlashCommand", "ExitPlanMode",
+      ]
+
+      MAX_TURNOS_SIN_HERRAMIENTAS = 3
+    notas: |
+      - **Es una lista negra, con el defecto que eso tiene**: una herramienta
+        nueva en una versión futura no estaría ahí.
+      - **Por eso hay dos redes debajo**: el tope de 3 turnos, que impide
+        usarla aunque exista, y el hook del reto 9.
+      - La lección: **el código decía una cosa, la documentación decía lo
+        mismo, y el sistema hacía otra.**
+
+  - id: s3-r6-reintento
+    tipo: codigo
+    titulo: Validar en el borde, y reintentar con la pista
+    entradilla: El error de validación es lo que se le manda de vuelta
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      try:
+          jsonschema.validate(datos, esquema)
+      except jsonschema.ValidationError as e:
+          ultimo_error = f"{'.'.join(str(p) for p in e.path)}: {e.message}"[:300]
+          continue
+
+      # y en el intento siguiente:
+      peticion = (
+          "Tu respuesta anterior no validó contra el esquema: "
+          f"{ultimo_error}\nResponde SOLO con el JSON, corregido.")
+    notas: |
+      - **No repite la pregunta original**: manda el error concreto. Decirle
+        «responde bien» le obliga a adivinar qué estuvo mal.
+      - **El tope son 2 reintentos**: uno para el despiste y otro para la mala
+        suerte. Al tercero es un problema del prompt o del esquema, y
+        reintentar lo esconde.
+
+  - id: s3-r6-banderas
+    tipo: comando-anotado
+    titulo: La invocación completa
+    entradilla: Lo que Python arma por cada nodo
+    minutos: 4
+    comando: claude -p PETICION --output-format stream-json --append-system-prompt SISTEMA --model sonnet --effort max --max-turns 50
+    segmentos:
+      - texto: --output-format stream-json
+        explicacion: >-
+          Un evento por mensaje, **según ocurre**. Leído en streaming, cada
+          línea trae su marca de tiempo real, y de ahí sale el tiempo y el
+          tamaño de cada llamada a herramienta. Con `json` a secas solo se
+          sabe lo que costó el nodo entero.
+      - texto: --append-system-prompt
+        explicacion: >-
+          Identidad, límites y **las rutas** de los documentos. Al reanudar una
+          conversación no se reenvía: ya está dentro, y mandarlo otra vez lo
+          duplica.
+      - texto: --model sonnet
+        explicacion: >-
+          Traducido del **rol** que declara el nodo, no escrito en el grafo.
+          Los nodos dicen para qué sirven; una tabla decide con qué se hace.
+      - texto: --effort max
+        explicacion: >-
+          El otro dial: cuánto se lo piensa antes de responder. Un modelo
+          fuerte con esfuerzo bajo y uno flojo con esfuerzo alto **no son lo
+          mismo**, y por eso son dos ajustes.
+      - texto: --max-turns 50
+        explicacion: >-
+          Tope del bucle de herramientas. Un turno es **una llamada a
+          herramienta**, no una vuelta de razonamiento. Vuelve en el reto 7.
+    notas: |
+      **Recorrerlo de a un segmento.** Es un ítem con pasos.
+      - **Detenerse en `--effort`**: es el dial que la sala no espera.
+      - **`--max-turns` se nombra y se deja**: el reto 7 lo cobra entero.
+
+  - id: s3-r6-pausa
+    tipo: pausa-preguntas
+    minutos: 2
+    disparadores:
+      - ¿Qué esquema le pondrían al nodo de recomendación que escribieron el domingo?
+      - ¿Dónde falla hoy su agente si el modelo devuelve un campo de más?
+
+  - id: s3-r6-transicion
+    tipo: transicion
+    minutos: 1
+    vimos: Un nodo como datos, su contexto por referencia, y un contrato que se valida en el borde
+    viene: "Reto 7 · el grafo que usa esos nodos, y el que refuta a los demás"

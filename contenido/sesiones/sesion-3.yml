@@ -1,0 +1,38 @@
+# Sesión 3 · Un agente en producción
+#
+# Este archivo es la CABECERA y el ORDEN. El contenido de cada unidad vive en
+# su propio archivo bajo `contenido/unidades/`, con el prefijo `sNN-uNN` para
+# que el listado alfabético sea el orden del dictado.
+#
+# Los minutos van SOLO en cada ítem: la unidad suma los suyos y la sesión suma
+# las unidades, de abajo hacia arriba (CONVENTIONS.md §15). La suma da 240.
+#
+# **El horario es nominal.** Esta sesión se entrega como material y no se
+# dicta: no hay fecha comprometida. Las horas están porque `validar-contenido`
+# compara la suma de los ítems contra la duración de la sesión, y esa
+# comprobación es la que impide que el reparto se descuadre sin que nadie lo
+# vea. Si algún día se dicta, se corrige la fecha y nada más.
+#
+# **La fuente de esta sesión es `texai/io-platform-engineer-ai-agent`**, no el
+# laboratorio. `taller-ia-uni-lab` queda cerrado en la sesión 2: los retos 6 a
+# 9 leen el agente de plataforma y reimplementan sus patrones en archivos
+# propios, sin tocar el laboratorio que los alumnos ya tienen corriendo.
+id: sesion-3
+numero: 3
+titulo: Un agente en producción
+subtitulo: Sesión 3
+fecha: 2026-08-16
+horaInicio: "15:00"
+horaFin: "19:00"
+
+unidades:
+  - archivo: unidades/s03-u01-de-la-simulacion-a-produccion.yml
+  - archivo: unidades/s03-u02-caso-plataforma.yml
+  - archivo: unidades/s03-u03-reto6-el-nodo-y-su-contrato.yml
+  # El receso va DENTRO del reto 7, al final, igual que en las dos sesiones
+  # anteriores: quince minutos de nada no sostienen una unidad con objetivos
+  # y requisitos.
+  - archivo: unidades/s03-u04-reto7-el-grafo-de-diagnostico.yml
+  - archivo: unidades/s03-u05-reto8-del-plan-al-codigo.yml
+  - archivo: unidades/s03-u06-reto9-los-frenos.yml
+  - archivo: unidades/s03-u07-cierre-medir-recordar-aprender.yml
