@@ -30,9 +30,8 @@ items:
   - id: s3-cierre-reloj
     tipo: salida-anotada
     titulo: En qué se fue el reloj
-    entradilla: El resultado final dice que tardó 139 segundos, no en qué
+    entradilla: Lo que imprime make costos sobre una ejecución real. El resultado final dice que tardó 139 segundos, no en qué
     minutos: 4
-    comando: make costos RUN=<id>
     salida: |
       Dentro de cada invocación
 

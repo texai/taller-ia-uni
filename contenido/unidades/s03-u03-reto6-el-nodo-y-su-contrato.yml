@@ -226,7 +226,7 @@ items:
     titulo: La invocación completa
     entradilla: Lo que Python arma por cada nodo
     minutos: 4
-    comando: claude -p PETICION --output-format stream-json --append-system-prompt SISTEMA --model sonnet --effort max --max-turns 50
+    comando: claude -p PETICION --output-format stream-json --append-system-prompt SISTEMA --model sonnet --effort max --max-turns 50 …
     segmentos:
       - texto: --output-format stream-json
         explicacion: >-
@@ -256,6 +256,8 @@ items:
       **Recorrerlo de a un segmento.** Es un ítem con pasos.
       - **Detenerse en `--effort`**: es el dial que la sala no espera.
       - **`--max-turns` se nombra y se deja**: el reto 7 lo cobra entero.
+      - Los puntos suspensivos no son adorno: **faltan `--verbose`,
+        `--allowedTools` y `--disallowedTools`**. Decirlo si alguien pregunta.
 
   - id: s3-r6-pausa
     tipo: pausa-preguntas

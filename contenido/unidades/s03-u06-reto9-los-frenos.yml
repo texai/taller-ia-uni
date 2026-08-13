@@ -92,9 +92,8 @@ items:
   - id: s3-r9-pruebas
     tipo: salida-anotada
     titulo: La suite que no cuesta dinero
-    entradilla: Alimenta al hook con el mismo JSON que le manda la CLI
+    entradilla: Lo que imprime make test SOLO=guardia. Alimenta al hook con el mismo JSON que le manda la CLI
     minutos: 4
-    comando: make test SOLO=guardia
     salida: |
       git
         ok    git push
