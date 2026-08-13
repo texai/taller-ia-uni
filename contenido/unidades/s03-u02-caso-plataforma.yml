@@ -36,16 +36,16 @@ items:
     cifras:
       - valor: "1644"
         unidad: repositorios
-        contexto: La organización sobre la que opera el agente
+        nota: La organización sobre la que opera el agente
       - valor: "3"
         unidad: shelltools
-        contexto: Componentes de CI/CD compartidos por todos los squads
+        nota: Componentes de CI/CD compartidos por todos los squads
       - valor: "5 a 9"
         unidad: invocaciones
-        contexto: Lo que cuesta un diagnóstico completo
+        nota: Lo que cuesta un diagnóstico completo
       - valor: "~$2.10"
         unidad: por diagnóstico
-        contexto: Y unos 4 minutos de reloj
+        nota: Y unos 4 minutos de reloj
     bloques:
       - titulo: Qué pasa
         contenido: >-

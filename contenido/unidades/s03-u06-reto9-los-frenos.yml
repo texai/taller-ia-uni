@@ -6,9 +6,10 @@
 # Es el reto más corto de la sesión y el que más se puede reimplementar sin
 # nada montado: un hook es un script que lee JSON por stdin y sale 0 o 2.
 #
-# PENDIENTE del batch de contenido: `s3-r9-pruebas` está declarado como
-# `terminal` y debería ser `salida-anotada` — la salida de la suite son
-# sesenta y siete líneas y lo que enseña es cómo se lee, no que salió verde.
+# `s3-r9-pruebas` va sin campo `comando`, y no es un olvido: el comando es de
+# otro repositorio y el docente no lo ensaya en la pauta. §19 ya dice que en
+# una `salida-anotada` el comando es contexto —dice qué produjo lo que se ve,
+# no qué teclear— y §8 admite salidas que valen solas.
 id: s3-reto-9
 tipo: reto
 titulo: Los frenos
@@ -160,20 +161,22 @@ items:
     titulo: Lista blanca o lista negra
     entradilla: Las dos están en el mismo archivo, y no es incoherencia
     minutos: 4
-    izquierda: |
-      **Lista negra** — git, gh, jira, terraform
+    izquierda:
+      titulo: Lista negra — git, gh, jira, terraform
+      contenido: |
+        Se enumera **lo prohibido**: `push`, `commit`, `tag`, `remote`,
+        `rebase`, `checkout`.
 
-      - se enumera lo prohibido
-      - el conjunto peligroso es pequeño y **enumerable**
-      - `push`, `commit`, `tag`, `remote`, `rebase`, `checkout`
-      - riesgo: un verbo nuevo no está en la lista
-    derecha: |
-      **Lista blanca** — AWS
+        Vale porque el conjunto peligroso es pequeño y **enumerable**. El
+        riesgo es que un verbo nuevo no esté en la lista.
+    derecha:
+      titulo: Lista blanca — AWS
+      contenido: |
+        Se enumera **lo permitido**: `describe-*`, `get-*`, `list-*`,
+        `head-*`… y todo lo demás se bloquea.
 
-      - se enumera lo permitido
-      - miles de subcomandos, y **crecen solos**
-      - `describe-*`, `get-*`, `list-*`, `head-*`… lo demás se bloquea
-      - riesgo: bloquea algo legítimo hasta que se agregue
+        Hace falta porque son miles de subcomandos y **crecen solos**. El
+        riesgo es bloquear algo legítimo hasta que alguien lo agregue.
     notas: |
       - **La regla de decisión**: si el conjunto peligroso es enumerable, lista
         negra; si crece solo, lista blanca.

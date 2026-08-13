@@ -157,6 +157,8 @@ items:
     titulo: Un nodo sin herramientas
     minutos: 4
     segundos: 45
+    visibilidad: publica
+    permiteOmitir: true
     pregunta: >-
       Un nodo se declara con `herramientas=[]` — lista vacía. ¿Qué herramientas
       puede usar ese nodo?
@@ -164,7 +166,7 @@ items:
       - Ninguna, la lista está vacía
       - Todas las que la CLI permite por omisión
       - Solo las de lectura
-    respuesta: 1
+    respuesta: Todas las que la CLI permite por omisión
     solucion: >-
       Todas. La bandera `--allowedTools` solo se añadía si la lista tenía algo,
       y sin esa bandera la CLI permite su conjunto por omisión. Nueve nodos que

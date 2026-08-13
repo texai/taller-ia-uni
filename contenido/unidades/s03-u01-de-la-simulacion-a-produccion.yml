@@ -83,22 +83,25 @@ items:
     titulo: El agente del domingo y el de hoy
     entradilla: La misma arquitectura, y lo que hubo que agregarle
     minutos: 5
-    izquierda: |
-      **El del laboratorio**
+    izquierda:
+      titulo: El del laboratorio
+      contenido: |
+        Seis nodos: percepción, diagnóstico, reflexión, revisión,
+        recomendación y acción. Siete herramientas contra una API que
+        montamos nosotros.
 
-      - percepción, diagnóstico, reflexión, revisión, recomendación, acción
-      - herramientas: 7, contra una API que montamos nosotros
-      - el mundo se rompe con `make romper`
-      - si se equivoca, se vuelve a correr
-      - lo que cuesta: no se mide
-    derecha: |
-      **El de plataforma**
+        El mundo se rompe con `make romper`, así que **sabemos la respuesta
+        antes de preguntar**. Si se equivoca, se vuelve a correr y no pasa
+        nada. Lo que cuesta no se mide.
+    derecha:
+      titulo: El de plataforma
+      contenido: |
+        Cinco nodos: percepción, hipótesis, reflexión, revisión y plan. Las
+        herramientas son `gh`, `jira`, `git` y `aws` — sistemas de un banco.
 
-      - percepción, hipótesis, reflexión, revisión, plan
-      - herramientas: `gh`, `jira`, `git`, `aws` — sistemas de un banco
-      - el mundo es el que es, y hay tickets de personas esperando
-      - si se equivoca, alguien pierde una tarde
-      - lo que cuesta: medido por invocación y por herramienta
+        El mundo es el que es y **nadie guardó la respuesta**. Si se
+        equivoca, alguien pierde una tarde. Lo que cuesta se mide por
+        invocación y por herramienta.
     notas: |
       **La comparación es el ítem, no la lista.** Leer las dos columnas de
       arriba abajo en paralelo.
@@ -139,6 +142,8 @@ items:
     titulo: Antes de empezar
     minutos: 4
     segundos: 60
+    visibilidad: publica
+    permiteOmitir: true
     pregunta: >-
       El agente del domingo emite un diagnóstico y quiere ejecutar
       `git push` para publicar la corrección. ¿Qué lo detiene?
@@ -147,7 +152,7 @@ items:
       - La lista de herramientas que le pasamos al invocarlo
       - Un hook que intercepta la llamada antes de ejecutarla
       - Las tres cosas, y en ese orden de dureza
-    respuesta: 3
+    respuesta: Las tres cosas, y en ese orden de dureza
     solucion: >-
       Las tres, y el orden importa: el prompt depende de que el modelo
       colabore, la lista de herramientas depende de que esté completa, y solo

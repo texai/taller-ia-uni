@@ -101,6 +101,8 @@ items:
     titulo: El reparto de modelos
     minutos: 4
     segundos: 60
+    visibilidad: publica
+    permiteOmitir: true
     pregunta: >-
       Hay que recortar el gasto del diagnóstico a la mitad. ¿De qué nodo
       bajarías el modelo primero?
@@ -108,7 +110,7 @@ items:
       - Percepción, que es el que más tarda
       - Reflexión, que corre en cada vuelta
       - Plan, que solo transcribe decisiones ya tomadas
-    respuesta: 2
+    respuesta: Plan, que solo transcribe decisiones ya tomadas
     solucion: >-
       Plan. Corre una sola vez y solo transcribe decisiones ya tomadas.
       Percepción es cara pero es la que reúne la evidencia, y la reflexión es
@@ -197,22 +199,22 @@ items:
     titulo: Un turno y una vuelta no son lo mismo
     entradilla: Dos topes distintos, y se confunden con facilidad
     minutos: 5
-    izquierda: |
-      **Turno**
+    izquierda:
+      titulo: Turno
+      contenido: |
+        Una **llamada a herramienta**, dentro de una sola invocación. Lo
+        limita `--max-turns`, hoy en 50.
 
-      - una llamada a herramienta
-      - vive **dentro** de una invocación
-      - lo limita `--max-turns`, hoy en 50
-      - cada turno reenvía la conversación entera
-      - el consumo crece con el **cuadrado**
-    derecha: |
-      **Vuelta**
+        Cada turno reenvía la conversación entera, así que el consumo crece
+        con el **cuadrado** del número de turnos.
+    derecha:
+      titulo: Vuelta
+      contenido: |
+        Que la **reflexión devuelva el control**. Vive en el grafo, en
+        Python. Lo limita `MAX_VUELTAS`, hoy en 1.
 
-      - que la reflexión devuelva el control
-      - vive **en el grafo**, en Python
-      - lo limita `MAX_VUELTAS`, hoy en 1
-      - cada vuelta repaga percepción e hipótesis enteras
-      - es el parámetro que más mueve el reloj
+        Cada vuelta vuelve a pagar percepción e hipótesis **enteras**: es el
+        parámetro que más mueve el reloj.
     notas: |
       - **La confusión es la lámina.** Preguntar cuál de los dos cuesta más y
         dejar que se equivoquen.
@@ -230,7 +232,7 @@ items:
       Y nueve minutos, en una sola pasada de percepción antes de que existiera
       el tope. Cada turno reenvía la conversación entera: un `Read` que
       devuelve 200 KB no cuesta 200 KB, cuesta 200 KB por cada turno que quede.
-    tono: alerta
+    tono: malo
     notas: |
       - **Leer el número antes de explicarlo.** 4.7 millones para diagnosticar
         un ticket.
@@ -281,10 +283,10 @@ items:
     titulo: Con qué se sale de este reto
     minutos: 3
     criterios:
-      - Cinco objeciones escritas para un dominio propio, ninguna genérica
-      - Un criterio de corte que distinga una objeción que obliga a volver de un matiz
-      - El esquema de salida del crítico, con `veredicto` como enumeración
-      - Una respuesta escrita a si ese crítico debe recordar entre vueltas
+      - texto: Cinco objeciones escritas para un dominio propio, ninguna genérica
+      - texto: Un criterio de corte que distinga una objeción que obliga a volver de un matiz
+      - texto: El esquema de salida del crítico, con `veredicto` como enumeración
+      - texto: Una respuesta escrita a si ese crítico debe recordar entre vueltas
     notas: |
       **Se hace en papel o en un archivo propio.** El laboratorio no se toca.
       - **El criterio real es el segundo**: sin él, el crítico devuelve el

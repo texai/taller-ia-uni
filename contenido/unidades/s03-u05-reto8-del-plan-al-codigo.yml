@@ -102,6 +102,8 @@ items:
     titulo: Quién decide la vuelta
     minutos: 4
     segundos: 45
+    visibilidad: publica
+    permiteOmitir: true
     pregunta: >-
       El agente escribe un script y hay que decidir si está bien. ¿Quién lo
       juzga?
@@ -109,7 +111,7 @@ items:
       - Un nodo revisor, como la reflexión del reto 7
       - "`bash -n` y `shellcheck`: código, sin modelo"
       - Las dos cosas, en momentos distintos
-    respuesta: 2
+    respuesta: Las dos cosas, en momentos distintos
     solucion: >-
       Las dos, y en momentos distintos. `bash -n` no se equivoca sobre si un
       archivo parsea, y preguntárselo a un modelo es pagar por una opinión
@@ -214,10 +216,10 @@ items:
     titulo: Con qué se sale de este reto
     minutos: 3
     criterios:
-      - Una función de comprobación que devuelva tres estados y no dos
-      - Al menos tres tipos de archivo cubiertos, distinguiendo «falló» de «no está instalada»
-      - Un resumen que cuente los tres, por separado
-      - El contraste declarado contra real, en las dos direcciones
+      - texto: Una función de comprobación que devuelva tres estados y no dos
+      - texto: Al menos tres tipos de archivo cubiertos, distinguiendo «falló» de «no está instalada»
+      - texto: Un resumen que cuente los tres, por separado
+      - texto: El contraste declarado contra real, en las dos direcciones
     notas: |
       **En archivos propios.** El laboratorio no se toca.
       - **El criterio real es el segundo**: es donde se decide si «verde»

@@ -123,6 +123,8 @@ items:
     titulo: La última
     minutos: 4
     segundos: 60
+    visibilidad: publica
+    permiteOmitir: true
     pregunta: >-
       Su agente cierra un caso y propone una regla nueva para su propio
       contexto. ¿Cuándo esa regla pasa de anécdota a patrón?
@@ -130,7 +132,7 @@ items:
       - Cuando el modelo la marca como corroborada
       - Cuando aparece propuesta desde dos casos distintos
       - Cuando una persona la aprueba
-    respuesta: 1
+    respuesta: Cuando aparece propuesta desde dos casos distintos
     solucion: >-
       Cuando sale de dos casos distintos, y lo cuenta el código. Que una
       persona la apruebe hace falta para que se escriba, pero no la convierte
