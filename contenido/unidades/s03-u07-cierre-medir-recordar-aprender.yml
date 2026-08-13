@@ -1,0 +1,181 @@
+# Unidad 7 de la sesión 3 · el cierre.
+#
+# Cierra la sesión y, con ella, el taller entero. Tres cosas que no caben en
+# ningún reto y sin las cuales un agente no dura en producción: saber en qué
+# se le va el reloj, recordar casos anteriores, y aprender sin degradar el
+# contexto con el que razona.
+#
+# La última es la que cierra el arco de las tres sesiones: el agente del
+# sábado no recordaba nada, el del domingo recordaba diagnósticos, y este
+# decide qué de un caso merece pasar al contexto — con una persona eligiendo
+# uno a uno.
+id: s3-cierre
+tipo: cierre
+titulo: Lo que se mide, lo que se recuerda
+objetivos:
+  - Medir por dentro de una invocación y no solo su resultado
+  - Entender por qué la corroboración la cuenta el código y no el modelo
+  - Cerrar el taller con lo que se llevan las tres sesiones
+requisitos:
+  - Los cuatro retos de hoy.
+items:
+  - id: s3-cierre-titulo
+    tipo: titulo
+    titulo: Lo que se mide y lo que se recuerda
+    entradilla: Tres cosas sin las cuales esto no dura un mes en producción
+    minutos: 2
+    notas: |
+      **25 min**, y con esto se cierra el taller.
+
+  - id: s3-cierre-reloj
+    tipo: salida-anotada
+    titulo: En qué se fue el reloj
+    entradilla: Lo que imprime make costos sobre una ejecución real. El resultado final dice que tardó 139 segundos, no en qué
+    minutos: 4
+    salida: |
+      Dentro de cada invocación
+
+        nodo         herramienta  veces  tiempo  devuelto  err
+        percepcion   Bash            11    48.2s     412KB    1
+        percepcion   Read             4    12.0s     1.2MB    —
+
+      Reparto del reloj
+
+        nodo         llm  pasos  esperando al modelo  en herramientas  devuelto
+        percepcion    18     15                71.4s            60.2s     1.6MB
+    anotaciones:
+      - texto: 412KB
+        explicacion: >-
+          Lo que once llamadas a `Bash` metieron en la conversación. **No es
+          lo que costó: es lo que se va a reenviar** en cada turno posterior.
+      - texto: 1.2MB
+        explicacion: >-
+          Cuatro lecturas de archivo, y pesan tres veces más que once
+          comandos. La forma barata de arreglar un nodo caro casi nunca es el
+          prompt: es acotar lo que lee.
+      - texto: 71.4s
+        explicacion: >-
+          Esperando al modelo. Si esta columna domina, lo que se ajusta es el
+          esfuerzo o el modelo del nodo.
+      - texto: 1.6MB
+        explicacion: >-
+          El total devuelto. Multiplicado por los turnos que quedan, es la
+          **explicación mecánica** de por qué el consumo crece con el cuadrado
+          — y no se ve en el resultado final de la invocación.
+    notas: |
+      - **De los 139 segundos, 71 fueron esperando al modelo y 60 ejecutando
+        herramientas.** Son dos problemas distintos: si domina el modelo se
+        baja el esfuerzo; si dominan las herramientas se acota lo que lee.
+      - **`1.6MB devuelto` es la alarma**: eso se reenvía en cada turno
+        posterior. Es la explicación mecánica del crecimiento cuadrático.
+      - Sale de leer la salida **en streaming**, no del resultado final.
+
+  - id: s3-cierre-memoria
+    tipo: codigo
+    titulo: La memoria es deliberadamente tonta
+    entradilla: agente/memoria.py
+    lenguaje: python
+    minutos: 3
+    contenido: |
+      def similares(texto: str, limite: int = 5) -> list[dict]:
+          """Casos parecidos, por coincidencia de términos significativos.
+
+          Deliberadamente tonto: parte el texto en palabras, descarta las
+          cortas y puntúa por cuántas aparecen en cada entrada. Lo que hace
+          que funcione no es el algoritmo sino qué se indexa — shelltool,
+          workflow, archivo, firma del error—, que son términos raros y por
+          tanto discriminan bien.
+          """
+          terminos = {p.lower() for p in _palabras(texto) if len(p) > 4}
+    notas: |
+      - **Sin embeddings y sin base vectorial.** Es intersección de conjuntos.
+      - **Lo que lo hace funcionar es qué se indexa**, no el algoritmo.
+      - **Texto plano a propósito**: un índice que se lee con `cat` y se depura
+        con `grep` vale más que uno que hay que reconstruir cuando algo sale
+        raro. Preguntar a la sala en qué volumen deja de ser cierto.
+
+  - id: s3-cierre-aprender
+    tipo: tabla
+    titulo: Aprender sin degradar el contexto
+    entradilla: Las cinco reglas, y la que hace que la etiqueta signifique algo
+    minutos: 4
+    columnas: [Regla, Por qué]
+    filas:
+      - ["Nada se escribe hasta que alguien elige", "Analizar no toca el contexto. Hay una prueba que lo fija."]
+      - ["Se selecciona uno a uno", "Con su archivo destino y si hay que crearlo"]
+      - ["Lo descartado se recuerda", "Si no, cada cierre reproduce la misma lista y nadie la mira"]
+      - ["Manda el disco, no la bandera", "Un `nuevo: true` sobre un archivo que existe lo pisaría"]
+      - ["**La corroboración la cuenta el código**", "Un hallazgo vale cuando sale de **dos casos distintos**"]
+    resaltar: [4]
+    notas: |
+      - **El riesgo**: el contexto con el que razona el agente es un
+        directorio de documentos. Si escribe ahí sin control, degrada todos
+        sus diagnósticos futuros **y la degradación se retroalimenta**.
+      - **La regla 5 es la lección**: cuando se dejaba al criterio del modelo,
+        casi todo llegaba marcado como corroborado porque sonaba mejor, y
+        entonces la etiqueta dejaba de distinguir nada.
+      - **Y si un hallazgo contradice lo verificado, se señala y no se
+        corrige**: el candidato más probable a estar equivocado es el
+        diagnóstico reciente.
+
+  - id: s3-cierre-pregunta
+    tipo: pregunta
+    titulo: La última
+    minutos: 4
+    segundos: 60
+    visibilidad: publica
+    permiteOmitir: true
+    pregunta: >-
+      Su agente cierra un caso y propone una regla nueva para su propio
+      contexto. ¿Cuándo esa regla pasa de anécdota a patrón?
+    opciones:
+      - Cuando el modelo la marca como corroborada
+      - Cuando aparece propuesta desde dos casos distintos
+      - Cuando una persona la aprueba
+    respuesta: Cuando aparece propuesta desde dos casos distintos
+    solucion: >-
+      Cuando sale de dos casos distintos, y lo cuenta el código. Que una
+      persona la apruebe hace falta para que se escriba, pero no la convierte
+      en patrón: una sola vez sigue siendo una anécdota aprobada. Y por eso el
+      identificador de un hallazgo se calcula del archivo y el título, **nunca
+      del caso** — el mismo hallazgo desde dos cierres no son dos hallazgos,
+      es uno confirmado.
+    notas: |
+      - **La opción 2 es la trampa amable**: aprobar es necesario y no es
+        suficiente.
+      - **Dejar la última frase en el aire**: meter el caso en el
+        identificador perdería justo la señal que se quiere medir.
+
+  - id: s3-cierre-que-se-llevan
+    tipo: markdown
+    titulo: Las tres sesiones, en una línea cada una
+    minutos: 6
+    contenido: |
+      **El sábado** construimos los ojos: herramientas que miran un mundo, y
+      un bucle plano que funciona y divaga.
+
+      **El domingo** le dimos sitios: seis nodos, una reflexión que devuelve
+      el control, y una política que no razona.
+
+      **Hoy** vimos la misma forma aguantando un dominio donde nadie sabe la
+      respuesta — y las cuatro cosas que hubo que ponerle encima para poder
+      soltarla: un contrato, un crítico que no se ancla, validación que no
+      opina, y frenos que no dependen del prompt.
+    notas: |
+      **Leerlo despacio. Es el cierre del taller, no de la sesión.**
+      - **La frase final**: lo que separa un demo de un sistema no es el
+        modelo, es todo lo que hay alrededor.
+      - **Agradecer y no alargar.**
+
+  - id: s3-cierre-despedida
+    tipo: titulo
+    titulo: Gracias
+    entradilla: El código de las tres sesiones queda publicado
+    destacado: true
+    minutos: 2
+    notas: |
+      - **Decir dónde queda cada cosa**: el laboratorio del sábado y el
+        domingo, y el agente de plataforma de hoy.
+      - **No abrir preguntas nuevas acá.**
+      - **Sin encuesta acá.** La del programa es una sola y cierra el domingo,
+        que es donde termina el dictado. Pedirla dos veces la vacía.

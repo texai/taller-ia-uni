@@ -1,0 +1,239 @@
+# Unidad 5 de la sesión 3 · reto 8.
+#
+# El equivalente del reto 5 del domingo —de la recomendación a la acción— pero
+# donde la acción es escribir código en repositorios de verdad. La diferencia
+# que ordena la unidad: allí la política era código y el agente no razonaba
+# sobre ella; acá la VALIDACIÓN es código y el agente tampoco opina sobre ella.
+#
+# La idea de la que cuelga: si hay un hecho, no se le pregunta a un modelo.
+id: s3-reto-8
+tipo: reto
+titulo: Del plan al código
+objetivos:
+  - Ver un bucle de corrección disparado por un hecho y no por un veredicto
+  - Implementar una validación con tres respuestas y no con dos
+  - Entender cómo se materializa la aprobación humana dentro del flujo
+  - "Conceptos: validación objetiva, contraste declarado contra real"
+requisitos:
+  - El reto 7. Existe un plan con repositorios, ramas y cambios.
+items:
+  # La segunda del día, justo al volver del receso. Va acá y no al final del
+  # reto 7 a propósito: quien no volvió del receso tiene que quedar ausente.
+  - id: s3-asistencia-2
+    tipo: asistencia
+    titulo: Asistencia, la segunda
+    nota: >-
+      Al volver del receso, antes de empezar. Si alguien no volvió, queda
+      ausente en esta — es la que la coordinación cruza con la primera.
+
+  - id: s3-r8-titulo
+    tipo: titulo
+    titulo: "Reto 8 · Del plan al código"
+    entradilla: El único grafo que escribe, y todo lo que hubo que ponerle alrededor
+    minutos: 2
+    notas: |
+      **40 min.** Hasta acá el agente solo leía.
+      - **La frase de apertura**: un diagnóstico malo se descarta; un archivo
+        mal escrito en el repositorio equivocado destruye trabajo de otro.
+
+  - id: s3-r8-mapa
+    tipo: diagrama
+    titulo: Los pasos de este reto
+    entradilla: Cuarenta minutos, cuatro pasos
+    clase: flujo
+    minutos: 2
+    contenido: |
+      flowchart TD
+        A["1 · preparar:<br/>dos cortes antes del disco"] --> B["2 · validar sin modelo,<br/>con TRES respuestas"]
+        B --> C["3 · lo declarado contra<br/>lo que git ve"]
+        C --> D["4 · el stage como firma,<br/>y el mensaje de commit"]
+        D --> E{{"criterio: una validacion de tres<br/>estados y el contraste, en codigo"}}
+    notas: |
+      - **El paso 2 es el que se llevan** aunque no trabajen nunca con agentes:
+        vale para CI, para pruebas y para monitoreo.
+
+  - id: s3-r8-preparar
+    tipo: codigo
+    titulo: Se comprueba, no se corrige
+    entradilla: agente/preparar.py — antes de clonar nada
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      def objeciones(repo: dict) -> list[str]:
+          """Lo que contradice al branching model. Vacío es que el plan cuadra.
+
+          Se comprueba, no se corrige: cambiar la rama por debajo dejaría el
+          plan diciendo una cosa y el disco otra, que es peor que parar.
+          """
+          base_ok = BASE_ESPERADA.get(modelo)
+          if base_ok and repo["rama_base"] != base_ok:
+              fallos.append(
+                  f"{modelo} nace de `{base_ok}`, no de `{repo['rama_base']}`.")
+          return fallos
+    notas: |
+      - **Tres cosas transferibles**: se comprueba y no se corrige; se para
+        **antes** de tocar el disco —clonar tres repos y fallar en el cuarto
+        deja el directorio a medias—; y el dato está verificado contra la
+        realidad, no contra la documentación oficial, que no lo dice.
+      - **Corregir en silencio es lo que produce el error que nadie encuentra.**
+
+  - id: s3-r8-tres-respuestas
+    tipo: tabla
+    titulo: Una comprobación tiene tres respuestas
+    entradilla: Y la tercera es la que casi nadie escribe
+    minutos: 4
+    columnas: [Resultado, Qué significa, Va al modelo, Va a la persona]
+    filas:
+      - ["`ok`", "pasó", "no", "en el resumen"]
+      - ["`falló`", "y la salida trae el número de línea", "**sí**, literal", "sí"]
+      - ["**`sin comprobar`**", "shellcheck no instalado, terraform sin init", "no", "**sí**, con qué falta"]
+    resaltar: [2]
+    notas: |
+      **La lámina de la sesión.** Leerla despacio.
+      - **Sin la tercera**, un `shellcheck` ausente se lee igual que uno que
+        pasó, y «todo verde» acaba significando «no miré nada».
+      - **La pregunta para la sala**: su pipeline de la sesión 1, ¿está verde
+        porque pasó o porque no se ejecutó?
+      - **El reparto por destinatario es por quién puede actuar**: el modelo no
+        va a instalar shellcheck.
+
+  - id: s3-r8-pregunta
+    tipo: pregunta
+    titulo: Quién decide la vuelta
+    minutos: 4
+    segundos: 45
+    visibilidad: publica
+    permiteOmitir: true
+    pregunta: >-
+      El agente escribe un script y hay que decidir si está bien. ¿Quién lo
+      juzga?
+    opciones:
+      - Un nodo revisor, como la reflexión del reto 7
+      - "`bash -n` y `shellcheck`: código, sin modelo"
+      - Las dos cosas, en momentos distintos
+    respuesta: Las dos cosas, en momentos distintos
+    solucion: >-
+      Las dos, y en momentos distintos. `bash -n` no se equivoca sobre si un
+      archivo parsea, y preguntárselo a un modelo es pagar por una opinión
+      donde había un hecho — eso dispara el bucle de corrección. Pero la
+      pregunta del final —«si esto se mergea, ¿deja de pasar lo que el ticket
+      reporta?»— no la contesta ningún linter, y ahí sí hay un nodo adversario.
+    notas: |
+      **Decisión de diseño.** La mayoría contesta 0 o 1.
+      - **La frase que queda**: si hay un hecho, no se le pregunta a un modelo.
+
+  - id: s3-r8-validar
+    tipo: codigo
+    titulo: El bucle lleva el error literal
+    entradilla: Decirle «hay un fallo» le obligaría a buscarlo
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      correcciones = (
+          "## Corrección\n\nYa escribiste una versión y las comprobaciones "
+          "automáticas fallaron. Arregla ESTO, sin rehacer lo que ya "
+          f"funciona:\n\n{validar.como_texto(comprobaciones)}")
+
+      # y `como_texto` manda SOLO lo que falló:
+      #   lo que pasó no le sirve y le cuesta tokens
+      #   lo que no se pudo comprobar no es accionable para él
+    notas: |
+      - **El mensaje de `bash -n` trae el número de línea.** Esa es la
+        diferencia entre una vuelta útil y una vuelta cara.
+      - **Un repositorio a la vez**, y con su propia conversación: con una
+        sola, el segundo repo escribiría con el caso del primero delante.
+
+  - id: s3-r8-declarado-real
+    tipo: codigo
+    titulo: Lo declarado contra lo que git ve
+    entradilla: La comprobación más barata del grafo
+    lenguaje: python
+    minutos: 4
+    contenido: |
+      dichos = {a["ruta"].strip("./") for a in declarado}
+      vistos = {str(f.relative_to(raiz)) for f in reales}
+      avisos = []
+      for r in sorted(dichos - vistos):
+          avisos.append(f"declaró haber tocado `{r}` y git no lo ve cambiado")
+      for r in sorted(vistos - dichos):
+          avisos.append(f"`{r}` está cambiado y no lo declaró")
+    notas: |
+      - **Dos conjuntos y su diferencia simétrica.** No cuesta tokens y no
+        puede equivocarse.
+      - **Atrapa el fallo más difícil de detectar de un agente con
+        herramientas: el resumen optimista** — contar lo que *pensaba* hacer
+        en vez de lo que hizo.
+      - **Las dos direcciones importan**, no solo una.
+
+  - id: s3-r8-indice
+    tipo: markdown
+    titulo: La solución cómoda que se rechaza
+    minutos: 4
+    contenido: |
+      A la revisión hay que enseñarle también los **archivos nuevos**, y
+      `git diff` no los ve. La forma cómoda de conseguirlo es
+      `git add --intent-to-add`.
+
+      Está descartada a propósito: **eso escribe en el índice, y el índice es
+      la señal con la que se sabe qué ha aprobado la persona.**
+
+      Un grafo que la toca por comodidad rompe el único mecanismo de
+      aprobación que hay.
+    notas: |
+      - **Es una decisión que rechaza la solución fácil para no romper un
+        mecanismo de seguridad.** Decirlo así de directo.
+      - **Y el diff es el mismo** que ve la persona en la interfaz: con dos
+        implementaciones, lo que revisa una y lo que juzga el nodo podrían
+        dejar de coincidir.
+
+  - id: s3-r8-commit
+    tipo: codigo
+    titulo: El mensaje se escribe sobre lo aprobado
+    entradilla: prompts/implementacion/commit.md
+    lenguaje: markdown
+    minutos: 4
+    contenido: |
+      ## Escribes sobre lo que está en stage, y solo sobre eso
+
+      Lo que hay en `git diff --staged` es lo que esa persona ha revisado y
+      aprobado, archivo por archivo. Puede ser **menos** de lo que se
+      implementó, y eso es intencionado.
+
+      ## La convención sale del repositorio, no de tu preferencia
+
+      Con cada repositorio te llegan sus últimos asuntos de commit. Léelos y
+      sigue lo que hagan. Cada repositorio puede tener la suya. No unifiques.
+    notas: |
+      - **`git add` es la firma.** Si aprobó la mitad, el mensaje habla de la
+        mitad, y lo que quedó fuera va aparte como aviso.
+      - **La convención no se configura**: se lee del `git log` de cada repo,
+        que es donde de verdad está escrita.
+      - **El commit lo hace la persona.** El hook lo bloquea para el agente —
+        eso es el reto 9.
+
+  - id: s3-r8-criterios
+    tipo: criterios
+    titulo: Con qué se sale de este reto
+    minutos: 3
+    criterios:
+      - texto: Una función de comprobación que devuelva tres estados y no dos
+      - texto: Al menos tres tipos de archivo cubiertos, distinguiendo «falló» de «no está instalada»
+      - texto: Un resumen que cuente los tres, por separado
+      - texto: El contraste declarado contra real, en las dos direcciones
+    notas: |
+      **En archivos propios.** El laboratorio no se toca.
+      - **El criterio real es el segundo**: es donde se decide si «verde»
+        significa algo.
+
+  - id: s3-r8-pausa
+    tipo: pausa-preguntas
+    minutos: 4
+    disparadores:
+      - ¿Dónde en su CI de la sesión 1 un paso que no corrió se lee como un paso que pasó?
+      - Si su agente del domingo dijera «ya ejecuté la acción», ¿cómo lo comprobarían?
+
+  - id: s3-r8-transicion
+    tipo: transicion
+    minutos: 1
+    vimos: Un bucle disparado por hechos, tres respuestas en vez de dos, y el stage como firma
+    viene: "Reto 9 · lo que impide que todo esto se salga de su sitio"

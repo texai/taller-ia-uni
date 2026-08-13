@@ -1,0 +1,174 @@
+# Unidad 1 de la sesión 3 · el repaso que engancha con el domingo.
+#
+# La sesión 2 terminó con un agente que la sala construyó: seis nodos, una
+# reflexión que devuelve el control, una política de doce líneas. Esta unidad
+# no lo vuelve a explicar — lo usa como vara. La pregunta que abre la sesión
+# es si eso que construyeron aguanta fuera del laboratorio, y la respuesta es
+# un agente que lleva meses diagnosticando pipelines rotos de verdad.
+#
+# PENDIENTE del batch de contenido: la lámina de glosario de apertura. Los
+# términos nuevos de esta sesión —hook, orquestador, esquema de salida,
+# traza— no están todavía en `contenido/glosario.yml`, y §18 exige que un
+# término se abra en pantalla antes de usarse. Se decide con la unidad, no acá.
+id: s3-apertura
+tipo: repaso
+titulo: De la simulación a producción
+objetivos:
+  - Reconocer la arquitectura del domingo dentro de un agente que opera de verdad
+  - Distinguir lo que cambia cuando el agente ejecuta comandos sobre sistemas reales
+  - "Conceptos: orquestador delgado, y el flujo de control como código"
+requisitos:
+  - Haber visto el grafo del reto 4. No hace falta tenerlo corriendo.
+items:
+  - id: s3-caratula
+    tipo: caratula
+    qr: /contenido/img/qr.svg
+    minutos: 1
+    notas: |
+      **Se abre con esto mientras entra la gente**, igual que las dos anteriores.
+      - Decir que es la sesión 3 y que **no hay laboratorio hoy**: se lee código
+        de un agente que no se puede ejecutar acá.
+
+  - id: s3-portada
+    tipo: titulo
+    titulo: El mismo grafo, con las manos en producción
+    entradilla: Lo que construimos el domingo, operando sobre 1644 repositorios
+    minutos: 2
+    notas: |
+      **El plan del día en una frase**: el agente de ustedes, pero con acceso a
+      Jira, GitHub y AWS de un banco — y todo lo que hubo que ponerle encima
+      para que eso no diera miedo.
+
+  - id: s3-recap
+    tipo: diagrama
+    titulo: Dónde nos quedamos
+    entradilla: Dos sesiones, un agente construido, y una pregunta que no se hizo
+    clase: componentes
+    minutos: 4
+    contenido: |
+      flowchart LR
+        H["7 herramientas<br/>de percepcion"] --> A
+        G["6 nodos y<br/>dos vueltas"] --> A
+        P["politica de accion<br/>12 lineas"] --> A
+        A[("el agente del domingo:<br/>vigila 192 modelos")] --> Q{"y si el mundo<br/>no es de mentira?"}
+        Q --> AYER["el laboratorio: 4 escenarios<br/>que rompemos nosotros"]
+        Q -.->|las proximas 4 horas| HOY["produccion: 1644 repositorios,<br/>y nadie controla el mundo"]
+    notas: |
+      **Es el abanico de las otras dos sesiones, con el agente de ustedes en el
+      centro.** La gramática ya se aprendió (§16).
+      - **Señalar el rombo**: en el laboratorio el mundo lo rompemos nosotros y
+        sabemos la respuesta. Hoy no.
+      - **No repasar los seis nodos.** Están en la caja y con eso basta.
+
+  - id: s3-de-la-simulacion
+    tipo: markdown
+    minutos: 4
+    titulo: Lo que el laboratorio no puede enseñar
+    contenido: |
+      En el laboratorio siempre supimos la respuesta. `make romper
+      ESCENARIO=feed_caido` y ya sabíamos qué tenía que encontrar el agente.
+
+      En producción nadie rompió nada a propósito. **No hay respuesta
+      correcta guardada**, no hay escenario, y el agente puede tardar cuatro
+      minutos y dos dólares en concluir algo falso sin que nada falle.
+    notas: |
+      - **La frase corta**: en el lab medimos si acertó; en producción medimos
+        si podemos creerle.
+      - Sembrar que de ahí salen las tres cosas de hoy: **un crítico que
+        refuta, límites que no dependen del prompt, y medición de lo que
+        cuesta**.
+
+  - id: s3-mismo-grafo
+    tipo: comparacion
+    titulo: El agente del domingo y el de hoy
+    entradilla: La misma arquitectura, y lo que hubo que agregarle
+    minutos: 5
+    izquierda:
+      titulo: El del laboratorio
+      contenido: |
+        Seis nodos: percepción, diagnóstico, reflexión, revisión,
+        recomendación y acción. Siete herramientas contra una API que
+        montamos nosotros.
+
+        El mundo se rompe con `make romper`, así que **sabemos la respuesta
+        antes de preguntar**. Si se equivoca, se vuelve a correr y no pasa
+        nada. Lo que cuesta no se mide.
+    derecha:
+      titulo: El de plataforma
+      contenido: |
+        Cinco nodos: percepción, hipótesis, reflexión, revisión y plan. Las
+        herramientas son `gh`, `jira`, `git` y `aws` — sistemas de un banco.
+
+        El mundo es el que es y **nadie guardó la respuesta**. Si se
+        equivoca, alguien pierde una tarde. Lo que cuesta se mide por
+        invocación y por herramienta.
+    notas: |
+      **La comparación es el ítem, no la lista.** Leer las dos columnas de
+      arriba abajo en paralelo.
+      - **La fila que importa es la cuarta.** El resto son detalles; esa es la
+        que explica por qué existen los frenos del reto 9.
+      - Si preguntan por qué acá es `hipotesis` y en el lab `diagnostico`: es
+        el mismo nodo con otro nombre. **No abrir el debate ahora.**
+
+  # Lo pide la coordinación del programa: una a los quince minutos de empezar y
+  # otra al volver del receso. Es lo único con lo que se evalúa el taller, así
+  # que no se mueve de sitio al reordenar contenido. No lleva minutos: se toma
+  # mientras la lámina siguiente ya está en pantalla.
+  - id: s3-asistencia-1
+    tipo: asistencia
+    titulo: Asistencia
+    nota: >-
+      La primera de las dos de hoy. Uno por uno y en voz alta, con micrófono:
+      no vale el chat de Zoom. Quien entre después queda en la segunda.
+
+  - id: s3-que-cambia
+    tipo: tabla
+    titulo: Qué hubo que agregarle
+    entradilla: Y en qué reto de hoy se ve cada cosa
+    minutos: 4
+    columnas: [Qué, Por qué, Dónde se ve hoy]
+    filas:
+      - ["Contrato de salida", "Un campo ausente revienta tres nodos más adelante", "Reto 6"]
+      - ["Un crítico que no recuerda", "Quien ya aprobó defiende su juicio en vez de revisarlo", "Reto 7"]
+      - ["Validación sin modelo", "`bash -n` no opina sobre si un archivo parsea", "Reto 8"]
+      - ["Un hook que intercepta", "El prompt es la capa más blanda de las tres", "Reto 9"]
+      - ["Medición por dentro", "«Tardó 139 segundos» no se puede accionar", "Cierre"]
+    notas: |
+      **Es el índice del día.** No explicar ninguna fila: cada una es un reto.
+      - **Leerlas como promesas**, no como conceptos.
+
+  - id: s3-pregunta-confiar
+    tipo: pregunta
+    titulo: Antes de empezar
+    minutos: 4
+    segundos: 60
+    visibilidad: publica
+    permiteOmitir: true
+    pregunta: >-
+      El agente del domingo emite un diagnóstico y quiere ejecutar
+      `git push` para publicar la corrección. ¿Qué lo detiene?
+    opciones:
+      - El prompt le dice que no lo haga
+      - La lista de herramientas que le pasamos al invocarlo
+      - Un hook que intercepta la llamada antes de ejecutarla
+      - Las tres cosas, y en ese orden de dureza
+    respuesta: Las tres cosas, y en ese orden de dureza
+    solucion: >-
+      Las tres, y el orden importa: el prompt depende de que el modelo
+      colabore, la lista de herramientas depende de que esté completa, y solo
+      la tercera intercepta la llamada **antes** de ejecutarla y falla cerrada.
+      El reto 9 las construye. Quien contestó «el prompt» tiene la intuición
+      más común y la más cara.
+    notas: |
+      **Es una pregunta de intuición equivocada (§17).** La mayoría contesta 1
+      o 2.
+      - **No corregir todavía**: se revela y se deja ahí. El reto 9 la cobra.
+      - **Contar las manos** de quienes dijeron «el prompt».
+
+  - id: s3-transicion-caso
+    tipo: transicion
+    minutos: 1
+    vimos: El agente del domingo, y las cinco cosas que hubo que agregarle para soltarlo en producción
+    viene: El caso — qué diagnostica este agente, y sobre cuántos repositorios
+    notas: |
+      El mapa lo dibuja la aplicación (§8). Solo enlazar.

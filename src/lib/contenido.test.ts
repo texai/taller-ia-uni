@@ -1377,9 +1377,15 @@ test("la encuesta docente cierra la sesión 2, y su instrucción es privada", ()
   // domingo. Va última porque despedir a la clase y pedirla después es cómo se
   // pierde la mitad de las respuestas — y si alguien mete contenido detrás, es
   // exactamente lo que pasaría sin que nadie lo notara hasta el domingo.
+  //
+  // Se busca la sesión 2 POR SU ID y no como «la última». Eran lo mismo
+  // mientras el curso tuvo dos sesiones, y dejaron de serlo al entrar la 3 —
+  // que es material y no se dicta, así que no cierra ningún dictado ni pide
+  // encuesta. La encuesta del programa es una y va donde termina el taller.
   const curso = mod.cargarCurso();
-  const ultima = curso.sesiones[curso.sesiones.length - 1]!;
-  const items = ultima.unidades.flatMap((u) => u.items);
+  const dictada = curso.sesiones.find((s) => s.id === "sesion-2")!;
+  assert.ok(dictada, "existe la sesión 2");
+  const items = dictada.unidades.flatMap((u) => u.items);
   const final = items[items.length - 1]!;
 
   assert.equal(final.tipo, "encuesta", "la encuesta es el último ítem");

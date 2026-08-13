@@ -1,0 +1,148 @@
+# Unidad 2 de la sesión 3 · el caso.
+#
+# Las dos sesiones anteriores abren con retail-192. Esta abre con otro caso, y
+# por eso es una unidad `caso` propia y no una referencia al de siempre: el
+# agente que se estudia hoy no vigila modelos, diagnostica pipelines rotos.
+#
+# El caso va inline y no en `contenido/casos/`, a diferencia de retail-192: la
+# regla de extraerlo a archivo existe para los casos que se cuentan DOS veces
+# (§8), y este se cuenta una. Si algún día se dicta dos veces, se extrae.
+#
+# Las cifras son obligatorias y todas están medidas — ninguna estimada. Salen
+# de `texai/io-platform-engineer-ai-agent`: el README y `docs/07-arquitectura`.
+id: s3-caso
+tipo: caso
+titulo: 1644 repositorios y tres shelltools
+objetivos:
+  - Entender qué diagnostica este agente y por qué no se puede scriptear
+  - Ver el tamaño real del problema antes de ver la solución
+requisitos:
+  - Ninguno.
+items:
+  - id: s3-caso-titulo
+    tipo: titulo
+    titulo: "El caso · plataforma"
+    entradilla: Un banco, 1644 repositorios, y un pipeline que falló anoche
+    minutos: 1
+    notas: |
+      **Cambio de caso.** Decirlo explícitamente: retail-192 se queda en el
+      laboratorio; hoy el mundo es otro.
+
+  - id: s3-caso-plataforma
+    tipo: caso
+    titulo: El equipo de plataforma
+    minutos: 6
+    empresa: Banco de Crédito del Perú · equipo IO
+    cifras:
+      - valor: "1644"
+        unidad: repositorios
+        nota: La organización sobre la que opera el agente
+      - valor: "3"
+        unidad: shelltools
+        nota: Componentes de CI/CD compartidos por todos los squads
+      - valor: "5 a 9"
+        unidad: invocaciones
+        nota: Lo que cuesta un diagnóstico completo
+      - valor: "~$2.10"
+        unidad: por diagnóstico
+        nota: Y unos 4 minutos de reloj
+    bloques:
+      - titulo: Qué pasa
+        contenido: >-
+          Un squad reporta que su pipeline falla. Abre un ticket en Jira, casi
+          siempre con un screenshot y poco más. El equipo de plataforma tiene
+          que averiguar si el defecto es del squad o de un componente
+          compartido — y esa respuesta cambia quién lo arregla.
+      - titulo: Por qué no se puede scriptear
+        contenido: >-
+          **Cada ticket lleva a un sitio distinto.** El rastro va del
+          screenshot a la ejecución de Actions, de ahí a cuál de los tres
+          shelltools corrió y en qué rama, y de ahí a una cadena
+          `action.yml → makefile → script → función`. No se puede prever el
+          siguiente paso desde Python.
+      - titulo: El error más caro
+        contenido: >-
+          Resolver **qué shelltool** y **qué rama de ese shelltool**
+          ejecutaron. Son dos datos, y leer la rama correcta del shelltool
+          equivocado es igual de falso que al revés.
+    notas: |
+      **6 min** · el caso completo, sin correr.
+      - **Leer las cuatro cifras en voz alta.** El 1644 es el que hace la sala
+        entender por qué no hay script que valga.
+      - **El tercer bloque es el que se cobra en el reto 7**: el crítico existe
+        en buena parte para cazar ese error.
+
+  - id: s3-caso-ticket
+    tipo: markdown
+    titulo: Lo que recibe el agente
+    minutos: 3
+    contenido: |
+      Un ticket de este tablero suele traer **un screenshot y dos líneas**. La
+      descripción a veces está vacía, y a veces vive en un campo personalizado
+      que nadie mira.
+
+      Eso ya produjo un fallo de verdad: el agente pedía solo los campos
+      estándar de Jira, la descripción estaba en un campo personalizado, y el
+      diagnóstico concluyó **«no hay rastro»** sobre un ticket que en el
+      navegador se lee entero.
+    notas: |
+      - **El fallo es la lámina**, no el formato del ticket.
+      - **La frase**: el nodo decía la verdad sobre lo que recibió, y lo que
+        recibió estaba mal. Sembrar que por eso hay un comando que enseña de
+        qué campos sale el texto.
+
+  - id: s3-caso-cadena
+    tipo: diagrama
+    titulo: El rastro que hay que seguir
+    entradilla: De un screenshot a la función que falló
+    clase: flujo
+    minutos: 4
+    contenido: |
+      flowchart LR
+        T["ticket de Jira<br/>+ screenshot"] --> R["el run de<br/>GitHub Actions"]
+        R --> C{"cual de los tres<br/>shelltools?"}
+        C --> B{"y que rama<br/>de ese shelltool?"}
+        B --> A["action.yml"]
+        A --> M["makefile"]
+        M --> S["script"]
+        S --> F["la funcion<br/>que falla"]
+    notas: |
+      **Es la cadena, no la arquitectura.** Recorrerla de izquierda a derecha
+      sin detenerse.
+      - **Señalar los dos rombos juntos**: son las dos preguntas del error más
+        caro, y son dos y no una.
+      - Quince o veinte llamadas a herramienta es un rastro completo. **Ese
+        número vuelve en el reto 7** cuando aparezca el tope de turnos.
+
+  - id: s3-caso-costo
+    tipo: metrica
+    titulo: Lo que cuesta preguntarle
+    minutos: 3
+    valor: "2.10"
+    unidad: USD
+    contexto: >-
+      Por diagnóstico completo, y unos 4 minutos. Medido sobre ejecuciones
+      reales. Es el número que aparece **antes** de pulsar el botón, no
+      después — entre un diagnóstico de $0.20 y uno de $2.10 hay algo que
+      decidir.
+    tono: neutro
+    notas: |
+      - **El punto no es que sea caro**: es que se sabe antes.
+      - Sembrar el cierre: ahí se ve cómo se mide y por qué la media sola
+        miente.
+
+  - id: s3-caso-pausa
+    tipo: pausa-preguntas
+    minutos: 2
+    disparadores:
+      - ¿Alguien tiene un caso parecido en su trabajo — un componente compartido que falla y nadie sabe de quién es?
+      - ¿Cuánto tardan hoy en decidir si un fallo es del squad o de la plataforma?
+    notas: |
+      **Pausa corta antes del primer reto.** Si nadie habla, lanzar el segundo
+      disparador: siempre hay alguien con una historia.
+
+  - id: s3-caso-transicion
+    tipo: transicion
+    minutos: 1
+    vimos: El caso, su tamaño, y por qué el rastro no se puede prever desde código
+    viene: "Reto 6 · la pieza más pequeña del agente: un nodo y su contrato"
