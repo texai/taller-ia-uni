@@ -1,0 +1,254 @@
+# Unidad 7 de la sesión 3 · revisar el pull request de otra persona.
+#
+# La única operación del agente que NO es del ciclo de un ticket, y la que
+# mejor sirve para la pregunta que atraviesa el taller: **dónde ponemos el
+# LLM y dónde no**.
+#
+# Cierra un arco abierto en la sesión 1. El reto 3 hizo apostar a la sala si
+# tres ejecuciones del mismo diagnóstico se parecerían, y la respuesta fue
+# «coinciden en el hallazgo, no en la severidad»; la nota decía que sin una
+# escala anclada a nada, la severidad es opinión editorial. Acá se ancla —a
+# la consecuencia— y además se le quita al modelo la decisión de qué se
+# enseña. El mismo problema, dos sesiones después, resuelto.
+#
+# Ningún ítem lleva campo `comando`, y no es un olvido: los comandos son de
+# `io-platform-engineer-ai-agent` y no entran en la pauta del docente
+# (commit a35c014). Los que se ven van en `entradilla` y en tablas, que son
+# texto y no prometen ejecución.
+id: s3-revisar-prs
+tipo: reto
+titulo: Revisar el PR de otra persona
+objetivos:
+  - Separar lo que se le pide a un LLM de lo que nunca se le delega
+  - Anclar una escala de severidad a la consecuencia y no a la opinión
+  - Ver por qué el filtro y el veredicto los calcula el código
+  - "Conceptos: sobre-diagnóstico, corte configurable, clasificar contra decidir"
+requisitos:
+  - El reto 9. Los frenos ya existen y el agente no escribe en remoto.
+items:
+  - id: s3-rev-titulo
+    tipo: titulo
+    titulo: "Otra operación, el mismo agente"
+    entradilla: Y la mejor pregunta del taller — dónde poner el LLM
+    minutos: 2
+    notas: |
+      **30 min.** Esto no es un reto más del ciclo: es una operación aparte
+      que se le pidió al agente después.
+      - **El encargo real**: a un ingeniero de plataforma le piden revisar el
+        pull request de un compañero. Varias veces por semana.
+      - **Por qué está acá y no en el ciclo**: un PR ajeno no es un caso
+        propio. Si entrara en la memoria, volvería como precedente de un
+        diagnóstico que no tiene nada que ver.
+
+  - id: s3-rev-mapa
+    tipo: diagrama
+    titulo: Quién hace qué
+    entradilla: Tres actores, y solo uno es el modelo
+    clase: flujo
+    minutos: 4
+    contenido: |
+      flowchart TD
+        A["gh pr view · gh pr diff<br/><i>Python trae el PR</i>"] --> B
+        B["<b>el LLM</b><br/>lee el diff, va a mirar el repo,<br/>y CLASIFICA cada hallazgo:<br/>tipo + severidad"] --> C
+        C{{"<b>el codigo</b><br/>filtrar()<br/>aplica el corte"}}
+        C -->|"pasan"| D["se enseñan"]
+        C -->|"no pasan"| E["se CUENTAN,<br/>con el comando para verlos"]
+        D --> F["<b>el codigo</b><br/>veredicto_de()"]
+        F --> G["la persona lee,<br/>corrige y publica"]
+    notas: |
+      **Recorrerlo de arriba abajo, y detenerse en el rombo.**
+      - **El LLM hace una sola cosa**: leer el cambio y clasificar lo que ve.
+        Es lo que un programa no sabe hacer.
+      - **El corte NO se lo pedimos a él.** Es la lámina siguiente.
+      - **El veredicto tampoco**: sale de lo que sobrevivió al filtro.
+      - La flecha de la derecha es la que la sala no espera: lo filtrado no
+        desaparece, **se cuenta**.
+
+  - id: s3-rev-prediccion
+    tipo: pregunta
+    titulo: Antes de ver el código
+    minutos: 4
+    segundos: 60
+    visibilidad: publica
+    permiteOmitir: false
+    pregunta: >-
+      Quieren que la revisión solo muestre lo grave. ¿Qué pasa si lo ponen en
+      el prompt — «reporta únicamente hallazgos de severidad alta»?
+    opciones:
+      - Funciona, es exactamente para eso que sirve un prompt
+      - Empieza a etiquetar como «alta» cosas que no lo son
+      - Deja de encontrar hallazgos leves, que es lo que se pedía
+      - Da igual, el modelo no entiende de severidades
+    respuesta: Empieza a etiquetar como «alta» cosas que no lo son
+    solucion:
+      explicacion: |
+        **Se le va la mano etiquetando de grave lo que quiere que pase el
+        corte.** No es mala fe: se le pidió una lista de cosas graves, y una
+        lista vacía se parece a no haber hecho el trabajo.
+
+        Y entonces el filtro deja de filtrar, que es peor que no tenerlo:
+        ahora hay una etiqueta que dice «alta» y no significa nada.
+
+        Es **el mismo fallo** que vimos en el cierre con la corroboración —
+        cuando se dejaba al criterio del modelo, casi todo llegaba marcado
+        como corroborado porque sonaba mejor. Y es la misma solución: **el
+        modelo clasifica, el código decide**.
+      descartes:
+        - opcion: Funciona, es exactamente para eso que sirve un prompt
+          razon: >-
+            Un prompt es la capa más blanda de las tres — lo dijo el reto 9.
+            Acá no hay ni hook que lo respalde: la etiqueta es del modelo.
+        - opcion: Deja de encontrar hallazgos leves, que es lo que se pedía
+          razon: >-
+            Los encuentra igual. Lo que cambia es cómo los rotula para que
+            sobrevivan al corte que se le anunció.
+        - opcion: Da igual, el modelo no entiende de severidades
+          razon: >-
+            Las entiende bien, y por eso el problema es sutil: la
+            clasificación es buena hasta que se le dice qué se va a filtrar.
+    notas: |
+      **Que apuesten antes de ver el código.** La primera opción es la que la
+      mayoría cree, y es razonable — por eso enseña.
+      - **Revelar después** de recoger manos.
+      - **La frase para dejar en el aire**: pedirle el corte al mismo que
+        produce los hallazgos es pedirle que se corrija a sí mismo.
+
+  - id: s3-rev-reparto
+    tipo: comparacion
+    titulo: Lo que se le pide y lo que no
+    entradilla: La línea que separa una operación con LLM de un LLM haciendo la operación
+    minutos: 4
+    izquierda:
+      titulo: Al LLM — clasificar
+      contenido: |
+        Leer el diff, **ir a mirar** el resto del repositorio si hace falta,
+        y por cada hallazgo decir **qué tipo** es y **qué severidad** tiene.
+
+        Y una cosa más, que es la que lo hace útil: **nombrar el caso que
+        falla**. Con qué entrada, en qué estado, y qué pasa entonces.
+
+        Es lo que un programa no sabe hacer.
+    derecha:
+      titulo: Al código — decidir
+      contenido: |
+        **Qué se enseña** (`filtrar`), **qué veredicto sale**
+        (`veredicto_de`), y **cuántos quedaron fuera**.
+
+        Ninguna de las tres necesita entender el código revisado. Las tres
+        necesitan ser estables entre ejecuciones.
+
+        Es lo que un modelo no puede garantizar.
+    notas: |
+      - **La regla, en una frase**: si hay un hecho, no se le pregunta a un
+        modelo. Es la misma del reto 8 con la validación.
+      - **El LLM sí tiene herramientas acá** —lectura, y `gh` para abrir un
+        archivo sin clonar— porque revisar es ir a mirar. Un diff enseña las
+        líneas que cambiaron y **esconde** justo lo que hace falta para
+        juzgarlas: quién llama a esa función, qué contrato tenía antes.
+      - Si preguntan por qué no se le da también el corte: **la lámina
+        anterior**.
+
+  - id: s3-rev-severidad
+    tipo: tabla
+    titulo: La severidad, anclada a la consecuencia
+    entradilla: La sesión 1 dijo que sin escala es opinión editorial. Esta es la escala
+    minutos: 4
+    columnas: [Nivel, "Qué significa — y no es «cuán molesto es»"]
+    filas:
+      - ["`critica`", "Pérdida o filtración de datos, credencial expuesta, borrado sin vuelta atrás"]
+      - ["**`alta`**", "**Falla con una entrada que va a ocurrir, rompe a un consumidor, o deja un fallo silencioso**"]
+      - ["`media`", "Falla en un caso borde poco frecuente, o degrada sin romper"]
+      - ["`baja`", "Se nota poco y se puede arreglar después"]
+    resaltar: [1]
+    notas: |
+      - **La definición es «qué pasa si esto llega a producción sin
+        arreglar»**, no «cuánto me incomoda». Esa es la diferencia entre una
+        escala y una opinión.
+      - **Volver al reto 3 del sábado**: ahí tres ejecuciones daban tres
+        severidades distintas para el mismo hallazgo. Con la escala anclada,
+        la varianza baja — y lo que queda de varianza ya no decide, porque el
+        corte lo aplica el código.
+      - **`alta` es el corte por omisión.** En un PR real, lo `media` es casi
+        todo: devolverlo entero es la lista que nadie lee.
+
+  - id: s3-rev-salida
+    tipo: salida-anotada
+    titulo: Lo que imprime
+    entradilla: Salida de `make revisar` sobre un PR con el corte por omisión
+    minutos: 6
+    salida: |
+      MATRIXMVP/io-script-devops-shelltool#88 · Corrige el ref del checkout
+      de ana · feature/ref → develop · 3 archivo(s) +41 −12
+
+        ✗ cambios_solicitados
+
+        Cambia el ref del checkout para que se resuelva desde main.
+
+        Hallazgos  desde «alta»
+
+          alta · correccion · main.yml:41
+            Con inputs.rama vacío el ref queda en cadena vacía
+            El checkout cae al default branch sin avisar
+
+        4 hallazgo(s) por debajo del corte: 1 de estilo, 3 de mantenibilidad.
+        Para verlos: make revisar PR=… SEVERIDAD=baja TIPOS=todos
+    anotaciones:
+      - texto: cambios_solicitados
+        explicacion: >-
+          **No lo dijo el modelo.** Sale de lo que sobrevivió al filtro: hay
+          un hallazgo `alta`, luego se piden cambios. Si el modelo diera el
+          veredicto, diría lo mismo por un hallazgo de estilo que acá ni se
+          dibuja — y el resumen contradiría a la lista.
+      - texto: "alta · correccion · main.yml:41"
+        explicacion: >-
+          Tipo y severidad los puso el modelo; que se vea, el código. Y
+          `donde` tiene que **poder abrirse**: archivo y línea, no «en la
+          función de arriba».
+      - texto: El checkout cae al default branch sin avisar
+        explicacion: >-
+          **El caso concreto que falla.** Sin esto no es un hallazgo, es una
+          duda — y las dudas van a otra lista, la de preguntas para el autor.
+      - texto: 4 hallazgo(s) por debajo del corte
+        explicacion: >-
+          Lo filtrado **se cuenta, con su desglose y el comando para verlo**.
+          «No encontró nada» y «encontró cuatro y los oculté» no se pueden
+          parecer: sin esta línea, el corte silencioso se lee como un PR
+          limpio.
+    notas: |
+      - **Empezar por el final.** La última línea es la que hace honesto todo
+        lo de arriba.
+      - **`desde «alta»`**: la cabecera dice con qué corte se está mirando.
+        Una lista sin su criterio no se puede interpretar.
+      - Si preguntan por qué `mantenibilidad` y `estilo` salen fuera por
+        omisión: **no bloquean un merge**, y mezclarlas con lo que sí lo
+        bloquea hace que se descarten las dos a la vez.
+
+  - id: s3-rev-configurable
+    tipo: tabla
+    titulo: El corte se cambia, no se discute
+    entradilla: Tres niveles, del más volátil al más duradero
+    minutos: 3
+    columnas: [Dónde, Ejemplo, Para qué]
+    filas:
+      - ["El argumento", "`SEVERIDAD=baja TIPOS=todos`", "Esta revisión y nada más"]
+      - ["El entorno", "`IO_AGENT_REVISION_SEVERIDAD=media`", "Fijarlo sin tocar código"]
+      - ["El valor por omisión", "`alta`, sin las categorías de opinión", "Lo que pasa si nadie dice nada"]
+    notas: |
+      - **Es el mismo orden que el modelo y el esfuerzo** en el resto del
+        agente: lo de arriba gana sobre lo de abajo.
+      - **La pregunta para la sala**: ¿qué corte pondrían para revisar el PR
+        de alguien que empieza? ¿Y el de alguien con diez años? No hay
+        respuesta correcta — hay una decisión, y ahora se puede tomar.
+
+  - id: s3-rev-pausa
+    tipo: pausa-preguntas
+    minutos: 2
+    disparadores:
+      - ¿Qué otra decisión de su agente del domingo está hoy dentro del prompt y debería estar en el código?
+      - ¿Dónde pondrían el corte para que la lista se siga leyendo a la tercera semana?
+
+  - id: s3-rev-transicion
+    tipo: transicion
+    minutos: 1
+    vimos: Una operación donde el LLM clasifica y el código decide qué se enseña
+    viene: El cierre — lo que se mide, lo que se recuerda y lo que se aprende

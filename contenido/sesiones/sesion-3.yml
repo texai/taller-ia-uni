@@ -25,7 +25,7 @@ titulo: Un agente en producción
 subtitulo: Sesión 3
 fecha: 2026-08-16
 horaInicio: "15:00"
-horaFin: "19:00"
+horaFin: "19:30"
 
 unidades:
   - archivo: unidades/s03-u01-de-la-simulacion-a-produccion.yml
@@ -37,4 +37,8 @@ unidades:
   - archivo: unidades/s03-u04-reto7-el-grafo-de-diagnostico.yml
   - archivo: unidades/s03-u05-reto8-del-plan-al-codigo.yml
   - archivo: unidades/s03-u06-reto9-los-frenos.yml
-  - archivo: unidades/s03-u07-cierre-medir-recordar-aprender.yml
+  # La única operación del agente que no es del ciclo de un ticket, y por eso
+  # va después de los cuatro retos y no entre ellos. Cierra además el arco que
+  # abrió el reto 3 del sábado sobre la severidad como opinión editorial.
+  - archivo: unidades/s03-u07-revisar-pull-requests.yml
+  - archivo: unidades/s03-u08-cierre-medir-recordar-aprender.yml
