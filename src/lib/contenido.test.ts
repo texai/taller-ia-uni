@@ -1345,7 +1345,16 @@ test("la asistencia la ve la clase; su instrucción, no", () => {
   );
 });
 
-test("dos asistencias por sesión, y una de ellas detrás del receso", () => {
+// Las sesiones que se dictaron de verdad. La 3 no: se entregó como material,
+// sin aula y sin fecha, así que no hay lista que tomar — y una asistencia en
+// una sesión que nadie dictó es un acta de un día que no ocurrió.
+//
+// Va como lista explícita y no como `sesion.id !== "sesion-3"` para que el
+// día que se dicte, reinstaurarla sea agregarla acá: la regla de la
+// coordinación sigue viva para todo lo que se dicta.
+const SESIONES_DICTADAS = ["sesion-1", "sesion-2"];
+
+test("dos asistencias por sesión dictada, y una de ellas detrás del receso", () => {
   // Regla de la coordinación del programa, no nuestra: una asistencia 15 min
   // después de empezar y otra al volver del receso. Es lo único con lo que se
   // evalúa el taller, así que un ítem que se caiga al reordenar contenido se
@@ -1353,6 +1362,7 @@ test("dos asistencias por sesión, y una de ellas detrás del receso", () => {
   const curso = mod.cargarCurso();
 
   for (const sesion of curso.sesiones) {
+    if (!SESIONES_DICTADAS.includes(sesion.id)) continue;
     const items = sesion.unidades.flatMap((u) => u.items);
     const asistencias = items
       .map((it, i) => ({ it, i }))
@@ -1370,6 +1380,21 @@ test("dos asistencias por sesión, y una de ellas detrás del receso", () => {
       `${sesion.id}: la segunda va después del receso`,
     );
   }
+});
+
+test("la sesión que solo se entregó como material no toma asistencia", () => {
+  // El reverso de la regla de arriba, y hace falta escrito: sin esto, quitar
+  // las dos marcas de la sesión 3 se lee como un descuido al reordenar
+  // contenido —que es exactamente el fallo que la otra prueba vigila— y
+  // alguien las repone de buena fe.
+  const curso = mod.cargarCurso();
+  const s3 = curso.sesiones.find((s) => s.id === "sesion-3");
+  assert.ok(s3, "existe la sesión 3");
+
+  const asistencias = s3!.unidades
+    .flatMap((u) => u.items)
+    .filter((it) => it.tipo === "asistencia");
+  assert.equal(asistencias.length, 0, "no se dictó: no hay lista que tomar");
 });
 
 test("la encuesta docente cierra la sesión 2, y su instrucción es privada", () => {
