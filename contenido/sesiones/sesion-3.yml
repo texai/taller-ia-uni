@@ -7,11 +7,13 @@
 # Los minutos van SOLO en cada ítem: la unidad suma los suyos y la sesión suma
 # las unidades, de abajo hacia arriba (CONVENTIONS.md §15). La suma da 240.
 #
-# **El horario es nominal.** Esta sesión se entrega como material y no se
-# dicta: no hay fecha comprometida. Las horas están porque `validar-contenido`
-# compara la suma de los ítems contra la duración de la sesión, y esa
-# comprobación es la que impide que el reparto se descuadre sin que nadie lo
-# vea. Si algún día se dicta, se corrige la fecha y nada más.
+# **El horario es nominal, y esta sesión no se dictó.** Se entregó como
+# material: no hay fecha comprometida y **no lleva marcas de asistencia** —
+# no hay lista que tomar en una sesión que nadie dictó. Las horas están porque
+# `validar-contenido` compara la suma de los ítems contra la duración de la
+# sesión, y esa comprobación es la que impide que el reparto se descuadre sin
+# que nadie lo vea. Si algún día se dicta, se corrige la fecha y se decide
+# entonces si hay asistencia.
 #
 # **La fuente de esta sesión es `texai/io-platform-engineer-ai-agent`**, no el
 # laboratorio. `taller-ia-uni-lab` queda cerrado en la sesión 2: los retos 6 a
@@ -23,7 +25,7 @@ titulo: Un agente en producción
 subtitulo: Sesión 3
 fecha: 2026-08-16
 horaInicio: "15:00"
-horaFin: "19:00"
+horaFin: "19:30"
 
 unidades:
   - archivo: unidades/s03-u01-de-la-simulacion-a-produccion.yml
@@ -35,4 +37,8 @@ unidades:
   - archivo: unidades/s03-u04-reto7-el-grafo-de-diagnostico.yml
   - archivo: unidades/s03-u05-reto8-del-plan-al-codigo.yml
   - archivo: unidades/s03-u06-reto9-los-frenos.yml
-  - archivo: unidades/s03-u07-cierre-medir-recordar-aprender.yml
+  # La única operación del agente que no es del ciclo de un ticket, y por eso
+  # va después de los cuatro retos y no entre ellos. Cierra además el arco que
+  # abrió el reto 3 del sábado sobre la severidad como opinión editorial.
+  - archivo: unidades/s03-u07-revisar-pull-requests.yml
+  - archivo: unidades/s03-u08-cierre-medir-recordar-aprender.yml

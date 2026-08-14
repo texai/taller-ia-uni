@@ -110,17 +110,6 @@ items:
       - Si preguntan por qué acá es `hipotesis` y en el lab `diagnostico`: es
         el mismo nodo con otro nombre. **No abrir el debate ahora.**
 
-  # Lo pide la coordinación del programa: una a los quince minutos de empezar y
-  # otra al volver del receso. Es lo único con lo que se evalúa el taller, así
-  # que no se mueve de sitio al reordenar contenido. No lleva minutos: se toma
-  # mientras la lámina siguiente ya está en pantalla.
-  - id: s3-asistencia-1
-    tipo: asistencia
-    titulo: Asistencia
-    nota: >-
-      La primera de las dos de hoy. Uno por uno y en voz alta, con micrófono:
-      no vale el chat de Zoom. Quien entre después queda en la segunda.
-
   - id: s3-que-cambia
     tipo: tabla
     titulo: Qué hubo que agregarle

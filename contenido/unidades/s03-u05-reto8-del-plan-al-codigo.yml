@@ -17,15 +17,6 @@ objetivos:
 requisitos:
   - El reto 7. Existe un plan con repositorios, ramas y cambios.
 items:
-  # La segunda del día, justo al volver del receso. Va acá y no al final del
-  # reto 7 a propósito: quien no volvió del receso tiene que quedar ausente.
-  - id: s3-asistencia-2
-    tipo: asistencia
-    titulo: Asistencia, la segunda
-    nota: >-
-      Al volver del receso, antes de empezar. Si alguien no volvió, queda
-      ausente en esta — es la que la coordinación cruza con la primera.
-
   - id: s3-r8-titulo
     tipo: titulo
     titulo: "Reto 8 · Del plan al código"
